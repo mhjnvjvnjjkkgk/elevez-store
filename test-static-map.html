@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Static Map API Test</title>
+</head>
+<body>
+    <h1>Static Map API Test</h1>
+    
+    <div>
+        <label for="address">Enter an address:</label><br>
+        <input type="text" id="address" value="Connaught Place, New Delhi" style="width: 300px; padding: 10px; margin: 10px 0;">
+        <button onclick="generateMap()" style="padding: 10px; background: #00ff88; border: none; cursor: pointer;">Generate Map</button>
+    </div>
+    
+    <div id="result" style="margin-top: 20px;">
+        <img id="mapImage" src="" alt="Static Map" style="width: 400px; height: 200px; border: 1px solid #ccc; display: none;">
+        <p id="message"></p>
+    </div>
+    
+    <script>
+        function generateMap() {
+            const address = document.getElementById('address').value;
+            const mapImage = document.getElementById('mapImage');
+            const message = document.getElementById('message');
+            
+            if (!address) {
+                message.innerHTML = 'Please enter an address';
+                return;
+            }
+            
+            // Encode the address for URL
+            const encodedAddress = encodeURIComponent(address);
+            
+            // Create the Static Maps API URL
+            const apiKey = 'AIzaSyCSPzIuoBQJvNxWxqOlxU7bPXAKQxBJhWQ';
+            const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodedAddress}&zoom=15&size=400x200&key=${apiKey}`;
+            
+            message.innerHTML = 'Generating map...';
+            mapImage.style.display = 'none';
+            
+            // Test the image loading
+            mapImage.onload = function() {
+                message.innerHTML = '✅ Map generated successfully!';
+                mapImage.style.display = 'block';
+            };
+            
+            mapImage.onerror = function() {
+                message.innerHTML = '❌ Failed to generate map. Check your API key and restrictions.';
+                mapImage.style.display = 'none';
+            };
+            
+            mapImage.src = mapUrl;
+        }
+        
+        // Test with default address on page load
+        window.onload = function() {
+            generateMap();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps JavaScript API Test</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSPzIuoBQJvNxWxqOlxU7bPXAKQxBJhWQ&libraries=places"></script>
+</head>
+<body>
+    <h1>Google Maps JavaScript API Test</h1>
+    
+    <div id="status">Loading Google Maps...</div>
+    
+    <div id="map" style="width: 400px; height: 200px; border: 1px solid #ccc; margin-top: 20px;"></div>
+    
+    <div id="autocomplete" style="margin-top: 20px;">
+        <input id="addressInput" type="text" placeholder="Type an address..." style="width: 300px; padding: 10px;">
+    </div>
+    
+    <script>
+        let mapLoaded = false;
+        let mapsApiWorking = false;
+        
+        // Check if Google Maps loaded
+        if (typeof google !== 'undefined' && google.maps) {
+            document.getElementById('status').innerHTML = '✅ Google Maps JavaScript API loaded successfully.';
+            document.getElementById('status').style.color = 'green';
+            mapsApiWorking = true;
+            
+            // Try to create a simple map
+            try {
+                const map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: 28.6139, lng: 77.2090 }, // New Delhi
+                    zoom: 10
+                });
+                mapLoaded = true;
+                document.getElementById('status').innerHTML += '<br>✅ Map created successfully.';
+                
+                // Try to initialize autocomplete
+                const input = document.getElementById('addressInput');
+                const autocomplete = new google.maps.places.Autocomplete(input);
+                document.getElementById('status').innerHTML += '<br>✅ Places Autocomplete initialized successfully.';
+            } catch (error) {
+                document.getElementById('status').innerHTML += '<br>❌ Error creating map or autocomplete: ' + error.message;
+                document.getElementById('status').style.color = 'orange';
+            }
+        } else {
+            document.getElementById('status').innerHTML = '❌ Google Maps JavaScript API failed to load.';
+            document.getElementById('status').style.color = 'red';
+        }
+        
+        // Test Static Maps API directly
+        const testStaticMap = new Image();
+        testStaticMap.onload = function() {
+            document.getElementById('status').innerHTML += '<br>✅ Static Maps API working correctly.';
+        };
+        testStaticMap.onerror = function() {
+            document.getElementById('status').innerHTML += '<br>❌ Static Maps API not working.';
+        };
+        testStaticMap.src = 'https://maps.googleapis.com/maps/api/staticmap?center=New+Delhi&zoom=10&size=400x200&key=AIzaSyCSPzIuoBQJvNxWxqOlxU7bPXAKQxBJhWQ';
+    </script>
+</body>
+</html>

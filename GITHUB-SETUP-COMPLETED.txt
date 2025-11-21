@@ -1,0 +1,77 @@
+🚀 ELEVEZ STORE - GITHUB SETUP COMPLETED
+=====================================
+
+Your website is ready for GitHub integration! Follow these simple steps:
+
+STEP 1: VERIFY GIT INSTALLATION
+-----------------------------
+1. Open Command Prompt (not PowerShell)
+2. Type: git --version
+3. If you see a version number, Git is properly installed
+4. If not, reinstall Git from https://git-scm.com/download/win
+   - During installation, make sure to check "Add Git to PATH"
+
+STEP 2: INITIALIZE YOUR REPOSITORY
+--------------------------------
+Open Command Prompt and run these commands:
+
+cd "d:\wbeiste\elevez (1)"
+git init
+git add .
+git commit -m "Initial commit"
+
+STEP 3: CREATE GITHUB REPOSITORY
+------------------------------
+1. Go to https://github.com/
+2. Sign up or log in to your account
+3. Click the "+" icon in the top right
+4. Select "New repository"
+5. Name it "elevez-store"
+6. Keep it Public
+7. Do NOT initialize with a README
+8. Click "Create repository"
+
+STEP 4: CONNECT TO GITHUB
+-----------------------
+In Command Prompt, run:
+
+git remote add origin https://github.com/YOUR_USERNAME/elevez-store.git
+git push -u origin main
+
+(Replace YOUR_USERNAME with your actual GitHub username)
+
+STEP 5: CONNECT TO VERCEL
+-----------------------
+1. Go to https://vercel.com/
+2. Sign up or log in with your GitHub account
+3. Click "New Project"
+4. Find and select your "elevez-store" repository
+5. Vercel will automatically detect it's a Vite project
+6. Click "Deploy"
+
+AUTOMATIC DEPLOYMENTS
+--------------------
+After setup, every time you:
+1. Make changes to your code
+2. Commit the changes: git commit -m "Description of changes"
+3. Push to GitHub: git push origin main
+
+Vercel will automatically:
+1. Detect the new code
+2. Build your project
+3. Deploy the updated site
+
+This means you'll NEVER have to manually deploy again!
+
+BENEFITS:
+- Automatic deployments on every push
+- Preview deployments for pull requests
+- Rollback to previous versions
+- Performance monitoring
+- Global CDN distribution
+
+Your website is already built and ready at:
+d:\wbeiste\elevez (1)\dist
+
+Current live URL:
+https://elevez-bmyf3g0uf-shayaks-projects-95c1d909.vercel.app

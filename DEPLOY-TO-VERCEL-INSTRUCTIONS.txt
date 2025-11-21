@@ -1,0 +1,58 @@
+🚀 ELEVEZ STORE - VERCEL DEPLOYMENT INSTRUCTIONS
+===============================================
+
+Your website has been successfully built and is ready for deployment to Vercel!
+
+FOLLOW THESE SIMPLE STEPS TO DEPLOY:
+
+1. OPEN POWERSHELL AS ADMINISTRATOR
+   - Press Windows key
+   - Type "PowerShell"
+   - Right-click on "Windows PowerShell"
+   - Select "Run as administrator"
+
+2. TEMPORARILY CHANGE EXECUTION POLICY
+   Copy and paste this command:
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   
+   Press Enter and type "Y" when prompted
+
+3. LOGIN TO VERCEL
+   Navigate to your project folder and login:
+   cd "d:\wbeiste\elevez (1)"
+   npx vercel login
+
+4. DEPLOY YOUR WEBSITE
+   Run the deployment command:
+   npx vercel --prod
+
+5. OPTIONAL: REVERT EXECUTION POLICY
+   After deployment, you can revert the policy:
+   Set-ExecutionPolicy -ExecutionPolicy Restricted -Scope CurrentUser
+
+ALTERNATIVE: GITHUB DEPLOYMENT (RECOMMENDED)
+--------------------------------------------
+This is often the easiest method for ongoing deployments:
+
+1. Push your code to a GitHub repository
+2. Go to https://vercel.com/
+3. Sign up or log in with your GitHub account
+4. Click "New Project"
+5. Import your GitHub repository
+6. Vercel will automatically detect it's a Vite project
+7. Click "Deploy"
+
+BENEFITS OF VERCEL DEPLOYMENT:
+- Free hosting with vercel.app subdomain
+- Automatic SSL certificates
+- Global CDN for fast loading
+- Automatic deployments on Git pushes
+- Easy custom domain setup
+- Built-in CI/CD pipeline
+
+YOUR BUILT WEBSITE:
+- Location: d:\wbeiste\elevez (1)\dist
+- Ready for immediate deployment
+- All assets optimized and minified
+
+Need help? Check the VERCEL_DEPLOYMENT.md file for more detailed instructions.
