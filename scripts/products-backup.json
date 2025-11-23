@@ -27,6 +27,27 @@
         "PREMIUM"
       ],
       "description": "Premium quality t-shirt. Perfect for any occasion."
+    },
+    {
+      "id": 1763905562151,
+      "qid": "12",
+      "name": "try try",
+      "price": 670,
+      "originalPrice": 1400,
+      "category": "Men",
+      "type": "T-Shirt",
+      "rating": 4.5,
+      "image": "https://postimg.cc/PC6ZrNXj",
+      "images": [
+        "https://postimg.cc/PC6ZrNXj",
+        "https://postimg.cc/G4MYh9cg"
+      ],
+      "sizes": [
+        "M"
+      ],
+      "colors": [
+        "White"
+      ]
     }
   ],
   "collections": [],
