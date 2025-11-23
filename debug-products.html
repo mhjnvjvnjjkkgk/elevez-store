@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Products</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #00ff88; }
+        pre { background: #000; padding: 20px; border-radius: 10px; overflow-x: auto; }
+        button { background: #00ff88; color: #000; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #00cc66; }
+        h2 { color: #fff; }
+    </style>
+</head>
+<body>
+    <h1>🔍 ELEVEZ Product Debugger</h1>
+    
+    <button onclick="showProducts()">Show Products in localStorage</button>
+    <button onclick="loadTrialProducts()">Load Trial Products</button>
+    <button onclick="clearAll()">Clear All Data</button>
+    <button onclick="syncToConstants()">Sync to constants.ts</button>
+    
+    <h2>Products in localStorage:</h2>
+    <pre id="output">Click "Show Products" to see data...</pre>
+    
+    <script>
+        function showProducts() {
+            const products = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+            const output = document.getElementById('output');
+            output.textContent = JSON.stringify(products, null, 2);
+            console.log('Products:', products);
+        }
+        
+        function loadTrialProducts() {
+            const trialProducts = [
+                {
+                    "id": 1,
+                    "qid": "NGH-001",
+                    "name": "Neon Glitch Hoodie",
+                    "price": 85,
+                    "originalPrice": 170,
+                    "category": "Men",
+                    "type": "Hoodie",
+                    "rating": 4.5,
+                    "description": "Premium quality hoodie with neon glitch design.",
+                    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+                    "images": ["https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"],
+                    "sizes": ["S", "M", "L", "XL"],
+                    "colors": ["Black", "White", "Neon Green"],
+                    "tags": ["TRENDING", "BESTSELLER"],
+                    "isBestSeller": true,
+                    "isNew": true
+                },
+                {
+                    "id": 2,
+                    "qid": "VCT-002",
+                    "name": "Vintage Crop Top",
+                    "price": 45,
+                    "originalPrice": 90,
+                    "category": "Women",
+                    "type": "Crop Top",
+                    "rating": 4.7,
+                    "description": "Stylish vintage crop top with retro vibes.",
+                    "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+                    "images": ["https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"],
+                    "sizes": ["XS", "S", "M", "L"],
+                    "colors": ["Pink", "White", "Black"],
+                    "tags": ["VINTAGE", "TRENDING"],
+                    "isNew": true
+                },
+                {
+                    "id": 3,
+                    "qid": "OST-003",
+                    "name": "Oversized Street Tee",
+                    "price": 35,
+                    "originalPrice": 70,
+                    "category": "Unisex",
+                    "type": "Oversized T-Shirt",
+                    "rating": 4.6,
+                    "description": "Ultra-comfortable oversized t-shirt.",
+                    "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
+                    "images": ["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"],
+                    "sizes": ["M", "L", "XL", "XXL"],
+                    "colors": ["Black", "White", "Gray"],
+                    "tags": ["ESSENTIAL", "BESTSELLER"],
+                    "isBestSeller": true
+                }
+            ];
+            
+            // Get existing products
+            const existing = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+            
+            // Merge: keep user products, add trial products
+            const merged = [...existing, ...trialProducts];
+            
+            localStorage.setItem('elevez_products', JSON.stringify(merged));
+            alert(`✅ Added ${trialProducts.length} trial products! Total: ${merged.length}`);
+            showProducts();
+        }
+        
+        function clearAll() {
+            if (confirm('⚠️ This will delete ALL products. Continue?')) {
+                localStorage.removeItem('elevez_products');
+                localStorage.removeItem('elevez_collections');
+                localStorage.removeItem('elevez_orders');
+                alert('✅ All data cleared!');
+                showProducts();
+            }
+        }
+        
+        async function syncToConstants() {
+            const products = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+            
+            if (products.length === 0) {
+                alert('❌ No products to sync!');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:3001/update-constants', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        products: products,
+                        collections: [],
+                        tags: ["ESSENTIAL", "TRENDING", "PREMIUM", "NEW", "BESTSELLER", "VINTAGE", "COLORFUL"],
+                        categories: ["Men", "Women", "Unisex"],
+                        types: ["Hoodie", "T-Shirt", "Crop Top", "Oversized T-Shirt"],
+                        colors: [
+                            { "name": "Black", "code": "#000000" },
+                            { "name": "White", "code": "#FFFFFF" },
+                            { "name": "Neon Green", "code": "#00ff88" }
+                        ]
+                    })
+                });
+                
+                if (response.ok) {
+                    alert('✅ Synced to constants.ts! Refresh your website.');
+                } else {
+                    alert('❌ Sync failed. Is admin server running?');
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+        
+        // Auto-show on load
+        showProducts();
+    </script>
+</body>
+</html>

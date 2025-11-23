@@ -3,11 +3,40 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { WebSocketServer } from 'ws';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = 3001;
+const WS_PORT = 3002;
+
+// Track connected clients for hot-reload
+const connectedClients = new Set();
+
+// Load GitHub configuration
+let githubConfig = {
+  username: 'YOUR-GITHUB-USERNAME',
+  repository: 'YOUR-REPO-NAME',
+  branch: 'main'
+};
+
+try {
+  const configPath = path.join(__dirname, '..', 'github-config.json');
+  if (fs.existsSync(configPath)) {
+    const configData = fs.readFileSync(configPath, 'utf8');
+    githubConfig = { ...githubConfig, ...JSON.parse(configData) };
+    console.log('✅ GitHub config loaded:', githubConfig.username + '/' + githubConfig.repository);
+  }
+} catch (e) {
+  console.log('ℹ️ Using default GitHub config. Update github-config.json for GitHub URLs.');
+}
+
+// Function to generate GitHub raw URL
+function getGitHubRawUrl(filename) {
+  const { username, repository, branch } = githubConfig;
+  return `https://raw.githubusercontent.com/${username}/${repository}/${branch}/public/images/products/${filename}`;
+}
 
 // Ensure images directory exists
 const imagesDir = path.join(__dirname, 'public', 'images', 'products');
@@ -63,17 +92,32 @@ const server = http.createServer((req, res) => {
               // Write file
               fs.writeFileSync(filepath, fileContent, 'binary');
               
-              // Return URL
-              const imageUrl = `/images/products/${uniqueFilename}`;
+              // Generate URLs
+              const localUrl = `/images/products/${uniqueFilename}`;
+              const githubUrl = getGitHubRawUrl(uniqueFilename);
               
               res.writeHead(200, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({
                 success: true,
-                url: imageUrl,
-                filename: uniqueFilename
+                url: localUrl,
+                githubUrl: githubUrl,
+                filename: uniqueFilename,
+                message: 'Image uploaded. Will be available on GitHub after sync & deploy.'
               }));
               
               console.log(`✅ Image uploaded: ${uniqueFilename}`);
+              console.log(`📍 Local URL: ${localUrl}`);
+              console.log(`🌐 GitHub URL: ${githubUrl}`);
+              
+              // Auto-commit image to git
+              import('child_process').then(({ exec }) => {
+                const relativePath = `public/images/products/${uniqueFilename}`;
+                exec(`git add "${relativePath}"`, (error) => {
+                  if (!error) {
+                    console.log(`📦 Image added to git: ${uniqueFilename}`);
+                  }
+                });
+              });
               return;
             }
           }
@@ -225,21 +269,72 @@ export function getCollectionProducts(collectionId: string): Product[] {
         
         console.log(`✅ Updated constants.ts - ${products.length} products, ${collections.length} collections`);
         
-        // Auto-commit and deploy
+        // Auto-commit and deploy with enhanced error handling
         console.log('🚀 Starting auto-deployment...');
         
         import('child_process').then(({ exec }) => {
-          // Git add, commit, push
-          exec('git add . && git commit -m "Auto-update: products and images" && git push', (error, stdout, stderr) => {
+          // Step 1: Add all files including images
+          console.log('📦 Adding files to git...');
+          exec('git add .', (error, stdout, stderr) => {
             if (error) {
-              console.error('⚠️ Git error:', error.message);
+              console.error('⚠️ Git add error:', error.message);
+              console.log('ℹ️ Make sure git is initialized: git init');
               return;
             }
-            console.log('✅ Git push successful!');
-            console.log(stdout);
             
-            // Trigger deployment (Firebase or Vercel will auto-deploy on push)
-            console.log('🚀 Deployment triggered! Check your hosting dashboard.');
+            // Step 2: Commit with timestamp
+            const timestamp = new Date().toLocaleString();
+            const commitMessage = `Auto-update: ${products.length} products and images - ${timestamp}`;
+            console.log(`💾 Committing: "${commitMessage}"`);
+            
+            exec(`git commit -m "${commitMessage}"`, (error, stdout, stderr) => {
+              if (error) {
+                // Check if it's "nothing to commit" (not an error)
+                if (error.message.includes('nothing to commit')) {
+                  console.log('ℹ️ No changes to commit');
+                } else {
+                  console.error('⚠️ Git commit error:', error.message);
+                }
+                return;
+              }
+              
+              console.log('✅ Committed successfully!');
+              
+              // Step 3: Push to GitHub
+              console.log('🚀 Pushing to GitHub...');
+              exec('git push origin main', (error, stdout, stderr) => {
+                if (error) {
+                  // Try 'master' branch if 'main' fails
+                  console.log('ℹ️ Trying master branch...');
+                  exec('git push origin master', (error2, stdout2, stderr2) => {
+                    if (error2) {
+                      console.error('⚠️ Git push error:', error2.message);
+                      console.log('ℹ️ Make sure remote is set: git remote add origin <url>');
+                      return;
+                    }
+                    console.log('✅ Pushed to GitHub (master branch)!');
+                    console.log('🚀 Deployment triggered! Changes will be live in 1-2 minutes.');
+                  });
+                } else {
+                  console.log('✅ Pushed to GitHub (main branch)!');
+                  console.log(stdout);
+                  console.log('');
+                  console.log('🚀 VERCEL DEPLOYMENT TRIGGERED!');
+                  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+                  console.log('📊 Deployment Status:');
+                  console.log('   1. GitHub: ✅ Push successful');
+                  console.log('   2. Vercel: 🔄 Building...');
+                  console.log('   3. Live Site: ⏳ Will update in 1-2 minutes');
+                  console.log('');
+                  console.log('🌐 Check deployment:');
+                  console.log('   - Vercel Dashboard: https://vercel.com/dashboard');
+                  console.log('   - GitHub Repo: https://github.com/mhjnvjvnjjkkgk/elevez-store');
+                  console.log('');
+                  console.log('✨ Your changes will be live soon!');
+                  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+                }
+              });
+            });
           });
         });
         
@@ -266,4 +361,47 @@ server.listen(PORT, () => {
   console.log(`✨ Admin panel can now auto-update constants.ts!`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
   console.log(`👀 Watching for updates from admin panel...`);
+  
+  // Setup WebSocket for hot-reload
+  setupHotReload();
 });
+
+// Setup hot-reload with WebSocket
+function setupHotReload() {
+  try {
+    const wss = new WebSocketServer({ port: WS_PORT });
+    
+    console.log(`🔥 Hot-Reload Server: ws://localhost:${WS_PORT}`);
+    
+    wss.on('connection', (ws) => {
+      connectedClients.add(ws);
+      console.log(`✅ Client connected for hot-reload (${connectedClients.size} total)`);
+      
+      ws.on('close', () => {
+        connectedClients.delete(ws);
+        console.log(`❌ Client disconnected (${connectedClients.size} remaining)`);
+      });
+    });
+    
+    // Watch admin panel files for changes
+    const adminPanelDir = path.join(__dirname, '..', 'admin-panel');
+    
+    fs.watch(adminPanelDir, { recursive: true }, (eventType, filename) => {
+      if (filename && (filename.endsWith('.js') || filename.endsWith('.css') || filename.endsWith('.html'))) {
+        console.log(`📝 File changed: ${filename}`);
+        
+        // Notify all connected clients to reload
+        connectedClients.forEach(client => {
+          if (client.readyState === 1) { // WebSocket.OPEN
+            client.send(JSON.stringify({ type: 'reload', file: filename }));
+          }
+        });
+        
+        console.log(`🔄 Sent reload signal to ${connectedClients.size} client(s)`);
+      }
+    });
+    
+  } catch (error) {
+    console.warn('⚠️ Hot-reload not available:', error.message);
+  }
+}

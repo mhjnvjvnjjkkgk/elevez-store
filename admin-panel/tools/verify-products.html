@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Products - ELEVEZ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      color: #00ff88;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+    
+    .subtitle {
+      color: #888;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: rgba(0,255,136,0.1);
+      border: 1px solid rgba(0,255,136,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: #00ff88;
+      margin-bottom: 5px;
+    }
+    
+    .stat-label {
+      color: #aaa;
+      font-size: 14px;
+    }
+    
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .product-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px);
+      border-color: #00ff88;
+    }
+    
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: rgba(0,0,0,0.3);
+    }
+    
+    .product-info {
+      padding: 15px;
+    }
+    
+    .product-name {
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+    
+    .product-qid {
+      background: rgba(0,255,136,0.2);
+      color: #00ff88;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    
+    .product-price {
+      font-size: 18px;
+      color: #00ff88;
+      font-weight: 700;
+    }
+    
+    .product-meta {
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn-primary {
+      background: #00ff88;
+      color: #1a1a1a;
+    }
+    
+    .btn-primary:hover {
+      background: #00cc6a;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background: #444;
+      color: #fff;
+    }
+    
+    .btn-secondary:hover {
+      background: #555;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      border: 2px dashed rgba(255,255,255,0.2);
+    }
+    
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📦 Product Verification</h1>
+    <p class="subtitle">Check what products are currently stored</p>
+    
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value" id="totalProducts">0</div>
+        <div class="stat-label">Total Products</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="withImages">0</div>
+        <div class="stat-label">With Images</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="lastSaved">Never</div>
+        <div class="stat-label">Last Saved</div>
+      </div>
+    </div>
+    
+    <div id="productsContainer"></div>
+    
+    <button class="btn btn-primary" onclick="refresh()">🔄 Refresh</button>
+    <button class="btn btn-secondary" onclick="goBack()">← Back to Admin</button>
+  </div>
+  
+  <script>
+    function loadProducts() {
+      const products = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+      const lastSave = localStorage.getItem('elevez_last_save');
+      
+      // Update stats
+      document.getElementById('totalProducts').textContent = products.length;
+      document.getElementById('withImages').textContent = products.filter(p => p.images && p.images.length > 0).length;
+      document.getElementById('lastSaved').textContent = lastSave ? new Date(lastSave).toLocaleString() : 'Never';
+      
+      // Display products
+      const container = document.getElementById('productsContainer');
+      
+      if (products.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📦</div>
+            <h2>No Products Found</h2>
+            <p style="color: #888; margin-top: 10px;">Add products in the admin panel to see them here</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = '<div class="products-grid">' + products.map(product => `
+        <div class="product-card">
+          <img src="${product.image || product.images?.[0] || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Crect fill=\'%23333\' width=\'200\' height=\'200\'/%3E%3Ctext fill=\'%23666\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' font-family=\'Arial\' font-size=\'20\'%3ENo Image%3C/text%3E%3C/svg%3E'}" 
+               alt="${product.name}" 
+               class="product-image"
+               onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Crect fill=\'%23333\' width=\'200\' height=\'200\'/%3E%3Ctext fill=\'%23666\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' font-family=\'Arial\' font-size=\'20\'%3ENo Image%3C/text%3E%3C/svg%3E'">
+          <div class="product-info">
+            <div class="product-name">${product.name}</div>
+            <div class="product-qid">QID: ${product.qid}</div>
+            <div class="product-price">₹${product.price}</div>
+            <div class="product-meta">
+              ${product.category} • ${product.type}<br>
+              ${product.images?.length || 0} images • ${product.sizes?.length || 0} sizes
+            </div>
+          </div>
+        </div>
+      `).join('') + '</div>';
+    }
+    
+    function refresh() {
+      loadProducts();
+      alert('✅ Refreshed!');
+    }
+    
+    function goBack() {
+      window.location.href = '../index.html';
+    }
+    
+    // Load on page load
+    window.addEventListener('DOMContentLoaded', loadProducts);
+  </script>
+</body>
+</html>

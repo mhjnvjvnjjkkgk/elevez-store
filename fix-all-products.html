@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix All Products - ELEVEZ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #00ff88;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.2);
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-align: center;
+            background: linear-gradient(45deg, #00ff88, #00cc66);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+        .status {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+        .status::-webkit-scrollbar {
+            width: 8px;
+        }
+        .status::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        .status::-webkit-scrollbar-thumb {
+            background: #00ff88;
+            border-radius: 4px;
+        }
+        .log { margin: 5px 0; }
+        .log.success { color: #00ff88; }
+        .log.error { color: #ff4444; }
+        .log.info { color: #4488ff; }
+        .log.warning { color: #ffaa00; }
+        button {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #00cc66;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+        button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix All Products</h1>
+        <p class="subtitle">Automatically fix images and sync to website</p>
+        
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="productCount">0</div>
+                <div class="stat-label">Products Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="fixedCount">0</div>
+                <div class="stat-label">Images Fixed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="syncStatus">⏳</div>
+                <div class="stat-label">Sync Status</div>
+            </div>
+        </div>
+        
+        <button id="fixBtn" onclick="fixEverything()">🚀 Fix Everything Now</button>
+        
+        <div class="status" id="status">
+            <div class="log info">Ready to fix all products...</div>
+            <div class="log info">Click "Fix Everything Now" to start</div>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="window.open('admin-panel/index.html', '_blank')">🎨 Open Admin Panel</button>
+            <button onclick="window.open('http://localhost:5173', '_blank')">🌐 Open Website</button>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const status = document.getElementById('status');
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.createElement('div');
+            logDiv.className = `log ${type}`;
+            logDiv.textContent = `[${timestamp}] ${message}`;
+            status.appendChild(logDiv);
+            status.scrollTop = status.scrollHeight;
+        }
+
+        async function fixEverything() {
+            const btn = document.getElementById('fixBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Fixing...';
+            
+            document.getElementById('status').innerHTML = '';
+            log('🔧 Starting complete fix...', 'info');
+            
+            try {
+                // Step 1: Load products
+                log('📦 Loading products from localStorage...', 'info');
+                const products = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+                document.getElementById('productCount').textContent = products.length;
+                
+                if (products.length === 0) {
+                    log('❌ No products found in localStorage!', 'error');
+                    log('ℹ️ Add products in admin panel first', 'info');
+                    btn.disabled = false;
+                    btn.textContent = '🚀 Fix Everything Now';
+                    return;
+                }
+                
+                log(`✅ Found ${products.length} products`, 'success');
+                
+                // Step 2: Fix images
+                log('🖼️ Fixing image URLs...', 'info');
+                let fixedCount = 0;
+                
+                const fixedProducts = products.map(product => {
+                    let wasFixed = false;
+                    
+                    // Fix images array
+                    if (product.images && Array.isArray(product.images)) {
+                        product.images = product.images.map(img => {
+                            if (!img.startsWith('data:') && !img.startsWith('http')) {
+                                wasFixed = true;
+                                if (img.startsWith('/')) {
+                                    return `http://localhost:5173${img}`;
+                                }
+                                // Assume it's an external URL that's missing protocol
+                                if (img.includes('unsplash.com') || img.includes('images.')) {
+                                    return img.startsWith('//') ? `https:${img}` : `https://${img}`;
+                                }
+                            }
+                            return img;
+                        });
+                    } else {
+                        product.images = [product.image];
+                    }
+                    
+                    // Fix main image
+                    if (product.image && !product.image.startsWith('data:') && !product.image.startsWith('http')) {
+                        wasFixed = true;
+                        if (product.image.startsWith('/')) {
+                            product.image = `http://localhost:5173${product.image}`;
+                        } else if (product.image.includes('unsplash.com') || product.image.includes('images.')) {
+                            product.image = product.image.startsWith('//') ? `https:${product.image}` : `https://${product.image}`;
+                        }
+                    }
+                    
+                    // Ensure required fields
+                    if (!product.qid) {
+                        product.qid = `PROD-${product.id}`;
+                        wasFixed = true;
+                    }
+                    if (!product.rating) product.rating = 4.5;
+                    if (!product.sizes) product.sizes = ['S', 'M', 'L', 'XL'];
+                    if (!product.colors) product.colors = ['Black', 'White'];
+                    if (!product.tags) product.tags = [];
+                    if (!product.description) product.description = `Premium quality ${product.type.toLowerCase()}. Perfect for any occasion.`;
+                    
+                    if (wasFixed) fixedCount++;
+                    return product;
+                });
+                
+                document.getElementById('fixedCount').textContent = fixedCount;
+                log(`✅ Fixed ${fixedCount} products`, 'success');
+                
+                // Step 3: Save to localStorage
+                log('💾 Saving to localStorage...', 'info');
+                localStorage.setItem('elevez_products', JSON.stringify(fixedProducts));
+                log('✅ Saved to localStorage', 'success');
+                
+                // Step 4: Sync to website
+                log('🔄 Syncing to website...', 'info');
+                document.getElementById('syncStatus').textContent = '🔄';
+                
+                const response = await fetch('http://localhost:3001/update-constants', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        products: fixedProducts,
+                        collections: [],
+                        tags: ["ESSENTIAL", "TRENDING", "PREMIUM", "NEW", "BESTSELLER", "VINTAGE", "COLORFUL"],
+                        categories: ["Men", "Women", "Unisex"],
+                        types: ["Hoodie", "T-Shirt", "Crop Top", "Oversized T-Shirt"],
+                        colors: [
+                            { "name": "Black", "code": "#000000" },
+                            { "name": "White", "code": "#FFFFFF" },
+                            { "name": "Neon Green", "code": "#00ff88" },
+                            { "name": "Pink", "code": "#FF69B4" },
+                            { "name": "Gray", "code": "#808080" },
+                            { "name": "Navy", "code": "#000080" },
+                            { "name": "Red", "code": "#FF0000" },
+                            { "name": "Blue", "code": "#0000FF" },
+                            { "name": "Yellow", "code": "#FFFF00" },
+                            { "name": "Orange", "code": "#FFA500" },
+                            { "name": "Purple", "code": "#800080" },
+                            { "name": "Rainbow", "code": "#FF0000" }
+                        ]
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    log('✅ Synced to constants.ts!', 'success');
+                    log(`📊 ${result.products} products synced`, 'success');
+                    document.getElementById('syncStatus').textContent = '✅';
+                    
+                    log('', 'info');
+                    log('🎉 ALL DONE!', 'success');
+                    log('', 'info');
+                    log('Next steps:', 'info');
+                    log('1. Refresh admin panel to see fixed products', 'info');
+                    log('2. Open http://localhost:5173 to see products on website', 'info');
+                    log('3. All images should now load correctly', 'info');
+                    
+                    btn.textContent = '✅ Complete!';
+                    setTimeout(() => {
+                        if (confirm('✅ Fix complete!\n\nOpen website now to see all products?')) {
+                            window.open('http://localhost:5173', '_blank');
+                        }
+                    }, 1000);
+                } else {
+                    throw new Error(`Server returned ${response.status}`);
+                }
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                log('', 'info');
+                log('Troubleshooting:', 'warning');
+                log('1. Make sure admin server is running: node scripts/admin-server.js', 'info');
+                log('2. Check that port 3001 is accessible', 'info');
+                log('3. Try running START-SIMPLE.bat', 'info');
+                document.getElementById('syncStatus').textContent = '❌';
+                btn.disabled = false;
+                btn.textContent = '🔄 Try Again';
+            }
+        }
+        
+        // Auto-load stats on page load
+        window.onload = () => {
+            const products = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+            document.getElementById('productCount').textContent = products.length;
+            document.getElementById('syncStatus').textContent = '⏳';
+        };
+    </script>
+</body>
+</html>

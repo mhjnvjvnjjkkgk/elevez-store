@@ -1,11 +1,6 @@
-import { Product } from './types';
+// Initialize admin panel with trial products from constants.ts
 
-export const BRAND_NAME = "ELEVEZ";
-export const ACCENT_COLOR = "#00ff88";
-
-// Products - Auto-synced from Admin Panel
-// Last update: ${new Date().toLocaleString()}
-export const PRODUCTS: Product[] = [
+const trialProducts = [
   {
     "id": 1,
     "qid": "NGH-001",
@@ -104,8 +99,7 @@ export const PRODUCTS: Product[] = [
   }
 ];
 
-// Collections - Auto-filtered by tags and criteria
-export const COLLECTIONS = [
+const trialCollections = [
   {
     "id": "bestsellers",
     "name": "Best Sellers",
@@ -124,56 +118,12 @@ export const COLLECTIONS = [
   }
 ];
 
-// Available Tags
-export const AVAILABLE_TAGS = ["ESSENTIAL", "TRENDING", "PREMIUM", "NEW", "BESTSELLER", "VINTAGE", "COLORFUL"];
+// Save to localStorage
+localStorage.setItem('elevez_products', JSON.stringify(trialProducts));
+localStorage.setItem('elevez_collections', JSON.stringify(trialCollections));
+localStorage.setItem('elevez_orders', JSON.stringify([]));
+localStorage.setItem('elevez_last_save', new Date().toISOString());
 
-// Available Categories (Custom)
-export const AVAILABLE_CATEGORIES = ["Men", "Women", "Unisex"];
-
-// Available Types (Custom)
-export const AVAILABLE_TYPES = ["Hoodie", "T-Shirt", "Crop Top", "Oversized T-Shirt"];
-
-// Available Colors (Custom)
-export const AVAILABLE_COLORS = [
-  { "name": "Black", "code": "#000000" },
-  { "name": "White", "code": "#FFFFFF" },
-  { "name": "Red", "code": "#FF0000" },
-  { "name": "Blue", "code": "#0000FF" },
-  { "name": "Green", "code": "#00FF00" },
-  { "name": "Yellow", "code": "#FFFF00" },
-  { "name": "Pink", "code": "#FF69B4" },
-  { "name": "Purple", "code": "#800080" },
-  { "name": "Orange", "code": "#FFA500" },
-  { "name": "Gray", "code": "#808080" },
-  { "name": "Neon Green", "code": "#00ff88" },
-  { "name": "Navy", "code": "#000080" },
-  { "name": "Rainbow", "code": "#FF0000" }
-];
-
-// Helper function to get products for a collection
-export function getCollectionProducts(collectionId: string): Product[] {
-  const collection = COLLECTIONS.find(c => c.id === collectionId);
-  if (!collection) return [];
-  
-  return PRODUCTS.filter(product => {
-    const filters: any = collection.filters || {};
-    
-    // Tag filter
-    if (filters.tags && filters.tags.length > 0) {
-      const hasMatchingTag = filters.tags.some((tag: string) => product.tags?.includes(tag));
-      if (!hasMatchingTag) return false;
-    }
-    
-    // Category filter
-    if (filters.category && product.category !== filters.category) return false;
-    
-    // Type filter
-    if (filters.type && product.type !== filters.type) return false;
-    
-    // Price filters
-    if (filters.minPrice && product.price < filters.minPrice) return false;
-    if (filters.maxPrice && product.price > filters.maxPrice) return false;
-    
-    return true;
-  });
-}
+console.log('✅ Trial products initialized!');
+console.log(`📦 ${trialProducts.length} products loaded`);
+console.log(`🗂️ ${trialCollections.length} collections loaded`);

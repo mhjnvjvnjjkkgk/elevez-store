@@ -7,13 +7,18 @@ echo.
 echo Starting all required servers...
 echo.
 
+REM Start Vite dev server in new window
+echo [1/3] Starting Website Server (Port 5173)...
+start "ELEVEZ Website" cmd /k "npm run dev"
+timeout /t 3 /nobreak >nul
+
 REM Start admin server in new window
-echo [1/2] Starting Admin Server (Port 3001)...
+echo [2/3] Starting Admin Server (Port 3001)...
 start "ELEVEZ Admin Server" cmd /k "node scripts\admin-server.js"
 timeout /t 2 /nobreak >nul
 
 REM Start auto-deploy monitor in new window
-echo [2/2] Starting Auto-Deploy Monitor...
+echo [3/3] Starting Auto-Deploy Monitor...
 start "ELEVEZ Auto-Deploy" cmd /k "powershell -ExecutionPolicy Bypass -File scripts\auto-deploy-monitor.ps1"
 timeout /t 2 /nobreak >nul
 
@@ -22,6 +27,7 @@ echo ========================================
 echo   ALL SERVERS STARTED!
 echo ========================================
 echo.
+echo Website: http://localhost:5173
 echo Admin Server: http://localhost:3001
 echo Auto-Deploy: Monitoring constants.ts
 echo.

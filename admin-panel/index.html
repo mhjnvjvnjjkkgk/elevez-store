@@ -330,6 +330,16 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+  <script>
+    // Merge trial products with existing products
+    const existing = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+    console.log(`📦 Found ${existing.length} existing products`);
+    
+    // Always load merge script to add trial products if they don't exist
+    const script = document.createElement('script');
+    script.src = 'merge-products.js';
+    document.head.appendChild(script);
+  </script>
   <script src="admin.js"></script>
 </body>
 </html>

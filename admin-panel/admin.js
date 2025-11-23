@@ -1,5 +1,60 @@
 // ELEVEZ Product Manager - Complete Implementation
 
+// ============================================
+// HOT-RELOAD CLIENT
+// ============================================
+function setupHotReloadClient() {
+  const wsUrl = `ws://${window.location.hostname}:3002`;
+  
+  function connect() {
+    try {
+      const ws = new WebSocket(wsUrl);
+      
+      ws.onopen = () => {
+        console.log('🔥 Hot-reload connected');
+      };
+      
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'reload') {
+          console.log(`📝 File changed: ${data.file} - Reloading...`);
+          // Reload CSS files without full page reload
+          if (data.file.endsWith('.css')) {
+            reloadCSS();
+          } else {
+            // For JS changes, do a full reload
+            setTimeout(() => location.reload(), 500);
+          }
+        }
+      };
+      
+      ws.onerror = (error) => {
+        console.warn('⚠️ Hot-reload connection error:', error);
+      };
+      
+      ws.onclose = () => {
+        console.log('❌ Hot-reload disconnected - Reconnecting in 3s...');
+        setTimeout(connect, 3000);
+      };
+    } catch (error) {
+      console.warn('⚠️ Hot-reload unavailable:', error.message);
+    }
+  }
+  
+  connect();
+}
+
+function reloadCSS() {
+  const links = document.querySelectorAll('link[rel="stylesheet"]');
+  links.forEach(link => {
+    if (link.href.includes('admin.css')) {
+      const newHref = link.href.split('?')[0] + '?t=' + Date.now();
+      link.href = newHref;
+      console.log('✅ CSS reloaded');
+    }
+  });
+}
+
 // State
 const state = {
   products: [],
@@ -40,6 +95,9 @@ const state = {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
+  // Setup hot-reload first
+  setupHotReloadClient();
+  
   await loadData();
   setupNavigation();
   setupSyncButton();
@@ -47,6 +105,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // Check for data issues on startup
   checkDataIntegrity();
+  
+  // Auto-save every 30 seconds
+  setInterval(() => {
+    if (state.products.length > 0) {
+      saveData();
+      console.log('🔄 Auto-saved products');
+    }
+  }, 30000);
+  
+  // Save before page unload
+  window.addEventListener('beforeunload', () => {
+    if (state.products.length > 0) {
+      saveData();
+      console.log('💾 Saved before page close');
+    }
+  });
 });
 
 // Load Data
@@ -206,6 +280,7 @@ async function saveData() {
     }
     
     // Log for debugging
+    const lastProduct = state.products[state.products.length - 1];
     console.log('✅ Data saved:', {
       products: state.products.length,
       collections: state.collections.length,
@@ -214,7 +289,18 @@ async function saveData() {
       timestamp: new Date().toLocaleString()
     });
     
-    showSyncStatus(`💾 Saved: ${state.products.length} products`, 'success');
+    if (lastProduct) {
+      console.log('📦 Last product:', {
+        name: lastProduct.name,
+        qid: lastProduct.qid,
+        price: `₹${lastProduct.price}`,
+        images: lastProduct.images?.length || 0,
+        category: lastProduct.category,
+        type: lastProduct.type
+      });
+    }
+    
+    showSyncStatus(`💾 Saved: ${state.products.length} products (localStorage + server)`, 'success');
   } catch (error) {
     console.error('❌ Error saving data:', error);
     
@@ -238,16 +324,36 @@ function updateOrdersBadge() {
 }
 
 function showSyncStatus(message, type = 'success') {
+  // Create notification container if it doesn't exist
+  let container = document.getElementById('notification-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'notification-container';
+    container.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column-reverse; gap: 10px; max-width: 400px;';
+    document.body.appendChild(container);
+  }
+  
   const statusDiv = document.createElement('div');
   statusDiv.className = `sync-status active ${type}`;
   statusDiv.innerHTML = `
     <span class="sync-status-icon">${type === 'success' ? '✓' : '✗'}</span>
     <span class="sync-status-text">${message}</span>
   `;
-  document.body.appendChild(statusDiv);
   
+  // Add to container (will stack from bottom)
+  container.appendChild(statusDiv);
+  
+  // Auto-remove after 3 seconds
   setTimeout(() => {
-    statusDiv.remove();
+    statusDiv.style.opacity = '0';
+    statusDiv.style.transform = 'translateX(400px)';
+    setTimeout(() => {
+      statusDiv.remove();
+      // Remove container if empty
+      if (container.children.length === 0) {
+        container.remove();
+      }
+    }, 300);
   }, 3000);
 }
 
@@ -583,12 +689,21 @@ async function handleImageUpload(files) {
         if (response.ok) {
           const result = await response.json();
           
-          // Store the URL instead of base64
-          state.productForm.images.push(result.url);
+          // Use GitHub URL if available, otherwise use local URL for preview
+          const imageUrl = result.githubUrl || `http://localhost:5173${result.url}`;
+          
+          // Store the image URL
+          state.productForm.images.push(imageUrl);
           renderImagePreviews();
           
           showSyncStatus(`✅ Image uploaded: ${result.filename}`, 'success');
-          console.log(`✅ Image saved to: public${result.url}`);
+          console.log(`✅ Image saved locally: public${result.url}`);
+          console.log(`🌐 GitHub URL (after deploy): ${result.githubUrl}`);
+          
+          // Show info about GitHub URL
+          if (result.githubUrl) {
+            showSyncStatus('ℹ️ Image will be available on GitHub after Sync & Deploy', 'success');
+          }
         } else {
           throw new Error('Upload failed');
         }
@@ -618,11 +733,20 @@ async function handleImageUpload(files) {
 
 // Alternative: Add image by URL
 window.addImageByUrl = () => {
-  const url = prompt('Enter image URL or path:\n\nExamples:\n• /images/products/hoodie.jpg\n• https://i.imgur.com/abc123.jpg\n• https://your-site.com/image.jpg');
+  const url = prompt('Enter image URL:\n\nExamples:\n• https://images.unsplash.com/photo-123?w=500\n• https://i.imgur.com/abc123.jpg\n• https://your-cdn.com/image.jpg\n\nOr paste a GitHub raw URL:\n• https://raw.githubusercontent.com/user/repo/main/public/images/products/image.jpg');
+  
   if (url && state.productForm.images.length < 5) {
-    state.productForm.images.push(url);
-    renderImagePreviews();
-    showSyncStatus('✅ Image added by URL', 'success');
+    // Validate URL
+    try {
+      new URL(url);
+      state.productForm.images.push(url);
+      renderImagePreviews();
+      showSyncStatus('✅ Image added by URL', 'success');
+      console.log('✅ Image URL added:', url);
+    } catch (e) {
+      showSyncStatus('❌ Invalid URL format', 'error');
+      alert('❌ Invalid URL. Please enter a complete URL starting with http:// or https://');
+    }
   }
 };
 
@@ -631,7 +755,10 @@ function renderImagePreviews() {
   grid.innerHTML = state.productForm.images.map((img, index) => {
     return `
       <div class="image-preview-item" draggable="true" data-index="${index}">
-        <img src="${img}" alt="Product ${index + 1}">
+        <img src="${img}" alt="Product ${index + 1}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255,0,0,0.1); color: #ff8888; font-size: 12px; text-align: center; padding: 10px;">
+          ⚠️ Image failed to load
+        </div>
         ${index === 0 ? '<span class="image-main-badge">MAIN</span>' : ''}
         <span class="image-order-badge">${index + 1}</span>
         <div class="image-preview-overlay">
@@ -647,6 +774,9 @@ function renderImagePreviews() {
   
   // Setup drag and drop for reordering
   setupImageDragAndDrop();
+  
+  // Log for debugging
+  console.log(`📸 Rendered ${state.productForm.images.length} image previews`);
 }
 
 function setupImageDragAndDrop() {
@@ -941,6 +1071,14 @@ function handleProductSubmit(e) {
     console.log(`Replaced product with QID ${qid}`);
   }
   
+  // Convert full URLs back to relative paths for storage
+  const convertToRelativePath = (url) => {
+    if (url.startsWith('http://localhost:5173')) {
+      return url.replace('http://localhost:5173', '');
+    }
+    return url;
+  };
+  
   const product = {
     id: state.editingProduct?.id || Date.now(),
     qid: qid,
@@ -951,9 +1089,9 @@ function handleProductSubmit(e) {
     type: document.getElementById('productType').value,
     rating: parseFloat(document.getElementById('productRating').value),
     description: document.getElementById('productDescription').value || undefined,
-    image: state.productForm.images[0],
-    images: state.productForm.images,
-    sizeChart: state.productForm.sizeChart || undefined,
+    image: convertToRelativePath(state.productForm.images[0]),
+    images: state.productForm.images.map(convertToRelativePath),
+    sizeChart: state.productForm.sizeChart ? convertToRelativePath(state.productForm.sizeChart) : undefined,
     sizes: state.productForm.selectedSizes,
     colors: state.productForm.selectedColors.map(c => c.name),
     tags: state.productForm.selectedTags.length > 0 ? state.productForm.selectedTags : undefined,
@@ -1053,8 +1191,16 @@ window.editProduct = (id) => {
   document.getElementById('isBestSeller').checked = product.isBestSeller || false;
   document.getElementById('isNew').checked = product.isNew || false;
   
-  state.productForm.images = product.images || [product.image];
-  state.productForm.sizeChart = product.sizeChart || null;
+  // Convert relative paths to full URLs for preview
+  const convertToFullUrl = (url) => {
+    if (url && !url.startsWith('http') && !url.startsWith('data:')) {
+      return `http://localhost:5173${url}`;
+    }
+    return url;
+  };
+  
+  state.productForm.images = (product.images || [product.image]).map(convertToFullUrl);
+  state.productForm.sizeChart = product.sizeChart ? convertToFullUrl(product.sizeChart) : null;
   state.productForm.selectedSizes = product.sizes || ['M'];
   state.productForm.colors = (product.colors || []).map(name => ({ name, code: '#00ff88' }));
   state.productForm.selectedTags = product.tags || [];

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Trial Products</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #00ff88;
+            padding: 40px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #00ff88;
+        }
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            background: #000;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        button {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #00cc66;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .button-group {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .success { color: #00ff88; }
+        .error { color: #ff4444; }
+        .info { color: #4488ff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Add Trial Products</h1>
+        
+        <div class="status" id="status">
+Ready to add trial products...
+        </div>
+        
+        <div class="button-group">
+            <button onclick="showCurrentProducts()">📦 Show Current Products</button>
+            <button onclick="addTrialProducts()">✨ Add Trial Products</button>
+            <button onclick="syncToWebsite()">🔄 Sync to Website</button>
+            <button onclick="clearAll()">🗑️ Clear All</button>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="openAdminPanel()">🎨 Open Admin Panel</button>
+            <button onclick="openWebsite()">🌐 Open Website</button>
+        </div>
+    </div>
+
+    <script>
+        const trialProducts = [
+            {
+                "id": 1001,
+                "qid": "NGH-001",
+                "name": "Neon Glitch Hoodie",
+                "price": 85,
+                "originalPrice": 170,
+                "category": "Men",
+                "type": "Hoodie",
+                "rating": 4.5,
+                "description": "Premium quality hoodie with neon glitch design.",
+                "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+                "images": ["https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"],
+                "sizes": ["S", "M", "L", "XL"],
+                "colors": ["Black", "White", "Neon Green"],
+                "tags": ["TRENDING", "BESTSELLER"],
+                "isBestSeller": true,
+                "isNew": true
+            },
+            {
+                "id": 1002,
+                "qid": "VCT-002",
+                "name": "Vintage Crop Top",
+                "price": 45,
+                "originalPrice": 90,
+                "category": "Women",
+                "type": "Crop Top",
+                "rating": 4.7,
+                "description": "Stylish vintage crop top with retro vibes.",
+                "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+                "images": ["https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"],
+                "sizes": ["XS", "S", "M", "L"],
+                "colors": ["Pink", "White", "Black"],
+                "tags": ["VINTAGE", "TRENDING"],
+                "isNew": true
+            },
+            {
+                "id": 1003,
+                "qid": "OST-003",
+                "name": "Oversized Street Tee",
+                "price": 35,
+                "originalPrice": 70,
+                "category": "Unisex",
+                "type": "Oversized T-Shirt",
+                "rating": 4.6,
+                "description": "Ultra-comfortable oversized t-shirt.",
+                "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
+                "images": ["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"],
+                "sizes": ["M", "L", "XL", "XXL"],
+                "colors": ["Black", "White", "Gray"],
+                "tags": ["ESSENTIAL", "BESTSELLER"],
+                "isBestSeller": true
+            }
+        ];
+
+        function log(message, type = 'info') {
+            const status = document.getElementById('status');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            status.innerHTML += `\n<span class="${className}">[${timestamp}] ${message}</span>`;
+            status.scrollTop = status.scrollHeight;
+        }
+
+        function showCurrentProducts() {
+            const existing = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+            log(`📦 Current products: ${existing.length}`, 'info');
+            
+            if (existing.length > 0) {
+                existing.forEach((p, i) => {
+                    log(`  ${i + 1}. ${p.name} (QID: ${p.qid})`, 'info');
+                });
+            } else {
+                log('  No products found', 'info');
+            }
+        }
+
+        function addTrialProducts() {
+            const existing = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+            log(`📦 Found ${existing.length} existing products`, 'info');
+            
+            // Check if trial products already exist
+            const hasTrialProducts = existing.some(p => p.id >= 1001 && p.id <= 1003);
+            
+            if (hasTrialProducts) {
+                log('⚠️ Trial products already exist!', 'error');
+                log('Use "Clear All" first if you want to re-add them', 'info');
+                return;
+            }
+            
+            // Merge
+            const merged = [...existing, ...trialProducts];
+            localStorage.setItem('elevez_products', JSON.stringify(merged));
+            
+            log(`✅ Added ${trialProducts.length} trial products!`, 'success');
+            log(`📦 Total products: ${merged.length}`, 'success');
+            log('', 'info');
+            log('Next steps:', 'info');
+            log('1. Click "Open Admin Panel" to see products', 'info');
+            log('2. Click "Sync to Website" to update website', 'info');
+        }
+
+        async function syncToWebsite() {
+            const products = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+            
+            if (products.length === 0) {
+                log('❌ No products to sync!', 'error');
+                return;
+            }
+            
+            log(`🔄 Syncing ${products.length} products...`, 'info');
+            
+            try {
+                const response = await fetch('http://localhost:3001/update-constants', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        products: products,
+                        collections: [],
+                        tags: ["ESSENTIAL", "TRENDING", "PREMIUM", "NEW", "BESTSELLER", "VINTAGE", "COLORFUL"],
+                        categories: ["Men", "Women", "Unisex"],
+                        types: ["Hoodie", "T-Shirt", "Crop Top", "Oversized T-Shirt"],
+                        colors: [
+                            { "name": "Black", "code": "#000000" },
+                            { "name": "White", "code": "#FFFFFF" },
+                            { "name": "Neon Green", "code": "#00ff88" }
+                        ]
+                    })
+                });
+                
+                if (response.ok) {
+                    log('✅ Synced to constants.ts!', 'success');
+                    log('🌐 Refresh your website to see products', 'success');
+                } else {
+                    log('❌ Sync failed. Is admin server running?', 'error');
+                    log('Run: node scripts/admin-server.js', 'info');
+                }
+            } catch (error) {
+                log('❌ Error: ' + error.message, 'error');
+                log('Make sure admin server is running on port 3001', 'info');
+            }
+        }
+
+        function clearAll() {
+            if (confirm('⚠️ This will delete ALL products. Continue?')) {
+                localStorage.removeItem('elevez_products');
+                localStorage.removeItem('elevez_collections');
+                localStorage.removeItem('elevez_orders');
+                log('✅ All data cleared!', 'success');
+            }
+        }
+
+        function openAdminPanel() {
+            window.open('admin-panel/index.html', '_blank');
+            log('🎨 Opening admin panel...', 'info');
+        }
+
+        function openWebsite() {
+            window.open('http://localhost:5173', '_blank');
+            log('🌐 Opening website...', 'info');
+        }
+
+        // Auto-show current products on load
+        window.onload = () => {
+            log('🎯 Ready to add trial products!', 'success');
+            showCurrentProducts();
+        };
+    </script>
+</body>
+</html>
