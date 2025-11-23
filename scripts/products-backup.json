@@ -9,12 +9,12 @@
       "category": "Men",
       "type": "T-Shirt",
       "rating": 4.5,
-      "image": "/images/products/Gemini_Generated_Image_gpaa7hgpaa7hgpaa-1763857736512.png",
+      "image": "http://localhost:5173/images/products/Gemini_Generated_Image_gpaa7hgpaa7hgpaa-1763857736512.png",
       "images": [
-        "/images/products/Gemini_Generated_Image_gpaa7hgpaa7hgpaa-1763857736512.png",
-        "/images/products/use fo carousal-1763857736539.png",
-        "/images/products/Gemini_Generated_Image_k4d9bck4d9bck4d9-1763857736573.png",
-        "/images/products/Gemini_Generated_Image_8udrlp8udrlp8udr-1763857736604.png"
+        "http://localhost:5173/images/products/Gemini_Generated_Image_gpaa7hgpaa7hgpaa-1763857736512.png",
+        "http://localhost:5173/images/products/use fo carousal-1763857736539.png",
+        "http://localhost:5173/images/products/Gemini_Generated_Image_k4d9bck4d9bck4d9-1763857736573.png",
+        "http://localhost:5173/images/products/Gemini_Generated_Image_8udrlp8udrlp8udr-1763857736604.png"
       ],
       "sizes": [
         "M",
@@ -25,7 +25,8 @@
       ],
       "tags": [
         "PREMIUM"
-      ]
+      ],
+      "description": "Premium quality t-shirt. Perfect for any occasion."
     }
   ],
   "collections": [],
