@@ -341,5 +341,17 @@
     document.head.appendChild(script);
   </script>
   <script src="admin.js"></script>
+  <script type="module" src="firebase-orders.js"></script>
+  <script>
+    // Start Firebase order sync after page loads
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (window.startAutoSync) {
+          console.log('🔄 Starting Firebase order auto-sync...');
+          window.startAutoSync();
+        }
+      }, 2000);
+    });
+  </script>
 </body>
 </html>

@@ -23,19 +23,29 @@ export interface OrderData {
 // Save order to Firestore
 export const saveOrder = async (orderData: OrderData) => {
   try {
+    const now = Timestamp.now();
+    
     // Add timestamp and default status
     const orderWithMetadata = {
       ...orderData,
-      orderDate: Timestamp.now(),
-      status: 'pending'
+      orderDate: now,
+      createdAt: now, // For admin panel compatibility
+      status: 'pending',
+      orderId: `ORD-${Date.now()}` // Unique order ID
     };
 
     // Save to Firestore
     const docRef = await addDoc(collection(db, 'orders'), orderWithMetadata);
-    console.log('Order saved with ID: ', docRef.id);
+    console.log('✅ Order saved with ID: ', docRef.id);
+    console.log('📦 Order details:', {
+      orderId: orderWithMetadata.orderId,
+      userId: orderData.userId,
+      items: orderData.items.length,
+      total: orderData.totalAmount
+    });
     return { success: true, orderId: docRef.id };
   } catch (error) {
-    console.error('Error saving order: ', error);
+    console.error('❌ Error saving order: ', error);
     return { success: false, error: error.message };
   }
 };

@@ -106,6 +106,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Check for data issues on startup
   checkDataIntegrity();
   
+  // Initialize Firebase real-time order sync
+  console.log('🔥 Initializing Firebase order sync...');
+  if (typeof startAutoSync === 'function') {
+    startAutoSync();
+    console.log('✅ Real-time order sync started');
+  } else {
+    console.log('⚠️ Firebase orders script not loaded. Include firebase-orders.js');
+  }
+  
   // Auto-save every 30 seconds
   setInterval(() => {
     if (state.products.length > 0) {
@@ -1365,26 +1374,57 @@ function renderOrders() {
       <div class="empty-state">
         <div class="empty-state-icon">🛒</div>
         <h3>No orders yet</h3>
-        <p>Orders from your website will appear here</p>
+        <p>Orders from your website and Firebase will appear here automatically</p>
         <button class="btn btn-primary" onclick="refreshOrders()" style="margin-top: 20px;">🔄 Refresh Orders</button>
+        <p style="margin-top: 15px; color: var(--text-muted); font-size: 12px;">
+          ${typeof syncOrdersFromFirebase === 'function' ? '✅ Real-time Firebase sync active' : '⚠️ Firebase sync not loaded'}
+        </p>
       </div>
     `;
     return;
   }
   
   // Sort orders by date (newest first)
-  const sortedOrders = [...state.orders].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sortedOrders = [...state.orders].sort((a, b) => {
+    const dateA = new Date(a.createdAt || a.date || 0);
+    const dateB = new Date(b.createdAt || b.date || 0);
+    return dateB - dateA;
+  });
   
-  container.innerHTML = sortedOrders.map(order => {
-    const product = state.products.find(p => p.id === order.productId);
+  // Add summary header
+  const pendingCount = sortedOrders.filter(o => o.status === 'pending' || o.status === 'processing').length;
+  const completedCount = sortedOrders.filter(o => o.status === 'completed').length;
+  const totalRevenue = sortedOrders.filter(o => o.status === 'completed').reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+  
+  const summaryHtml = `
+    <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(0,255,136,0.1);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+        <div>
+          <h3 style="margin: 0 0 5px 0; color: var(--primary);">📦 ${sortedOrders.length} Total Orders</h3>
+          <p style="margin: 0; color: var(--text-muted); font-size: 14px;">
+            ${pendingCount} pending • ${completedCount} completed • ₹${totalRevenue.toFixed(0)} revenue
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-secondary" onclick="refreshOrders()" style="background: var(--primary); color: var(--bg);">
+            🔄 Refresh
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  container.innerHTML = summaryHtml + sortedOrders.map(order => {
     const statusClass = order.status || 'pending';
+    const orderDate = new Date(order.createdAt || order.date || Date.now());
+    const sourceLabel = order.source === 'firebase' ? '🔥 Firebase' : '💾 Local';
     
     return `
-      <div class="order-card">
+      <div class="order-card" style="border-left: 4px solid ${order.source === 'firebase' ? '#00ff88' : '#666'};">
         <div class="order-header">
           <div>
-            <div class="order-id">Order #${order.id}</div>
-            <div class="order-date">${new Date(order.date).toLocaleString()}</div>
+            <div class="order-id">Order #${order.orderId || order.id} <span style="font-size: 11px; color: var(--text-muted); margin-left: 10px;">${sourceLabel}</span></div>
+            <div class="order-date">${orderDate.toLocaleString()}</div>
           </div>
           <div class="order-status ${statusClass}">${statusClass}</div>
         </div>
@@ -1394,19 +1434,19 @@ function renderOrders() {
             <h4>Customer Information</h4>
             <div class="order-info-row">
               <span class="order-info-label">Name</span>
-              <span class="order-info-value">${order.customerName}</span>
+              <span class="order-info-value">${order.fullName || order.customerName || 'N/A'}</span>
             </div>
             <div class="order-info-row">
               <span class="order-info-label">Email</span>
-              <span class="order-info-value">${order.customerEmail}</span>
+              <span class="order-info-value">${order.email || order.customerEmail || 'N/A'}</span>
             </div>
             <div class="order-info-row">
               <span class="order-info-label">Phone</span>
-              <span class="order-info-value">${order.customerPhone}</span>
+              <span class="order-info-value">${order.phone || order.customerPhone || 'N/A'}</span>
             </div>
             <div class="order-info-row">
               <span class="order-info-label">Address</span>
-              <span class="order-info-value">${order.shippingAddress}</span>
+              <span class="order-info-value">${order.address || order.shippingAddress || 'N/A'}, ${order.city || ''} ${order.state || ''} ${order.pincode || ''}</span>
             </div>
           </div>
           
@@ -1414,31 +1454,36 @@ function renderOrders() {
             <h4>Order Details</h4>
             <div class="order-info-row">
               <span class="order-info-label">Payment Method</span>
-              <span class="order-info-value">${order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'UPI'}</span>
+              <span class="order-info-value">${order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod === 'upi' ? 'UPI' : order.paymentMethod || 'N/A'}</span>
             </div>
             <div class="order-info-row">
               <span class="order-info-label">Subtotal</span>
-              <span class="order-info-value">₹${order.subtotal?.toFixed(2) || '0.00'}</span>
+              <span class="order-info-value">₹${(order.subtotal || 0).toFixed(2)}</span>
             </div>
             <div class="order-info-row">
               <span class="order-info-label">Shipping</span>
-              <span class="order-info-value">${order.shippingCost === 0 ? 'FREE' : '₹' + order.shippingCost?.toFixed(2)}</span>
+              <span class="order-info-value">${(order.shippingCost || 0) === 0 ? 'FREE' : '₹' + (order.shippingCost || 0).toFixed(2)}</span>
             </div>
           </div>
         </div>
         
         <div class="order-items">
-          <h4 style="font-size: 14px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 15px;">Products</h4>
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 15px;">Products (${order.items?.length || 0} items)</h4>
           ${order.items?.map(item => {
-            const itemProduct = state.products.find(p => p.id === item.productId);
+            // Item already has full product details from Firebase sync
+            const qid = item.qid || 'N/A';
+            const image = item.image || 'https://via.placeholder.com/80x100?text=No+Image';
+            const category = item.category || '';
+            const type = item.type || '';
+            
             return `
               <div class="order-item">
-                <img src="${item.image || itemProduct?.image || ''}" alt="${item.name}" class="order-item-image">
+                <img src="${image}" alt="${item.name}" class="order-item-image" onerror="this.src='https://via.placeholder.com/80x100?text=No+Image'">
                 <div class="order-item-details">
                   <div class="order-item-name">${item.name}</div>
-                  <div class="order-item-qid">QID: ${itemProduct?.qid || 'N/A'}</div>
-                  <div class="order-item-meta">Size: ${item.size} • Color: ${item.color} • Qty: ${item.quantity}</div>
-                  <div class="order-item-price">₹${(item.price * item.quantity).toFixed(2)}</div>
+                  <div class="order-item-qid">QID: ${qid} ${category ? '• ' + category : ''} ${type ? '• ' + type : ''}</div>
+                  <div class="order-item-meta">Size: ${item.orderedSize || item.size} • Color: ${item.orderedColor || item.color} • Qty: ${item.orderedQuantity || item.quantity}</div>
+                  <div class="order-item-price">₹${((item.price || 0) * (item.orderedQuantity || item.quantity || 1)).toFixed(2)}</div>
                 </div>
               </div>
             `;
@@ -1447,13 +1492,13 @@ function renderOrders() {
         
         <div class="order-total">
           <span class="order-total-label">Total Amount</span>
-          <span class="order-total-value">₹${order.totalAmount?.toFixed(2) || '0.00'}</span>
+          <span class="order-total-value">₹${(order.totalAmount || 0).toFixed(2)}</span>
         </div>
         
         ${order.status !== 'completed' && order.status !== 'cancelled' ? `
           <div class="order-actions">
-            <button class="btn-complete" onclick="updateOrderStatus('${order.id}', 'completed')">✓ Mark as Completed</button>
-            <button class="btn-cancel" onclick="updateOrderStatus('${order.id}', 'cancelled')">× Cancel Order</button>
+            <button class="btn-complete" onclick="updateOrderStatus('${order.orderId || order.id}', 'completed')">✓ Mark as Completed</button>
+            <button class="btn-cancel" onclick="updateOrderStatus('${order.orderId || order.id}', 'cancelled')">× Cancel Order</button>
           </div>
         ` : ''}
       </div>
@@ -1473,18 +1518,24 @@ function renderOrders() {
   }
 }
 
-window.refreshOrders = () => {
-  // In a real app, this would fetch from your backend/Firebase
-  // For now, we'll simulate by checking localStorage
+window.refreshOrders = async () => {
+  showSyncStatus('🔄 Refreshing orders from Firebase...', 'success');
+  
+  // Trigger Firebase sync if available
+  if (typeof syncOrdersFromFirebase === 'function') {
+    await syncOrdersFromFirebase();
+  }
+  
+  // Also check localStorage
   const savedOrders = localStorage.getItem('elevez_orders');
   if (savedOrders) {
     state.orders = JSON.parse(savedOrders);
-    renderOrders();
-    updateOrdersBadge();
-    alert('✅ Orders refreshed!');
-  } else {
-    alert('ℹ️ No new orders');
   }
+  
+  renderOrders();
+  updateOrdersBadge();
+  
+  showSyncStatus(`✅ Refreshed: ${state.orders.length} orders`, 'success');
 };
 
 window.updateOrderStatus = (orderId, newStatus) => {
@@ -1991,7 +2042,7 @@ window.autoSyncAndDeploy = async () => {
       setTimeout(() => {
         showSyncStatus('✅ Deployed successfully!', 'success');
         
-        alert(`✅ FULLY AUTOMATIC DEPLOYMENT COMPLETE!\n\n📦 ${state.products.length} products synced\n📸 Images uploaded\n💾 constants.ts updated\n📤 Committed to Git\n🚀 Deployed to hosting\n\n✨ Your products are now LIVE!\n\nNo manual steps needed - everything was automatic!`);
+        alert(`✅ FULLY AUTOMATIC DEPLOYMENT COMPLETE!\n\n📦 ${state.products.length} products synced\n📸 Images uploaded\n💾 constants.ts updated\n📄 Collections page auto-updated\n📤 Committed to Git\n🚀 Deployed to hosting\n\n✨ Your products are now LIVE!\n\n🌐 Collections page will show all ${state.products.length} products automatically!\n\nNo manual steps needed - everything was automatic!`);
         
         if (btn) {
           btn.classList.remove('syncing');

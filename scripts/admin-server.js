@@ -255,19 +255,20 @@ export function getCollectionProducts(collectionId: string): Product[] {
 `;
         
         // Write to constants.ts
-        const constantsPath = path.join(__dirname, 'constants.ts');
+        const constantsPath = path.join(__dirname, '..', 'constants.ts');
         fs.writeFileSync(constantsPath, tsCode, 'utf8');
         
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: true,
-          message: '✅ constants.ts updated successfully!',
+          message: '✅ constants.ts updated successfully! Collections page will auto-update.',
           products: products.length,
           collections: collections.length,
           timestamp: new Date().toISOString()
         }));
         
         console.log(`✅ Updated constants.ts - ${products.length} products, ${collections.length} collections`);
+        console.log(`📄 Collections page will show all ${products.length} products automatically`);
         
         // Auto-commit and deploy with enhanced error handling
         console.log('🚀 Starting auto-deployment...');

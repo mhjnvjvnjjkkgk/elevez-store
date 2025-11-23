@@ -4,7 +4,7 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: 23/11/2025, 7:19:20 pm
+// Last update: 23/11/2025, 7:27:56 pm
 export const PRODUCTS: Product[] = [
   {
     "id": 1763857751091,
@@ -53,9 +53,7 @@ export const PRODUCTS: Product[] = [
     ],
     "colors": [
       "White"
-    ],
-    "tags": [],
-    "description": "Premium quality t-shirt. Perfect for any occasion."
+    ]
   }
 ];
 
@@ -99,22 +97,6 @@ export const AVAILABLE_COLORS = [
     "code": "#FFFFFF"
   },
   {
-    "name": "Neon Green",
-    "code": "#00ff88"
-  },
-  {
-    "name": "Pink",
-    "code": "#FF69B4"
-  },
-  {
-    "name": "Gray",
-    "code": "#808080"
-  },
-  {
-    "name": "Navy",
-    "code": "#000080"
-  },
-  {
     "name": "Red",
     "code": "#FF0000"
   },
@@ -123,20 +105,28 @@ export const AVAILABLE_COLORS = [
     "code": "#0000FF"
   },
   {
+    "name": "Green",
+    "code": "#00FF00"
+  },
+  {
     "name": "Yellow",
     "code": "#FFFF00"
   },
   {
-    "name": "Orange",
-    "code": "#FFA500"
+    "name": "Pink",
+    "code": "#FF69B4"
   },
   {
     "name": "Purple",
     "code": "#800080"
   },
   {
-    "name": "Rainbow",
-    "code": "#FF0000"
+    "name": "Orange",
+    "code": "#FFA500"
+  },
+  {
+    "name": "Gray",
+    "code": "#808080"
   }
 ];
 

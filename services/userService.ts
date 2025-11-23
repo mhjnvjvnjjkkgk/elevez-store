@@ -96,18 +96,59 @@ export const removeFromWishlist = async (userId: string, productId: number) => {
 // Get user's orders
 export const getUserOrders = async (userId: string) => {
   try {
+    console.log('📦 Fetching orders for user:', userId);
+    
     const ordersRef = collection(db, 'orders');
     const q = query(ordersRef, where('userId', '==', userId), orderBy('orderDate', 'desc'));
     const querySnapshot = await getDocs(q);
     
-    const orders = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const orders = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        orderId: data.orderId || doc.id,
+        ...data,
+        // Convert Firestore Timestamp to ISO string for display
+        orderDate: data.orderDate?.toDate?.()?.toISOString() || data.orderDate,
+        createdAt: data.createdAt?.toDate?.()?.toISOString() || data.createdAt
+      };
+    });
     
+    console.log(`✅ Found ${orders.length} orders for user ${userId}`);
     return { success: true, data: orders };
   } catch (error) {
-    console.error('Error getting user orders:', error);
-    return { success: false, error: error.message };
+    console.error('❌ Error getting user orders:', error);
+    
+    // If orderBy fails (no index), try without ordering
+    try {
+      console.log('⚠️ Retrying without orderBy...');
+      const ordersRef = collection(db, 'orders');
+      const q = query(ordersRef, where('userId', '==', userId));
+      const querySnapshot = await getDocs(q);
+      
+      const orders = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          orderId: data.orderId || doc.id,
+          ...data,
+          orderDate: data.orderDate?.toDate?.()?.toISOString() || data.orderDate,
+          createdAt: data.createdAt?.toDate?.()?.toISOString() || data.createdAt
+        };
+      });
+      
+      // Sort manually
+      orders.sort((a, b) => {
+        const dateA = new Date(a.orderDate || a.createdAt || 0);
+        const dateB = new Date(b.orderDate || b.createdAt || 0);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      console.log(`✅ Found ${orders.length} orders (manual sort)`);
+      return { success: true, data: orders };
+    } catch (retryError) {
+      console.error('❌ Retry failed:', retryError);
+      return { success: false, error: retryError.message };
+    }
   }
 };
