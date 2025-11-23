@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fix QID Issue - ELEVEZ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 600px;
+      background: #2a2a2a;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,255,136,0.1);
+    }
+    
+    h1 {
+      color: #00ff88;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+    
+    .subtitle {
+      color: #888;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .status {
+      background: rgba(0,255,136,0.1);
+      border: 1px solid rgba(0,255,136,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .status-item:last-child {
+      border-bottom: none;
+    }
+    
+    .status-label {
+      color: #aaa;
+      font-size: 14px;
+    }
+    
+    .status-value {
+      color: #00ff88;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn-primary {
+      background: #00ff88;
+      color: #1a1a1a;
+    }
+    
+    .btn-primary:hover {
+      background: #00cc6a;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,255,136,0.3);
+    }
+    
+    .btn-danger {
+      background: #ff4444;
+      color: #fff;
+    }
+    
+    .btn-danger:hover {
+      background: #cc0000;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255,68,68,0.3);
+    }
+    
+    .btn-secondary {
+      background: #444;
+      color: #fff;
+    }
+    
+    .btn-secondary:hover {
+      background: #555;
+    }
+    
+    .issues {
+      background: rgba(255,68,68,0.1);
+      border: 1px solid rgba(255,68,68,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .issues.show {
+      display: block;
+    }
+    
+    .issue-item {
+      padding: 10px 0;
+      color: #ff8888;
+      font-size: 14px;
+    }
+    
+    .success {
+      background: rgba(0,255,136,0.1);
+      border: 1px solid rgba(0,255,136,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      color: #00ff88;
+      text-align: center;
+      display: none;
+    }
+    
+    .success.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔧 Fix QID Issue</h1>
+    <p class="subtitle">Diagnose and fix duplicate QID problems</p>
+    
+    <div class="status" id="status">
+      <div class="status-item">
+        <span class="status-label">Total Products</span>
+        <span class="status-value" id="totalProducts">0</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Products with QID</span>
+        <span class="status-value" id="productsWithQID">0</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Duplicate QIDs</span>
+        <span class="status-value" id="duplicateQIDs">0</span>
+      </div>
+    </div>
+    
+    <div class="issues" id="issues">
+      <h3 style="color: #ff8888; margin-bottom: 15px;">⚠️ Issues Found:</h3>
+      <div id="issuesList"></div>
+    </div>
+    
+    <div class="success" id="success">
+      <h3 style="margin-bottom: 10px;">✅ All Clear!</h3>
+      <p>No data integrity issues found.</p>
+    </div>
+    
+    <button class="btn btn-primary" onclick="checkData()">🔍 Check Data</button>
+    <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+    <button class="btn btn-secondary" onclick="exportData()">💾 Export Backup</button>
+    <button class="btn btn-secondary" onclick="openAdmin()">← Back to Admin</button>
+  </div>
+  
+  <script>
+    function checkData() {
+      const products = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+      
+      document.getElementById('totalProducts').textContent = products.length;
+      
+      const productsWithQID = products.filter(p => p.qid);
+      document.getElementById('productsWithQID').textContent = productsWithQID.length;
+      
+      // Check for duplicates
+      const qids = products.map(p => p.qid).filter(q => q);
+      const duplicates = qids.filter((qid, index) => qids.indexOf(qid) !== index);
+      const uniqueDuplicates = [...new Set(duplicates)];
+      
+      document.getElementById('duplicateQIDs').textContent = uniqueDuplicates.length;
+      
+      const issuesDiv = document.getElementById('issues');
+      const issuesList = document.getElementById('issuesList');
+      const successDiv = document.getElementById('success');
+      
+      if (uniqueDuplicates.length > 0 || productsWithQID.length < products.length) {
+        issuesDiv.classList.add('show');
+        successDiv.classList.remove('show');
+        
+        let issuesHTML = '';
+        
+        if (uniqueDuplicates.length > 0) {
+          issuesHTML += `<div class="issue-item">❌ Duplicate QIDs found: ${uniqueDuplicates.join(', ')}</div>`;
+          
+          uniqueDuplicates.forEach(qid => {
+            const dupeProducts = products.filter(p => p.qid === qid);
+            issuesHTML += `<div class="issue-item" style="padding-left: 20px;">• QID "${qid}" used by ${dupeProducts.length} products: ${dupeProducts.map(p => p.name).join(', ')}</div>`;
+          });
+        }
+        
+        if (productsWithQID.length < products.length) {
+          issuesHTML += `<div class="issue-item">❌ ${products.length - productsWithQID.length} products missing QID</div>`;
+        }
+        
+        issuesList.innerHTML = issuesHTML;
+      } else if (products.length === 0) {
+        issuesDiv.classList.remove('show');
+        successDiv.classList.add('show');
+        successDiv.innerHTML = '<h3 style="margin-bottom: 10px;">📦 No Data</h3><p>No products found. You can start adding products!</p>';
+      } else {
+        issuesDiv.classList.remove('show');
+        successDiv.classList.add('show');
+      }
+    }
+    
+    function clearAllData() {
+      if (confirm('⚠️ WARNING!\n\nThis will permanently delete:\n• All products\n• All collections\n• All orders\n• All settings\n\nThis action CANNOT be undone!\n\nClick OK to proceed.')) {
+        if (confirm('Are you ABSOLUTELY sure?\n\nThis is your last chance to cancel!')) {
+          localStorage.removeItem('elevez_products');
+          localStorage.removeItem('elevez_collections');
+          localStorage.removeItem('elevez_orders');
+          localStorage.removeItem('elevez_tags');
+          localStorage.removeItem('elevez_categories');
+          localStorage.removeItem('elevez_types');
+          
+          alert('✅ All data cleared successfully!\n\nYou can now add products without any issues.');
+          checkData();
+        }
+      }
+    }
+    
+    function exportData() {
+      const data = {
+        products: JSON.parse(localStorage.getItem('elevez_products') || '[]'),
+        collections: JSON.parse(localStorage.getItem('elevez_collections') || '[]'),
+        orders: JSON.parse(localStorage.getItem('elevez_orders') || '[]'),
+        tags: JSON.parse(localStorage.getItem('elevez_tags') || '[]'),
+        categories: JSON.parse(localStorage.getItem('elevez_categories') || '[]'),
+        types: JSON.parse(localStorage.getItem('elevez_types') || '[]'),
+        exportDate: new Date().toISOString()
+      };
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `elevez-backup-${Date.now()}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      
+      alert('✅ Backup exported successfully!');
+    }
+    
+    function openAdmin() {
+      window.location.href = 'admin-final.html';
+    }
+    
+    // Auto-check on load
+    window.addEventListener('DOMContentLoaded', checkData);
+  </script>
+</body>
+</html>

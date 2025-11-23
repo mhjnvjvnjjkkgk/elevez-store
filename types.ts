@@ -4,6 +4,7 @@ export type ProductType = 'Hoodie' | 'T-Shirt' | 'Crop Top' | 'Oversized T-Shirt
 
 export interface Product {
   id: number;
+  qid: string; // Unique product identifier (e.g., "NGH-001")
   name: string;
   price: number;
   originalPrice: number;
@@ -17,6 +18,8 @@ export interface Product {
   isBestSeller?: boolean;
   description?: string;
   colors?: string[];
+  sizes?: string[]; // Available sizes: XS, S, M, L, XL, XXL
+  sizeChart?: string; // Size chart image URL or base64
 }
 
 export interface CartItem extends Product {

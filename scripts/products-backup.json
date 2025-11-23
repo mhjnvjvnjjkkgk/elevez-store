@@ -1,0 +1,95 @@
+{
+  "products": [
+    {
+      "id": 1763857751091,
+      "qid": "TEST",
+      "name": "hoodie",
+      "price": 50,
+      "originalPrice": 1500,
+      "category": "Men",
+      "type": "T-Shirt",
+      "rating": 4.5,
+      "image": "/images/products/Gemini_Generated_Image_gpaa7hgpaa7hgpaa-1763857736512.png",
+      "images": [
+        "/images/products/Gemini_Generated_Image_gpaa7hgpaa7hgpaa-1763857736512.png",
+        "/images/products/use fo carousal-1763857736539.png",
+        "/images/products/Gemini_Generated_Image_k4d9bck4d9bck4d9-1763857736573.png",
+        "/images/products/Gemini_Generated_Image_8udrlp8udrlp8udr-1763857736604.png"
+      ],
+      "sizes": [
+        "M",
+        "S"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "tags": [
+        "PREMIUM"
+      ]
+    }
+  ],
+  "collections": [],
+  "orders": [],
+  "tags": [
+    "ESSENTIAL",
+    "TRENDING",
+    "PREMIUM",
+    "NEW",
+    "BESTSELLER",
+    "VINTAGE",
+    "COLORFUL"
+  ],
+  "categories": [
+    "Men",
+    "Women",
+    "Unisex"
+  ],
+  "types": [
+    "Hoodie",
+    "T-Shirt",
+    "Crop Top",
+    "Oversized T-Shirt"
+  ],
+  "colors": [
+    {
+      "name": "Black",
+      "code": "#000000"
+    },
+    {
+      "name": "White",
+      "code": "#FFFFFF"
+    },
+    {
+      "name": "Red",
+      "code": "#FF0000"
+    },
+    {
+      "name": "Blue",
+      "code": "#0000FF"
+    },
+    {
+      "name": "Green",
+      "code": "#00FF00"
+    },
+    {
+      "name": "Yellow",
+      "code": "#FFFF00"
+    },
+    {
+      "name": "Pink",
+      "code": "#FF69B4"
+    },
+    {
+      "name": "Purple",
+      "code": "#800080"
+    },
+    {
+      "name": "Orange",
+      "code": "#FFA500"
+    },
+    {
+      "name": "Gray",
+      "code": "#808080"
+    }
+  ]
+}

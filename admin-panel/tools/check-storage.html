@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Storage - ELEVEZ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #2a2a2a;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,255,136,0.1);
+    }
+    
+    h1 {
+      color: #00ff88;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+    
+    .subtitle {
+      color: #888;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .status-box {
+      background: rgba(0,255,136,0.1);
+      border: 1px solid rgba(0,255,136,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .status-item:last-child {
+      border-bottom: none;
+    }
+    
+    .status-label {
+      color: #aaa;
+      font-size: 14px;
+    }
+    
+    .status-value {
+      color: #00ff88;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    
+    .data-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .data-box h3 {
+      color: #00ff88;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    
+    .product-item {
+      background: rgba(255,255,255,0.03);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 3px solid #00ff88;
+    }
+    
+    .product-name {
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 5px;
+    }
+    
+    .product-details {
+      font-size: 12px;
+      color: #888;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn-primary {
+      background: #00ff88;
+      color: #1a1a1a;
+    }
+    
+    .btn-primary:hover {
+      background: #00cc6a;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background: #444;
+      color: #fff;
+    }
+    
+    .btn-secondary:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📦 Storage Check</h1>
+    <p class="subtitle">View what's stored in your browser</p>
+    
+    <div class="status-box">
+      <div class="status-item">
+        <span class="status-label">Products Stored</span>
+        <span class="status-value" id="productCount">0</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Collections Stored</span>
+        <span class="status-value" id="collectionCount">0</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Orders Stored</span>
+        <span class="status-value" id="orderCount">0</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Last Saved</span>
+        <span class="status-value" id="lastSave">Never</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Storage Size</span>
+        <span class="status-value" id="storageSize">0 KB</span>
+      </div>
+    </div>
+    
+    <div class="data-box" id="productsBox">
+      <h3>📦 Products</h3>
+      <div id="productsList"></div>
+    </div>
+    
+    <button class="btn btn-primary" onclick="refresh()">🔄 Refresh</button>
+    <button class="btn btn-secondary" onclick="goToAdmin()">← Back to Admin</button>
+  </div>
+  
+  <script>
+    function loadStorageData() {
+      // Get products
+      const products = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+      const collections = JSON.parse(localStorage.getItem('elevez_collections') || '[]');
+      const orders = JSON.parse(localStorage.getItem('elevez_orders') || '[]');
+      const lastSave = localStorage.getItem('elevez_last_save');
+      
+      // Update counts
+      document.getElementById('productCount').textContent = products.length;
+      document.getElementById('collectionCount').textContent = collections.length;
+      document.getElementById('orderCount').textContent = orders.length;
+      document.getElementById('lastSave').textContent = lastSave ? new Date(lastSave).toLocaleString() : 'Never';
+      
+      // Calculate storage size
+      let totalSize = 0;
+      for (let key in localStorage) {
+        if (key.startsWith('elevez_')) {
+          totalSize += localStorage[key].length;
+        }
+      }
+      document.getElementById('storageSize').textContent = (totalSize / 1024).toFixed(2) + ' KB';
+      
+      // Display products
+      const productsList = document.getElementById('productsList');
+      if (products.length === 0) {
+        productsList.innerHTML = '<p style="color: #888;">No products stored</p>';
+      } else {
+        productsList.innerHTML = products.map(p => `
+          <div class="product-item">
+            <div class="product-name">${p.name}</div>
+            <div class="product-details">
+              QID: ${p.qid} • Price: ₹${p.price} • Category: ${p.category} • Type: ${p.type}
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+    
+    function refresh() {
+      loadStorageData();
+      alert('✅ Refreshed!');
+    }
+    
+    function goToAdmin() {
+      window.location.href = 'admin-final.html';
+    }
+    
+    // Load on page load
+    window.addEventListener('DOMContentLoaded', loadStorageData);
+  </script>
+</body>
+</html>

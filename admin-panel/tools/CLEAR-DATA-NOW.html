@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clear Data - ELEVEZ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 500px;
+      background: #2a2a2a;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,68,68,0.3);
+      text-align: center;
+    }
+    
+    h1 {
+      color: #ff4444;
+      margin-bottom: 20px;
+      font-size: 36px;
+    }
+    
+    p {
+      color: #aaa;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn-danger {
+      background: #ff4444;
+      color: #fff;
+    }
+    
+    .btn-danger:hover {
+      background: #cc0000;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255,68,68,0.5);
+    }
+    
+    .btn-secondary {
+      background: #444;
+      color: #fff;
+    }
+    
+    .btn-secondary:hover {
+      background: #555;
+    }
+    
+    .status {
+      background: rgba(0,255,136,0.1);
+      border: 1px solid rgba(0,255,136,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      display: none;
+    }
+    
+    .status.show {
+      display: block;
+    }
+    
+    .icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🗑️</div>
+    <h1>Clear All Data</h1>
+    <p>This will permanently delete all products, collections, and orders from your browser storage.</p>
+    <p style="color: #ff8888; font-weight: 700;">⚠️ This action cannot be undone!</p>
+    
+    <button class="btn btn-danger" onclick="clearNow()">🗑️ Clear All Data Now</button>
+    <button class="btn btn-secondary" onclick="goBack()">← Cancel</button>
+    
+    <div class="status" id="status">
+      <h3 style="color: #00ff88; margin-bottom: 10px;">✅ Data Cleared!</h3>
+      <p style="color: #aaa; margin: 0;">All data has been removed. You can now add products fresh.</p>
+    </div>
+  </div>
+  
+  <script>
+    function clearNow() {
+      if (confirm('⚠️ FINAL WARNING!\n\nThis will delete ALL data permanently.\n\nClick OK to proceed.')) {
+        // Clear all ELEVEZ data
+        localStorage.removeItem('elevez_products');
+        localStorage.removeItem('elevez_collections');
+        localStorage.removeItem('elevez_orders');
+        localStorage.removeItem('elevez_tags');
+        localStorage.removeItem('elevez_categories');
+        localStorage.removeItem('elevez_types');
+        
+        // Show success
+        document.getElementById('status').classList.add('show');
+        
+        // Redirect to admin after 2 seconds
+        setTimeout(() => {
+          window.location.href = 'admin-final.html';
+        }, 2000);
+      }
+    }
+    
+    function goBack() {
+      window.location.href = 'admin-final.html';
+    }
+  </script>
+</body>
+</html>

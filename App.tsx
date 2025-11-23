@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
@@ -446,8 +446,8 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         <h3 className="text-lg font-bold text-white group-hover:text-[#00ff88] transition-colors line-clamp-1 font-syne">{product.name}</h3>
         <div className="flex items-center justify-between mt-1">
            <div className="flex items-center gap-2">
-             <span className="text-[#00ff88] font-bold">${product.price.toFixed(2)}</span>
-             <span className="text-red-500/70 line-through text-sm">${product.originalPrice.toFixed(2)}</span>
+             <span className="text-[#00ff88] font-bold">₹{product.price.toFixed(2)}</span>
+             <span className="text-red-500/70 line-through text-sm">₹{product.originalPrice.toFixed(2)}</span>
            </div>
            <div className="flex gap-1">
               {[...Array(5)].map((_, i) => (
@@ -528,8 +528,8 @@ const QuickViewModal = () => {
               </div>
               <h2 className="text-3xl font-bold font-syne leading-tight mb-2">{activeProduct.name}</h2>
               <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-[#00ff88]">${activeProduct.price}</span>
-                <span className="text-gray-500 line-through text-lg">${activeProduct.originalPrice}</span>
+                <span className="text-2xl font-bold text-[#00ff88]">₹{activeProduct.price}</span>
+                <span className="text-gray-500 line-through text-lg">₹{activeProduct.originalPrice}</span>
               </div>
             </div>
 
@@ -571,7 +571,7 @@ const QuickViewModal = () => {
                 onClick={handleAddToCart}
                 className="w-full bg-[#00ff88] text-black font-bold py-4 rounded-lg uppercase tracking-widest hover:bg-white transition-colors shadow-[0_0_20px_rgba(0,255,136,0.2)]"
                >
-                 Add to Cart - ${(activeProduct.price).toFixed(2)}
+                 Add to Cart - ₹{(activeProduct.price).toFixed(2)}
                </button>
                <Link 
                 to={`/product/${activeProduct.id}`} 
@@ -645,7 +645,7 @@ const CartSidebar = () => {
                         </div>
                       </div>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-[#00ff88] font-bold">${(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="text-[#00ff88] font-bold">₹{(item.price * item.quantity).toFixed(2)}</span>
                         <button onClick={() => removeFromCart(item.cartId)} className="text-zinc-500 hover:text-red-500 transition-colors p-1 hover:bg-red-500/10 rounded">
                           <Trash2 size={16} />
                         </button>
@@ -660,7 +660,7 @@ const CartSidebar = () => {
               <div className="p-6 border-t border-white/10 bg-zinc-900/50 backdrop-blur">
                 <div className="flex justify-between mb-4 text-lg font-bold">
                   <span>Subtotal</span>
-                  <span>${cartTotal.toFixed(2)}</span>
+                  <span>₹{cartTotal.toFixed(2)}</span>
                 </div>
                 <p className="text-xs text-gray-400 mb-6 text-center">Shipping calculated at checkout.</p>
                 <button 
@@ -744,8 +744,8 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     if (collectionFilter === 'Premium Streetwear') return p.tags?.includes('PREMIUM') && p.isBestSeller;
     if (collectionFilter === 'Hoodies') return p.type.includes('Hoodie') && p.isBestSeller;
     if (collectionFilter === 'Oversized') return p.type.includes('Oversized') && p.isBestSeller;
-    if (collectionFilter === 'Under $50') return p.price < 50 && p.isBestSeller;
-    if (collectionFilter === '$100+') return p.price >= 100 && p.isBestSeller;
+    if (collectionFilter === 'Under ₹50') return p.price < 50 && p.isBestSeller;
+    if (collectionFilter === '₹100+') return p.price >= 100 && p.isBestSeller;
     return p.isBestSeller;
   });
 
@@ -893,7 +893,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
            </motion.div>
 
            <div className="flex flex-wrap justify-center gap-4 mb-16">
-              {['All', 'Old Money', 'Bold and Vibrant', 'Premium Streetwear', 'Hoodies', 'Oversized', 'Under $50', '$100+'].map((filter, i) => (
+              {['All', 'Old Money', 'Bold and Vibrant', 'Premium Streetwear', 'Hoodies', 'Oversized', 'Under ₹50', '₹100+'].map((filter, i) => (
                 <button 
                   key={filter}
                   onClick={() => setCollectionFilter(filter)}
@@ -982,7 +982,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                <span className="text-white">Modern Fashion</span>
              </h2>
              <p className="text-zinc-400 text-lg leading-relaxed mb-8">
-               At Elevez, we believe clothing is more than fabric—it's an expression of identity. 
+               At Elevez, we believe clothing is more than fabricΓÇöit's an expression of identity. 
                Each piece is meticulously crafted with sustainable materials and innovative design.
              </p>
              <MagneticButton
@@ -1035,7 +1035,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     else if (filter === 'PREMIUM') matchesFilter = p.tags?.includes('PREMIUM');
     else if (filter === 'ESSENTIAL') matchesFilter = p.tags?.includes('ESSENTIAL');
     else if (filter === 'Under') matchesFilter = p.price < 50;
-    else if (filter === '$100+') matchesFilter = p.price >= 100;
+    else if (filter === '₹100+') matchesFilter = p.price >= 100;
 
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           p.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -1064,7 +1064,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         <div className="flex flex-col lg:flex-row gap-12 relative">
           {/* Sticky Sidebar */}
           <aside className="w-full lg:w-1/4 shrink-0">
-             <div className="sticky top-32 bg-zinc-900/30 backdrop-blur-md p-6 rounded-2xl border border-white/5">
+             <div className="sticky top-32 bg-zinc-900/30 backdrop-blur-md p-6 rounded-2xl border border-white/5 max-h-[calc(100vh-8rem)] overflow-y-auto">
                 <div className="flex items-center gap-2 mb-6 pb-4 border-b border-white/10">
                    <SlidersHorizontal size={20} className="text-[#00ff88]" />
                    <span className="font-bold font-syne text-xl uppercase">Filters</span>
@@ -1114,7 +1114,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                 </FilterSection>
 
                 <FilterSection title="Price">
-                   {['Under', '$100+'].map(c => (
+                   {['Under', '₹100+'].map(c => (
                      <button 
                       key={c} 
                       onClick={() => setFilter(c)}
@@ -1122,7 +1122,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                       onMouseLeave={() => setCursorVariant('default')}
                       className={`block w-full text-left text-sm py-1 hover:text-[#00ff88] transition-colors ${filter === c ? 'text-[#00ff88] font-bold' : 'text-gray-400'}`}
                      >
-                       {c === 'Under' ? 'Under $50' : '$100+'}
+                       {c === 'Under' ? 'Under ₹50' : '₹100+'}
                      </button>
                    ))}
                 </FilterSection>
@@ -1251,18 +1251,18 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
            <div className="lg:col-span-5 flex flex-col">
              <div className="flex items-center gap-2 text-xs font-bold uppercase text-gray-500 mb-2">
                 <span className="bg-zinc-800 text-white px-2 py-0.5 rounded">Essential</span>
-                <span>•</span>
+                <span>ΓÇó</span>
                 <span>{product.category}</span>
-                <span>•</span>
+                <span>ΓÇó</span>
                 <span>{product.type}</span>
              </div>
 
              <h1 className="text-5xl font-bold mb-2 font-syne leading-tight">{product.name}</h1>
              
              <div className="flex items-center gap-3 mb-6">
-               <span className="text-3xl font-bold text-[#00ff88]">${product.price}</span>
-               <span className="text-xl text-gray-500 line-through">${product.originalPrice}</span>
-               <span className="bg-red-900/50 text-red-400 text-xs font-bold px-2 py-1 rounded">Save ${(product.originalPrice - product.price).toFixed(0)}</span>
+               <span className="text-3xl font-bold text-[#00ff88]">₹{product.price}</span>
+               <span className="text-xl text-gray-500 line-through">₹{product.originalPrice}</span>
+               <span className="bg-red-900/50 text-red-400 text-xs font-bold px-2 py-1 rounded">Save ₹{(product.originalPrice - product.price).toFixed(0)}</span>
              </div>
 
              {/* Countdown Bar */}

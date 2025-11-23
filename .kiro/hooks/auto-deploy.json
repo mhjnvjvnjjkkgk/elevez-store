@@ -1,0 +1,15 @@
+{
+  "name": "Auto Deploy - Git + Vercel",
+  "description": "Automatically commits to GitHub and deploys to Vercel whenever you save a file",
+  "enabled": true,
+  "trigger": {
+    "type": "onFileSave",
+    "filePattern": "**/*.{tsx,ts,jsx,js,css,html}"
+  },
+  "action": {
+    "type": "shellCommand",
+    "command": "powershell -ExecutionPolicy Bypass -File ./auto-deploy.ps1",
+    "showOutput": true,
+    "debounceMs": 10000
+  }
+}

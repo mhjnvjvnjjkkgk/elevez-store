@@ -24,3 +24,11 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Backup files
+*.backup
+*.corrupted
+*.git
+App.tsx.backup
+App.tsx.corrupted
+App.tsx.git

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELEVEZ - Product Manager</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="brand">ELEVEZ</h1>
+        <p class="brand-subtitle">Product Manager</p>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="products">
+          <span class="nav-icon">📦</span>
+          <span class="nav-text">Products</span>
+        </button>
+        <button class="nav-item" data-view="orders">
+          <span class="nav-icon">🛒</span>
+          <span class="nav-text">Orders</span>
+          <span class="nav-badge" id="ordersBadge">0</span>
+        </button>
+        <button class="nav-item" data-view="collections">
+          <span class="nav-icon">🗂️</span>
+          <span class="nav-text">Collections</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="sync-btn" id="syncBtn">
+          <span class="sync-icon">🔄</span>
+          <span>Sync & Deploy</span>
+        </button>
+        <button class="sync-btn" onclick="quickClearData()" style="background: #ff4444; margin-top: 10px;">
+          <span class="sync-icon">🗑️</span>
+          <span>Clear All Data</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard View -->
+      <div class="view active" id="dashboard-view">
+        <div class="view-header">
+          <h2>Dashboard</h2>
+        </div>
+        <div class="stats-grid" id="statsGrid"></div>
+      </div>
+
+      <!-- Products View -->
+      <div class="view" id="products-view">
+        <div class="view-header">
+          <h2>Products</h2>
+          <div class="header-actions">
+            <input type="text" class="search-input" id="productSearch" placeholder="🔍 Search products...">
+            <button class="btn btn-primary" onclick="openProductModal()">+ Add Product</button>
+          </div>
+        </div>
+        <div class="products-grid" id="productsGrid"></div>
+      </div>
+
+      <!-- Orders View -->
+      <div class="view" id="orders-view">
+        <div class="view-header">
+          <h2>Orders</h2>
+          <div class="header-actions">
+            <input type="text" class="search-input" id="orderSearch" placeholder="🔍 Search orders...">
+            <button class="btn btn-secondary" onclick="refreshOrders()">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="orders-container" id="ordersContainer"></div>
+      </div>
+
+      <!-- Collections View -->
+      <div class="view" id="collections-view">
+        <div class="view-header">
+          <h2>Collections</h2>
+          <button class="btn btn-primary" onclick="openCollectionModal()">+ Create Collection</button>
+        </div>
+        <div class="collections-grid" id="collectionsGrid"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Product Modal -->
+  <div class="modal" id="productModal">
+    <div class="modal-backdrop" onclick="closeProductModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="productModalTitle">Add New Product</h3>
+        <button class="close-modal" onclick="closeProductModal()">×</button>
+      </div>
+      <form id="productForm" class="modal-body">
+        <input type="hidden" id="productId">
+        
+        <div class="form-section">
+          <h4>Basic Information</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Product Name *</label>
+              <input type="text" id="productName" required placeholder="e.g., Neon Glitch Hoodie">
+            </div>
+            <div class="form-group">
+              <label>Product QID *</label>
+              <input type="text" id="productQID" required placeholder="e.g., NGH-001" pattern="[A-Z0-9-]+" title="Use uppercase letters, numbers, and hyphens">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Normal Price (₹) *</label>
+              <input type="number" id="normalPrice" required step="0.01" placeholder="170.00">
+            </div>
+            <div class="form-group">
+              <label>Sale Price (₹) *</label>
+              <input type="number" id="salePrice" required step="0.01" placeholder="85.00">
+            </div>
+            <div class="form-group">
+              <label>Discount</label>
+              <input type="text" id="discountDisplay" readonly class="discount-badge">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category *</label>
+              <div style="display: flex; gap: 10px;">
+                <select id="productCategory" required style="flex: 1;">
+                  <option value="">Select or create category</option>
+                </select>
+                <button type="button" class="btn btn-secondary" onclick="toggleCategoryInput()" style="padding: 10px 15px;">+ New</button>
+              </div>
+              <input type="text" id="customCategoryInput" placeholder="Enter new category name" style="display: none; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 8px; color: var(--text); width: 100%;">
+            </div>
+            <div class="form-group">
+              <label>Product Type *</label>
+              <div style="display: flex; gap: 10px;">
+                <select id="productType" required style="flex: 1;">
+                  <option value="">Select or create type</option>
+                </select>
+                <button type="button" class="btn btn-secondary" onclick="toggleTypeInput()" style="padding: 10px 15px;">+ New</button>
+              </div>
+              <input type="text" id="customTypeInput" placeholder="Enter new type name" style="display: none; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 8px; color: var(--text); width: 100%;">
+            </div>
+            <div class="form-group">
+              <label>Rating *</label>
+              <input type="number" id="productRating" required min="1" max="5" step="0.1" value="4.5">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="productDescription" rows="4" placeholder="Enter detailed product description..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4>Product Images *</h4>
+          <div class="image-upload-zone" id="imageUploadZone">
+            <input type="file" id="imageInput" multiple accept="image/*" style="display: none;">
+            <div class="upload-placeholder">
+              <span class="upload-icon">📸</span>
+              <p>Click or drag images here</p>
+              <small>Max 5 images • JPG, PNG, WebP</small>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="addImageByUrl()" style="margin-top: 10px; width: 100%;">🔗 Add Image by URL</button>
+          <div class="image-preview-grid" id="imagePreviewGrid"></div>
+          <p style="color: #ff8888; font-size: 12px; margin-top: 10px;">⚠️ Large images may cause storage issues. Consider using image URLs from your hosting.</p>
+        </div>
+
+        <div class="form-section">
+          <h4>Size Chart (Optional)</h4>
+          <div class="image-upload-zone small" id="sizeChartZone">
+            <input type="file" id="sizeChartInput" accept="image/*" style="display: none;">
+            <div class="upload-placeholder">
+              <span class="upload-icon">📏</span>
+              <p>Upload size chart</p>
+            </div>
+          </div>
+          <div class="image-preview-grid" id="sizeChartPreview"></div>
+        </div>
+
+        <div class="form-section">
+          <h4>Available Sizes *</h4>
+          <div class="size-selector" id="sizeSelector">
+            <button type="button" class="size-btn" data-size="XS">XS</button>
+            <button type="button" class="size-btn" data-size="S">S</button>
+            <button type="button" class="size-btn active" data-size="M">M</button>
+            <button type="button" class="size-btn" data-size="L">L</button>
+            <button type="button" class="size-btn" data-size="XL">XL</button>
+            <button type="button" class="size-btn" data-size="XXL">XXL</button>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4>Available Colors *</h4>
+          <div class="colors-grid" id="colorsGrid"></div>
+          <button type="button" class="btn-add-color" onclick="openColorPicker()">+ Add Custom Color</button>
+          <div class="color-picker-popup" id="colorPickerPopup">
+            <input type="text" id="colorNameInput" placeholder="Color name (e.g., Neon Green)">
+            <input type="color" id="colorCodeInput" value="#00ff88">
+            <button type="button" class="btn btn-primary" onclick="addCustomColor()">Add</button>
+            <button type="button" class="btn btn-secondary" onclick="closeColorPicker()">Cancel</button>
+          </div>
+          <div class="selected-colors-list" id="selectedColorsList"></div>
+        </div>
+
+        <div class="form-section">
+          <h4>Tags</h4>
+          <div class="tags-container" id="tagsContainer"></div>
+          <div class="tag-input-container">
+            <input type="text" id="customTagInput" placeholder="Add custom tag (e.g., SUMMER, WINTER)" style="flex: 1; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 8px; color: var(--text);">
+            <button type="button" class="btn btn-secondary" onclick="addCustomTag()" style="padding: 10px 20px;">+ Add Tag</button>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="checkbox-row">
+            <label class="checkbox-label">
+              <input type="checkbox" id="isBestSeller">
+              <span>Best Seller</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="isNew">
+              <span>New Arrival</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Image Crop Modal -->
+  <div class="modal" id="cropModal">
+    <div class="modal-backdrop" onclick="closeCropModal()"></div>
+    <div class="modal-content crop-modal">
+      <div class="modal-header">
+        <h3>Crop Image</h3>
+        <button class="close-modal" onclick="closeCropModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="crop-container">
+          <img id="cropImage" src="">
+        </div>
+        <div class="crop-info">
+          <span id="cropAspectRatio">Aspect Ratio: --</span>
+          <span id="cropDimensions">Dimensions: --</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeCropModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="applyCrop()">Apply Crop</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Collection Modal -->
+  <div class="modal" id="collectionModal">
+    <div class="modal-backdrop" onclick="closeCollectionModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="collectionModalTitle">Create Collection</h3>
+        <button class="close-modal" onclick="closeCollectionModal()">×</button>
+      </div>
+      <form id="collectionForm" class="modal-body">
+        <input type="hidden" id="collectionId">
+        <div class="form-group">
+          <label>Collection Name *</label>
+          <input type="text" id="collectionName" required placeholder="e.g., Summer Essentials">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="collectionDescription" rows="3" placeholder="Brief description..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Filter by Tags (Select one or more)</label>
+          <div class="tags-container" id="collectionTags"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category Filter</label>
+            <select id="collectionCategory">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Type Filter</label>
+            <select id="collectionType">
+              <option value="">All Types</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Min Price (₹)</label>
+            <input type="number" id="collectionMinPrice" step="0.01" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label>Max Price (₹)</label>
+            <input type="number" id="collectionMaxPrice" step="0.01" placeholder="No limit">
+          </div>
+        </div>
+        <div class="collection-preview" id="collectionPreview">
+          <h4 style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 10px;">Preview: <span id="previewCount">0</span> products match</h4>
+          <div id="previewProducts" style="display: flex; gap: 10px; flex-wrap: wrap; max-height: 200px; overflow-y: auto;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeCollectionModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveCollectionBtn">Save Collection</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
