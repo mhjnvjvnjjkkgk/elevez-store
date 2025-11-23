@@ -673,7 +673,7 @@ function setupProductFormListeners() {
 
 async function handleImageUpload(files) {
   for (const file of Array.from(files)) {
-    if (file.type.startsWith('image/') && state.productForm.images.length < 5) {
+    if (file.type.startsWith('image/') && state.productForm.images.length < 10) {
       try {
         showSyncStatus('📤 Uploading image...', 'success');
         
@@ -733,16 +733,33 @@ async function handleImageUpload(files) {
 
 // Alternative: Add image by URL
 window.addImageByUrl = () => {
-  const url = prompt('Enter image URL:\n\nExamples:\n• https://images.unsplash.com/photo-123?w=500\n• https://i.imgur.com/abc123.jpg\n• https://your-cdn.com/image.jpg\n\nOr paste a GitHub raw URL:\n• https://raw.githubusercontent.com/user/repo/main/public/images/products/image.jpg');
+  if (state.productForm.images.length >= 10) {
+    alert('❌ Maximum 10 images allowed per product');
+    return;
+  }
   
-  if (url && state.productForm.images.length < 5) {
+  const url = prompt('Enter image URL:\n\nExamples:\n• https://images.unsplash.com/photo-123?w=500\n• https://i.imgur.com/abc123.jpg\n• https://postimages.org/image.jpg\n\nFree hosting:\n• Imgur.com (bulk upload)\n• PostImages.org (no account)\n• ImgBB.com (free API)');
+  
+  if (url && url.trim()) {
     // Validate URL
     try {
       new URL(url);
-      state.productForm.images.push(url);
-      renderImagePreviews();
-      showSyncStatus('✅ Image added by URL', 'success');
-      console.log('✅ Image URL added:', url);
+      
+      // Test if image loads
+      const img = new Image();
+      img.onload = () => {
+        state.productForm.images.push(url);
+        renderImagePreviews();
+        showSyncStatus(`✅ Image ${state.productForm.images.length}/10 added`, 'success');
+        console.log('✅ Image URL added:', url);
+      };
+      img.onerror = () => {
+        showSyncStatus('⚠️ Image URL added but may not load', 'error');
+        state.productForm.images.push(url);
+        renderImagePreviews();
+      };
+      img.src = url;
+      
     } catch (e) {
       showSyncStatus('❌ Invalid URL format', 'error');
       alert('❌ Invalid URL. Please enter a complete URL starting with http:// or https://');

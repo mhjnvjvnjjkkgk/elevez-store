@@ -1,20 +1,23 @@
 @echo off
+cd /d "%~dp0"
 echo.
 echo ========================================
 echo   ELEVEZ - Simple Start
 echo ========================================
 echo.
+echo Current directory: %CD%
+echo.
 echo Starting servers...
 echo.
 
 echo [1/2] Starting Website (Port 5173)...
-start "ELEVEZ Website" cmd /k "npm run dev"
+start "ELEVEZ Website" cmd /k "cd /d "%~dp0" && npm run dev"
 echo Wait for: "Local: http://localhost:5173/"
 timeout /t 3 /nobreak >nul
 
 echo.
 echo [2/2] Starting Admin Server (Port 3001)...
-start "ELEVEZ Admin Server" cmd /k "node scripts\admin-server.js"
+start "ELEVEZ Admin Server" cmd /k "cd /d "%~dp0" && node scripts\admin-server.js"
 echo Wait for: "Admin Server Running!"
 timeout /t 2 /nobreak >nul
 

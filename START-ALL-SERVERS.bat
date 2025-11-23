@@ -1,25 +1,28 @@
 @echo off
+cd /d "%~dp0"
 echo.
 echo ========================================
 echo   ELEVEZ - START ALL SERVERS
 echo ========================================
+echo.
+echo Current directory: %CD%
 echo.
 echo Starting all required servers...
 echo.
 
 REM Start Vite dev server in new window
 echo [1/3] Starting Website Server (Port 5173)...
-start "ELEVEZ Website" cmd /k "npm run dev"
+start "ELEVEZ Website" cmd /k "cd /d "%~dp0" && npm run dev"
 timeout /t 3 /nobreak >nul
 
 REM Start admin server in new window
 echo [2/3] Starting Admin Server (Port 3001)...
-start "ELEVEZ Admin Server" cmd /k "node scripts\admin-server.js"
+start "ELEVEZ Admin Server" cmd /k "cd /d "%~dp0" && node scripts\admin-server.js"
 timeout /t 2 /nobreak >nul
 
 REM Start auto-deploy monitor in new window
 echo [3/3] Starting Auto-Deploy Monitor...
-start "ELEVEZ Auto-Deploy" cmd /k "powershell -ExecutionPolicy Bypass -File scripts\auto-deploy-monitor.ps1"
+start "ELEVEZ Auto-Deploy" cmd /k "cd /d "%~dp0" && powershell -ExecutionPolicy Bypass -File scripts\auto-deploy-monitor.ps1"
 timeout /t 2 /nobreak >nul
 
 echo.
