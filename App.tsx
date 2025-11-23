@@ -2184,9 +2184,23 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
 
           {/* Orders Section */}
           <div className="mb-12">
-            <div className="flex items-center gap-3 mb-6">
-              <Package size={28} className="text-[#00ff88]" />
-              <h2 className="text-3xl font-bold font-syne">Past Orders</h2>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <Package size={28} className="text-[#00ff88]" />
+                <h2 className="text-3xl font-bold font-syne">Past Orders</h2>
+                {orders.length > 0 && (
+                  <span className="bg-[#00ff88] text-black text-sm font-bold px-3 py-1 rounded-full">
+                    {orders.length}
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={() => loadUserData(user.uid)}
+                className="flex items-center gap-2 text-gray-400 hover:text-[#00ff88] transition-colors text-sm"
+              >
+                <RefreshCw size={16} />
+                <span>Refresh</span>
+              </button>
             </div>
             
             {orders.length === 0 ? (
@@ -2199,46 +2213,93 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
               </div>
             ) : (
               <div className="space-y-4">
-                {orders.map((order) => (
-                  <div key={order.id} className="bg-zinc-900/30 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-[#00ff88]/30 transition-colors">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <p className="text-sm text-gray-400">Order ID: <span className="text-white font-mono">{order.id}</span></p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          {order.orderDate && new Date(order.orderDate.seconds * 1000).toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          })}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-[#00ff88]">₹{order.totalAmount?.toFixed(2)}</p>
-                        <p className="text-xs text-gray-400 mt-1">{order.paymentMethod === 'upi' ? 'UPI' : 'Cash on Delivery'}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3 mb-4">
-                      {order.items?.map((item: any, idx: number) => (
-                        <div key={idx} className="flex gap-3 pb-3 border-b border-white/5 last:border-0">
-                          <div className="flex-1">
-                            <p className="font-bold text-sm">{item.name}</p>
-                            <p className="text-xs text-gray-400 mt-1">
-                              {item.size} • {item.color} • Qty: {item.quantity} • ₹{item.price}
-                            </p>
-                          </div>
+                {orders.map((order) => {
+                  // Parse order date properly
+                  let orderDateStr = 'N/A';
+                  try {
+                    if (order.orderDate) {
+                      const date = typeof order.orderDate === 'string' 
+                        ? new Date(order.orderDate)
+                        : order.orderDate.seconds 
+                          ? new Date(order.orderDate.seconds * 1000)
+                          : new Date(order.orderDate);
+                      orderDateStr = date.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      });
+                    }
+                  } catch (e) {
+                    console.error('Error parsing order date:', e);
+                  }
+                  
+                  return (
+                    <div key={order.id} className="bg-zinc-900/30 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-[#00ff88]/30 transition-colors">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <p className="text-sm text-gray-400">
+                            Order ID: <span className="text-white font-mono">{order.orderId || order.id}</span>
+                          </p>
+                          <p className="text-sm text-gray-400 mt-1">{orderDateStr}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Status: <span className={`font-bold ${order.status === 'completed' ? 'text-green-500' : order.status === 'pending' ? 'text-yellow-500' : 'text-gray-400'}`}>
+                              {order.status || 'pending'}
+                            </span>
+                          </p>
                         </div>
-                      ))}
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-[#00ff88]">₹{order.totalAmount?.toFixed(2)}</p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {order.paymentMethod === 'upi' ? 'UPI' : order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3 mb-4">
+                        {order.items?.map((item: any, idx: number) => {
+                          const product = PRODUCTS.find(p => p.id === item.id);
+                          const itemImage = item.image || product?.image || 'https://via.placeholder.com/60x75?text=No+Image';
+                          
+                          return (
+                            <div key={idx} className="flex gap-3 pb-3 border-b border-white/5 last:border-0">
+                              <img 
+                                src={itemImage} 
+                                alt={item.name} 
+                                className="w-16 h-20 object-cover rounded bg-zinc-900"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = 'https://via.placeholder.com/60x75?text=No+Image';
+                                }}
+                              />
+                              <div className="flex-1">
+                                <p className="font-bold text-sm">{item.name}</p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {item.size} • {item.color} • Qty: {item.quantity}
+                                </p>
+                                <p className="text-sm text-[#00ff88] font-bold mt-1">
+                                  ₹{(item.price * item.quantity).toFixed(2)}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      
+                      <div className="pt-3 border-t border-white/10 space-y-2">
+                        <p className="text-sm text-gray-400">
+                          <MapPin size={14} className="inline mr-1" />
+                          {order.address}, {order.city}, {order.state} - {order.pincode}
+                        </p>
+                        <div className="flex gap-4 text-xs text-gray-500">
+                          <span>Subtotal: ₹{order.subtotal?.toFixed(2)}</span>
+                          <span>Shipping: {order.shippingCost === 0 ? 'FREE' : `₹${order.shippingCost?.toFixed(2)}`}</span>
+                        </div>
+                      </div>
                     </div>
-                    
-                    <div className="pt-3 border-t border-white/10">
-                      <p className="text-sm text-gray-400">
-                        <MapPin size={14} className="inline mr-1" />
-                        {order.address}, {order.city}, {order.state} - {order.pincode}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

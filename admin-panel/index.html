@@ -175,7 +175,10 @@
               <small>Max 10 images • JPG, PNG, WebP</small>
             </div>
           </div>
-          <button type="button" class="btn btn-secondary" onclick="addImageByUrl()" style="margin-top: 10px; width: 100%;">🔗 Add Image by URL</button>
+          <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button type="button" class="btn btn-secondary" onclick="addImageByUrl()" style="flex: 1;">🔗 Add Single URL</button>
+            <button type="button" class="btn btn-secondary" onclick="bulkImportImages()" style="flex: 1; background: var(--primary); color: var(--bg);">📦 Bulk Import</button>
+          </div>
           <div class="image-preview-grid" id="imagePreviewGrid"></div>
           <p style="color: #ff8888; font-size: 12px; margin-top: 10px;">⚠️ Large images may cause storage issues. Consider using image URLs from your hosting.</p>
         </div>

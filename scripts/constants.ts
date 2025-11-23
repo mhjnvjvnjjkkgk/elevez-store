@@ -4,56 +4,194 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: 23/11/2025, 7:27:56 pm
+// Last update: 23/11/2025, 7:55:27 pm
 export const PRODUCTS: Product[] = [
   {
-    "id": 1763857751091,
-    "qid": "TEST",
-    "name": "hoodie",
-    "price": 50,
-    "originalPrice": 1500,
+    "id": 1,
+    "qid": "NGH-001",
+    "name": "Neon Glitch Hoodie",
+    "price": 85,
+    "originalPrice": 170,
     "category": "Men",
-    "type": "T-Shirt",
+    "type": "Hoodie",
     "rating": 4.5,
-    "image": "http://localhost:5173/images/products/Gemini_Generated_Image_gpaa7hgpaa7hgpaa-1763857736512.png",
+    "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
     "images": [
-      "http://localhost:5173/images/products/Gemini_Generated_Image_gpaa7hgpaa7hgpaa-1763857736512.png",
-      "http://localhost:5173/images/products/use fo carousal-1763857736539.png",
-      "http://localhost:5173/images/products/Gemini_Generated_Image_k4d9bck4d9bck4d9-1763857736573.png",
-      "http://localhost:5173/images/products/Gemini_Generated_Image_8udrlp8udrlp8udr-1763857736604.png"
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
     ],
     "sizes": [
+      "S",
       "M",
-      "S"
+      "L",
+      "XL"
     ],
     "colors": [
+      "Black",
+      "White",
+      "Neon Green"
+    ],
+    "tags": [
+      "TRENDING",
+      "BESTSELLER"
+    ],
+    "isBestSeller": true,
+    "isNew": true
+  },
+  {
+    "id": 2,
+    "qid": "VCT-002",
+    "name": "Vintage Crop Top",
+    "price": 45,
+    "originalPrice": 90,
+    "category": "Women",
+    "type": "Crop Top",
+    "rating": 4.7,
+    "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
+    "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
+    ],
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L"
+    ],
+    "colors": [
+      "Pink",
+      "White",
       "Black"
     ],
     "tags": [
-      "PREMIUM"
+      "VINTAGE",
+      "TRENDING"
     ],
-    "description": "Premium quality t-shirt. Perfect for any occasion."
+    "isNew": true
   },
   {
-    "id": 1763905562151,
-    "qid": "12",
-    "name": "try try",
-    "price": 670,
-    "originalPrice": 1400,
-    "category": "Men",
-    "type": "T-Shirt",
-    "rating": 4.5,
-    "image": "https://postimg.cc/PC6ZrNXj",
+    "id": 3,
+    "qid": "OST-003",
+    "name": "Oversized Street Tee",
+    "price": 35,
+    "originalPrice": 70,
+    "category": "Unisex",
+    "type": "Oversized T-Shirt",
+    "rating": 4.6,
+    "description": "Ultra-comfortable oversized t-shirt. Perfect for casual streetwear.",
+    "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
     "images": [
-      "https://postimg.cc/PC6ZrNXj",
-      "https://postimg.cc/G4MYh9cg"
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"
     ],
     "sizes": [
-      "M"
+      "M",
+      "L",
+      "XL",
+      "XXL"
     ],
     "colors": [
-      "White"
+      "Black",
+      "White",
+      "Gray"
+    ],
+    "tags": [
+      "ESSENTIAL",
+      "BESTSELLER"
+    ],
+    "isBestSeller": true
+  },
+  {
+    "id": 4,
+    "qid": "PTH-004",
+    "name": "Premium Tech Hoodie",
+    "price": 95,
+    "originalPrice": 190,
+    "category": "Men",
+    "type": "Hoodie",
+    "rating": 4.8,
+    "description": "High-tech fabric hoodie with moisture-wicking properties. Perfect for active lifestyle.",
+    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "Black",
+      "Navy",
+      "Gray"
+    ],
+    "tags": [
+      "PREMIUM",
+      "NEW"
+    ],
+    "isNew": true
+  },
+  {
+    "id": 5,
+    "qid": "CFT-005",
+    "name": "Colorful Festival Tee",
+    "price": 40,
+    "originalPrice": 80,
+    "category": "Unisex",
+    "type": "T-Shirt",
+    "rating": 4.4,
+    "description": "Vibrant and colorful t-shirt perfect for festivals and summer events.",
+    "image": "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "Rainbow",
+      "Yellow",
+      "Orange"
+    ],
+    "tags": [
+      "COLORFUL",
+      "TRENDING"
     ]
+  },
+  {
+    "id": 1763907924781,
+    "qid": "FAKEEEEE",
+    "name": "Dont Look back hoodie",
+    "price": 800,
+    "originalPrice": 1500,
+    "category": "Men",
+    "type": "Hoodie",
+    "rating": 4.5,
+    "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+    "image": "https://i.postimg.cc/PC6ZrNXj/image.jpg",
+    "images": [
+      "https://i.postimg.cc/PC6ZrNXj/image.jpg",
+      "https://i.postimg.cc/G4MYh9cg/image.jpg",
+      "https://i.postimg.cc/jD8NdCsG/image.jpg",
+      "https://i.postimg.cc/BjhDQtqr/image.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [],
+    "tags": [
+      "TRENDING",
+      "BESTSELLER"
+    ],
+    "isBestSeller": true,
+    "isNew": true
   }
 ];
 

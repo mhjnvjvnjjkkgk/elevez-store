@@ -90,7 +90,11 @@ const state = {
   cropper: null,
   currentCropIndex: null,
   currentCropType: 'product',
-  draggedImageIndex: null
+  draggedImageIndex: null,
+  // Undo/Redo functionality
+  imageHistory: [],
+  historyIndex: -1,
+  selectedImages: new Set()
 };
 
 // Initialize
@@ -133,6 +137,98 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // Load Data
+// Trial products to load by default
+const TRIAL_PRODUCTS = [
+  {
+    id: 1,
+    qid: "NGH-001",
+    name: "Neon Glitch Hoodie",
+    price: 85,
+    originalPrice: 170,
+    category: "Men",
+    type: "Hoodie",
+    rating: 4.5,
+    description: "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+    images: [
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+    ],
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Black", "White", "Neon Green"],
+    tags: ["TRENDING", "BESTSELLER"],
+    isBestSeller: true,
+    isNew: true
+  },
+  {
+    id: 2,
+    qid: "VCT-002",
+    name: "Vintage Crop Top",
+    price: 45,
+    originalPrice: 90,
+    category: "Women",
+    type: "Crop Top",
+    rating: 4.7,
+    description: "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
+    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+    images: ["https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"],
+    sizes: ["XS", "S", "M", "L"],
+    colors: ["Pink", "White", "Black"],
+    tags: ["VINTAGE", "TRENDING"],
+    isNew: true
+  },
+  {
+    id: 3,
+    qid: "OST-003",
+    name: "Oversized Street Tee",
+    price: 35,
+    originalPrice: 70,
+    category: "Unisex",
+    type: "Oversized T-Shirt",
+    rating: 4.6,
+    description: "Ultra-comfortable oversized t-shirt. Perfect for casual streetwear.",
+    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
+    images: ["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"],
+    sizes: ["M", "L", "XL", "XXL"],
+    colors: ["Black", "White", "Gray"],
+    tags: ["ESSENTIAL", "BESTSELLER"],
+    isBestSeller: true
+  },
+  {
+    id: 4,
+    qid: "PTH-004",
+    name: "Premium Tech Hoodie",
+    price: 95,
+    originalPrice: 190,
+    category: "Men",
+    type: "Hoodie",
+    rating: 4.8,
+    description: "High-tech fabric hoodie with moisture-wicking properties. Perfect for active lifestyle.",
+    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+    images: ["https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"],
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Black", "Navy", "Gray"],
+    tags: ["PREMIUM", "NEW"],
+    isNew: true
+  },
+  {
+    id: 5,
+    qid: "CFT-005",
+    name: "Colorful Festival Tee",
+    price: 40,
+    originalPrice: 80,
+    category: "Unisex",
+    type: "T-Shirt",
+    rating: 4.4,
+    description: "Vibrant and colorful t-shirt perfect for festivals and summer events.",
+    image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500",
+    images: ["https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500"],
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Rainbow", "Yellow", "Orange"],
+    tags: ["COLORFUL", "TRENDING"]
+  }
+];
+
 async function loadData() {
   console.log('📂 Loading data from localStorage...');
   
@@ -172,10 +268,19 @@ async function loadData() {
           
           console.log(`✅ Restored ${state.products.length} products from server backup`);
           showSyncStatus(`✅ Restored ${state.products.length} products from backup`, 'success');
+        } else {
+          // No server backup, load trial products
+          console.log('ℹ️ No server backup, loading trial products...');
+          loadTrialProducts();
         }
+      } else {
+        // Server not available, load trial products
+        console.log('ℹ️ Server not available, loading trial products...');
+        loadTrialProducts();
       }
     } catch (e) {
-      console.log('ℹ️ Server backup not available');
+      console.log('ℹ️ Server backup not available, loading trial products...');
+      loadTrialProducts();
     }
   }
   
@@ -740,34 +845,141 @@ async function handleImageUpload(files) {
   }
 }
 
+// Convert hosting service URLs to direct image URLs
+function convertToDirectImageUrl(url) {
+  try {
+    const urlObj = new URL(url);
+    
+    // PostImage.cc - Convert page URL to direct image URL
+    if (urlObj.hostname.includes('postimg.cc')) {
+      // Extract image ID from URL like https://postimg.cc/G4MYh9cg
+      const imageId = urlObj.pathname.split('/').pop();
+      // Return direct image URL
+      return `https://i.postimg.cc/${imageId}/image.jpg`;
+    }
+    
+    // Imgur - Convert page URL to direct image URL
+    if (urlObj.hostname === 'imgur.com' && !urlObj.hostname.startsWith('i.')) {
+      const imageId = urlObj.pathname.split('/').pop().split('.')[0];
+      return `https://i.imgur.com/${imageId}.jpg`;
+    }
+    
+    // ImgBB - Extract direct URL if it's a page URL
+    if (urlObj.hostname.includes('ibb.co') && !urlObj.hostname.startsWith('i.')) {
+      // For ibb.co, we need to fetch the page to get the direct URL
+      // For now, return as-is and let the preview handle it
+      return url;
+    }
+    
+    // Already a direct image URL
+    return url;
+  } catch (e) {
+    return url;
+  }
+}
+
+// Fetch direct image URL from hosting page
+async function fetchDirectImageUrl(pageUrl) {
+  try {
+    showSyncStatus('🔍 Detecting image URL...', 'success');
+    
+    // Try to convert known hosting services
+    const directUrl = convertToDirectImageUrl(pageUrl);
+    
+    if (directUrl !== pageUrl) {
+      console.log('✅ Converted URL:', pageUrl, '→', directUrl);
+      return directUrl;
+    }
+    
+    // For other services, try common patterns
+    const urlObj = new URL(pageUrl);
+    
+    // Check if it's already a direct image URL
+    if (pageUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i)) {
+      return pageUrl;
+    }
+    
+    // Try adding common image extensions
+    const possibleUrls = [
+      pageUrl,
+      `${pageUrl}.jpg`,
+      `${pageUrl}.png`,
+      pageUrl.replace(/^(https?:\/\/)/, '$1i.')
+    ];
+    
+    // Test each URL
+    for (const testUrl of possibleUrls) {
+      const works = await testImageUrl(testUrl);
+      if (works) {
+        console.log('✅ Found working URL:', testUrl);
+        return testUrl;
+      }
+    }
+    
+    // If nothing works, return original
+    console.warn('⚠️ Could not find direct image URL, using original');
+    return pageUrl;
+    
+  } catch (e) {
+    console.error('Error fetching direct URL:', e);
+    return pageUrl;
+  }
+}
+
+// Test if an image URL works
+function testImageUrl(url) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = url;
+    
+    // Timeout after 3 seconds
+    setTimeout(() => resolve(false), 3000);
+  });
+}
+
 // Alternative: Add image by URL
-window.addImageByUrl = () => {
+window.addImageByUrl = async () => {
   if (state.productForm.images.length >= 10) {
     alert('❌ Maximum 10 images allowed per product');
     return;
   }
   
-  const url = prompt('Enter image URL:\n\nExamples:\n• https://images.unsplash.com/photo-123?w=500\n• https://i.imgur.com/abc123.jpg\n• https://postimages.org/image.jpg\n\nFree hosting:\n• Imgur.com (bulk upload)\n• PostImages.org (no account)\n• ImgBB.com (free API)');
+  const url = prompt('Enter image URL:\n\n✅ Supported:\n• PostImg.cc (page or direct URL)\n• Imgur (page or direct URL)\n• ImgBB\n• Direct image URLs (.jpg, .png, etc.)\n\nExamples:\n• https://postimg.cc/G4MYh9cg\n• https://imgur.com/abc123\n• https://i.imgur.com/abc123.jpg\n• https://images.unsplash.com/photo-123\n\n💡 Tip: Right-click image → Copy Image Address');
   
   if (url && url.trim()) {
-    // Validate URL
     try {
       new URL(url);
       
+      showSyncStatus('🔄 Processing image URL...', 'success');
+      
+      // Convert to direct image URL if needed
+      const directUrl = await fetchDirectImageUrl(url.trim());
+      
       // Test if image loads
       const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
       img.onload = () => {
-        state.productForm.images.push(url);
+        saveImageHistory();
+        state.productForm.images.push(directUrl);
         renderImagePreviews();
         showSyncStatus(`✅ Image ${state.productForm.images.length}/10 added`, 'success');
-        console.log('✅ Image URL added:', url);
+        console.log('✅ Image URL added:', directUrl);
       };
+      
       img.onerror = () => {
-        showSyncStatus('⚠️ Image URL added but may not load', 'error');
-        state.productForm.images.push(url);
+        // Still add it, but warn user
+        saveImageHistory();
+        state.productForm.images.push(directUrl);
         renderImagePreviews();
+        showSyncStatus('⚠️ Image added but preview may not work. It will work on the website.', 'error');
+        console.warn('⚠️ Image preview failed for:', directUrl);
+        console.log('💡 Tip: Try right-clicking the image and selecting "Copy Image Address"');
       };
-      img.src = url;
+      
+      img.src = directUrl;
       
     } catch (e) {
       showSyncStatus('❌ Invalid URL format', 'error');
@@ -776,23 +988,199 @@ window.addImageByUrl = () => {
   }
 };
 
+// Bulk Import Images from BBCode or multiple URLs
+window.bulkImportImages = async () => {
+  const input = prompt(`📦 BULK IMAGE IMPORT\n\nPaste your images here:\n\n✅ Supported formats:\n• BBCode from PostImage\n• Multiple URLs (one per line)\n• Mixed formats\n\nExample BBCode:\n[url=https://postimg.cc/PC6ZrNXj][img]https://i.postimg.cc/PC6ZrNXj/image.png[/img][/url]\n\nExample URLs:\nhttps://postimg.cc/G4MYh9cg\nhttps://imgur.com/abc123\nhttps://i.imgur.com/xyz.jpg`);
+  
+  if (!input || !input.trim()) {
+    return;
+  }
+  
+  showSyncStatus('🔄 Parsing images...', 'success');
+  
+  try {
+    // Extract image URLs from various formats
+    const urls = extractImageUrls(input);
+    
+    if (urls.length === 0) {
+      alert('❌ No valid image URLs found.\n\nPlease paste:\n• BBCode from PostImage\n• Direct image URLs\n• PostImage/Imgur page URLs');
+      return;
+    }
+    
+    // Check if we'll exceed the limit
+    const remaining = 10 - state.productForm.images.length;
+    if (urls.length > remaining) {
+      if (!confirm(`⚠️ Found ${urls.length} images but only ${remaining} slots remaining.\n\nAdd first ${remaining} images?`)) {
+        return;
+      }
+    }
+    
+    const urlsToAdd = urls.slice(0, remaining);
+    
+    showSyncStatus(`📦 Importing ${urlsToAdd.length} images...`, 'success');
+    console.log(`📦 Bulk importing ${urlsToAdd.length} images:`, urlsToAdd);
+    
+    let successCount = 0;
+    let failCount = 0;
+    
+    // Save current state for undo
+    saveImageHistory();
+    
+    // Process each URL
+    for (let i = 0; i < urlsToAdd.length; i++) {
+      const url = urlsToAdd[i];
+      
+      try {
+        showSyncStatus(`🔄 Processing image ${i + 1}/${urlsToAdd.length}...`, 'success');
+        
+        // Convert to direct URL if needed
+        const directUrl = await fetchDirectImageUrl(url);
+        
+        // Verify URL is valid before adding
+        if (directUrl && directUrl.trim()) {
+          state.productForm.images.push(directUrl);
+          successCount++;
+          console.log(`✅ Added image ${i + 1}/${urlsToAdd.length}:`, directUrl);
+        } else {
+          console.warn(`⚠️ Skipped empty URL at position ${i + 1}`);
+          failCount++;
+        }
+        
+        // Small delay to avoid overwhelming the browser
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+      } catch (error) {
+        console.error(`❌ Failed to add image ${i + 1}:`, url, error);
+        failCount++;
+      }
+    }
+    
+    // Update preview only once after all images are added
+    renderImagePreviews();
+    
+    // Show results
+    const message = `✅ Bulk import complete!\n\n✅ Added: ${successCount} images\n${failCount > 0 ? `⚠️ Failed: ${failCount} images\n` : ''}\nTotal: ${state.productForm.images.length}/10`;
+    
+    showSyncStatus(message, successCount > 0 ? 'success' : 'error');
+    alert(message);
+    
+  } catch (error) {
+    console.error('❌ Bulk import error:', error);
+    showSyncStatus('❌ Bulk import failed', 'error');
+    alert('❌ Error during bulk import. Check console for details.');
+  }
+};
+
+// Extract image URLs from various formats
+function extractImageUrls(text) {
+  const urls = [];
+  
+  // 1. Extract from BBCode format: [img]URL[/img]
+  const bbcodeRegex = /\[img\](https?:\/\/[^\]]+)\[\/img\]/gi;
+  let match;
+  while ((match = bbcodeRegex.exec(text)) !== null) {
+    urls.push(match[1]);
+  }
+  
+  // 2. Extract from BBCode with URL wrapper: [url=...][img]URL[/img][/url]
+  const bbcodeUrlRegex = /\[url=[^\]]+\]\[img\](https?:\/\/[^\]]+)\[\/img\]\[\/url\]/gi;
+  while ((match = bbcodeUrlRegex.exec(text)) !== null) {
+    if (!urls.includes(match[1])) {
+      urls.push(match[1]);
+    }
+  }
+  
+  // 3. Extract plain URLs (one per line or space-separated)
+  const urlRegex = /https?:\/\/[^\s\[\]]+/gi;
+  const plainUrls = text.match(urlRegex) || [];
+  plainUrls.forEach(url => {
+    // Clean up URL (remove trailing punctuation)
+    const cleanUrl = url.replace(/[,;.!?]+$/, '');
+    if (!urls.includes(cleanUrl)) {
+      urls.push(cleanUrl);
+    }
+  });
+  
+  // 4. Remove duplicates and filter valid image URLs
+  const uniqueUrls = [...new Set(urls)];
+  
+  // Filter to only image-related URLs
+  const imageUrls = uniqueUrls.filter(url => {
+    try {
+      const urlObj = new URL(url);
+      // Accept direct image URLs or known hosting services
+      return (
+        url.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i) || // Direct image
+        urlObj.hostname.includes('postimg') || // PostImage
+        urlObj.hostname.includes('imgur') || // Imgur
+        urlObj.hostname.includes('imgbb') || // ImgBB
+        urlObj.hostname.includes('unsplash') || // Unsplash
+        urlObj.hostname.includes('cloudinary') || // Cloudinary
+        urlObj.hostname.includes('images') // Generic image CDN
+      );
+    } catch (e) {
+      return false;
+    }
+  });
+  
+  console.log(`📊 Extracted ${imageUrls.length} image URLs from input`);
+  return imageUrls;
+}
+
 function renderImagePreviews() {
   const grid = document.getElementById('imagePreviewGrid');
-  grid.innerHTML = state.productForm.images.map((img, index) => {
+  
+  // Add controls header
+  const hasImages = state.productForm.images.length > 0;
+  const hasSelection = state.selectedImages.size > 0;
+  
+  const controlsHtml = hasImages ? `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; background: rgba(0,255,136,0.05); border-radius: 8px;">
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button type="button" onclick="selectAllImages()" class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;">
+          ${state.selectedImages.size === state.productForm.images.length ? '☑️ Deselect All' : '☐ Select All'}
+        </button>
+        ${hasSelection ? `
+          <button type="button" onclick="deleteSelectedImages()" class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; background: #ff4444; color: white;">
+            🗑️ Delete Selected (${state.selectedImages.size})
+          </button>
+        ` : ''}
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button type="button" onclick="undoImageAction()" class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;" ${state.historyIndex <= 0 ? 'disabled' : ''} title="Undo (Ctrl+Z)">
+          ↶ Undo
+        </button>
+        <button type="button" onclick="redoImageAction()" class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;" ${state.historyIndex >= state.imageHistory.length - 1 ? 'disabled' : ''} title="Redo (Ctrl+Y)">
+          ↷ Redo
+        </button>
+        <span style="font-size: 12px; color: var(--text-muted);">${state.productForm.images.length}/10 images</span>
+      </div>
+    </div>
+  ` : '';
+  
+  grid.innerHTML = controlsHtml + state.productForm.images.map((img, index) => {
+    // Create a safe URL for display
+    const displayUrl = img;
+    const isExternal = img.startsWith('http');
+    const isSelected = state.selectedImages.has(index);
+    
     return `
-      <div class="image-preview-item" draggable="true" data-index="${index}">
-        <img src="${img}" 
+      <div class="image-preview-item ${isSelected ? 'selected' : ''}" draggable="true" data-index="${index}" onclick="toggleImageSelection(${index}, event)">
+        <img src="${displayUrl}" 
              alt="Product ${index + 1}" 
-             crossorigin="anonymous"
+             ${isExternal ? 'crossorigin="anonymous"' : ''}
              loading="lazy"
-             onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22250%22%3E%3Crect fill=%22%23333%22 width=%22200%22 height=%22250%22/%3E%3Ctext fill=%22%2300ff88%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Arial%22 font-size=%2214%22%3EImage ${index + 1}%3C/text%3E%3Ctext fill=%22%23666%22 x=%2250%25%22 y=%2260%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Arial%22 font-size=%2210%22%3EPreview%3C/text%3E%3C/svg%3E';">
+             referrerpolicy="no-referrer"
+             onerror="handleImageError(this, ${index})">
         ${index === 0 ? '<span class="image-main-badge">MAIN</span>' : ''}
         <span class="image-order-badge">${index + 1}</span>
+        ${isSelected ? '<span class="image-selected-badge">✓</span>' : ''}
         <div class="image-preview-overlay">
           <span class="image-info">Image ${index + 1}</span>
           <div class="image-actions">
-            <button type="button" class="image-action-btn" onclick="cropImage(${index}, 'product')" title="Crop">✂️</button>
-            <button type="button" class="image-action-btn delete" onclick="removeImage(${index})" title="Delete">×</button>
+            <button type="button" class="image-action-btn" onclick="event.stopPropagation(); viewImageUrl(${index})" title="View URL">🔗</button>
+            <button type="button" class="image-action-btn" onclick="event.stopPropagation(); cropImage(${index}, 'product')" title="Crop">✂️</button>
+            <button type="button" class="image-action-btn delete" onclick="event.stopPropagation(); removeImage(${index})" title="Delete">×</button>
           </div>
         </div>
       </div>
@@ -845,10 +1233,159 @@ function setupImageDragAndDrop() {
   });
 }
 
+// Handle image loading errors
+window.handleImageError = (imgElement, index) => {
+  console.warn(`⚠️ Image ${index + 1} failed to load:`, state.productForm.images[index]);
+  
+  // Try without crossorigin
+  if (imgElement.crossOrigin) {
+    imgElement.crossOrigin = null;
+    imgElement.src = state.productForm.images[index];
+    return;
+  }
+  
+  // Show placeholder with URL info
+  const url = state.productForm.images[index];
+  const shortUrl = url.length > 30 ? url.substring(0, 30) + '...' : url;
+  
+  imgElement.onerror = null;
+  imgElement.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='250'%3E%3Crect fill='%23333' width='200' height='250'/%3E%3Ctext fill='%2300ff88' x='50%25' y='40%25' text-anchor='middle' font-family='Arial' font-size='14'%3EImage ${index + 1}%3C/text%3E%3Ctext fill='%23666' x='50%25' y='55%25' text-anchor='middle' font-family='Arial' font-size='9'%3EPreview unavailable%3C/text%3E%3Ctext fill='%23888' x='50%25' y='65%25' text-anchor='middle' font-family='Arial' font-size='8'%3EWill work on website%3C/text%3E%3C/svg%3E`;
+  
+  console.log('💡 Image will still work on the website, just preview unavailable in admin panel');
+};
+
+// View image URL
+window.viewImageUrl = (index) => {
+  const url = state.productForm.images[index];
+  const message = `Image ${index + 1} URL:\n\n${url}\n\n✅ This URL will be used on your website.\n\nOptions:\n- Click OK to copy URL\n- Click Cancel to close`;
+  
+  if (confirm(message)) {
+    // Copy to clipboard
+    navigator.clipboard.writeText(url).then(() => {
+      showSyncStatus('✅ URL copied to clipboard', 'success');
+    }).catch(() => {
+      // Fallback: show in prompt for manual copy
+      prompt('Copy this URL:', url);
+    });
+  }
+};
+
 window.removeImage = (index) => {
-  state.productForm.images.splice(index, 1);
+  if (confirm(`Remove image ${index + 1}?`)) {
+    saveImageHistory();
+    state.productForm.images.splice(index, 1);
+    state.selectedImages.clear();
+    renderImagePreviews();
+    showSyncStatus(`🗑️ Image ${index + 1} removed`, 'success');
+  }
+};
+
+// Save current image state to history for undo/redo
+function saveImageHistory() {
+  // Remove any future history if we're not at the end
+  if (state.historyIndex < state.imageHistory.length - 1) {
+    state.imageHistory = state.imageHistory.slice(0, state.historyIndex + 1);
+  }
+  
+  // Save current state
+  state.imageHistory.push([...state.productForm.images]);
+  state.historyIndex++;
+  
+  // Limit history to 20 states
+  if (state.imageHistory.length > 20) {
+    state.imageHistory.shift();
+    state.historyIndex--;
+  }
+}
+
+// Undo image action
+window.undoImageAction = () => {
+  if (state.historyIndex > 0) {
+    state.historyIndex--;
+    state.productForm.images = [...state.imageHistory[state.historyIndex]];
+    state.selectedImages.clear();
+    renderImagePreviews();
+    showSyncStatus('↶ Undo', 'success');
+  }
+};
+
+// Redo image action
+window.redoImageAction = () => {
+  if (state.historyIndex < state.imageHistory.length - 1) {
+    state.historyIndex++;
+    state.productForm.images = [...state.imageHistory[state.historyIndex]];
+    state.selectedImages.clear();
+    renderImagePreviews();
+    showSyncStatus('↷ Redo', 'success');
+  }
+};
+
+// Toggle image selection
+window.toggleImageSelection = (index, event) => {
+  // Don't toggle if clicking on action buttons
+  if (event && event.target.closest('.image-action-btn')) {
+    return;
+  }
+  
+  if (state.selectedImages.has(index)) {
+    state.selectedImages.delete(index);
+  } else {
+    state.selectedImages.add(index);
+  }
   renderImagePreviews();
 };
+
+// Select all images
+window.selectAllImages = () => {
+  if (state.selectedImages.size === state.productForm.images.length) {
+    // Deselect all
+    state.selectedImages.clear();
+  } else {
+    // Select all
+    state.selectedImages.clear();
+    state.productForm.images.forEach((_, index) => {
+      state.selectedImages.add(index);
+    });
+  }
+  renderImagePreviews();
+};
+
+// Delete selected images
+window.deleteSelectedImages = () => {
+  if (state.selectedImages.size === 0) {
+    return;
+  }
+  
+  if (confirm(`Delete ${state.selectedImages.size} selected image(s)?`)) {
+    saveImageHistory();
+    
+    // Sort indices in descending order to avoid index shifting issues
+    const indicesToDelete = Array.from(state.selectedImages).sort((a, b) => b - a);
+    
+    indicesToDelete.forEach(index => {
+      state.productForm.images.splice(index, 1);
+    });
+    
+    state.selectedImages.clear();
+    renderImagePreviews();
+    showSyncStatus(`🗑️ Deleted ${indicesToDelete.length} image(s)`, 'success');
+  }
+};
+
+// Keyboard shortcuts for undo/redo
+document.addEventListener('keydown', (e) => {
+  // Ctrl+Z or Cmd+Z for undo
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+    e.preventDefault();
+    undoImageAction();
+  }
+  
+  // Ctrl+Y or Cmd+Shift+Z for redo
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'z'))) {
+    e.preventDefault();
+    redoImageAction();
+  }
+});
 
 async function handleSizeChartUpload(file) {
   if (file && file.type.startsWith('image/')) {
@@ -2185,31 +2722,63 @@ window.forceClearAllData = () => {
 };
 
 
-// Quick clear data function (accessible from sidebar)
-window.quickClearData = () => {
+// Load trial products
+function loadTrialProducts() {
+  console.log('📦 Loading trial products...');
+  state.products = JSON.parse(JSON.stringify(TRIAL_PRODUCTS)); // Deep clone
+  
+  // Save to localStorage
+  localStorage.setItem('elevez_products', JSON.stringify(state.products));
+  
+  console.log(`✅ Loaded ${state.products.length} trial products`);
+  showSyncStatus(`✅ Loaded ${state.products.length} trial products`, 'success');
+  
+  setTimeout(() => {
+    showSyncStatus('💡 These are sample products. Edit or delete them to add your own!', 'success');
+  }, 2000);
+}
+
+// Clear all data function (used by "Clear All" button)
+window.clearAllData = () => {
   const products = state.products.length;
   const collections = state.collections.length;
   const orders = state.orders.length;
   
-  const confirmMsg = `⚠️ CLEAR ALL DATA?\n\nThis will delete:\n• ${products} products\n• ${collections} collections\n• ${orders} orders\n\nThis action CANNOT be undone!\n\nClick OK to proceed.`;
+  const confirmMsg = `⚠️ CLEAR ALL DATA?\n\nThis will delete:\n• ${products} products\n• ${collections} collections\n• ${orders} orders\n• All tags, categories, and types\n\nThis action CANNOT be undone!\n\nClick OK to proceed.`;
   
   if (confirm(confirmMsg)) {
+    // Clear localStorage
     localStorage.removeItem('elevez_products');
     localStorage.removeItem('elevez_collections');
     localStorage.removeItem('elevez_orders');
     localStorage.removeItem('elevez_tags');
     localStorage.removeItem('elevez_categories');
     localStorage.removeItem('elevez_types');
+    localStorage.removeItem('elevez_colors');
+    localStorage.removeItem('elevez_last_save');
     
+    // Clear state
     state.products = [];
     state.collections = [];
     state.orders = [];
     
+    // Re-render
     renderCurrentView();
     showSyncStatus('✅ All data cleared!', 'success');
     
-    alert('✅ All data cleared successfully!\n\nYou can now add products without any issues.');
+    // Ask if user wants to load trial products
+    setTimeout(() => {
+      if (confirm('✅ All data cleared!\n\nWould you like to load trial products to get started?')) {
+        loadTrialProducts();
+        renderCurrentView();
+      }
+    }, 500);
   }
+};
+
+// Quick clear data function (accessible from sidebar)
+window.quickClearData = () => {
+  clearAllData();
 };
 
 
