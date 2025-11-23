@@ -772,10 +772,11 @@ function renderImagePreviews() {
   grid.innerHTML = state.productForm.images.map((img, index) => {
     return `
       <div class="image-preview-item" draggable="true" data-index="${index}">
-        <img src="${img}" alt="Product ${index + 1}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255,0,0,0.1); color: #ff8888; font-size: 12px; text-align: center; padding: 10px;">
-          ⚠️ Image failed to load
-        </div>
+        <img src="${img}" 
+             alt="Product ${index + 1}" 
+             crossorigin="anonymous"
+             loading="lazy"
+             onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22250%22%3E%3Crect fill=%22%23333%22 width=%22200%22 height=%22250%22/%3E%3Ctext fill=%22%2300ff88%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Arial%22 font-size=%2214%22%3EImage ${index + 1}%3C/text%3E%3Ctext fill=%22%23666%22 x=%2250%25%22 y=%2260%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Arial%22 font-size=%2210%22%3EPreview%3C/text%3E%3C/svg%3E';">
         ${index === 0 ? '<span class="image-main-badge">MAIN</span>' : ''}
         <span class="image-order-badge">${index + 1}</span>
         <div class="image-preview-overlay">
