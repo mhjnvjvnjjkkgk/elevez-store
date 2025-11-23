@@ -1208,13 +1208,6 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   
   useEffect(() => {
     if (product) {
-      console.log('🔍 Product loaded:', {
-        id: product.id,
-        name: product.name,
-        mainImage: product.image,
-        imagesArray: product.images,
-        imageCount: product.images?.length || 0
-      });
       setActiveImage(product.image);
       if (product.colors?.[0]) setSelectedColor(product.colors[0]);
     }
@@ -1254,14 +1247,6 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
              <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden mb-6 group">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#00ff88]/10 via-transparent to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" />
                 
-                {/* Debug Info */}
-                <div className="absolute top-4 left-4 bg-black/80 text-white text-xs p-2 rounded z-20 max-w-[300px] break-all">
-                  <div className="font-bold text-[#00ff88] mb-1">DEBUG INFO:</div>
-                  <div>URL: {activeImage.substring(0, 60)}...</div>
-                  <div>Width Param: {activeImage.match(/w=(\d+)/)?.[1] || 'none'}</div>
-                  <div>Quality: {activeImage.match(/q=(\d+)/)?.[1] || 'none'}</div>
-                </div>
-                
                 <img 
                   src={activeImage} 
                   alt={product.name} 
@@ -1269,16 +1254,6 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                   loading="eager"
                   decoding="sync"
                   fetchPriority="high"
-                  onLoad={(e) => {
-                    const img = e.target as HTMLImageElement;
-                    console.log('🖼️ Image loaded:', {
-                      url: activeImage,
-                      naturalWidth: img.naturalWidth,
-                      naturalHeight: img.naturalHeight,
-                      displayWidth: img.width,
-                      displayHeight: img.height
-                    });
-                  }}
                   style={{ 
                     imageRendering: '-webkit-optimize-contrast',
                     WebkitImageRendering: '-webkit-optimize-contrast',

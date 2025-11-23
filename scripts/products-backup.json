@@ -157,38 +157,7 @@
       ]
     },
     {
-      "id": 1763907924781,
-      "qid": "FAKEEEEE",
-      "name": "Dont Look back hoodie",
-      "price": 800,
-      "originalPrice": 1500,
-      "category": "Men",
-      "type": "Hoodie",
-      "rating": 4.5,
-      "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
-      "image": "https://i.postimg.cc/PC6ZrNXj/image.jpg",
-      "images": [
-        "https://i.postimg.cc/PC6ZrNXj/image.jpg",
-        "https://i.postimg.cc/G4MYh9cg/image.jpg",
-        "https://i.postimg.cc/jD8NdCsG/image.jpg",
-        "https://i.postimg.cc/BjhDQtqr/image.jpg"
-      ],
-      "sizes": [
-        "S",
-        "M",
-        "L",
-        "XL"
-      ],
-      "colors": [],
-      "tags": [
-        "TRENDING",
-        "BESTSELLER"
-      ],
-      "isBestSeller": true,
-      "isNew": true
-    },
-    {
-      "id": 1763915057614,
+      "id": 1763915268195,
       "qid": "1222",
       "name": "Dont Look back hoodie",
       "price": 850,
@@ -196,21 +165,19 @@
       "category": "Men",
       "type": "Hoodie",
       "rating": 4.5,
-      "image": "https://i.ibb.co/svktk85k/Gemini-Generated-Image-gpaa7hgpaa7hgpaa.png",
+      "image": "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
       "images": [
+        "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
         "https://i.ibb.co/svktk85k/Gemini-Generated-Image-gpaa7hgpaa7hgpaa.png",
         "https://i.ibb.co/FbLmZBJg/use-fo-carousal.png",
-        "https://i.ibb.co/gFM8kzCT/Gemini-Generated-Image-k4d9bck4d9bck4d9.png",
-        "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png"
+        "https://i.ibb.co/gFM8kzCT/Gemini-Generated-Image-k4d9bck4d9bck4d9.png"
       ],
       "sizes": [
         "M",
         "S",
         "XS"
       ],
-      "colors": [
-        "Black"
-      ],
+      "colors": [],
       "showInHome": true,
       "showInShop": true,
       "showInCollections": true
