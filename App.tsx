@@ -425,6 +425,9 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
           src={product.image} 
           alt={product.name}
           className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110 group-hover:brightness-110"
+          loading="lazy"
+          decoding="async"
+          style={{ imageRendering: 'high-quality' }}
         />
         
         {/* Quick View Overlay Button */}
@@ -503,6 +506,9 @@ const QuickViewModal = () => {
               src={activeProduct.image} 
               alt={activeProduct.name} 
               className="w-full h-full object-cover"
+              loading="eager"
+              decoding="sync"
+              style={{ imageRendering: 'high-quality' }}
             />
             <button 
               onClick={closeQuickView} 
@@ -634,7 +640,7 @@ const CartSidebar = () => {
                     key={item.cartId} 
                     className="flex gap-4 bg-zinc-900/50 p-3 rounded-lg border border-white/5"
                   >
-                    <img src={item.image} alt={item.name} className="w-20 h-24 object-cover rounded bg-zinc-900" />
+                    <img src={item.image} alt={item.name} className="w-20 h-24 object-cover rounded bg-zinc-900" loading="lazy" style={{ imageRendering: 'high-quality' }} />
                     <div className="flex-1 flex flex-col justify-between">
                       <div>
                         <h3 className="font-bold text-lg line-clamp-1">{item.name}</h3>
@@ -1202,6 +1208,13 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   
   useEffect(() => {
     if (product) {
+      console.log('🔍 Product loaded:', {
+        id: product.id,
+        name: product.name,
+        mainImage: product.image,
+        imagesArray: product.images,
+        imageCount: product.images?.length || 0
+      });
       setActiveImage(product.image);
       if (product.colors?.[0]) setSelectedColor(product.colors[0]);
     }
@@ -1209,7 +1222,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   
   if (!product) return <div className="min-h-screen flex items-center justify-center">Product Not Found</div>;
 
-  const productImages = product.images && product.images.length > 0 ? product.images : [product.image, product.image, product.image];
+  const productImages = product.images && product.images.length > 0 ? product.images.slice(0, 5) : [product.image];
 
   const getColorCode = (name: string) => {
      const colors: {[key: string]: string} = {
@@ -1235,22 +1248,96 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
          </Link>
 
          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-           {/* Left Column - Images */}
+           {/* Left Column - Images with Liquid Glass Layout */}
            <div className="lg:col-span-7">
-             <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden border border-white/5 mb-4 group">
-                <img src={activeImage} alt={product.name} className="w-full h-full object-cover" />
-                <div className="absolute top-4 right-4 bg-red-600 text-white text-sm font-bold px-3 py-1 rounded-sm">SALE</div>
+             {/* Main Image */}
+             <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden mb-6 group">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00ff88]/10 via-transparent to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" />
+                
+                {/* Debug Info */}
+                <div className="absolute top-4 left-4 bg-black/80 text-white text-xs p-2 rounded z-20 max-w-[300px] break-all">
+                  <div className="font-bold text-[#00ff88] mb-1">DEBUG INFO:</div>
+                  <div>URL: {activeImage.substring(0, 60)}...</div>
+                  <div>Width Param: {activeImage.match(/w=(\d+)/)?.[1] || 'none'}</div>
+                  <div>Quality: {activeImage.match(/q=(\d+)/)?.[1] || 'none'}</div>
+                </div>
+                
+                <img 
+                  src={activeImage} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                  loading="eager"
+                  decoding="sync"
+                  fetchPriority="high"
+                  onLoad={(e) => {
+                    const img = e.target as HTMLImageElement;
+                    console.log('🖼️ Image loaded:', {
+                      url: activeImage,
+                      naturalWidth: img.naturalWidth,
+                      naturalHeight: img.naturalHeight,
+                      displayWidth: img.width,
+                      displayHeight: img.height
+                    });
+                  }}
+                  style={{ 
+                    imageRendering: '-webkit-optimize-contrast',
+                    WebkitImageRendering: '-webkit-optimize-contrast',
+                    msInterpolationMode: 'bicubic',
+                    transform: 'translateZ(0)',
+                    willChange: 'transform'
+                  } as React.CSSProperties}
+                />
+                <div className="absolute top-4 right-4 bg-red-600 text-white text-sm font-bold px-3 py-1 rounded-sm shadow-lg">SALE</div>
+                
+                {/* Liquid Glass Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
              </div>
-             <div className="grid grid-cols-2 gap-4">
-                {productImages.slice(0, 2).map((img, idx) => (
-                    <div 
+             
+             {/* Thumbnail Grid - Liquid Glass Layout */}
+             <div className="grid grid-cols-5 gap-3">
+                {productImages.map((img, idx) => (
+                    <motion.div 
                       key={idx}
                       onClick={() => setActiveImage(img)}
-                      className={`aspect-square rounded-lg overflow-hidden border ${activeImage === img ? 'border-[#00ff88]' : 'border-white/5'} cursor-pointer opacity-80 hover:opacity-100 transition-all`}
+                      whileHover={{ scale: 1.05, y: -4 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`relative aspect-square rounded-xl overflow-hidden cursor-pointer group/thumb transition-all duration-300 ${
+                        activeImage === img 
+                          ? 'ring-2 ring-[#00ff88] shadow-[0_0_20px_rgba(0,255,136,0.4)]' 
+                          : 'ring-1 ring-white/10 hover:ring-white/30'
+                      }`}
                     >
-                       <img src={img} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover" />
-                    </div>
+                       {/* Liquid Glass Effect */}
+                       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-[2px] opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-300 z-10" />
+                       
+                       {/* Image */}
+                       <img 
+                         src={img} 
+                         alt={`View ${idx + 1}`} 
+                         className="w-full h-full object-cover transition-all duration-500 group-hover/thumb:scale-110 group-hover/thumb:brightness-110" 
+                         loading="eager"
+                         decoding="sync"
+                         style={{ imageRendering: 'high-quality' }}
+                       />
+                       
+                       {/* Active Indicator */}
+                       {activeImage === img && (
+                         <motion.div 
+                           initial={{ scale: 0 }}
+                           animate={{ scale: 1 }}
+                           className="absolute inset-0 border-2 border-[#00ff88] rounded-xl pointer-events-none"
+                         />
+                       )}
+                       
+                       {/* Hover Glow */}
+                       <div className="absolute inset-0 bg-gradient-to-t from-[#00ff88]/20 via-transparent to-transparent opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-300" />
+                    </motion.div>
                 ))}
+             </div>
+             
+             {/* Image Counter */}
+             <div className="mt-4 text-center text-sm text-gray-500">
+               <span className="text-[#00ff88] font-bold">{productImages.indexOf(activeImage) + 1}</span> / {productImages.length}
              </div>
            </div>
 
@@ -1965,7 +2052,7 @@ const Checkout = () => {
                 <div className="space-y-4 mb-6">
                   {items.map((item) => (
                     <div key={item.cartId} className="flex gap-3 pb-4 border-b border-white/5">
-                      <img src={item.image} alt={item.name} className="w-16 h-20 object-cover rounded bg-zinc-900" />
+                      <img src={item.image} alt={item.name} className="w-16 h-20 object-cover rounded bg-zinc-900" loading="lazy" style={{ imageRendering: 'high-quality' }} />
                       <div className="flex-1">
                         <h4 className="font-bold text-sm line-clamp-1">{item.name}</h4>
                         <p className="text-xs text-gray-400 mt-1">{item.size} • {item.color} • Qty: {item.quantity}</p>
@@ -2333,7 +2420,10 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                     <div className="relative aspect-[3/4] overflow-hidden bg-zinc-900">
                       <img 
                         src={product.image} 
-                        alt={product.name} 
+                        alt={product.name}
+                        loading="lazy"
+                        decoding="async"
+                        style={{ imageRendering: 'high-quality' }} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <button

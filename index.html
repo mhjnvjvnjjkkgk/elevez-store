@@ -31,6 +31,27 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #00ff88;
       }
+      /* High-quality image rendering */
+      img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        image-rendering: high-quality;
+        -ms-interpolation-mode: bicubic;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+        -webkit-font-smoothing: antialiased;
+        -webkit-backface-visibility: hidden;
+        -moz-backface-visibility: hidden;
+        -webkit-perspective: 1000;
+        perspective: 1000;
+      }
+      /* Prevent image compression in containers */
+      .object-cover {
+        image-rendering: high-quality;
+      }
+      .object-contain {
+        image-rendering: high-quality;
+      }
     </style>
   <script type="importmap">
 {

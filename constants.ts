@@ -4,7 +4,7 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: 23/11/2025, 8:53:55 pm
+// Last update: 23/11/2025, 9:54:19 pm
 export const PRODUCTS: Product[] = [
   {
     "id": 1,
@@ -192,6 +192,34 @@ export const PRODUCTS: Product[] = [
     ],
     "isBestSeller": true,
     "isNew": true
+  },
+  {
+    "id": 1763915057614,
+    "qid": "1222",
+    "name": "Dont Look back hoodie",
+    "price": 850,
+    "originalPrice": 1500,
+    "category": "Men",
+    "type": "Hoodie",
+    "rating": 4.5,
+    "image": "https://i.ibb.co/svktk85k/Gemini-Generated-Image-gpaa7hgpaa7hgpaa.png",
+    "images": [
+      "https://i.ibb.co/svktk85k/Gemini-Generated-Image-gpaa7hgpaa7hgpaa.png",
+      "https://i.ibb.co/FbLmZBJg/use-fo-carousal.png",
+      "https://i.ibb.co/gFM8kzCT/Gemini-Generated-Image-k4d9bck4d9bck4d9.png",
+      "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png"
+    ],
+    "sizes": [
+      "M",
+      "S",
+      "XS"
+    ],
+    "colors": [
+      "Black"
+    ],
+    "showInHome": true,
+    "showInShop": true,
+    "showInCollections": true
   }
 ];
 

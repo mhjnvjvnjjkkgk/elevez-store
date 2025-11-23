@@ -864,10 +864,26 @@ function convertToDirectImageUrl(url) {
       return `https://i.imgur.com/${imageId}.jpg`;
     }
     
-    // ImgBB - Extract direct URL if it's a page URL
-    if (urlObj.hostname.includes('ibb.co') && !urlObj.hostname.startsWith('i.')) {
-      // For ibb.co, we need to fetch the page to get the direct URL
-      // For now, return as-is and let the preview handle it
+    // ImgBB - Convert page URL to direct image URL
+    // URLs like https://ibb.co/WWqsqmDq need to be converted to https://i.ibb.co/XXX/image.jpg
+    if (urlObj.hostname.includes('ibb.co')) {
+      // If it's already a direct URL (i.ibb.co), return as-is
+      if (urlObj.hostname.startsWith('i.')) {
+        return url;
+      }
+      
+      // Extract image ID from URL like https://ibb.co/WWqsqmDq
+      const imageId = urlObj.pathname.split('/').filter(p => p).pop();
+      
+      // ImgBB direct URLs follow pattern: https://i.ibb.co/{imageId}/{filename}
+      // We'll use a generic filename since we don't know the original
+      // The actual direct link will be fetched when the image loads
+      console.log(`🔄 ImgBB page URL detected: ${url}`);
+      console.log(`📝 Image ID: ${imageId}`);
+      console.log(`⚠️ Note: ImgBB requires fetching the page to get the direct URL`);
+      console.log(`💡 Tip: Use "Direct link" from ImgBB instead of page URL for best results`);
+      
+      // Return the page URL - we'll handle it in fetchDirectImageUrl
       return url;
     }
     
@@ -883,6 +899,11 @@ async function fetchDirectImageUrl(pageUrl) {
   try {
     showSyncStatus('🔍 Detecting image URL...', 'success');
     
+    // Check if it's already a direct image URL
+    if (pageUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i)) {
+      return pageUrl;
+    }
+    
     // Try to convert known hosting services
     const directUrl = convertToDirectImageUrl(pageUrl);
     
@@ -891,15 +912,41 @@ async function fetchDirectImageUrl(pageUrl) {
       return directUrl;
     }
     
-    // For other services, try common patterns
+    // Special handling for ImgBB page URLs
     const urlObj = new URL(pageUrl);
-    
-    // Check if it's already a direct image URL
-    if (pageUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i)) {
-      return pageUrl;
+    if (urlObj.hostname.includes('ibb.co') && !urlObj.hostname.startsWith('i.')) {
+      console.log('🔄 Fetching ImgBB direct URL from page...');
+      showSyncStatus('🔄 Fetching ImgBB image...', 'success');
+      
+      try {
+        // Fetch the page HTML
+        const response = await fetch(pageUrl);
+        const html = await response.text();
+        
+        // Extract direct image URL from HTML
+        // ImgBB embeds the direct URL in meta tags and data attributes
+        const ogImageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
+        const dataUrlMatch = html.match(/data-url="([^"]+)"/);
+        const imgSrcMatch = html.match(/<img[^>]+src="(https:\/\/i\.ibb\.co\/[^"]+)"/);
+        
+        const extractedUrl = ogImageMatch?.[1] || dataUrlMatch?.[1] || imgSrcMatch?.[1];
+        
+        if (extractedUrl) {
+          console.log('✅ Extracted ImgBB direct URL:', extractedUrl);
+          return extractedUrl;
+        } else {
+          console.warn('⚠️ Could not extract direct URL from ImgBB page');
+          alert(`⚠️ Could not extract direct image URL from ImgBB page.\n\nPlease use the "Direct link" from ImgBB instead:\n1. Open image on ImgBB\n2. Click "Get share links"\n3. Copy "Direct link"\n4. Paste that URL instead`);
+          return null;
+        }
+      } catch (fetchError) {
+        console.error('❌ Error fetching ImgBB page:', fetchError);
+        alert(`❌ Could not fetch ImgBB page (CORS restriction).\n\nPlease use the "Direct link" from ImgBB:\n1. Open image on ImgBB\n2. Click "Get share links"\n3. Copy "Direct link" (starts with https://i.ibb.co/)\n4. Paste that URL instead`);
+        return null;
+      }
     }
     
-    // Try adding common image extensions
+    // For other services, try common patterns
     const possibleUrls = [
       pageUrl,
       `${pageUrl}.jpg`,
@@ -990,7 +1037,7 @@ window.addImageByUrl = async () => {
 
 // Bulk Import Images from BBCode or multiple URLs
 window.bulkImportImages = async () => {
-  const input = prompt(`📦 BULK IMAGE IMPORT\n\nPaste your images here:\n\n✅ Supported formats:\n• BBCode from PostImage\n• Multiple URLs (one per line)\n• Mixed formats\n\nExample BBCode:\n[url=https://postimg.cc/PC6ZrNXj][img]https://i.postimg.cc/PC6ZrNXj/image.png[/img][/url]\n\nExample URLs:\nhttps://postimg.cc/G4MYh9cg\nhttps://imgur.com/abc123\nhttps://i.imgur.com/xyz.jpg`);
+  const input = prompt(`📦 BULK IMAGE IMPORT\n\nPaste your images here (one per line):\n\n✅ Supported formats:\n• ImgBB Direct Links (https://i.ibb.co/...)\n• Imgur Direct Links (https://i.imgur.com/...)\n• BBCode from PostImage\n• Any direct image URLs\n\n💡 For ImgBB:\n1. Upload to ImgBB\n2. Click "Get share links"\n3. Copy "Direct link" (starts with https://i.ibb.co/)\n4. Paste here (one per line)\n\nExample:\nhttps://i.ibb.co/ABC123/image.jpg\nhttps://i.ibb.co/XYZ789/photo.png\nhttps://i.imgur.com/abc123.jpg`);
   
   if (!input || !input.trim()) {
     return;
@@ -1075,14 +1122,14 @@ window.bulkImportImages = async () => {
 function extractImageUrls(text) {
   const urls = [];
   
-  // 1. Extract from BBCode format: [img]URL[/img]
-  const bbcodeRegex = /\[img\](https?:\/\/[^\]]+)\[\/img\]/gi;
+  // 1. Extract from HTML <img> tags: <img src="URL">
+  const htmlImgRegex = /<img[^>]+src=["'](https?:\/\/[^"']+)["']/gi;
   let match;
-  while ((match = bbcodeRegex.exec(text)) !== null) {
+  while ((match = htmlImgRegex.exec(text)) !== null) {
     urls.push(match[1]);
   }
   
-  // 2. Extract from BBCode with URL wrapper: [url=...][img]URL[/img][/url]
+  // 3. Extract from BBCode with URL wrapper: [url=...][img]URL[/img][/url]
   const bbcodeUrlRegex = /\[url=[^\]]+\]\[img\](https?:\/\/[^\]]+)\[\/img\]\[\/url\]/gi;
   while ((match = bbcodeUrlRegex.exec(text)) !== null) {
     if (!urls.includes(match[1])) {
@@ -1090,18 +1137,18 @@ function extractImageUrls(text) {
     }
   }
   
-  // 3. Extract plain URLs (one per line or space-separated)
-  const urlRegex = /https?:\/\/[^\s\[\]]+/gi;
+  // 4. Extract plain URLs (one per line or space-separated)
+  const urlRegex = /https?:\/\/[^\s\[\]<>]+/gi;
   const plainUrls = text.match(urlRegex) || [];
   plainUrls.forEach(url => {
-    // Clean up URL (remove trailing punctuation)
-    const cleanUrl = url.replace(/[,;.!?]+$/, '');
+    // Clean up URL (remove trailing punctuation and HTML artifacts)
+    const cleanUrl = url.replace(/[,;.!?"']+$/, '').replace(/["'>]+$/, '');
     if (!urls.includes(cleanUrl)) {
       urls.push(cleanUrl);
     }
   });
   
-  // 4. Remove duplicates and filter valid image URLs
+  // 5. Remove duplicates and filter valid image URLs
   const uniqueUrls = [...new Set(urls)];
   
   // Filter to only image-related URLs
