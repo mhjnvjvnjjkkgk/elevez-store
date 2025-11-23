@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Firebase Connection</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .status {
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 2px solid #333;
+    }
+    .success { border-color: #00ff88; background: rgba(0,255,136,0.1); }
+    .error { border-color: #ff4444; background: rgba(255,68,68,0.1); }
+    .loading { border-color: #ffaa00; background: rgba(255,170,0,0.1); }
+    button {
+      background: #00ff88;
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 10px 5px;
+    }
+    button:hover { background: #00dd77; }
+    pre {
+      background: #000;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔥 Firebase Connection Test</h1>
+  
+  <div id="status" class="status loading">
+    <h2>Testing Firebase Connection...</h2>
+    <p>Please wait...</p>
+  </div>
+
+  <div id="details"></div>
+
+  <div>
+    <button onclick="testConnection()">🔄 Test Again</button>
+    <button onclick="testOrders()">📦 Test Orders Collection</button>
+  </div>
+
+  <script type="module">
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    };
+
+    let db = null;
+
+    async function initFirebase() {
+      try {
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+        const { getFirestore, collection, getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        
+        return { success: true, db };
+      } catch (error) {
+        return { success: false, error: error.message };
+      }
+    }
+
+    async function testConnection() {
+      const statusDiv = document.getElementById('status');
+      const detailsDiv = document.getElementById('details');
+      
+      statusDiv.className = 'status loading';
+      statusDiv.innerHTML = '<h2>Testing Firebase Connection...</h2><p>Please wait...</p>';
+      detailsDiv.innerHTML = '';
+
+      const result = await initFirebase();
+      
+      if (result.success) {
+        statusDiv.className = 'status success';
+        statusDiv.innerHTML = `
+          <h2>✅ Firebase Connected Successfully!</h2>
+          <p>Project: elevez-ed97f</p>
+          <p>Firestore initialized and ready</p>
+        `;
+        
+        detailsDiv.innerHTML = `
+          <h3>Configuration:</h3>
+          <pre>${JSON.stringify(firebaseConfig, null, 2)}</pre>
+        `;
+      } else {
+        statusDiv.className = 'status error';
+        statusDiv.innerHTML = `
+          <h2>❌ Firebase Connection Failed</h2>
+          <p>Error: ${result.error}</p>
+        `;
+      }
+    }
+
+    async function testOrders() {
+      const statusDiv = document.getElementById('status');
+      const detailsDiv = document.getElementById('details');
+      
+      if (!db) {
+        await initFirebase();
+      }
+
+      statusDiv.className = 'status loading';
+      statusDiv.innerHTML = '<h2>Testing Orders Collection...</h2><p>Please wait...</p>';
+
+      try {
+        const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const ordersRef = collection(db, 'orders');
+        const snapshot = await getDocs(ordersRef);
+        
+        const orders = [];
+        snapshot.forEach(doc => {
+          orders.push({ id: doc.id, ...doc.data() });
+        });
+
+        statusDiv.className = 'status success';
+        statusDiv.innerHTML = `
+          <h2>✅ Orders Collection Accessible!</h2>
+          <p>Found ${orders.length} order(s)</p>
+        `;
+        
+        if (orders.length > 0) {
+          detailsDiv.innerHTML = `
+            <h3>Orders:</h3>
+            <pre>${JSON.stringify(orders, null, 2)}</pre>
+          `;
+        } else {
+          detailsDiv.innerHTML = `
+            <h3>No orders yet</h3>
+            <p>Place an order on the website to test the sync.</p>
+          `;
+        }
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.innerHTML = `
+          <h2>❌ Orders Collection Error</h2>
+          <p>Error: ${error.message}</p>
+          <p>Make sure Firestore is enabled in Firebase Console</p>
+        `;
+      }
+    }
+
+    // Auto-test on load
+    window.testConnection = testConnection;
+    window.testOrders = testOrders;
+    testConnection();
+  </script>
+</body>
+</html>

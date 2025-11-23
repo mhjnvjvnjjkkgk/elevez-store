@@ -4,7 +4,7 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: ${new Date().toLocaleString()}
+// Last update: 23/11/2025, 8:53:55 pm
 export const PRODUCTS: Product[] = [
   {
     "id": 1,
@@ -21,9 +21,21 @@ export const PRODUCTS: Product[] = [
       "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
       "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
     ],
-    "sizes": ["S", "M", "L", "XL"],
-    "colors": ["Black", "White", "Neon Green"],
-    "tags": ["TRENDING", "BESTSELLER"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "Black",
+      "White",
+      "Neon Green"
+    ],
+    "tags": [
+      "TRENDING",
+      "BESTSELLER"
+    ],
     "isBestSeller": true,
     "isNew": true
   },
@@ -41,9 +53,21 @@ export const PRODUCTS: Product[] = [
     "images": [
       "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
     ],
-    "sizes": ["XS", "S", "M", "L"],
-    "colors": ["Pink", "White", "Black"],
-    "tags": ["VINTAGE", "TRENDING"],
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L"
+    ],
+    "colors": [
+      "Pink",
+      "White",
+      "Black"
+    ],
+    "tags": [
+      "VINTAGE",
+      "TRENDING"
+    ],
     "isNew": true
   },
   {
@@ -60,9 +84,21 @@ export const PRODUCTS: Product[] = [
     "images": [
       "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"
     ],
-    "sizes": ["M", "L", "XL", "XXL"],
-    "colors": ["Black", "White", "Gray"],
-    "tags": ["ESSENTIAL", "BESTSELLER"],
+    "sizes": [
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "Black",
+      "White",
+      "Gray"
+    ],
+    "tags": [
+      "ESSENTIAL",
+      "BESTSELLER"
+    ],
     "isBestSeller": true
   },
   {
@@ -79,9 +115,21 @@ export const PRODUCTS: Product[] = [
     "images": [
       "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
     ],
-    "sizes": ["S", "M", "L", "XL"],
-    "colors": ["Black", "Navy", "Gray"],
-    "tags": ["PREMIUM", "NEW"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "Black",
+      "Navy",
+      "Gray"
+    ],
+    "tags": [
+      "PREMIUM",
+      "NEW"
+    ],
     "isNew": true
   },
   {
@@ -98,56 +146,126 @@ export const PRODUCTS: Product[] = [
     "images": [
       "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500"
     ],
-    "sizes": ["S", "M", "L", "XL"],
-    "colors": ["Rainbow", "Yellow", "Orange"],
-    "tags": ["COLORFUL", "TRENDING"]
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "Rainbow",
+      "Yellow",
+      "Orange"
+    ],
+    "tags": [
+      "COLORFUL",
+      "TRENDING"
+    ]
+  },
+  {
+    "id": 1763907924781,
+    "qid": "FAKEEEEE",
+    "name": "Dont Look back hoodie",
+    "price": 800,
+    "originalPrice": 1500,
+    "category": "Men",
+    "type": "Hoodie",
+    "rating": 4.5,
+    "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+    "image": "https://i.postimg.cc/PC6ZrNXj/image.jpg",
+    "images": [
+      "https://i.postimg.cc/PC6ZrNXj/image.jpg",
+      "https://i.postimg.cc/G4MYh9cg/image.jpg",
+      "https://i.postimg.cc/jD8NdCsG/image.jpg",
+      "https://i.postimg.cc/BjhDQtqr/image.jpg"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [],
+    "tags": [
+      "TRENDING",
+      "BESTSELLER"
+    ],
+    "isBestSeller": true,
+    "isNew": true
   }
 ];
 
 // Collections - Auto-filtered by tags and criteria
-export const COLLECTIONS = [
-  {
-    "id": "bestsellers",
-    "name": "Best Sellers",
-    "description": "Our most popular items",
-    "filters": {
-      "tags": ["BESTSELLER"]
-    }
-  },
-  {
-    "id": "new-arrivals",
-    "name": "New Arrivals",
-    "description": "Latest additions to our collection",
-    "filters": {
-      "tags": ["NEW"]
-    }
-  }
-];
+export const COLLECTIONS = [];
 
 // Available Tags
-export const AVAILABLE_TAGS = ["ESSENTIAL", "TRENDING", "PREMIUM", "NEW", "BESTSELLER", "VINTAGE", "COLORFUL"];
+export const AVAILABLE_TAGS = [
+  "ESSENTIAL",
+  "TRENDING",
+  "PREMIUM",
+  "NEW",
+  "BESTSELLER",
+  "VINTAGE",
+  "COLORFUL"
+];
 
 // Available Categories (Custom)
-export const AVAILABLE_CATEGORIES = ["Men", "Women", "Unisex"];
+export const AVAILABLE_CATEGORIES = [
+  "Men",
+  "Women",
+  "Unisex"
+];
 
 // Available Types (Custom)
-export const AVAILABLE_TYPES = ["Hoodie", "T-Shirt", "Crop Top", "Oversized T-Shirt"];
+export const AVAILABLE_TYPES = [
+  "Hoodie",
+  "T-Shirt",
+  "Crop Top",
+  "Oversized T-Shirt"
+];
 
 // Available Colors (Custom)
 export const AVAILABLE_COLORS = [
-  { "name": "Black", "code": "#000000" },
-  { "name": "White", "code": "#FFFFFF" },
-  { "name": "Red", "code": "#FF0000" },
-  { "name": "Blue", "code": "#0000FF" },
-  { "name": "Green", "code": "#00FF00" },
-  { "name": "Yellow", "code": "#FFFF00" },
-  { "name": "Pink", "code": "#FF69B4" },
-  { "name": "Purple", "code": "#800080" },
-  { "name": "Orange", "code": "#FFA500" },
-  { "name": "Gray", "code": "#808080" },
-  { "name": "Neon Green", "code": "#00ff88" },
-  { "name": "Navy", "code": "#000080" },
-  { "name": "Rainbow", "code": "#FF0000" }
+  {
+    "name": "Black",
+    "code": "#000000"
+  },
+  {
+    "name": "White",
+    "code": "#FFFFFF"
+  },
+  {
+    "name": "Red",
+    "code": "#FF0000"
+  },
+  {
+    "name": "Blue",
+    "code": "#0000FF"
+  },
+  {
+    "name": "Green",
+    "code": "#00FF00"
+  },
+  {
+    "name": "Yellow",
+    "code": "#FFFF00"
+  },
+  {
+    "name": "Pink",
+    "code": "#FF69B4"
+  },
+  {
+    "name": "Purple",
+    "code": "#800080"
+  },
+  {
+    "name": "Orange",
+    "code": "#FFA500"
+  },
+  {
+    "name": "Gray",
+    "code": "#808080"
+  }
 ];
 
 // Helper function to get products for a collection
@@ -156,7 +274,7 @@ export function getCollectionProducts(collectionId: string): Product[] {
   if (!collection) return [];
   
   return PRODUCTS.filter(product => {
-    const filters: any = collection.filters || {};
+    const filters = collection.filters || {};
     
     // Tag filter
     if (filters.tags && filters.tags.length > 0) {

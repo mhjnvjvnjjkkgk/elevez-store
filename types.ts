@@ -16,10 +16,15 @@ export interface Product {
   tags?: string[]; // e.g., 'ESSENTIAL', 'TRENDING', 'PREMIUM'
   isNew?: boolean;
   isBestSeller?: boolean;
+  isFeatured?: boolean;
   description?: string;
   colors?: string[];
   sizes?: string[]; // Available sizes: XS, S, M, L, XL, XXL
   sizeChart?: string; // Size chart image URL or base64
+  // Section visibility flags (centralized management)
+  showInHome?: boolean; // Show on homepage (default: true)
+  showInShop?: boolean; // Show in shop/all products (default: true)
+  showInCollections?: boolean; // Show in collections page (default: true)
 }
 
 export interface CartItem extends Product {

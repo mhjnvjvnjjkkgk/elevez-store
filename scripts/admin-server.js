@@ -48,13 +48,53 @@ if (!fs.existsSync(imagesDir)) {
 const server = http.createServer((req, res) => {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
   if (req.method === 'OPTIONS') {
     res.writeHead(200);
     res.end();
     return;
+  }
+  
+  // Serve admin panel files
+  if (req.method === 'GET' && req.url.startsWith('/admin-panel/')) {
+    const filePath = path.join(__dirname, '..', req.url);
+    
+    // Security: prevent directory traversal
+    const normalizedPath = path.normalize(filePath);
+    const adminPanelDir = path.join(__dirname, '..', 'admin-panel');
+    
+    if (!normalizedPath.startsWith(adminPanelDir)) {
+      res.writeHead(403);
+      res.end('Forbidden');
+      return;
+    }
+    
+    // Serve the file
+    if (fs.existsSync(filePath)) {
+      const ext = path.extname(filePath);
+      const mimeTypes = {
+        '.html': 'text/html',
+        '.js': 'application/javascript',
+        '.css': 'text/css',
+        '.json': 'application/json',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.gif': 'image/gif'
+      };
+      
+      const contentType = mimeTypes[ext] || 'application/octet-stream';
+      const content = fs.readFileSync(filePath);
+      
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(content);
+      return;
+    } else {
+      res.writeHead(404);
+      res.end('Not Found');
+      return;
+    }
   }
   
   if (req.method === 'POST' && req.url === '/upload-image') {

@@ -1,14 +1,14 @@
 // Firebase Order Sync for Admin Panel
 // This script fetches orders from Firebase and displays them in the admin panel with full product details
 
-// Firebase configuration (same as main app)
+// Firebase configuration - using your actual credentials
 const firebaseConfig = {
-  apiKey: "AIzaSyBqGZfJqGZfJqGZfJqGZfJqGZfJqGZfJqGZ",
-  authDomain: "elevez-store.firebaseapp.com",
-  projectId: "elevez-store",
-  storageBucket: "elevez-store.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdef123456"
+  apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+  authDomain: "elevez-ed97f.firebaseapp.com",
+  projectId: "elevez-ed97f",
+  storageBucket: "elevez-ed97f.firebasestorage.app",
+  messagingSenderId: "440636781018",
+  appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
 };
 
 // Initialize Firebase
@@ -18,9 +18,13 @@ let isFirebaseAvailable = false;
 
 async function initFirebase() {
   try {
+    console.log('🔄 Initializing Firebase for admin panel...');
+    
     // Import Firebase modules
     const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
     const { getFirestore } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+    
+    console.log('📦 Firebase modules loaded');
     
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
@@ -28,11 +32,23 @@ async function initFirebase() {
     isFirebaseAvailable = true;
     
     console.log('✅ Firebase initialized for admin panel');
-    showSyncStatus('✅ Firebase connected - Real-time order sync active', 'success');
+    console.log('📊 Project:', firebaseConfig.projectId);
+    
+    // Show status if function is available
+    if (typeof showSyncStatus === 'function') {
+      showSyncStatus('✅ Firebase connected - Real-time order sync active', 'success');
+    }
+    
     return true;
   } catch (error) {
     console.error('❌ Firebase initialization error:', error);
-    showSyncStatus('⚠️ Firebase unavailable - Using local orders only', 'error');
+    console.error('Error details:', error.message);
+    
+    // Show status if function is available
+    if (typeof showSyncStatus === 'function') {
+      showSyncStatus('⚠️ Firebase unavailable - Using local orders only', 'error');
+    }
+    
     isFirebaseAvailable = false;
     return false;
   }
@@ -90,7 +106,10 @@ function getProductDetails(productId) {
 }
 
 async function syncOrdersFromFirebase() {
+  console.log('🔄 syncOrdersFromFirebase called');
+  
   if (!db) {
+    console.log('📡 Firebase not initialized, initializing now...');
     const initialized = await initFirebase();
     if (!initialized) {
       console.log('⚠️ Firebase not available, using local orders only');
@@ -99,6 +118,7 @@ async function syncOrdersFromFirebase() {
   }
   
   try {
+    console.log('📥 Setting up Firebase listener for orders...');
     const { collection, onSnapshot, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
     
     // Listen to orders collection in real-time

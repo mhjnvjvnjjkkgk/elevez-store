@@ -738,6 +738,9 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
   // Filter products based on collection filter
   const filteredProducts = PRODUCTS.filter(p => {
+    // Only show products that are enabled for homepage
+    if (p.showInHome === false) return false;
+    
     if (collectionFilter === 'All') return p.isBestSeller;
     if (collectionFilter === 'Old Money') return p.tags?.includes('VINTAGE') && p.isBestSeller;
     if (collectionFilter === 'Bold and Vibrant') return p.tags?.includes('COLORFUL') && p.isBestSeller;
@@ -1025,6 +1028,10 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   }, [tagFilter, typeFilter]);
 
   const filteredProducts = PRODUCTS.filter(p => {
+    // Only show products that are enabled for shop (default to true if not set)
+    if (p.showInShop === false) return false;
+    
+    // Show ALL products in "all" category
     const matchesCategory = category === 'all' || !category ? true : p.category.toLowerCase() === category || p.category === 'Unisex';
     let matchesFilter = true;
     if (filter === 'All') matchesFilter = true;

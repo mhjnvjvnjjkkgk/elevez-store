@@ -230,14 +230,32 @@
         </div>
 
         <div class="form-section">
-          <div class="checkbox-row">
+          <h4>Display Sections</h4>
+          <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 15px;">Select where this product should appear on the website</p>
+          <div class="checkbox-row" style="flex-direction: column; gap: 12px;">
+            <label class="checkbox-label">
+              <input type="checkbox" id="showInHome" checked>
+              <span>🏠 Show on Homepage</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="showInShop" checked>
+              <span>🛍️ Show in Shop/All Products</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="showInCollections" checked>
+              <span>📦 Show in Collections Page</span>
+            </label>
             <label class="checkbox-label">
               <input type="checkbox" id="isBestSeller">
-              <span>Best Seller</span>
+              <span>⭐ Best Seller (Featured)</span>
             </label>
             <label class="checkbox-label">
               <input type="checkbox" id="isNew">
-              <span>New Arrival</span>
+              <span>✨ New Arrival</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="isFeatured">
+              <span>🔥 Featured Product</span>
             </label>
           </div>
         </div>
@@ -337,11 +355,6 @@
     // Merge trial products with existing products
     const existing = JSON.parse(localStorage.getItem('elevez_products') || '[]');
     console.log(`📦 Found ${existing.length} existing products`);
-    
-    // Always load merge script to add trial products if they don't exist
-    const script = document.createElement('script');
-    script.src = 'merge-products.js';
-    document.head.appendChild(script);
   </script>
   <script src="admin.js"></script>
   <script type="module" src="firebase-orders.js"></script>
@@ -349,11 +362,15 @@
     // Start Firebase order sync after page loads
     window.addEventListener('load', () => {
       setTimeout(() => {
-        if (window.startAutoSync) {
-          console.log('🔄 Starting Firebase order auto-sync...');
+        console.log('🔍 Checking if startAutoSync is available...');
+        if (typeof window.startAutoSync === 'function') {
+          console.log('✅ startAutoSync found, starting...');
           window.startAutoSync();
+        } else {
+          console.error('❌ startAutoSync not found. Firebase orders script may not have loaded.');
+          console.log('Available window functions:', Object.keys(window).filter(k => k.includes('sync') || k.includes('firebase')));
         }
-      }, 2000);
+      }, 3000); // Increased delay to 3 seconds
     });
   </script>
 </body>

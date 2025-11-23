@@ -1659,8 +1659,13 @@ function handleProductSubmit(e) {
     sizes: state.productForm.selectedSizes,
     colors: state.productForm.selectedColors.map(c => c.name),
     tags: state.productForm.selectedTags.length > 0 ? state.productForm.selectedTags : undefined,
+    // Section visibility flags
+    showInHome: document.getElementById('showInHome')?.checked !== false,
+    showInShop: document.getElementById('showInShop')?.checked !== false,
+    showInCollections: document.getElementById('showInCollections')?.checked !== false,
     isBestSeller: document.getElementById('isBestSeller').checked || undefined,
-    isNew: document.getElementById('isNew').checked || undefined
+    isNew: document.getElementById('isNew').checked || undefined,
+    isFeatured: document.getElementById('isFeatured')?.checked || undefined
   };
   
   if (state.editingProduct) {
@@ -1752,8 +1757,16 @@ window.editProduct = (id) => {
   document.getElementById('productType').value = product.type;
   document.getElementById('productRating').value = product.rating;
   document.getElementById('productDescription').value = product.description || '';
+  
+  // Load section visibility flags (default to true if not set)
+  document.getElementById('showInHome').checked = product.showInHome !== false;
+  document.getElementById('showInShop').checked = product.showInShop !== false;
+  document.getElementById('showInCollections').checked = product.showInCollections !== false;
   document.getElementById('isBestSeller').checked = product.isBestSeller || false;
   document.getElementById('isNew').checked = product.isNew || false;
+  if (document.getElementById('isFeatured')) {
+    document.getElementById('isFeatured').checked = product.isFeatured || false;
+  }
   
   // Convert relative paths to full URLs for preview
   const convertToFullUrl = (url) => {

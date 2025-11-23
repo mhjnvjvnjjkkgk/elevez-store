@@ -189,7 +189,140 @@
     }
   ],
   "collections": [],
-  "orders": [],
+  "orders": [
+    {
+      "id": "mAsVn48LIsf1XLgRVy9r",
+      "orderId": "ORD-1763911399446",
+      "address": "sdasdada",
+      "city": "koltakata",
+      "createdAt": {
+        "seconds": 1763911399,
+        "nanoseconds": 446000000
+      },
+      "items": [
+        {
+          "id": 1,
+          "quantity": 1,
+          "size": "M",
+          "color": "Black",
+          "price": 85,
+          "name": "Neon Glitch Hoodie",
+          "qid": "NGH-001",
+          "originalPrice": 170,
+          "category": "Men",
+          "type": "Hoodie",
+          "rating": 4.5,
+          "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+          "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+          "images": [
+            "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+            "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+          ],
+          "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "colors": [
+            "Black",
+            "White",
+            "Neon Green"
+          ],
+          "tags": [
+            "TRENDING",
+            "BESTSELLER"
+          ],
+          "isBestSeller": true,
+          "isNew": true,
+          "orderedQuantity": 1,
+          "orderedSize": "M",
+          "orderedColor": "Black"
+        }
+      ],
+      "pincode": "700055",
+      "totalAmount": 115,
+      "state": "West Bengal",
+      "status": "pending",
+      "subtotal": 85,
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "orderDate": {
+        "seconds": 1763911399,
+        "nanoseconds": 446000000
+      },
+      "paymentMethod": "cod",
+      "phone": "80001812381",
+      "shippingCost": 30,
+      "email": "lolislolpp@gmail.com",
+      "fullName": "Mr Oak GAMING",
+      "source": "firebase"
+    },
+    {
+      "id": "9uhZ0XRhlS8Z4j6X4Rke",
+      "orderId": "ORD-1763906412534",
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "address": "sdasdada",
+      "city": "koltakata",
+      "items": [
+        {
+          "quantity": 1,
+          "price": 45,
+          "id": 2,
+          "size": "M",
+          "name": "Vintage Crop Top",
+          "color": "Pink",
+          "qid": "VCT-002",
+          "originalPrice": 90,
+          "category": "Women",
+          "type": "Crop Top",
+          "rating": 4.7,
+          "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
+          "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+          "images": [
+            "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
+          ],
+          "sizes": [
+            "XS",
+            "S",
+            "M",
+            "L"
+          ],
+          "colors": [
+            "Pink",
+            "White",
+            "Black"
+          ],
+          "tags": [
+            "VINTAGE",
+            "TRENDING"
+          ],
+          "isNew": true,
+          "orderedQuantity": 1,
+          "orderedSize": "M",
+          "orderedColor": "Pink"
+        }
+      ],
+      "pincode": "700055",
+      "paymentMethod": "upi",
+      "state": "West Bengal",
+      "email": "lolislolpp@gmail.com",
+      "phone": "80001812381",
+      "fullName": "Mr Oak GAMING",
+      "totalAmount": 45,
+      "subtotal": 45,
+      "createdAt": {
+        "seconds": 1763906412,
+        "nanoseconds": 534000000
+      },
+      "orderDate": {
+        "seconds": 1763906412,
+        "nanoseconds": 534000000
+      },
+      "status": "pending",
+      "shippingCost": 0,
+      "source": "firebase"
+    }
+  ],
   "tags": [
     "ESSENTIAL",
     "TRENDING",
