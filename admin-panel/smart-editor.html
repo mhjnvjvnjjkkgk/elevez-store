@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELEVEZ - Smart Content Editor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      color: white;
+      overflow: hidden;
+    }
+
+    .editor-layout {
+      display: flex;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      font-size: 20px;
+      font-weight: 700;
+      color: #00ff88;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #00ff88;
+      color: black;
+    }
+
+    .btn-primary:hover {
+      background: #00dd77;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #333;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #444;
+    }
+
+    /* Main Content */
+    .main-content {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Left Panel - Component Selector */
+    .left-panel {
+      width: 320px;
+      background: #1a1a1a;
+      border-right: 1px solid #333;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    .component-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .component-card {
+      background: #252525;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .component-card:hover {
+      border-color: #00ff88;
+      transform: translateX(4px);
+    }
+
+    .component-card.active {
+      background: #00ff88;
+      color: black;
+      border-color: #00ff88;
+    }
+
+    .component-name {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .component-desc {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    /* Center - Preview */
+    .preview-panel {
+      flex: 1;
+      background: #0f0f0f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+      overflow: auto;
+    }
+
+    .preview-container {
+      width: 100%;
+      max-width: 1400px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(0, 255, 136, 0.15);
+    }
+
+    .preview-iframe {
+      width: 100%;
+      height: 800px;
+      border: none;
+      display: block;
+    }
+
+    .preview-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    /* Right Panel - Editor */
+    .right-panel {
+      width: 380px;
+      background: #1a1a1a;
+      border-left: 1px solid #333;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .editor-section {
+      margin-bottom: 32px;
+    }
+
+    .field-group {
+      margin-bottom: 20px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #aaa;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 12px;
+      background: #252525;
+      border: 2px solid #333;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .field-input:focus {
+      outline: none;
+      border-color: #00ff88;
+      background: #2a2a2a;
+    }
+
+    textarea.field-input {
+      resize: vertical;
+      min-height: 100px;
+      font-family: 'Courier New', monospace;
+      line-height: 1.6;
+    }
+
+    .color-picker {
+      height: 50px;
+      cursor: pointer;
+    }
+
+    .field-hint {
+      font-size: 11px;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #888;
+    }
+
+    .empty-state-desc {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .success-message {
+      background: #00ff88;
+      color: black;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .divider {
+      height: 1px;
+      background: #333;
+      margin: 24px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="editor-layout">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="brand">✨ ELEVEZ Smart Content Editor</div>
+      <div class="top-actions">
+        <button class="btn btn-secondary" onclick="editor.preview()">👁️ Preview</button>
+        <button class="btn btn-primary" onclick="editor.saveAndDeploy()">🚀 Save & Deploy</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Left Panel -->
+      <div class="left-panel">
+        <div class="section-title">📝 Editable Sections</div>
+        <div class="component-list" id="componentList">
+          <!-- Components will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Center Preview -->
+      <div class="preview-panel">
+        <div class="preview-container">
+          <iframe 
+            id="previewIframe" 
+            class="preview-iframe"
+            src="http://localhost:5173/"
+            title="Website Preview">
+          </iframe>
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div class="right-panel">
+        <div id="editorContent">
+          <div class="empty-state">
+            <div class="empty-state-icon">👈</div>
+            <div class="empty-state-title">Select a Section</div>
+            <div class="empty-state-desc">
+              Choose a section from the left to edit its content
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="smart-editor.js"></script>
+</body>
+</html>

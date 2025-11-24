@@ -1,12 +1,16 @@
 ﻿
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
-import { ShoppingBag, Menu, X, ArrowRight, ArrowLeft, Star, Play, Check, Truck, Shield, Award, Instagram, Twitter, Mail, MapPin, Phone, Sparkles, Trash2, Eye, Maximize2, Search, ChevronDown, ChevronUp, SlidersHorizontal, Heart, Minus, Plus, Timer, RefreshCw, ShieldCheck, CreditCard, Banknote, Package, User, Lock, LogOut } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, useInView } from 'framer-motion';
+import { ShoppingBag, Menu, X, ArrowRight, ArrowLeft, Star, Play, Check, Truck, Shield, Award, Instagram, Twitter, Mail, MapPin, Phone, Sparkles, Trash2, Eye, Maximize2, Search, ChevronDown, ChevronUp, SlidersHorizontal, Heart, Minus, Plus, Timer, RefreshCw, ShieldCheck, CreditCard, Banknote, Package, User, Lock, LogOut, Gift } from 'lucide-react';
 import { PRODUCTS, BRAND_NAME } from './constants';
 import { Product, ProductType, CartItem, CursorVariant } from './types';
 import { auth } from './firebaseConfig';
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
+import { BuilderComponent, useBuilderContent } from './BuilderComponent';
+import { RewardsPage } from './components/RewardsPage';
+import { OrderDetail } from './components/OrderDetail';
+import { FloatingRewardsButton, RewardsModal } from './components/RewardsModal';
 
 // --- Cart Context ---
 interface CartContextType {
@@ -717,6 +721,956 @@ const FilterSection: React.FC<{ title: string; children: React.ReactNode; defaul
   );
 };
 
+// --- Scroll-Linked Animation Wrapper ---
+const ScrollAnimatedSection: React.FC<{ 
+  children: React.ReactNode;
+}> = ({ children }) => {
+  const ref = useRef(null);
+  
+  // Track scroll progress of this specific section
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"] // Start when section enters bottom, end when it exits top
+  });
+  
+  // Map scroll progress to animation values
+  // Progress: 0 (below viewport) → 0.5 (center) → 1 (above viewport)
+  
+  // Opacity: fade in from 0-0.3, stay visible 0.3-0.7, fade out 0.7-1
+  const opacity = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.8, 1],
+    [0, 1, 1, 0]
+  );
+  
+  // TranslateY: slide up on enter, slide up on exit
+  const y = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.8, 1],
+    [100, 0, 0, -100]
+  );
+  
+  // Scale: subtle scale effect
+  const scale = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.8, 1],
+    [0.95, 1, 1, 0.95]
+  );
+  
+  return (
+    <motion.div
+      ref={ref}
+      style={{ 
+        opacity, 
+        y, 
+        scale 
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// --- Best Sellers Section ---
+const BestSellers = () => {
+  const navigate = useNavigate();
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  
+  // Get top 4 best-selling products
+  const bestSellers = PRODUCTS
+    .filter(p => p.isBestSeller || p.featured)
+    .slice(0, 4);
+
+  return (
+    <ScrollAnimatedSection>
+      <section className="min-h-screen relative flex items-center justify-center py-20 px-6 overflow-hidden">
+        {/* Animated Grid Background */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              linear-gradient(rgba(0, 255, 136, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0, 255, 136, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px',
+            animation: 'gridMove 20s linear infinite'
+          }} />
+        </div>
+        
+        {/* Optimized Floating Particles - Reduced from 20 to 5 */}
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-[#00ff88] rounded-full blur-sm"
+            style={{
+              left: `${20 + i * 20}%`,
+              top: `${30 + i * 10}%`,
+            }}
+            animate={{
+              y: [0, -40, 0],
+              opacity: [0.3, 0.8, 0.3],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              delay: i * 0.8,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
+
+        <style>{`
+          @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+          }
+          @keyframes holographic {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+          }
+        `}</style>
+
+        <div className="max-w-7xl w-full relative z-10">
+          {/* Header */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: false }}
+            className="text-center mb-16"
+          >
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00ff88]/20 to-[#00ff88]/5 border border-[#00ff88]/30 rounded-full px-6 py-2 mb-6"
+            >
+              <span className="text-2xl">🔥</span>
+              <span className="text-[#00ff88] text-sm font-bold uppercase tracking-[0.3em]">Trending Now</span>
+            </motion.div>
+            
+            <motion.h2 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="text-5xl md:text-7xl font-black font-syne mb-6"
+            >
+              Best <span className="text-[#00ff88]">Sellers</span>
+            </motion.h2>
+            
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-gray-400 text-lg max-w-2xl mx-auto mb-8"
+            >
+              The pieces everyone's talking about. Limited stock available.
+            </motion.p>
+
+            {/* Animated Stats */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-wrap justify-center gap-8 mb-4"
+            >
+              {[
+                { value: "1000+", label: "Happy Customers", icon: "👥" },
+                { value: "50+", label: "Sold Today", icon: "🔥" },
+                { value: "4.9", label: "Average Rating", icon: "⭐" }
+              ].map((stat, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  transition={{ delay: 0.6 + i * 0.1, type: "spring" }}
+                  className="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-[#00ff88]/20 rounded-full px-6 py-3"
+                >
+                  <span className="text-2xl">{stat.icon}</span>
+                  <div>
+                    <div className="text-[#00ff88] font-bold text-lg">{stat.value}</div>
+                    <div className="text-gray-400 text-xs">{stat.label}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          {/* Products Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {bestSellers.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
+                viewport={{ once: false }}
+                whileHover={{ 
+                  y: -20, 
+                  scale: 1.03,
+                  rotateY: 5,
+                  rotateX: 5,
+                  transition: { duration: 0.4 }
+                }}
+                onHoverStart={() => setHoveredCard(index)}
+                onHoverEnd={() => setHoveredCard(null)}
+                onClick={() => navigate(`/product/${product.id}`)}
+                style={{
+                  background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.05) 0%, rgba(0, 0, 0, 0.6) 100%)',
+                  backdropFilter: 'blur(30px) saturate(200%)',
+                  WebkitBackdropFilter: 'blur(30px) saturate(200%)',
+                  transformStyle: 'preserve-3d',
+                  perspective: '1000px',
+                }}
+                className="group relative rounded-2xl overflow-hidden cursor-pointer"
+              >
+                {/* Holographic Border */}
+                <div 
+                  className="absolute inset-0 rounded-2xl p-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background: 'linear-gradient(90deg, #00ff88, #00ddff, #ff00ff, #00ff88, #00ddff)',
+                    backgroundSize: '200% 100%',
+                    animation: hoveredCard === index ? 'holographic 3s linear infinite' : 'none',
+                  }}
+                >
+                  <div className="w-full h-full bg-black rounded-2xl" />
+                </div>
+
+                {/* Card Content */}
+                <div className="relative z-10"
+>
+                {/* Best Seller Badge */}
+                <div className="absolute top-4 left-4 z-20 bg-[#00ff88] text-black text-xs font-bold px-3 py-1 rounded-full shadow-[0_0_20px_rgba(0,255,136,0.5)]">
+                  BEST SELLER
+                </div>
+
+                {/* Product Image */}
+                <div className="relative aspect-square overflow-hidden">
+                  <motion.img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ duration: 0.6 }}
+                  />
+                  
+                  {/* Gradient overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  {/* Quick view button */}
+                  <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    whileHover={{ opacity: 1, y: 0 }}
+                    className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-2 rounded-full text-sm font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#00ff88]"
+                  >
+                    Quick View
+                  </motion.button>
+                </div>
+
+                {/* Product Info */}
+                <div className="p-6">
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-[#00ff88] transition-colors line-clamp-1">
+                    {product.name}
+                  </h3>
+                  
+                  {/* Rating */}
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`w-4 h-4 ${i < 4 ? 'fill-[#00ff88] text-[#00ff88]' : 'text-gray-600'}`}
+                      />
+                    ))}
+                    <span className="text-xs text-gray-400 ml-2">(4.8)</span>
+                  </div>
+                  
+                  {/* Price */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-[#00ff88]">
+                      ${product.price}
+                    </span>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="w-10 h-10 rounded-full bg-[#00ff88]/10 border border-[#00ff88]/30 flex items-center justify-center hover:bg-[#00ff88] hover:text-black transition-all"
+                    >
+                      <ShoppingBag className="w-5 h-5" />
+                    </motion.button>
+                  </div>
+                </div>
+
+                {/* Enhanced Glow effect */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#00ff88]/20 via-[#00ddff]/10 to-transparent" />
+                  <div className="absolute -inset-2 bg-gradient-to-r from-[#00ff88]/30 via-[#00ddff]/20 to-[#ff00ff]/10 blur-2xl" />
+                </div>
+
+                {/* Stock Indicator */}
+                <div className="absolute top-4 right-4 z-20">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="bg-red-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full"
+                  >
+                    Only 3 left!
+                  </motion.div>
+                </div>
+
+                {/* Wishlist Button */}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Add to wishlist logic
+                  }}
+                  className="absolute top-16 right-4 z-20 w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-[#00ff88] hover:border-[#00ff88]"
+                >
+                  <Heart className="w-5 h-5" />
+                </motion.button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* View All Button */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1, duration: 0.5 }}
+            viewport={{ once: false }}
+            className="text-center"
+          >
+            <button
+              onClick={() => navigate('/shop/all')}
+              className="group relative inline-flex items-center gap-3 bg-gradient-to-r from-[#00ff88] to-[#00dd77] text-black px-12 py-4 rounded-full text-lg font-bold uppercase overflow-hidden hover:scale-105 transition-all duration-300 shadow-[0_0_30px_rgba(0,255,136,0.3)] hover:shadow-[0_0_50px_rgba(0,255,136,0.5)]"
+            >
+              <span className="relative z-10">View All Products</span>
+              <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-2 transition-transform" />
+              
+              {/* Animated background */}
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+            </button>
+          </motion.div>
+        </div>
+      </section>
+    </ScrollAnimatedSection>
+  );
+};
+
+// --- Customer Reviews Carousel with Scroll Hijacking ---
+const CustomerReviews = () => {
+  const ref = useRef<HTMLElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isInView, setIsInView] = useState(false);
+  const [hasCompletedReviews, setHasCompletedReviews] = useState(false);
+  const scrollAccumulator = useRef(0);
+  const isScrollingRef = useRef(false);
+
+  const reviews = [
+    {
+      id: 1,
+      name: "Sarah Johnson",
+      rating: 5,
+      text: "Absolutely love the quality! The fabric is premium and the fit is perfect. Best streetwear purchase I've made this year.",
+      date: "2 days ago",
+      product: "Premium Hoodie",
+      avatar: "👩"
+    },
+    {
+      id: 2,
+      name: "Mike Chen",
+      rating: 5,
+      text: "The attention to detail is incredible. Fast shipping and the packaging was top-notch. Will definitely order again!",
+      date: "1 week ago",
+      product: "Oversized Tee",
+      avatar: "👨"
+    },
+    {
+      id: 3,
+      name: "Emma Davis",
+      rating: 5,
+      text: "Finally found a brand that gets it right. The designs are unique and the quality speaks for itself. Highly recommend!",
+      date: "2 weeks ago",
+      product: "Vintage Jacket",
+      avatar: "👩‍🦰"
+    },
+    {
+      id: 4,
+      name: "Alex Rivera",
+      rating: 4,
+      text: "Great products and excellent customer service. The fit guide was super helpful. My new go-to brand for streetwear.",
+      date: "3 weeks ago",
+      product: "Cargo Pants",
+      avatar: "🧑"
+    },
+    {
+      id: 5,
+      name: "Lisa Park",
+      rating: 5,
+      text: "Obsessed with my order! The colors are vibrant, quality is amazing, and it arrived faster than expected. 10/10!",
+      date: "1 month ago",
+      product: "Graphic Hoodie",
+      avatar: "👩‍🦱"
+    },
+    {
+      id: 6,
+      name: "Jordan Lee",
+      rating: 5,
+      text: "Best online shopping experience! The quality exceeded my expectations and customer service was incredibly helpful.",
+      date: "1 month ago",
+      product: "Denim Jacket",
+      avatar: "🧑‍🦱"
+    }
+  ];
+
+  // Detect when section is in viewport
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+        if (!entry.isIntersecting) {
+          // Reset when leaving section
+          scrollAccumulator.current = 0;
+        }
+      },
+      { threshold: 0.5 } // Section must be 50% visible
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Scroll hijacking logic
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      // Only hijack if section is in view and reviews not completed
+      if (!isInView || hasCompletedReviews) return;
+
+      // Prevent default page scroll
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Accumulate scroll delta
+      scrollAccumulator.current += e.deltaY;
+
+      // Threshold for changing review (adjust for sensitivity)
+      const threshold = 100;
+
+      if (Math.abs(scrollAccumulator.current) >= threshold) {
+        const direction = scrollAccumulator.current > 0 ? 1 : -1;
+        
+        setCurrentIndex(prev => {
+          const newIndex = Math.max(0, Math.min(reviews.length - 1, prev + direction));
+          
+          // If reached last review, mark as completed
+          if (newIndex === reviews.length - 1 && direction > 0) {
+            setTimeout(() => {
+              setHasCompletedReviews(true);
+            }, 500);
+          }
+          
+          return newIndex;
+        });
+
+        // Reset accumulator
+        scrollAccumulator.current = 0;
+      }
+    };
+
+    // Add wheel listener with passive: false to allow preventDefault
+    window.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+    };
+  }, [isInView, hasCompletedReviews, reviews.length]);
+
+  const currentReview = reviews[currentIndex];
+
+  return (
+    <ScrollAnimatedSection>
+      <section ref={ref} className="min-h-screen relative flex items-center justify-center py-20 px-6">
+        <div className="max-w-5xl w-full">
+          {/* Header */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: false }}
+            className="text-center mb-16"
+          >
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-[#00ff88] text-sm font-bold uppercase tracking-[0.3em] mb-4"
+            >
+              Customer Love
+            </motion.p>
+            <motion.h2 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="text-5xl md:text-7xl font-black font-syne mb-6"
+            >
+              What Our <span className="text-[#00ff88]">Customers</span> Say
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-gray-400 text-lg"
+            >
+              Real reviews from real people. Scroll to see more.
+            </motion.p>
+          </motion.div>
+
+          {/* Review Card */}
+          <motion.div
+            style={{
+              background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.08) 0%, rgba(0, 0, 0, 0.6) 100%)',
+              backdropFilter: 'blur(30px) saturate(200%)',
+              WebkitBackdropFilter: 'blur(30px) saturate(200%)',
+            }}
+            className="relative rounded-3xl border border-white/10 p-12 md:p-16 overflow-hidden"
+          >
+            {/* Decorative Quote Marks */}
+            <div className="absolute top-8 left-8 text-[#00ff88]/20 text-8xl font-serif leading-none">"</div>
+            <div className="absolute bottom-8 right-8 text-[#00ff88]/20 text-8xl font-serif leading-none rotate-180">"</div>
+
+            {/* Review Content */}
+            <div className="relative z-10">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentReview.id}
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-center"
+                >
+                  {/* Avatar */}
+                  <motion.div 
+                    className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#00ff88] to-[#00dd77] flex items-center justify-center text-4xl shadow-[0_0_30px_rgba(0,255,136,0.3)]"
+                    animate={{ 
+                      boxShadow: [
+                        '0 0 30px rgba(0,255,136,0.3)',
+                        '0 0 50px rgba(0,255,136,0.5)',
+                        '0 0 30px rgba(0,255,136,0.3)'
+                      ]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    {currentReview.avatar}
+                  </motion.div>
+
+                  {/* Rating Stars */}
+                  <div className="flex justify-center gap-2 mb-6">
+                    {[...Array(5)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ delay: i * 0.1, type: "spring" }}
+                      >
+                        <Star 
+                          className={`w-6 h-6 ${i < currentReview.rating ? 'fill-[#00ff88] text-[#00ff88]' : 'text-gray-600'}`}
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Review Text */}
+                  <p className="text-xl md:text-2xl text-gray-200 leading-relaxed mb-8 max-w-3xl mx-auto">
+                    {currentReview.text}
+                  </p>
+
+                  {/* Customer Info */}
+                  <div className="space-y-2">
+                    <h4 className="text-xl font-bold text-white">{currentReview.name}</h4>
+                    <p className="text-sm text-gray-400">
+                      Purchased: <span className="text-[#00ff88]">{currentReview.product}</span>
+                    </p>
+                    <p className="text-xs text-gray-500">{currentReview.date}</p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Glow Effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#00ff88]/5 via-transparent to-transparent pointer-events-none" />
+          </motion.div>
+
+          {/* Progress Indicators */}
+          <div className="mt-12 flex flex-col items-center gap-6">
+            {/* Review Counter */}
+            <div className="text-center">
+              <span className="text-3xl font-bold text-[#00ff88]">{currentIndex + 1}</span>
+              <span className="text-gray-500 text-xl"> / {reviews.length}</span>
+            </div>
+
+            {/* Dots */}
+            <div className="flex gap-3">
+              {reviews.map((_, index) => (
+                <motion.div
+                  key={index}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === currentIndex 
+                      ? 'w-12 bg-[#00ff88]' 
+                      : 'w-2 bg-gray-600'
+                  }`}
+                  animate={{
+                    boxShadow: index === currentIndex 
+                      ? '0 0 20px rgba(0,255,136,0.5)' 
+                      : 'none'
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Dynamic Scroll Hint */}
+            <AnimatePresence mode="wait">
+              {!hasCompletedReviews && (
+                <motion.div
+                  key="scroll-hint"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="text-center"
+                >
+                  <motion.p 
+                    className="text-sm text-gray-500 mb-2"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    {currentIndex === reviews.length - 1 
+                      ? '🎉 Scroll down to continue to next section' 
+                      : `Scroll to see review ${currentIndex + 2}/${reviews.length}`}
+                  </motion.p>
+                  {isInView && !hasCompletedReviews && (
+                    <motion.div
+                      animate={{ y: [0, 10, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="text-[#00ff88] text-2xl"
+                    >
+                      ↓
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </section>
+    </ScrollAnimatedSection>
+  );
+};
+
+// --- Why Choose Us Section ---
+const WhyChooseUs = () => {
+  const features = [
+    {
+      icon: Award,
+      title: "Premium Quality",
+      description: "Handpicked materials and meticulous craftsmanship in every piece",
+      gradient: "from-[#00ff88] to-[#00cc6a]"
+    },
+    {
+      icon: Truck,
+      title: "Fast Shipping",
+      description: "Express delivery worldwide, your style arrives in days",
+      gradient: "from-[#00ff88] to-[#00ddff]"
+    },
+    {
+      icon: ShieldCheck,
+      title: "Secure Payment",
+      description: "Bank-level encryption, shop with complete confidence",
+      gradient: "from-[#00ff88] to-[#6a5acd]"
+    },
+    {
+      icon: Timer,
+      title: "24/7 Support",
+      description: "Always here to help, whenever you need us",
+      gradient: "from-[#00ff88] to-[#ff6b9d]"
+    }
+  ];
+
+  return (
+    <ScrollAnimatedSection>
+      <section className="min-h-screen relative flex items-center justify-center py-20 px-6">
+        {/* Glassmorphic Container */}
+        <div className="max-w-7xl w-full">
+          {/* Header */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: false }}
+            className="text-center mb-16"
+          >
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-[#00ff88] text-sm font-bold uppercase tracking-[0.3em] mb-4"
+            >
+              Why Choose ELEVEZ
+            </motion.p>
+            <motion.h2 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="text-5xl md:text-7xl font-black font-syne mb-6"
+            >
+              Premium Quality,
+              <br />
+              <span className="text-[#00ff88]">Unmatched Style</span>
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-gray-400 text-lg max-w-2xl mx-auto"
+            >
+              Experience the difference that sets us apart from the rest
+            </motion.p>
+          </motion.div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.5 + index * 0.15, duration: 0.5 }}
+                viewport={{ once: false }}
+                whileHover={{ 
+                  y: -10, 
+                  scale: 1.02,
+                  transition: { duration: 0.3 }
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%)',
+                  backdropFilter: 'blur(20px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                }}
+                className="group relative p-8 rounded-2xl border border-white/10 hover:border-[#00ff88]/30 transition-all duration-300 overflow-hidden"
+              >
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#00ff88]/10 to-transparent" />
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10">
+                  {/* Icon */}
+                  <motion.div 
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.6 }}
+                    className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} p-0.5 mb-6`}
+                  >
+                    <div className="w-full h-full bg-black rounded-2xl flex items-center justify-center">
+                      <feature.icon className="w-8 h-8 text-[#00ff88]" />
+                    </div>
+                  </motion.div>
+
+                  {/* Text */}
+                  <h3 className="text-2xl font-bold mb-3 group-hover:text-[#00ff88] transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+
+                {/* Corner accent */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#00ff88]/5 rounded-full blur-3xl group-hover:bg-[#00ff88]/10 transition-all duration-300" />
+              </motion.div>
+            ))}
+          </div>
+
+          {/* CTA Button */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.1, duration: 0.5 }}
+            viewport={{ once: false }}
+            className="text-center"
+          >
+            <Link 
+              to="/shop/all"
+              className="inline-block bg-[#00ff88] text-black px-12 py-4 rounded-full text-lg font-bold uppercase hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(0,255,136,0.3)] hover:shadow-[0_0_50px_rgba(0,255,136,0.5)] hover:scale-105"
+            >
+              Shop Now
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+    </ScrollAnimatedSection>
+  );
+};
+
+// --- Scroll Progress Indicator ---
+const ScrollProgressBar = () => {
+  const { scrollYProgress } = useScroll();
+  
+  return (
+    <motion.div
+      style={{
+        scaleX: scrollYProgress,
+        background: 'linear-gradient(90deg, #00ff88, #00ddff, #00ff88)',
+      }}
+      className="fixed top-0 left-0 right-0 h-1 origin-left z-[100]"
+    />
+  );
+};
+
+// --- Scroll to Top Button ---
+const ScrollToTop = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      setIsVisible(window.scrollY > 500);
+    };
+
+    window.addEventListener('scroll', toggleVisibility);
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0 }}
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-[#00ff88] text-black flex items-center justify-center shadow-[0_0_30px_rgba(0,255,136,0.5)] hover:scale-110 transition-transform"
+          whileHover={{ y: -5 }}
+        >
+          <ArrowRight className="w-6 h-6 -rotate-90" />
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+};
+
+// --- Toast Notification System ---
+const Toast: React.FC<{ message: string; type?: 'success' | 'error' | 'info' }> = ({ message, type = 'success' }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50, scale: 0.3 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+      className={`fixed bottom-24 right-8 z-50 px-6 py-4 rounded-2xl backdrop-blur-xl border flex items-center gap-3 shadow-2xl ${
+        type === 'success' ? 'bg-[#00ff88]/20 border-[#00ff88]/50 text-[#00ff88]' :
+        type === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' :
+        'bg-blue-500/20 border-blue-500/50 text-blue-400'
+      }`}
+    >
+      <Check className="w-5 h-5" />
+      <span className="font-semibold">{message}</span>
+    </motion.div>
+  );
+};
+
+// --- Interactive Gradient Background ---
+const InteractiveGradientBackground = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+  
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      setMousePosition({ x, y });
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  return (
+    <>
+      <style>{`
+        @keyframes gradientShift {
+          0%, 100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+        }
+        
+        .interactive-gradient-bg {
+          background: 
+            radial-gradient(
+              circle 800px at ${mousePosition.x}% ${mousePosition.y}%,
+              rgba(0, 255, 136, 0.15),
+              transparent 50%
+            ),
+            linear-gradient(
+              135deg,
+              rgba(0, 255, 136, 0.08) 0%,
+              rgba(0, 0, 0, 0.95) 20%,
+              rgba(0, 0, 0, 1) 40%,
+              rgba(100, 50, 255, 0.08) 60%,
+              rgba(0, 0, 0, 0.95) 80%,
+              rgba(0, 255, 136, 0.08) 100%
+            );
+          background-size: 200% 200%;
+          animation: gradientShift 15s ease infinite;
+          transition: background 0.3s ease;
+        }
+        
+        .cursor-glow {
+          background: radial-gradient(
+            circle 600px at ${mousePosition.x}% ${mousePosition.y}%,
+            rgba(0, 255, 136, 0.2),
+            rgba(0, 255, 136, 0.05) 40%,
+            transparent 70%
+          );
+        }
+      `}</style>
+      
+      {/* Base gradient layer */}
+      <div className="interactive-gradient-bg fixed inset-0 z-0" />
+      
+      {/* Cursor glow layer */}
+      <motion.div 
+        className="cursor-glow fixed inset-0 z-0 pointer-events-none"
+        animate={{
+          opacity: [0.5, 0.8, 0.5],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      
+      {/* Noise texture overlay */}
+      <div 
+        className="fixed inset-0 z-0 opacity-[0.03] mix-blend-overlay pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
+    </>
+  );
+};
+
 // --- Pages ---
 
 const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
@@ -759,9 +1713,19 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   });
 
   return (
-    <div className="w-full overflow-hidden" onMouseMove={handleHeroMouseMove}>
+    <div className="w-full overflow-hidden relative">
+      {/* Optimized Interactive Gradient Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div 
+          className="absolute inset-0 transition-all duration-700 ease-out"
+          style={{
+            background: `radial-gradient(circle 600px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 136, 0.08), transparent 70%)`
+          }}
+        />
+      </div>
+      
       {/* Hero Section */}
-      <section className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden px-4 perspective-1000">
+      <section className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden px-4 perspective-1000 z-10">
         
         {/* Floating Pill */}
         <motion.div 
@@ -889,8 +1853,18 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         </div>
       </section>
 
+      {/* Why Choose Us Section */}
+      <WhyChooseUs />
+
+      {/* Best Sellers Section */}
+      <BestSellers />
+
+      {/* Customer Reviews Carousel */}
+      <CustomerReviews />
+
       {/* Featured Collections */}
-      <section className="py-32 bg-zinc-950/80 backdrop-blur-sm relative">
+      <ScrollAnimatedSection>
+        <section className="py-32 relative">
         <div className="container mx-auto px-6">
            <motion.div
              initial={{ opacity: 0, scale: 0.9 }}
@@ -945,8 +1919,10 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
            </div>
         </div>
       </section>
+      </ScrollAnimatedSection>
 
       {/* Video Experience Section - Parallax Effect */}
+      <ScrollAnimatedSection>
       <section className="py-20 bg-black relative">
         <motion.div 
           style={{ y: videoSectionY }}
@@ -1013,6 +1989,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
            </TiltCard>
         </div>
       </section>
+      </ScrollAnimatedSection>
     </div>
   );
 };
@@ -2063,6 +3040,73 @@ const Checkout = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Points Preview Card */}
+                {user && (
+                  <motion.div
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="mt-6 p-6 bg-gradient-to-br from-purple-500/20 to-pink-500/20 
+                             border-2 border-purple-500/30 rounded-2xl relative overflow-hidden"
+                  >
+                    {/* Animated Background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 
+                                  animate-pulse opacity-50" />
+                    
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[#00ff88] to-cyan-500 
+                                      rounded-full flex items-center justify-center shadow-lg shadow-[#00ff88]/30">
+                          <Gift className="w-5 h-5 text-black" />
+                        </div>
+                        <div>
+                          <p className="text-white font-bold text-sm">Loyalty Rewards</p>
+                          <p className="text-white/60 text-xs">You'll earn points!</p>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                        <div className="flex items-baseline justify-between mb-2">
+                          <span className="text-white/70 text-sm">Points to Earn:</span>
+                          <div className="flex items-baseline gap-1">
+                            <motion.span 
+                              key={totalAmount}
+                              initial={{ scale: 1.5, color: '#00ff88' }}
+                              animate={{ scale: 1, color: '#ffffff' }}
+                              transition={{ duration: 0.5 }}
+                              className="text-3xl font-black font-syne text-[#00ff88]"
+                              style={{ textShadow: '0 0 20px rgba(0, 255, 136, 0.5)' }}
+                            >
+                              +{Math.floor(totalAmount / 10)}
+                            </motion.span>
+                            <span className="text-white/50 text-xs uppercase">pts</span>
+                          </div>
+                        </div>
+                        <div className="h-px bg-gradient-to-r from-transparent via-[#00ff88]/50 to-transparent mb-2" />
+                        <p className="text-white/50 text-xs text-center">
+                          ₹10 = 1 point • Redeem for discounts
+                        </p>
+                      </div>
+                      
+                      <motion.div
+                        animate={{ 
+                          boxShadow: [
+                            '0 0 20px rgba(0, 255, 136, 0.2)',
+                            '0 0 30px rgba(0, 255, 136, 0.4)',
+                            '0 0 20px rgba(0, 255, 136, 0.2)'
+                          ]
+                        }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="mt-4 p-3 bg-[#00ff88]/10 rounded-lg border border-[#00ff88]/30"
+                      >
+                        <p className="text-[#00ff88] text-xs text-center font-semibold">
+                          🎉 Complete this order to earn rewards!
+                        </p>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             </div>
           </div>
@@ -2492,29 +3536,96 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { items, setIsCartOpen } = useCart();
   const { setCursorVariant } = useCursor();
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      const scrolled = window.scrollY;
+      setIsScrolled(scrolled > 50);
+      setScrollProgress(Math.min(scrolled / 300, 1));
+    };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <>
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-black/80 backdrop-blur-xl py-4 border-b border-white/5' : 'bg-transparent py-8'}`}>
+    <style>{`
+      @keyframes gradientFlow {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      .flowing-gradient {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 255, 136, 0.15) 0%,
+          rgba(0, 0, 0, 0.6) 25%,
+          rgba(100, 50, 255, 0.15) 50%,
+          rgba(0, 0, 0, 0.6) 75%,
+          rgba(0, 255, 136, 0.15) 100%
+        );
+        background-size: 200% 200%;
+        animation: gradientFlow 8s ease infinite;
+      }
+    `}</style>
+    <motion.nav 
+      style={{
+        backdropFilter: `blur(${isScrolled ? 12 : 8}px)`,
+        WebkitBackdropFilter: `blur(${isScrolled ? 12 : 8}px)`,
+        boxShadow: `0 4px 16px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 255, 136, ${isScrolled ? 0.1 : 0.05})`,
+      }}
+      className={`flowing-gradient fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${isScrolled ? 'border-white/20 py-3' : 'border-white/10 py-6'}`}
+    >
       <div className="container mx-auto px-6 flex items-center justify-between">
         <Link to="/" className="text-3xl font-black tracking-tighter font-syne z-50 relative group">
           {BRAND_NAME}
           <span className="text-[#00ff88] group-hover:text-white transition-colors">.</span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-8 bg-black/50 backdrop-blur-md px-8 py-3 rounded-full border border-white/5">
-          <Link to="/" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-colors">Home</Link>
-          <Link to="/shop/men" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-colors">Men</Link>
-          <Link to="/shop/women" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-colors">Women</Link>
-          <Link to="/shop/all" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-colors">Collections</Link>
-          <Link to="/about" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-colors">About</Link>
-          <Link to="/contact" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-colors">Contact</Link>
+        <div 
+          style={{
+            background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.05) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(100, 50, 255, 0.05) 100%)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+          }}
+          className="hidden md:flex items-center gap-8 px-8 py-3 rounded-full border border-white/20 hover:border-[#00ff88]/30 transition-all duration-300 hover:shadow-lg hover:shadow-[#00ff88]/10"
+        >
+          <Link to="/" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-colors duration-200 relative group">
+            Home
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00ff88] group-hover:w-full transition-all duration-200"></span>
+          </Link>
+          <Link to="/shop/men" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-all duration-300 relative group">
+            Men
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00ff88] group-hover:w-full transition-all duration-300"></span>
+          </Link>
+          <Link to="/shop/women" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-all duration-300 relative group">
+            Women
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00ff88] group-hover:w-full transition-all duration-300"></span>
+          </Link>
+          <Link to="/shop/all" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-all duration-300 relative group">
+            Collections
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00ff88] group-hover:w-full transition-all duration-300"></span>
+          </Link>
+          <Link to="/about" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-all duration-300 relative group">
+            About
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00ff88] group-hover:w-full transition-all duration-300"></span>
+          </Link>
+          <Link to="/rewards" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-all duration-300 relative group">
+            Rewards
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00ff88] group-hover:w-full transition-all duration-300"></span>
+          </Link>
+          <Link to="/contact" className="text-xs font-bold uppercase tracking-widest hover:text-[#00ff88] transition-all duration-300 relative group">
+            Contact
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#00ff88] group-hover:w-full transition-all duration-300"></span>
+          </Link>
         </div>
 
         <div className="flex items-center gap-6 z-50 relative">
@@ -2547,7 +3658,7 @@ const Navbar = () => {
            </button>
         </div>
       </div>
-    </nav>
+    </motion.nav>
     {/* Mobile Menu */}
     <AnimatePresence>
       {isMobileMenuOpen && (
@@ -2562,6 +3673,7 @@ const Navbar = () => {
           <Link to="/shop/women" onClick={() => setIsMobileMenuOpen(false)} className="text-4xl font-bold uppercase font-syne">Women</Link>
           <Link to="/shop/all" onClick={() => setIsMobileMenuOpen(false)} className="text-4xl font-bold uppercase font-syne">Shop All</Link>
           <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-4xl font-bold uppercase font-syne">About</Link>
+          <Link to="/rewards" onClick={() => setIsMobileMenuOpen(false)} className="text-4xl font-bold uppercase font-syne">Rewards</Link>
           <Link to="/account" onClick={() => setIsMobileMenuOpen(false)} className="text-4xl font-bold uppercase font-syne">Account</Link>
         </motion.div>
       )}
@@ -2571,8 +3683,30 @@ const Navbar = () => {
 };
 
 const Footer = () => (
-  <footer className="bg-black/90 backdrop-blur-xl border-t border-white/10 pt-20 pb-10 relative z-10">
+  <footer className="bg-black/90 backdrop-blur-md border-t border-white/10 pt-20 pb-10 relative z-10">
      <div className="container mx-auto px-6">
+       {/* Loyalty Program Teaser */}
+       <div className="mb-16 bg-gradient-to-r from-purple-500/15 to-pink-500/15 backdrop-blur-sm
+                     rounded-3xl p-8 border border-white/20 text-center shadow-xl shadow-purple-500/10">
+         <div className="flex items-center justify-center gap-3 mb-4">
+           <Gift className="w-8 h-8 text-[#00ff88]" />
+           <h3 className="text-3xl font-bold">Join Our Rewards Program</h3>
+         </div>
+         <p className="text-white/70 mb-6 max-w-2xl mx-auto">
+           Earn points with every purchase, unlock exclusive tiers, and get amazing discounts. 
+           Start earning today!
+         </p>
+         <Link 
+           to="/rewards"
+           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+           className="inline-block px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 
+                    rounded-full text-white font-bold hover:shadow-2xl hover:shadow-purple-500/50 
+                    transition-all duration-300 transform hover:scale-105"
+         >
+           Learn More About Rewards
+         </Link>
+       </div>
+
        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
          <div>
            <h3 className="text-3xl font-bold mb-6 font-syne">{BRAND_NAME}</h3>
@@ -2618,98 +3752,116 @@ const Footer = () => (
   </footer>
 );
 
-// New Icon-Based Custom Cursor
-const CustomCursor = ({ variant, position }: { variant: CursorVariant, position: { x: number, y: number } }) => {
+// Simple Custom Cursor - Always Visible, Perfectly Synced, ALWAYS ON TOP
+const OptimizedCursor = ({ variant, position }: { variant: CursorVariant, position: { x: number, y: number } }) => {
   const isHover = variant !== 'default';
   
   return (
-    <motion.div
-      className="fixed top-0 left-0 pointer-events-none z-[100]"
-      animate={{
-        x: position.x - (isHover ? 10 : 0), 
-        y: position.y - (isHover ? 0 : 0),
+    <div
+      className="fixed pointer-events-none"
+      style={{
+        left: 0,
+        top: 0,
+        zIndex: 2147483647, // Maximum z-index value
+        transform: `translate(${position.x}px, ${position.y}px)`,
+        willChange: 'transform',
+        position: 'fixed',
       }}
-      transition={{ type: "spring", damping: 50, stiffness: 500, mass: 0.1 }}
     >
-      {/* Default Arrow Cursor (Hidden when custom cursor is active) */}
-      <motion.div 
-        animate={{ 
-          scale: isHover ? 0 : 1, 
-          opacity: isHover ? 0 : 1 
+      {/* Enhanced Glowing Cursor with Smooth Hover Animation */}
+      <svg 
+        width="24" 
+        height="24" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        xmlns="http://www.w3.org/2000/svg"
+        style={{
+          transform: isHover ? 'scale(1.5)' : 'scale(1)',
+          transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          filter: isHover 
+            ? 'drop-shadow(0 0 8px #00ff88) drop-shadow(0 0 16px #00ff88) drop-shadow(0 0 24px rgba(0, 255, 136, 0.8)) drop-shadow(0 0 32px rgba(0, 255, 136, 0.6))'
+            : 'drop-shadow(0 0 6px #00ff88) drop-shadow(0 0 12px rgba(0, 255, 136, 0.7)) drop-shadow(0 0 18px rgba(0, 255, 136, 0.4))',
+          transformOrigin: '4px 4px', // Anchor point at cursor tip
+          display: 'block',
         }}
-        className="absolute -top-1 -left-1 origin-top-left"
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6.0001 2L18.0001 14L12.0001 15L15.5001 22L13.5001 23L9.5001 15.5L6.0001 18V2Z" fill="#00ff88" stroke="black" strokeWidth="1.5"/>
-        </svg>
-      </motion.div>
-
-      {/* Pinching Hand Cursor (Small, Green, No Background Layer) */}
-      <motion.div 
-         initial={{ scale: 0, opacity: 0 }}
-         animate={{ 
-           scale: isHover ? 1 : 0, 
-           opacity: isHover ? 1 : 0 
-         }}
-         className="absolute -top-2 -left-2"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ff88" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-           {/* Thumb */}
-           <path d="M14 13l-4 4" />
-           {/* Index Finger */}
-           <path d="M10 13l4 4" />
-           
-           {/* Hand Shape Outline */}
-           <path d="M8 10c0-2 1.5-3 3-3 2 0 3 2 3 3v4" />
-           <path d="M17 13c2 0 3 1.5 3 3 0 2-2 4-5 4h-3c-3 0-5-2-5-5 0-2 1-3 3-4" />
-           <path d="M14 17l2-2" />
-        </svg>
-      </motion.div>
-    </motion.div>
+        <path 
+          d="M6.0001 2L18.0001 14L12.0001 15L15.5001 22L13.5001 23L9.5001 15.5L6.0001 18V2Z" 
+          fill="#00ff88" 
+          stroke="#000" 
+          strokeWidth="2"
+        />
+      </svg>
+    </div>
   );
 };
 
 function App() {
   const { cursorVariant, setCursorVariant, mousePosition } = useCursor();
+  const [isRewardsModalOpen, setIsRewardsModalOpen] = useState(false);
 
-  // Hide default cursor globally
+  // Optimized mouse tracking with throttling for gradient
   useEffect(() => {
-    // Create a more comprehensive style to hide cursor everywhere
-    const hideCursorStyles = `
-      *, *::before, *::after {
+    let rafId: number;
+    let lastUpdate = 0;
+    const throttleMs = 50; // Update every 50ms max
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const now = Date.now();
+      if (now - lastUpdate < throttleMs) return;
+      
+      if (rafId) cancelAnimationFrame(rafId);
+      
+      rafId = requestAnimationFrame(() => {
+        const x = (e.clientX / window.innerWidth) * 100;
+        const y = (e.clientY / window.innerHeight) * 100;
+        document.documentElement.style.setProperty('--mouse-x', `${x}%`);
+        document.documentElement.style.setProperty('--mouse-y', `${y}%`);
+        lastUpdate = now;
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  // Hide default cursor globally - IMMEDIATE injection
+  useEffect(() => {
+    // Inject CSS immediately and aggressively
+    const style = document.createElement('style');
+    style.id = 'hide-cursor-global';
+    style.textContent = `
+      *, *::before, *::after,
+      html, body, div, span, a, button, input, textarea, select,
+      h1, h2, h3, h4, h5, h6, p, img, svg, canvas {
         cursor: none !important;
       }
-      html, body, div, span, applet, object, iframe,
-      h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-      a, abbr, acronym, address, big, cite, code,
-      del, dfn, em, img, ins, kbd, q, s, samp,
-      small, strike, strong, sub, sup, tt, var,
-      b, u, i, center,
-      dl, dt, dd, ol, ul, li,
-      fieldset, form, label, legend,
-      table, caption, tbody, tfoot, thead, tr, th, td,
-      article, aside, canvas, details, embed, 
-      figure, figcaption, footer, header, hgroup, 
-      menu, nav, output, ruby, section, summary,
-      time, mark, audio, video, button, input, textarea {
+      *:hover {
         cursor: none !important;
       }
     `;
     
-    const styleSheet = document.createElement('style');
-    styleSheet.id = 'hide-cursor-styles';
-    styleSheet.textContent = hideCursorStyles;
-    document.head.appendChild(styleSheet);
+    // Insert at the very beginning of head for highest priority
+    if (document.head.firstChild) {
+      document.head.insertBefore(style, document.head.firstChild);
+    } else {
+      document.head.appendChild(style);
+    }
     
-    // Also set on document element
+    // Also set directly on elements
     document.documentElement.style.cursor = 'none';
+    document.body.style.cursor = 'none';
     
     return () => {
-      const style = document.getElementById('hide-cursor-styles');
-      if (style) {
-        style.remove();
+      const existingStyle = document.getElementById('hide-cursor-global');
+      if (existingStyle) {
+        document.head.removeChild(existingStyle);
       }
       document.documentElement.style.cursor = '';
+      document.body.style.cursor = '';
     };
   }, []);
 
@@ -2717,12 +3869,17 @@ function App() {
     <CartProvider>
       <QuickViewProvider>
         <HashRouter>
-          <div className="bg-black min-h-screen text-white selection:bg-[#00ff88] selection:text-black font-space">
-            <PixelBackground />
-            <CustomCursor variant={cursorVariant} position={mousePosition} />
+          <div className="bg-black min-h-screen text-white selection:bg-[#00ff88] selection:text-black font-space"
+               style={{
+                 willChange: 'auto',
+                 transform: 'translateZ(0)',
+                 backfaceVisibility: 'hidden',
+               }}>
+            <ScrollProgressBar />
             <Navbar />
             <CartSidebar />
             <QuickViewModal />
+            <ScrollToTop />
             <main className="relative z-10">
               <Routes>
                 <Route path="/" element={<Home setCursorVariant={setCursorVariant} />} />
@@ -2730,12 +3887,21 @@ function App() {
                 <Route path="/product/:id" element={<ProductDetail setCursorVariant={setCursorVariant} />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/account" element={<Account setCursorVariant={setCursorVariant} />} />
+                <Route path="/rewards" element={<RewardsPage />} />
+                <Route path="/order/:orderId" element={<OrderDetail />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
               </Routes>
             </main>
             <Footer />
+            
+            {/* Floating Rewards Button & Modal */}
+            <FloatingRewardsButton onClick={() => setIsRewardsModalOpen(true)} />
+            <RewardsModal isOpen={isRewardsModalOpen} onClose={() => setIsRewardsModalOpen(false)} />
           </div>
+          
+          {/* Optimized Custom Cursor - Rendered OUTSIDE main container for maximum z-index */}
+          <OptimizedCursor variant={cursorVariant} position={mousePosition} />
         </HashRouter>
       </QuickViewProvider>
     </CartProvider>

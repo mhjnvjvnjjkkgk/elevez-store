@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELEVEZ - Visual Builder (Production)</title>
+  <link rel="stylesheet" href="builder/builder.css">
+</head>
+<body>
+  <!-- Top Navigation -->
+  <nav class="builder-nav">
+    <div class="nav-left">
+      <h1 class="brand">ELEVEZ</h1>
+      <span class="brand-subtitle">Visual Builder</span>
+    </div>
+    
+    <div class="nav-center">
+      <select id="pageSelector" onchange="switchPage(this.value)">
+        <option value="homepage">Homepage</option>
+      </select>
+    </div>
+    
+    <div class="nav-right">
+      <button class="btn-icon" onclick="undo()" title="Undo (Ctrl+Z)">↶</button>
+      <button class="btn-icon" onclick="redo()" title="Redo (Ctrl+Shift+Z)">↷</button>
+      <button class="btn-secondary" onclick="togglePreview()">👁️ Preview</button>
+      <button class="btn-primary" onclick="publish()">🚀 Publish</button>
+    </div>
+  </nav>
+
+  <!-- Main Layout -->
+  <div class="builder-layout">
+    <!-- Left Sidebar -->
+    <aside class="sidebar-left">
+      <div class="sidebar-tabs">
+        <button class="tab-btn active" data-tab="pages">Pages</button>
+        <button class="tab-btn" data-tab="add">Add</button>
+      </div>
+
+      <!-- Pages Tab -->
+      <div class="tab-content active" id="pages-tab">
+        <div class="pages-list">
+          <button class="btn-add" onclick="addNewPage()">+ New Page</button>
+          <div id="pagesList"></div>
+        </div>
+      </div>
+
+      <!-- Add Tab -->
+      <div class="tab-content" id="add-tab">
+        <div class="components-library">
+          <div class="component-category">
+            <h4>Primitives</h4>
+            <div class="component-grid">
+              <div class="component-item" draggable="true" data-type="text">
+                <span class="component-icon">T</span>
+                <span>Text</span>
+              </div>
+              <div class="component-item" draggable="true" data-type="button">
+                <span class="component-icon">🔘</span>
+                <span>Button</span>
+              </div>
+              <div class="component-item" draggable="true" data-type="image">
+                <span class="component-icon">🖼️</span>
+                <span>Image</span>
+              </div>
+              <div class="component-item" draggable="true" data-type="container">
+                <span class="component-icon">📦</span>
+                <span>Container</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="component-category">
+            <h4>Smart Sections</h4>
+            <div class="component-grid">
+              <div class="component-item" draggable="true" data-type="hero">
+                <span class="component-icon">🎯</span>
+                <span>Hero</span>
+              </div>
+              <div class="component-item" draggable="true" data-type="collection">
+                <span class="component-icon">🛍️</span>
+                <span>Collection</span>
+              </div>
+              <div class="component-item" draggable="true" data-type="product-card">
+                <span class="component-icon">🏷️</span>
+                <span>Product</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center Canvas -->
+    <main class="canvas-area">
+      <div class="canvas-toolbar">
+        <div class="device-selector">
+          <button class="device-btn active" data-device="desktop">🖥️</button>
+          <button class="device-btn" data-device="tablet">📱</button>
+          <button class="device-btn" data-device="mobile">📱</button>
+        </div>
+        <div class="zoom-controls">
+          <button onclick="zoomOut()">-</button>
+          <span id="zoomLevel">100%</span>
+          <button onclick="zoomIn()">+</button>
+        </div>
+      </div>
+
+      <div class="canvas-wrapper">
+        <div class="canvas-container" id="canvasContainer">
+          <!-- Live Website Iframe -->
+          <iframe 
+            id="live-website-iframe" 
+            class="live-iframe"
+            sandbox="allow-same-origin allow-scripts allow-forms"
+            title="Live Website">
+          </iframe>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Sidebar -->
+    <aside class="sidebar-right">
+      <div class="properties-header">
+        <h3>Properties</h3>
+      </div>
+      
+      <div class="properties-content" id="propertiesPanel">
+        <div class="no-selection">
+          <p>Click any element on the canvas to edit</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Scripts -->
+  <script src="builder/types.ts"></script>
+  <script src="builder/store.js"></script>
+  <script src="builder/live-renderer.js"></script>
+  <script src="builder/properties-panel.js"></script>
+  <script src="builder/main.js"></script>
+</body>
+</html>

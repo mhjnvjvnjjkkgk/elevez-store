@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELEVEZ - Visual Page Builder</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="page-builder.css">
+</head>
+<body>
+  <div class="builder-container">
+    <!-- Left Sidebar - Sections Library -->
+    <aside class="builder-sidebar">
+      <div class="sidebar-header">
+        <h2>🎨 Page Builder</h2>
+        <button class="btn-back" onclick="window.location.href='index.html'">← Back</button>
+      </div>
+
+      <div class="sidebar-tabs">
+        <button class="tab-btn active" data-tab="sections">Sections</button>
+        <button class="tab-btn" data-tab="elements">Elements</button>
+        <button class="tab-btn" data-tab="pages">Pages</button>
+      </div>
+
+      <!-- Sections Tab -->
+      <div class="tab-content active" id="sections-tab">
+        <div class="section-category">
+          <h3>Hero Sections</h3>
+          <div class="section-templates">
+            <div class="template-card" draggable="true" data-section="hero-1">
+              <div class="template-preview">
+                <div class="preview-hero">Hero 1</div>
+              </div>
+              <span>Hero - Center</span>
+            </div>
+            <div class="template-card" draggable="true" data-section="hero-2">
+              <div class="template-preview">
+                <div class="preview-hero">Hero 2</div>
+              </div>
+              <span>Hero - Split</span>
+            </div>
+            <div class="template-card" draggable="true" data-section="hero-3">
+              <div class="template-preview">
+                <div class="preview-hero">Hero 3</div>
+              </div>
+              <span>Hero - Video</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-category">
+          <h3>Collections</h3>
+          <div class="section-templates">
+            <div class="template-card" draggable="true" data-section="collection-grid">
+              <div class="template-preview">
+                <div class="preview-grid">Grid</div>
+              </div>
+              <span>Product Grid</span>
+            </div>
+            <div class="template-card" draggable="true" data-section="collection-carousel">
+              <div class="template-preview">
+                <div class="preview-carousel">Carousel</div>
+              </div>
+              <span>Carousel</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-category">
+          <h3>Banners</h3>
+          <div class="section-templates">
+            <div class="template-card" draggable="true" data-section="banner-image">
+              <div class="template-preview">
+                <div class="preview-banner">Image</div>
+              </div>
+              <span>Image Banner</span>
+            </div>
+            <div class="template-card" draggable="true" data-section="banner-video">
+              <div class="template-preview">
+                <div class="preview-banner">Video</div>
+              </div>
+              <span>Video Banner</span>
+            </div>
+            <div class="template-card" draggable="true" data-section="banner-text">
+              <div class="template-preview">
+                <div class="preview-banner">Text</div>
+              </div>
+              <span>Text Banner</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Elements Tab -->
+      <div class="tab-content" id="elements-tab">
+        <p style="padding: 20px; color: var(--text-muted);">Coming in Phase 2</p>
+      </div>
+
+      <!-- Pages Tab -->
+      <div class="tab-content" id="pages-tab">
+        <div class="pages-list">
+          <button class="btn btn-primary" onclick="createNewPage()">+ New Page</button>
+          <div id="pagesList"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center - Canvas -->
+    <main class="builder-canvas">
+      <div class="canvas-toolbar">
+        <div class="toolbar-left">
+          <select id="deviceMode" onchange="changeDeviceMode(this.value)">
+            <option value="desktop">🖥️ Desktop</option>
+            <option value="tablet">📱 Tablet</option>
+            <option value="mobile">📱 Mobile</option>
+          </select>
+          <button class="btn-icon" onclick="undoAction()" title="Undo">↶</button>
+          <button class="btn-icon" onclick="redoAction()" title="Redo">↷</button>
+        </div>
+        <div class="toolbar-center">
+          <span id="currentPageName">Homepage</span>
+        </div>
+        <div class="toolbar-right">
+          <button class="btn btn-secondary" onclick="loadLiveWebsiteAdvanced()" title="Load with advanced parser">📥 Load Live (Advanced)</button>
+          <button class="btn btn-secondary" onclick="initLiveMode()" title="Load with simple mode">📥 Load Live (Simple)</button>
+          <button class="btn btn-secondary" onclick="previewSite()">👁️ Preview</button>
+          <button class="btn btn-primary" onclick="saveToLiveWebsite()">💾 Save to Website</button>
+          <button class="btn btn-primary" onclick="deployWebsite()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🚀 Deploy</button>
+        </div>
+      </div>
+
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <div class="canvas-content" id="canvasContent">
+          <!-- Sections will be added here -->
+          <div class="canvas-placeholder">
+            <div class="placeholder-content">
+              <h2>Start Building Your Page</h2>
+              <p>Drag sections from the left sidebar to start</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Sidebar - Properties Panel -->
+    <aside class="builder-properties">
+      <div class="properties-header">
+        <h3>Properties</h3>
+      </div>
+      <div class="properties-content" id="propertiesContent">
+        <div class="no-selection">
+          <p>Select an element to edit its properties</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script src="page-builder-state.js"></script>
+  <script src="page-builder-sections.js"></script>
+  <script src="page-builder-ast-parser.js"></script>
+  <script src="page-builder-live.js"></script>
+  <script src="page-builder.js"></script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Builder.io Integration - ELEVEZ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: white;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .logo {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 42px;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border: 2px solid #333;
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 30px;
+    }
+
+    .card-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #00ff88;
+    }
+
+    .step {
+      background: #252525;
+      border-left: 4px solid #00ff88;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+
+    .step-number {
+      display: inline-block;
+      background: #00ff88;
+      color: black;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 32px;
+      font-weight: 700;
+      margin-right: 12px;
+    }
+
+    .step-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .step-content {
+      color: #ccc;
+      line-height: 1.8;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 16px 32px;
+      background: #00ff88;
+      color: black;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #00dd77;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 255, 136, 0.3);
+    }
+
+    .btn-secondary {
+      background: #333;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #444;
+    }
+
+    .code-block {
+      background: #0a0a0a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      color: #00ff88;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .feature {
+      background: #252525;
+      padding: 24px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .feature-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .feature-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: #888;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .comparison-item {
+      background: #252525;
+      padding: 24px;
+      border-radius: 10px;
+    }
+
+    .comparison-item.winner {
+      border: 2px solid #00ff88;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #00ff88;
+      color: black;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .alert {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid #00ff88;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 30px 0;
+    }
+
+    .alert-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #00ff88;
+    }
+
+    @media (max-width: 768px) {
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🎨</div>
+      <h1>Visual Editor Solution</h1>
+      <p class="subtitle">
+        Professional visual editing with Builder.io - Free, powerful, and works immediately
+      </p>
+    </div>
+
+    <!-- Why Builder.io -->
+    <div class="card">
+      <h2 class="card-title">Why Builder.io?</h2>
+      <p style="color: #ccc; margin-bottom: 30px;">
+        After trying multiple approaches, Builder.io is the best solution for visual editing of React apps.
+        It's what companies like Shopify, Amazon, and Target use.
+      </p>
+
+      <div class="feature-grid">
+        <div class="feature">
+          <div class="feature-icon">✨</div>
+          <div class="feature-title">True Visual Editing</div>
+          <div class="feature-desc">Click and edit any element</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-title">Drag & Drop</div>
+          <div class="feature-desc">Build pages visually</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title">No Setup</div>
+          <div class="feature-desc">Works in minutes</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">💰</div>
+          <div class="feature-title">Free Forever</div>
+          <div class="feature-desc">50k API calls/month</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="card">
+      <h2 class="card-title">Quick Start (5 Minutes)</h2>
+
+      <div class="step">
+        <div class="step-title">
+          <span class="step-number">1</span>
+          Create Free Account
+        </div>
+        <div class="step-content">
+          Go to <a href="https://www.builder.io/signup" target="_blank" style="color: #00ff88;">builder.io/signup</a> and create a free account.
+          No credit card required. Takes 2 minutes.
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-title">
+          <span class="step-number">2</span>
+          Choose Space Type
+        </div>
+        <div class="step-content">
+          When asked "What would you like to build?", select: <strong style="color: #00ff88;">"Website or Web App"</strong><br>
+          Name your space: <code style="background: #0a0a0a; padding: 4px 8px; border-radius: 4px;">ELEVEZ Store</code>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-title">
+          <span class="step-number">3</span>
+          Get Your API Key
+        </div>
+        <div class="step-content">
+          <strong>Where to find it:</strong><br>
+          Profile Icon (top right) → Account Settings → Spaces → Your Space → <strong style="color: #00ff88;">Public API Key</strong><br><br>
+          Copy the key - it looks like: <code style="background: #0a0a0a; padding: 4px 8px; border-radius: 4px;">abc123def456...</code>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-title">
+          <span class="step-number">3</span>
+          Add to Your Website
+        </div>
+        <div class="step-content">
+          Add this script to your <code>index.html</code>:
+          <div class="code-block">
+            <code>&lt;script src="https://cdn.builder.io/js/webcomponents"&gt;&lt;/script&gt;</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-title">
+          <span class="step-number">4</span>
+          Start Editing
+        </div>
+        <div class="step-content">
+          Go to <a href="https://builder.io/content" target="_blank" style="color: #00ff88;">builder.io/content</a>,
+          create a new page, and start editing visually!
+        </div>
+      </div>
+
+      <div class="actions">
+        <a href="https://www.builder.io/signup" target="_blank" class="btn">
+          🚀 Sign Up Free
+        </a>
+        <a href="https://www.builder.io/c/docs/quickstart" target="_blank" class="btn btn-secondary">
+          📚 View Docs
+        </a>
+      </div>
+    </div>
+
+    <!-- Comparison -->
+    <div class="card">
+      <h2 class="card-title">Custom vs Builder.io</h2>
+
+      <div class="comparison">
+        <div class="comparison-item">
+          <h3 style="margin-bottom: 20px;">Custom Editor</h3>
+          <ul style="list-style: none; color: #ccc; line-height: 2;">
+            <li>❌ CORS issues</li>
+            <li>❌ Weeks of development</li>
+            <li>❌ Maintenance burden</li>
+            <li>❌ Limited features</li>
+            <li>❌ Browser compatibility</li>
+            <li>✅ Full control</li>
+          </ul>
+        </div>
+
+        <div class="comparison-item winner">
+          <span class="badge">Recommended</span>
+          <h3 style="margin-bottom: 20px;">Builder.io</h3>
+          <ul style="list-style: none; color: #ccc; line-height: 2;">
+            <li>✅ No CORS issues</li>
+            <li>✅ Ready in 5 minutes</li>
+            <li>✅ Zero maintenance</li>
+            <li>✅ Professional features</li>
+            <li>✅ Works everywhere</li>
+            <li>✅ Free forever</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert">
+      <div class="alert-title">💡 Recommended Approach</div>
+      <p style="color: #ccc; line-height: 1.8;">
+        Use <strong>Builder.io for content pages</strong> (home, about, landing pages) and 
+        <strong>your existing admin panel for products/orders</strong>. This gives you the best of both worlds:
+        professional visual editing + custom e-commerce management.
+      </p>
+    </div>
+
+    <!-- Resources -->
+    <div class="card">
+      <h2 class="card-title">Resources</h2>
+      <ul style="list-style: none; color: #ccc; line-height: 2.5;">
+        <li>📖 <a href="https://www.builder.io/c/docs" target="_blank" style="color: #00ff88;">Documentation</a></li>
+        <li>🎥 <a href="https://www.builder.io/c/docs/videos" target="_blank" style="color: #00ff88;">Video Tutorials</a></li>
+        <li>💬 <a href="https://forum.builder.io" target="_blank" style="color: #00ff88;">Community Forum</a></li>
+        <li>🔧 <a href="https://www.builder.io/c/docs/integrations/react" target="_blank" style="color: #00ff88;">React Integration</a></li>
+        <li>📝 <a href="../BUILDER-IO-SETUP.md" style="color: #00ff88;">Setup Guide (Local)</a></li>
+      </ul>
+    </div>
+
+    <div style="text-align: center; margin-top: 60px; padding-top: 40px; border-top: 1px solid #333;">
+      <p style="color: #666; font-size: 14px;">
+        ELEVEZ Admin Panel | <a href="index.html" style="color: #00ff88;">Back to Dashboard</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

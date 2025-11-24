@@ -10,9 +10,11 @@
     "deploy": "npm run build && node deploy.js",
     "deploy:firebase": "npm run build && node deploy-firebase.js",
     "deploy:vercel": "npm run build && node deploy-vercel.js",
-    "firebase:setup": "node firebase-setup.js"
+    "firebase:setup": "node firebase-setup.js",
+    "builder:webhook": "node builder-webhook-handler.js"
   },
   "dependencies": {
+    "express": "^5.1.0",
     "firebase": "^11.0.1",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.554.0",

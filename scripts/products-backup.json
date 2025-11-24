@@ -188,35 +188,22 @@
     {
       "id": "mAsVn48LIsf1XLgRVy9r",
       "orderId": "ORD-1763911399446",
-      "orderDate": {
-        "seconds": 1763911399,
-        "nanoseconds": 446000000
-      },
       "email": "lolislolpp@gmail.com",
-      "phone": "80001812381",
-      "city": "koltakata",
-      "status": "pending",
-      "totalAmount": 115,
+      "address": "sdasdada",
+      "fullName": "Mr Oak GAMING",
       "createdAt": {
         "seconds": 1763911399,
         "nanoseconds": 446000000
       },
-      "paymentMethod": "cod",
-      "fullName": "Mr Oak GAMING",
-      "subtotal": 85,
-      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
-      "pincode": "700055",
-      "shippingCost": 30,
       "state": "West Bengal",
-      "address": "sdasdada",
       "items": [
         {
+          "name": "Neon Glitch Hoodie",
+          "id": 1,
           "price": 85,
           "size": "M",
-          "id": 1,
-          "color": "Black",
           "quantity": 1,
-          "name": "Neon Glitch Hoodie",
+          "color": "Black",
           "qid": "NGH-001",
           "originalPrice": 170,
           "category": "Men",
@@ -250,27 +237,50 @@
           "orderedColor": "Black"
         }
       ],
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "paymentMethod": "cod",
+      "shippingCost": 30,
+      "subtotal": 85,
+      "status": "pending",
+      "totalAmount": 115,
+      "city": "koltakata",
+      "pincode": "700055",
+      "orderDate": {
+        "seconds": 1763911399,
+        "nanoseconds": 446000000
+      },
+      "phone": "80001812381",
       "source": "firebase"
     },
     {
       "id": "9uhZ0XRhlS8Z4j6X4Rke",
       "orderId": "ORD-1763906412534",
-      "totalAmount": 45,
-      "email": "lolislolpp@gmail.com",
-      "address": "sdasdada",
-      "shippingCost": 0,
+      "orderDate": {
+        "seconds": 1763906412,
+        "nanoseconds": 534000000
+      },
       "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "totalAmount": 45,
+      "status": "pending",
+      "address": "sdasdada",
+      "subtotal": 45,
       "fullName": "Mr Oak GAMING",
-      "city": "koltakata",
+      "shippingCost": 0,
+      "email": "lolislolpp@gmail.com",
       "phone": "80001812381",
+      "pincode": "700055",
+      "createdAt": {
+        "seconds": 1763906412,
+        "nanoseconds": 534000000
+      },
       "items": [
         {
           "size": "M",
           "id": 2,
           "quantity": 1,
-          "color": "Pink",
           "name": "Vintage Crop Top",
           "price": 45,
+          "color": "Pink",
           "qid": "VCT-002",
           "originalPrice": 90,
           "category": "Women",
@@ -302,19 +312,9 @@
           "orderedColor": "Pink"
         }
       ],
-      "createdAt": {
-        "seconds": 1763906412,
-        "nanoseconds": 534000000
-      },
       "state": "West Bengal",
-      "subtotal": 45,
-      "status": "pending",
-      "pincode": "700055",
+      "city": "koltakata",
       "paymentMethod": "upi",
-      "orderDate": {
-        "seconds": 1763906412,
-        "nanoseconds": 534000000
-      },
       "source": "firebase"
     }
   ],

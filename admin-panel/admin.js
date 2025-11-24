@@ -2873,3 +2873,156 @@ function showStorageWarning() {
     alert(`⚠️ STORAGE ALMOST FULL!\n\nUsing ${usage.sizeMB.toFixed(2)}MB of ~5MB\n\n💡 RECOMMENDATIONS:\n• Clear old products\n• Use smaller images\n• Delete unused data`);
   }
 }
+
+
+// ============================================
+// AI DESCRIPTION GENERATOR
+// ============================================
+
+// Generate AI description from product images using vision AI
+window.generateAIDescription = async () => {
+  try {
+    // Load config
+    const config = window.AI_PROMPT_CONFIG || {};
+    
+    // Check if there are images
+    if (!state.productForm.images || state.productForm.images.length === 0) {
+      alert('⚠️ Please add at least one product image first!\n\nThe AI needs to analyze the product image to generate a description.');
+      return;
+    }
+    
+    // Get product details
+    const productName = document.getElementById('productName')?.value || 'Product';
+    const category = document.getElementById('productCategory')?.value || 'Fashion';
+    const type = document.getElementById('productType')?.value || 'Apparel';
+    const price = document.getElementById('salePrice')?.value || '';
+    
+    // Show loading state
+    const descField = document.getElementById('productDescription');
+    const originalPlaceholder = descField.placeholder;
+    descField.placeholder = '✨ AI is analyzing your product image...';
+    descField.disabled = true;
+    
+    showSyncStatus('🤖 Analyzing product image with AI...', 'success');
+    
+    const imageUrl = state.productForm.images[0];
+    console.log('🤖 Analyzing image:', imageUrl);
+    
+    // Build prompt from config
+    const systemPrompt = config.systemPrompt || 'Write a compelling product description for a streetwear brand.';
+    const contextTemplate = config.productContext || 'Product: {productName}\nCategory: {category}\nType: {type}';
+    
+    const productContext = contextTemplate
+      .replace('{productName}', productName)
+      .replace('{category}', category)
+      .replace('{type}', type)
+      .replace('{price}', price);
+    
+    // Build the full prompt with image analysis
+    const fullPrompt = `${systemPrompt}
+
+${productContext}
+${imageAnalysis}`;
+    
+    console.log('📝 Using prompt:', fullPrompt.substring(0, 400) + '...');
+    console.log('🖼️ Image URL:', imageUrl);
+    
+    showSyncStatus('✍️ AI is writing your lore-based description...', 'success');
+    
+    // Use Hugging Face Mistral model with better prompt formatting
+    const textResponse = await fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        inputs: fullPrompt,
+        parameters: {
+          max_new_tokens: config.apiConfig?.maxTokens || 500,
+          temperature: config.apiConfig?.temperature || 0.8,
+          top_p: config.apiConfig?.topP || 0.95,
+          return_full_text: false,
+          do_sample: true
+        }
+      })
+    });
+    
+    if (!textResponse.ok) {
+      console.warn('⚠️ AI API unavailable');
+      throw new Error('AI service unavailable');
+    }
+    
+    const textData = await textResponse.json();
+    let description = '';
+    
+    // Handle Hugging Face response format
+    if (Array.isArray(textData) && textData[0]?.generated_text) {
+      description = textData[0].generated_text.trim();
+    } else if (textData.generated_text) {
+      description = textData.generated_text.trim();
+    } else {
+      throw new Error('Invalid API response');
+    }
+    
+    // Clean up and format the description
+    // Keep the full output including TITLE and LORE sections
+    description = description
+      .replace(/^[\s\n]+/, '') // Remove leading whitespace
+      .trim();
+    
+    // If it contains TITLE and LORE sections, keep them formatted nicely
+    if (description.includes('**TITLE:**') || description.includes('**LORE:**')) {
+      // Keep the formatted output
+      description = description.substring(0, 500); // Limit total length
+    } else {
+      // If no formatting, just take first 300 chars
+      description = description.substring(0, 300);
+    }
+    
+    // Set the generated description
+    descField.value = description;
+    descField.disabled = false;
+    descField.placeholder = originalPlaceholder;
+    
+    showSyncStatus('✅ AI description generated from image!', 'success');
+    console.log('✅ Generated description:', description);
+    
+    // Highlight the field
+    descField.style.background = 'rgba(0, 255, 136, 0.1)';
+    setTimeout(() => {
+      descField.style.background = '';
+    }, 2000);
+    
+  } catch (error) {
+    console.error('❌ AI generation error:', error);
+    
+    // Fallback to template-based generation
+    const config = window.AI_PROMPT_CONFIG || {};
+    const templates = config.fallbackTemplates || [
+      'Premium {type} with personality-driven design. Engineered for durability and style.',
+      'Elevate your {category} wardrobe with this {type}. Perfect blend of comfort and quality.'
+    ];
+    
+    const productName = document.getElementById('productName')?.value || 'Product';
+    const category = document.getElementById('productCategory')?.value || 'fashion';
+    const type = document.getElementById('productType')?.value || 'apparel';
+    
+    const randomTemplate = templates[Math.floor(Math.random() * templates.length)]
+      .replace('{type}', type.toLowerCase())
+      .replace('{category}', category.toLowerCase())
+      .replace('{productName}', productName);
+    
+    const descField = document.getElementById('productDescription');
+    descField.value = randomTemplate;
+    descField.disabled = false;
+    descField.placeholder = 'Enter detailed product description...';
+    
+    showSyncStatus('✅ Template description generated', 'success');
+    console.log('✅ Used template description (AI unavailable)');
+    
+    descField.style.background = 'rgba(0, 255, 136, 0.1)';
+    setTimeout(() => {
+      descField.style.background = '';
+    }, 2000);
+  }
+};

@@ -57,6 +57,49 @@ const server = http.createServer((req, res) => {
     return;
   }
   
+  // Proxy to Vite dev server for visual builder
+  if (req.method === 'GET' && req.url.startsWith('/vite-proxy')) {
+    const targetUrl = req.url.replace('/vite-proxy', '');
+    const viteUrl = `http://localhost:5173${targetUrl || '/'}`;
+    
+    // Proxy the request to Vite
+    import('http').then(({ default: http }) => {
+      http.get(viteUrl, (viteRes) => {
+        res.writeHead(viteRes.statusCode, {
+          ...viteRes.headers,
+          'Access-Control-Allow-Origin': '*',
+          'X-Frame-Options': 'ALLOWALL'
+        });
+        viteRes.pipe(res);
+      }).on('error', (err) => {
+        console.error('❌ Vite proxy error:', err.message);
+        res.writeHead(502);
+        res.end('Vite dev server not running. Start it with: npm run dev');
+      });
+    });
+    return;
+  }
+  
+  // Serve App.tsx for the page builder
+  if (req.method === 'GET' && req.url === '/App.tsx') {
+    const appPath = path.join(__dirname, '..', 'App.tsx');
+    
+    if (fs.existsSync(appPath)) {
+      const content = fs.readFileSync(appPath, 'utf8');
+      res.writeHead(200, { 
+        'Content-Type': 'text/plain',
+        'Access-Control-Allow-Origin': '*'
+      });
+      res.end(content);
+      console.log('📄 Served App.tsx to page builder');
+      return;
+    } else {
+      res.writeHead(404);
+      res.end('App.tsx not found');
+      return;
+    }
+  }
+  
   // Serve admin panel files
   if (req.method === 'GET' && req.url.startsWith('/admin-panel/')) {
     const filePath = path.join(__dirname, '..', req.url);
@@ -229,6 +272,68 @@ const server = http.createServer((req, res) => {
       }));
       console.error('❌ Load error:', error.message);
     }
+  } else if (req.method === 'POST' && req.url === '/update-app-tsx') {
+    let body = '';
+    
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        const { code, sections } = data;
+        
+        // Backup current App.tsx
+        const appPath = path.join(__dirname, '..', 'App.tsx');
+        const backupPath = path.join(__dirname, '..', `App.tsx.backup.${Date.now()}`);
+        
+        if (fs.existsSync(appPath)) {
+          fs.copyFileSync(appPath, backupPath);
+          console.log('📦 Backed up App.tsx');
+        }
+        
+        // Write new App.tsx
+        fs.writeFileSync(appPath, code, 'utf8');
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          message: '✅ App.tsx updated successfully!',
+          backup: backupPath,
+          sections: sections.length
+        }));
+        
+        console.log(`✅ Updated App.tsx with ${sections.length} sections`);
+        
+      } catch (error) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          error: error.message
+        }));
+        console.error('❌ Error updating App.tsx:', error.message);
+      }
+    });
+  } else if (req.method === 'POST' && req.url === '/deploy-website') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    
+    // Auto-deploy using existing git workflow
+    import('child_process').then(({ exec }) => {
+      exec('git add . && git commit -m "Visual builder update" && git push origin main', (error, stdout, stderr) => {
+        if (error) {
+          console.error('⚠️ Deploy error:', error.message);
+        } else {
+          console.log('✅ Deployed to GitHub!');
+          console.log(stdout);
+        }
+      });
+    });
+    
+    res.end(JSON.stringify({
+      success: true,
+      message: 'Deployment started'
+    }));
   } else if (req.method === 'POST' && req.url === '/update-constants') {
     let body = '';
     

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Builder.io Visual Editor - ELEVEZ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .icon {
+      font-size: 80px;
+      margin-bottom: 30px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #888;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border: 2px solid #333;
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 30px;
+    }
+
+    .api-key {
+      background: #0a0a0a;
+      border: 1px solid #00ff88;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 30px 0;
+      font-family: 'Courier New', monospace;
+      color: #00ff88;
+      font-size: 14px;
+      word-break: break-all;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 18px 40px;
+      background: #00ff88;
+      color: black;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    .btn:hover {
+      background: #00dd77;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+    }
+
+    .btn-secondary {
+      background: #333;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #444;
+    }
+
+    .steps {
+      text-align: left;
+      margin: 30px 0;
+    }
+
+    .step {
+      background: #252525;
+      border-left: 4px solid #00ff88;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+    }
+
+    .step-number {
+      display: inline-block;
+      background: #00ff88;
+      color: black;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      font-weight: 700;
+      margin-right: 12px;
+    }
+
+    .step-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .step-desc {
+      color: #aaa;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .alert {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid #00ff88;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .alert-title {
+      font-weight: 700;
+      color: #00ff88;
+      margin-bottom: 10px;
+    }
+
+    .countdown {
+      font-size: 14px;
+      color: #666;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🎨</div>
+    <h1>Visual Editor Ready!</h1>
+    <p class="subtitle">
+      Your website is connected to Builder.io.<br>
+      Start editing visually in 3 clicks!
+    </p>
+
+    <div class="card">
+      <h2 style="color: #00ff88; margin-bottom: 20px;">Your API Key</h2>
+      <div class="api-key">
+        273eceb4203548428b50f961521eccd0
+      </div>
+      <p style="color: #888; font-size: 13px; margin-top: 10px;">
+        ✅ Already configured in your website
+      </p>
+    </div>
+
+    <div class="card">
+      <h2 style="color: #00ff88; margin-bottom: 20px;">Quick Start</h2>
+      
+      <div class="steps">
+        <div class="step">
+          <div class="step-title">
+            <span class="step-number">1</span>
+            Open Builder.io Editor
+          </div>
+          <div class="step-desc">
+            Click the button below to open the visual editor
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-title">
+            <span class="step-number">2</span>
+            Create a New Page
+          </div>
+          <div class="step-desc">
+            Click "+ New → Page" and enter your website URL
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-title">
+            <span class="step-number">3</span>
+            Start Editing!
+          </div>
+          <div class="step-desc">
+            Click any element to edit, drag & drop components, publish when ready
+          </div>
+        </div>
+      </div>
+
+      <a href="https://builder.io/content" target="_blank" class="btn">
+        🚀 Open Visual Editor
+      </a>
+      <a href="../BUILDER-IO-READY.md" class="btn btn-secondary">
+        📚 View Guide
+      </a>
+    </div>
+
+    <div class="alert">
+      <div class="alert-title">💡 Pro Tip</div>
+      <p style="color: #ccc; line-height: 1.8;">
+        When creating a page, use these URLs:<br>
+        • Homepage: <code style="background: #0a0a0a; padding: 2px 6px; border-radius: 4px;">/</code><br>
+        • About: <code style="background: #0a0a0a; padding: 2px 6px; border-radius: 4px;">/about</code><br>
+        • Collections: <code style="background: #0a0a0a; padding: 2px 6px; border-radius: 4px;">/collections</code>
+      </p>
+    </div>
+
+    <div class="countdown">
+      <p>🎉 Your website is ready for visual editing!</p>
+      <p style="margin-top: 10px;">
+        <a href="index.html" style="color: #00ff88;">← Back to Admin Panel</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Auto-redirect to Builder.io after 10 seconds (optional)
+    // Uncomment if you want auto-redirect
+    // setTimeout(() => {
+    //   window.open('https://builder.io/content', '_blank');
+    // }, 10000);
+  </script>
+</body>
+</html>

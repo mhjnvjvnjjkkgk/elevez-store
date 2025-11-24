@@ -1,5 +1,5 @@
 import { db } from '../firebaseConfig';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, Timestamp, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 
 // Order data interface
 export interface OrderData {
@@ -70,6 +70,36 @@ export const getOrder = async (orderId: string) => {
     return { success: true, data: null };
   } catch (error) {
     console.error('Error getting order: ', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Get order by ID with user verification
+export const getOrderById = async (orderId: string, userId: string) => {
+  try {
+    const orderRef = doc(db, 'orders', orderId);
+    const orderSnap = await getDoc(orderRef);
+
+    if (!orderSnap.exists()) {
+      return { success: false, error: 'Order not found' };
+    }
+
+    const orderData = orderSnap.data();
+
+    // Verify the order belongs to the user
+    if (orderData.userId !== userId) {
+      return { success: false, error: 'Unauthorized access to this order' };
+    }
+
+    return { 
+      success: true, 
+      data: {
+        id: orderId,
+        ...orderData
+      }
+    };
+  } catch (error) {
+    console.error('Error getting order:', error);
     return { success: false, error: error.message };
   }
 };
