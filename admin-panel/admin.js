@@ -97,15 +97,69 @@ const state = {
   selectedImages: new Set()
 };
 
+// Auto-sync from constants.ts if no products in localStorage
+async function autoSyncFromConstants(force = false) {
+  try {
+    // Check if we already have products
+    const existing = localStorage.getItem('elevez_products');
+    if (!force && existing && JSON.parse(existing).length > 0) {
+      console.log('ℹ️ Products already exist in localStorage, skipping auto-sync');
+      return false;
+    }
+    
+    console.log('🔄 Syncing from constants.ts...');
+    
+    // Try to import from constants module
+    const module = await import('../constants.js');
+    if (module.PRODUCTS && module.PRODUCTS.length > 0) {
+      localStorage.setItem('elevez_products', JSON.stringify(module.PRODUCTS));
+      localStorage.setItem('elevez_last_save', new Date().toISOString());
+      state.products = module.PRODUCTS;
+      console.log(`✅ Synced ${module.PRODUCTS.length} products from constants.ts`);
+      showSyncStatus(`✅ Loaded ${module.PRODUCTS.length} products from website`, 'success');
+      return true;
+    }
+  } catch (error) {
+    console.log('ℹ️ Auto-sync from constants.ts not available:', error.message);
+  }
+  return false;
+}
+
+// Force sync from constants - for refresh button
+window.forceSyncFromConstants = async function() {
+  console.log('🔄 Force syncing from constants.ts...');
+  const synced = await autoSyncFromConstants(true);
+  if (synced) {
+    await loadData();
+    renderProducts();
+    showSyncStatus(`✅ Synced ${state.products.length} products from website`, 'success');
+  } else {
+    showSyncStatus('❌ Failed to sync from website', 'error');
+  }
+};
+
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
   // Setup hot-reload first
   setupHotReloadClient();
   
+  // Try auto-sync before loading data
+  await autoSyncFromConstants();
+  
   await loadData();
   setupNavigation();
   setupSyncButton();
+  
+  // Force render orders immediately
+  console.log('🔧 Forcing initial render...');
+  console.log('   state.orders:', state.orders.length);
   renderCurrentView();
+  
+  // Also render orders directly to ensure they display
+  setTimeout(() => {
+    console.log('📋 Rendering orders directly...');
+    renderOrders();
+  }, 500);
   
   // Check for data issues on startup
   checkDataIntegrity();
@@ -134,6 +188,34 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.log('💾 Saved before page close');
     }
   });
+  
+  // Make functions globally accessible for debugging
+  window.debugAdmin = {
+    renderProducts,
+    renderOrders,
+    renderDashboard,
+    state,
+    switchView,
+    renderCurrentView
+  };
+  console.log('🔧 Debug functions available: window.debugAdmin');
+  
+  // EMERGENCY FIX: Add direct observer for products view
+  const productsView = document.getElementById('products-view');
+  if (productsView) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          if (productsView.classList.contains('active')) {
+            console.log('🔍 Products view became active, forcing render...');
+            setTimeout(() => renderProducts(), 100);
+          }
+        }
+      });
+    });
+    observer.observe(productsView, { attributes: true });
+    console.log('👁️ Products view observer installed');
+  }
 });
 
 // Load Data
@@ -473,35 +555,78 @@ function showSyncStatus(message, type = 'success') {
 
 // Navigation
 function setupNavigation() {
+  console.log('🔧 Setting up navigation...');
   document.querySelectorAll('.nav-item').forEach(btn => {
-    btn.addEventListener('click', () => {
+    // Skip if no data-view (like external links)
+    if (!btn.dataset.view) {
+      console.log('   Skipping nav item without data-view');
+      return;
+    }
+    
+    console.log('   Found nav item:', btn.dataset.view);
+    btn.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent default to ensure our handler runs
       const view = btn.dataset.view;
+      console.log('🖱️ Nav clicked:', view);
       switchView(view);
     });
   });
+  
+  // Force render products if we're on products view
+  if (state.currentView === 'products') {
+    console.log('🔄 Initial view is products, rendering...');
+    renderProducts();
+  }
 }
 
 function switchView(view) {
-  state.currentView = view;
-  
-  document.querySelectorAll('.nav-item').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.view === view);
-  });
-  
-  document.querySelectorAll('.view').forEach(v => {
-    v.classList.remove('active');
-  });
-  document.getElementById(`${view}-view`).classList.add('active');
-  
-  renderCurrentView();
+  try {
+    console.log('🔄 switchView called with:', view);
+    state.currentView = view;
+    
+    // Update nav items
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.view === view);
+    });
+    
+    // Hide all views
+    document.querySelectorAll('.view').forEach(v => {
+      v.classList.remove('active');
+    });
+    
+    // Show target view
+    const targetView = document.getElementById(`${view}-view`);
+    if (targetView) {
+      targetView.classList.add('active');
+      console.log('✅ View activated:', view);
+    } else {
+      console.error('❌ View not found:', `${view}-view`);
+    }
+    
+    // Render content
+    console.log('🎯 About to call renderCurrentView()...');
+    renderCurrentView();
+    console.log('✅ renderCurrentView() completed');
+  } catch (error) {
+    console.error('❌ Error in switchView:', error);
+    // Force render anyway
+    if (view === 'products') {
+      console.log('🔧 Force rendering products due to error...');
+      renderProducts();
+    }
+  }
 }
 
 function renderCurrentView() {
+  console.log('🔄 renderCurrentView called, current view:', state.currentView);
+  console.log('📦 Products in state:', state.products.length);
+  
   switch(state.currentView) {
     case 'dashboard':
       renderDashboard();
       break;
     case 'products':
+      console.log('🎯 Calling renderProducts()...');
       renderProducts();
       break;
     case 'orders':
@@ -509,6 +634,11 @@ function renderCurrentView() {
       break;
     case 'collections':
       renderCollections();
+      break;
+    case 'sections':
+      if (typeof renderSections === 'function') {
+        renderSections();
+      }
       break;
   }
 }
@@ -521,7 +651,38 @@ function renderDashboard() {
   const avgPrice = totalProducts > 0 ? totalValue / totalProducts : 0;
   const totalOrders = state.orders.length;
   const pendingOrders = state.orders.filter(o => o.status === 'pending' || o.status === 'processing').length;
-  const totalRevenue = state.orders.filter(o => o.status === 'completed').reduce((sum, o) => sum + o.totalAmount, 0);
+  const completedOrders = state.orders.filter(o => o.status === 'completed');
+  const totalRevenue = completedOrders.reduce((sum, o) => sum + o.totalAmount, 0);
+  
+  // Calculate total profit from completed orders
+  let totalProfit = 0;
+  let totalCost = 0;
+  completedOrders.forEach(order => {
+    if (order.items) {
+      order.items.forEach(item => {
+        const product = state.products.find(p => p.id === item.id);
+        if (product && product.cost) {
+          const itemCost = product.cost * item.quantity;
+          const itemRevenue = item.price * item.quantity;
+          totalCost += itemCost;
+          totalProfit += (itemRevenue - itemCost);
+        }
+      });
+    }
+  });
+  
+  const avgProfitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
+  
+  // Find best performing products by profit
+  const productProfits = state.products
+    .filter(p => p.cost > 0)
+    .map(p => ({
+      name: p.name,
+      profit: p.profit || (p.price - p.cost),
+      margin: p.profitMargin || ((p.price - p.cost) / p.price * 100).toFixed(1)
+    }))
+    .sort((a, b) => b.profit - a.profit)
+    .slice(0, 3);
   
   grid.innerHTML = `
     <div class="stat-card">
@@ -540,12 +701,45 @@ function renderDashboard() {
       <div class="stat-value">₹${totalRevenue.toFixed(0)}</div>
       <div class="stat-label">Total Revenue</div>
     </div>
+    <div class="stat-card">
+      <div class="stat-value" style="color: var(--primary);">₹${totalProfit.toFixed(0)}</div>
+      <div class="stat-label">Total Profit</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" style="color: var(--primary);">₹${totalCost.toFixed(0)}</div>
+      <div class="stat-label">Cost of Goods Sold</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" style="color: ${avgProfitMargin < 20 ? '#ff3b30' : avgProfitMargin < 40 ? '#ffaa00' : 'var(--primary)'};">${avgProfitMargin}%</div>
+      <div class="stat-label">Avg Profit Margin</div>
+    </div>
+    <div class="stat-card" style="grid-column: span 1;">
+      <div class="stat-label" style="margin-bottom: 10px;">Top Profitable Products</div>
+      ${productProfits.length > 0 ? productProfits.map(p => `
+        <div style="font-size: 12px; margin: 5px 0; display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">${p.name.substring(0, 20)}${p.name.length > 20 ? '...' : ''}</span>
+          <span style="color: var(--primary); font-weight: 600;">₹${p.profit.toFixed(0)} (${p.margin}%)</span>
+        </div>
+      `).join('') : '<div style="font-size: 12px; color: var(--text-muted);">No profit data yet</div>'}
+    </div>
   `;
 }
 
 // Products
 function renderProducts() {
+  console.log('🎨 renderProducts() CALLED!');
   const grid = document.getElementById('productsGrid');
+  
+  console.log('🎨 Rendering products:', {
+    count: state.products.length,
+    gridElement: grid ? 'Found' : 'NOT FOUND',
+    products: state.products.slice(0, 2).map(p => ({ name: p.name, image: p.image }))
+  });
+  
+  if (!grid) {
+    console.error('❌ Products grid element not found!');
+    return;
+  }
   
   if (state.products.length === 0) {
     grid.innerHTML = `
@@ -581,9 +775,21 @@ function renderProducts() {
   
   grid.innerHTML = summary + state.products.map(product => {
     const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+    const imageUrl = product.image || product.images?.[0] || 'https://via.placeholder.com/400x500/1a1a1a/00ff88?text=No+Image';
+    
+    // Calculate profit if cost is available
+    const cost = product.cost || 0;
+    const profit = cost > 0 ? product.price - cost : 0;
+    const profitMargin = cost > 0 && product.price > 0 ? ((profit / product.price) * 100).toFixed(1) : 0;
+    
+    // Determine profit color
+    let profitColor = 'var(--primary)';
+    if (profitMargin < 20) profitColor = '#ff3b30';
+    else if (profitMargin < 40) profitColor = '#ffaa00';
+    
     return `
       <div class="product-card">
-        <img src="${product.image}" alt="${product.name}">
+        <img src="${imageUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x500/1a1a1a/00ff88?text=No+Image'; this.style.opacity='0.5';">
         <div class="product-info">
           <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
             <h3 style="margin: 0; flex: 1;">${product.name}</h3>
@@ -594,6 +800,16 @@ function renderProducts() {
             <span class="price-normal">₹${product.originalPrice}</span>
             <span class="price-discount">${discount}% OFF</span>
           </div>
+          ${cost > 0 ? `
+          <div style="display: flex; gap: 8px; margin: 8px 0; font-size: 12px;">
+            <span style="background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px;">
+              Cost: ₹${cost}
+            </span>
+            <span style="background: rgba(${profitColor === '#ff3b30' ? '255,59,48' : profitColor === '#ffaa00' ? '255,170,0' : '0,255,136'},0.1); color: ${profitColor}; padding: 4px 8px; border-radius: 4px; font-weight: 600;">
+              Profit: ₹${profit.toFixed(0)} (${profitMargin}%)
+            </span>
+          </div>
+          ` : ''}
           <div class="product-meta">
             <span class="meta-badge">${product.category}</span>
             <span class="meta-badge">${product.type}</span>
@@ -710,24 +926,54 @@ function resetProductForm() {
 }
 
 function setupProductFormListeners() {
-  // Price calculation
+  // Price and profit calculation
   const normalPrice = document.getElementById('normalPrice');
   const salePrice = document.getElementById('salePrice');
+  const productCost = document.getElementById('productCost');
   const discountDisplay = document.getElementById('discountDisplay');
+  const profitDisplay = document.getElementById('profitDisplay');
+  const profitMarginDisplay = document.getElementById('profitMarginDisplay');
   
-  const calculateDiscount = () => {
+  const calculateAll = () => {
     const normal = parseFloat(normalPrice.value) || 0;
     const sale = parseFloat(salePrice.value) || 0;
+    const cost = parseFloat(productCost.value) || 0;
+    
+    // Calculate discount
     if (normal > 0 && sale > 0 && sale < normal) {
       const discount = Math.round(((normal - sale) / normal) * 100);
       discountDisplay.value = `${discount}% OFF`;
     } else {
       discountDisplay.value = '';
     }
+    
+    // Calculate profit
+    if (sale > 0 && cost > 0) {
+      const profit = sale - cost;
+      const profitMargin = ((profit / sale) * 100).toFixed(1);
+      profitDisplay.value = `₹${profit.toFixed(0)}`;
+      profitMarginDisplay.value = `${profitMargin}%`;
+      
+      // Color code based on margin
+      if (profitMargin < 20) {
+        profitMarginDisplay.style.background = 'rgba(255, 59, 48, 0.1)';
+        profitMarginDisplay.style.color = '#ff3b30';
+      } else if (profitMargin < 40) {
+        profitMarginDisplay.style.background = 'rgba(255, 170, 0, 0.1)';
+        profitMarginDisplay.style.color = '#ffaa00';
+      } else {
+        profitMarginDisplay.style.background = 'rgba(0, 255, 136, 0.1)';
+        profitMarginDisplay.style.color = 'var(--primary)';
+      }
+    } else {
+      profitDisplay.value = '';
+      profitMarginDisplay.value = '';
+    }
   };
   
-  normalPrice.addEventListener('input', calculateDiscount);
-  salePrice.addEventListener('input', calculateDiscount);
+  normalPrice.addEventListener('input', calculateAll);
+  salePrice.addEventListener('input', calculateAll);
+  productCost.addEventListener('input', calculateAll);
   
   // Size selection
   document.querySelectorAll('.size-btn').forEach(btn => {
@@ -1690,12 +1936,20 @@ function handleProductSubmit(e) {
     return url;
   };
   
+  // Get cost and calculate profit
+  const productCost = parseFloat(document.getElementById('productCost').value) || 0;
+  const profit = productCost > 0 ? salePrice - productCost : 0;
+  const profitMargin = productCost > 0 && salePrice > 0 ? ((profit / salePrice) * 100).toFixed(1) : 0;
+  
   const product = {
     id: state.editingProduct?.id || Date.now(),
     qid: qid,
     name: document.getElementById('productName').value,
     price: salePrice,
     originalPrice: normalPrice,
+    cost: productCost,
+    profit: profit,
+    profitMargin: parseFloat(profitMargin),
     category: document.getElementById('productCategory').value,
     type: document.getElementById('productType').value,
     rating: parseFloat(document.getElementById('productRating').value),
@@ -1706,6 +1960,10 @@ function handleProductSubmit(e) {
     sizes: state.productForm.selectedSizes,
     colors: state.productForm.selectedColors.map(c => c.name),
     tags: state.productForm.selectedTags.length > 0 ? state.productForm.selectedTags : undefined,
+    // Inventory tracking
+    sku: document.getElementById('productSKU')?.value || undefined,
+    stock: parseInt(document.getElementById('productStock')?.value) || 0,
+    status: document.getElementById('productStatus')?.value || 'active',
     // Section visibility flags
     showInHome: document.getElementById('showInHome')?.checked !== false,
     showInShop: document.getElementById('showInShop')?.checked !== false,
@@ -1966,7 +2224,17 @@ export function getCollectionProducts(collectionId: string): Product[] {
 function renderOrders() {
   const container = document.getElementById('ordersContainer');
   
+  console.log('📋 renderOrders called');
+  console.log('   state.orders.length:', state.orders.length);
+  console.log('   container:', container);
+  
+  if (!container) {
+    console.error('❌ ordersContainer not found!');
+    return;
+  }
+  
   if (state.orders.length === 0) {
+    console.log('⚠️ No orders to display');
     container.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">🛒</div>
@@ -1981,6 +2249,8 @@ function renderOrders() {
     return;
   }
   
+  console.log('✅ Rendering', state.orders.length, 'orders');
+  
   // Sort orders by date (newest first)
   const sortedOrders = [...state.orders].sort((a, b) => {
     const dateA = new Date(a.createdAt || a.date || 0);
@@ -1993,7 +2263,7 @@ function renderOrders() {
   const completedCount = sortedOrders.filter(o => o.status === 'completed').length;
   const totalRevenue = sortedOrders.filter(o => o.status === 'completed').reduce((sum, o) => sum + (o.totalAmount || 0), 0);
   
-  const summaryHtml = `
+  let html = `
     <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(0,255,136,0.1);">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
         <div>
@@ -2011,96 +2281,122 @@ function renderOrders() {
     </div>
   `;
   
-  container.innerHTML = summaryHtml + sortedOrders.map(order => {
+  // Add each order
+  sortedOrders.forEach(order => {
     const statusClass = order.status || 'pending';
-    const orderDate = new Date(order.createdAt || order.date || Date.now());
-    const sourceLabel = order.source === 'firebase' ? '🔥 Firebase' : '💾 Local';
     
-    return `
-      <div class="order-card" style="border-left: 4px solid ${order.source === 'firebase' ? '#00ff88' : '#666'};">
-        <div class="order-header">
+    // Format date safely
+    let orderDate;
+    try {
+      const dateValue = order.createdAt || order.date || new Date().toISOString();
+      orderDate = new Date(dateValue);
+      // Check if date is valid
+      if (isNaN(orderDate.getTime())) {
+        orderDate = new Date();
+      }
+    } catch (e) {
+      orderDate = new Date();
+    }
+    
+    const dateString = orderDate.toLocaleString();
+    const sourceLabel = order.source === 'firebase' ? '🔥 Firebase' : '💾 Local';
+    const pointsEarned = order.pointsEarned || Math.floor((order.totalAmount || 0) / 10);
+    
+    html += `
+      <div style="background: var(--card-bg); border: 1px solid rgba(0,255,136,0.2); border-left: 4px solid ${order.source === 'firebase' ? '#00ff88' : '#666'}; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
           <div>
-            <div class="order-id">Order #${order.orderId || order.id} <span style="font-size: 11px; color: var(--text-muted); margin-left: 10px;">${sourceLabel}</span></div>
-            <div class="order-date">${orderDate.toLocaleString()}</div>
+            <h3 style="margin: 0; color: var(--primary);">Order #${order.orderId || order.id}</h3>
+            <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 12px;">${sourceLabel} • ${dateString}</p>
           </div>
-          <div class="order-status ${statusClass}">${statusClass}</div>
+          <span style="background: ${statusClass === 'completed' ? '#00ff88' : statusClass === 'pending' ? '#ffaa00' : '#ff4444'}; color: #000; padding: 5px 12px; border-radius: 6px; font-weight: 700; font-size: 12px;">${statusClass}</span>
         </div>
         
-        <div class="order-body">
-          <div class="order-section">
-            <h4>Customer Information</h4>
-            <div class="order-info-row">
-              <span class="order-info-label">Name</span>
-              <span class="order-info-value">${order.fullName || order.customerName || 'N/A'}</span>
-            </div>
-            <div class="order-info-row">
-              <span class="order-info-label">Email</span>
-              <span class="order-info-value">${order.email || order.customerEmail || 'N/A'}</span>
-            </div>
-            <div class="order-info-row">
-              <span class="order-info-label">Phone</span>
-              <span class="order-info-value">${order.phone || order.customerPhone || 'N/A'}</span>
-            </div>
-            <div class="order-info-row">
-              <span class="order-info-label">Address</span>
-              <span class="order-info-value">${order.address || order.shippingAddress || 'N/A'}, ${order.city || ''} ${order.state || ''} ${order.pincode || ''}</span>
-            </div>
-          </div>
-          
-          <div class="order-section">
-            <h4>Order Details</h4>
-            <div class="order-info-row">
-              <span class="order-info-label">Payment Method</span>
-              <span class="order-info-value">${order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod === 'upi' ? 'UPI' : order.paymentMethod || 'N/A'}</span>
-            </div>
-            <div class="order-info-row">
-              <span class="order-info-label">Subtotal</span>
-              <span class="order-info-value">₹${(order.subtotal || 0).toFixed(2)}</span>
-            </div>
-            <div class="order-info-row">
-              <span class="order-info-label">Shipping</span>
-              <span class="order-info-value">${(order.shippingCost || 0) === 0 ? 'FREE' : '₹' + (order.shippingCost || 0).toFixed(2)}</span>
-            </div>
-          </div>
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+          <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 14px;">👤 Customer</h4>
+          <p style="margin: 5px 0;"><strong>Name:</strong> ${order.fullName || order.customerName || 'N/A'}</p>
+          <p style="margin: 5px 0;"><strong>Email:</strong> ${order.email || 'N/A'}</p>
+          <p style="margin: 5px 0;"><strong>Phone:</strong> ${order.phone || 'N/A'}</p>
+          <p style="margin: 5px 0;"><strong>Address:</strong> ${order.address || order.shippingAddress || 'N/A'}</p>
         </div>
         
-        <div class="order-items">
-          <h4 style="font-size: 14px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 15px;">Products (${order.items?.length || 0} items)</h4>
-          ${order.items?.map(item => {
-            // Item already has full product details from Firebase sync
-            const qid = item.qid || 'N/A';
-            const image = item.image || 'https://via.placeholder.com/80x100?text=No+Image';
-            const category = item.category || '';
-            const type = item.type || '';
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+          <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 14px;">💰 Order Details</h4>
+          <p style="margin: 5px 0;"><strong>Payment:</strong> ${order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod || 'N/A'}</p>
+          <p style="margin: 5px 0;"><strong>Subtotal:</strong> ₹${(order.subtotal || 0).toFixed(2)}</p>
+          <p style="margin: 5px 0;"><strong>Shipping:</strong> ${(order.shippingCost || 0) === 0 ? 'FREE' : '₹' + (order.shippingCost || 0).toFixed(2)}</p>
+          <p style="margin: 5px 0;"><strong>Points Earned:</strong> <span style="color: var(--primary); font-weight: 700;">⭐ ${pointsEarned} points</span></p>
+          ${(() => {
+            // Calculate order profit
+            let orderCost = 0;
+            let orderProfit = 0;
+            if (order.items) {
+              order.items.forEach(item => {
+                const product = state.products.find(p => p.id === item.id);
+                if (product && product.cost) {
+                  const qty = item.orderedQuantity || item.quantity || 1;
+                  orderCost += product.cost * qty;
+                  orderProfit += (item.price - product.cost) * qty;
+                }
+              });
+            }
+            const orderMargin = order.totalAmount > 0 ? ((orderProfit / order.totalAmount) * 100).toFixed(1) : 0;
+            const marginColor = orderMargin < 20 ? '#ff3b30' : orderMargin < 40 ? '#ffaa00' : 'var(--primary)';
             
-            return `
-              <div class="order-item">
-                <img src="${image}" alt="${item.name}" class="order-item-image" onerror="this.src='https://via.placeholder.com/80x100?text=No+Image'">
-                <div class="order-item-details">
-                  <div class="order-item-name">${item.name}</div>
-                  <div class="order-item-qid">QID: ${qid} ${category ? '• ' + category : ''} ${type ? '• ' + type : ''}</div>
-                  <div class="order-item-meta">Size: ${item.orderedSize || item.size} • Color: ${item.orderedColor || item.color} • Qty: ${item.orderedQuantity || item.quantity}</div>
-                  <div class="order-item-price">₹${((item.price || 0) * (item.orderedQuantity || item.quantity || 1)).toFixed(2)}</div>
-                </div>
+            return orderCost > 0 ? `
+              <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,255,136,0.2);">
+                <p style="margin: 5px 0;"><strong>Cost:</strong> ₹${orderCost.toFixed(2)}</p>
+                <p style="margin: 5px 0;"><strong>Profit:</strong> <span style="color: ${marginColor}; font-weight: 700;">₹${orderProfit.toFixed(2)} (${orderMargin}%)</span></p>
               </div>
-            `;
-          }).join('') || '<p style="color: var(--text-muted);">No items</p>'}
+            ` : '';
+          })()}
         </div>
         
-        <div class="order-total">
-          <span class="order-total-label">Total Amount</span>
-          <span class="order-total-value">₹${(order.totalAmount || 0).toFixed(2)}</span>
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+          <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 14px;">🛍️ Products (${order.items?.length || 0} items)</h4>
+          ${order.items?.map(item => `
+            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin-bottom: 12px; display: flex; gap: 12px;">
+              <div style="flex-shrink: 0;">
+                <img src="${item.image || 'https://via.placeholder.com/100x120?text=No+Image'}" alt="${item.name}" style="width: 100px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(0,255,136,0.2);" onerror="this.src='https://via.placeholder.com/100x120?text=No+Image'">
+              </div>
+              <div style="flex: 1;">
+                <p style="margin: 0 0 5px 0;"><strong>${item.name}</strong></p>
+                <p style="margin: 0 0 5px 0; font-size: 12px; color: var(--text-muted);">QID: ${item.qid || 'N/A'} • ${item.category || ''} • ${item.type || ''}</p>
+                <p style="margin: 0 0 5px 0; font-size: 12px;">Size: ${item.orderedSize || item.size} • Color: ${item.orderedColor || item.color}</p>
+                <p style="margin: 0 0 5px 0; font-size: 12px;">Qty: ${item.orderedQuantity || item.quantity}</p>
+                <p style="margin: 0; font-weight: 700; color: var(--primary);">₹${((item.price || 0) * (item.orderedQuantity || item.quantity || 1)).toFixed(2)}</p>
+              </div>
+            </div>
+          `).join('') || '<p style="color: var(--text-muted);">No items</p>'}
         </div>
         
-        ${order.status !== 'completed' && order.status !== 'cancelled' ? `
-          <div class="order-actions">
-            <button class="btn-complete" onclick="updateOrderStatus('${order.orderId || order.id}', 'completed')">✓ Mark as Completed</button>
-            <button class="btn-cancel" onclick="updateOrderStatus('${order.orderId || order.id}', 'cancelled')">× Cancel Order</button>
+        <div style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 6px; border: 1px solid rgba(0,255,136,0.3); margin-bottom: 15px;">
+          <p style="margin: 0; font-size: 18px; font-weight: 700; color: var(--primary);">Total: ₹${(order.totalAmount || 0).toFixed(2)}</p>
+        </div>
+        
+        ${statusClass === 'pending' || statusClass === 'processing' ? `
+          <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px; border: 1px solid rgba(0,255,136,0.2);">
+            <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 14px;">📦 Ship Order</h4>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="text" id="tracking-${order.id}" placeholder="Enter tracking link (e.g., https://tracking.com/12345)" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid rgba(0,255,136,0.3); background: rgba(0,0,0,0.5); color: #fff; font-size: 14px;">
+              <button onclick="shipOrder('${order.id}')" style="padding: 10px 20px; background: var(--primary); color: #000; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; white-space: nowrap;">🚚 Ship Order</button>
+            </div>
+          </div>
+        ` : statusClass === 'shipped' && order.trackingLink ? `
+          <div style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 6px; border: 1px solid rgba(0,255,136,0.3);">
+            <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 14px;">📦 Tracking Information</h4>
+            <p style="margin: 0 0 5px 0; font-size: 14px;">Tracking Link: <a href="${order.trackingLink}" target="_blank" style="color: var(--primary); text-decoration: underline;">${order.trackingLink}</a></p>
+            <button onclick="markDelivered('${order.id}')" style="padding: 10px 20px; background: var(--primary); color: #000; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 10px;">✅ Mark as Delivered</button>
           </div>
         ` : ''}
       </div>
     `;
-  }).join('');
+  });
+  
+  const summaryHtml = html;
+  
+  container.innerHTML = summaryHtml;
+  console.log('✅ Orders rendered to container');
   
   // Setup search
   const searchInput = document.getElementById('orderSearch');
@@ -2142,6 +2438,147 @@ window.updateOrderStatus = (orderId, newStatus) => {
     saveData();
     renderOrders();
     alert(`✅ Order ${orderId} marked as ${newStatus}!`);
+  }
+};
+
+// Ship order with tracking link
+window.shipOrder = async (orderId) => {
+  const trackingInput = document.getElementById(`tracking-${orderId}`);
+  const trackingLink = trackingInput?.value?.trim();
+  
+  if (!trackingLink) {
+    alert('⚠️ Please enter a tracking link!');
+    return;
+  }
+  
+  // Validate URL
+  try {
+    new URL(trackingLink);
+  } catch (e) {
+    alert('⚠️ Please enter a valid URL (e.g., https://tracking.com/12345)');
+    return;
+  }
+  
+  try {
+    showSyncStatus('🚚 Shipping order...', 'success');
+    
+    // Find the order and get the actual Firebase document ID
+    const order = state.orders.find(o => o.id === orderId || o.orderId === orderId);
+    if (!order) {
+      throw new Error('Order not found in local state');
+    }
+    
+    // Use the document ID (order.id is the Firebase doc ID)
+    const firebaseDocId = order.id;
+    
+    console.log('🔍 Shipping order:', {
+      displayOrderId: orderId,
+      firebaseDocId: firebaseDocId,
+      trackingLink: trackingLink
+    });
+    
+    // Update in Firebase
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+    const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+    
+    const app = initializeApp({
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    }, 'ship-order-' + Date.now());
+    
+    const db = getFirestore(app);
+    const orderRef = doc(db, 'orders', firebaseDocId);
+    
+    await updateDoc(orderRef, {
+      status: 'shipped',
+      trackingLink: trackingLink,
+      shippedAt: new Date().toISOString(),
+      lastUpdated: new Date().toISOString()
+    });
+    
+    // Update local state
+    order.status = 'shipped';
+    order.trackingLink = trackingLink;
+    order.shippedAt = new Date().toISOString();
+    
+    saveData();
+    renderOrders();
+    
+    showSyncStatus('✅ Order shipped! Customer will see tracking link.', 'success');
+    alert(`✅ Order shipped successfully!\n\nTracking link: ${trackingLink}\n\nThe customer can now track their package in their account page.`);
+    
+    // Clear the input
+    trackingInput.value = '';
+    
+  } catch (error) {
+    console.error('❌ Error shipping order:', error);
+    console.error('Error details:', error.message);
+    showSyncStatus('❌ Error shipping order', 'error');
+    alert(`❌ Error: ${error.message}\n\nPlease check the console for details.`);
+  }
+};
+
+// Mark order as delivered
+window.markDelivered = async (orderId) => {
+  if (!confirm('Mark this order as delivered?')) return;
+  
+  try {
+    showSyncStatus('✅ Marking as delivered...', 'success');
+    
+    // Find the order and get the actual Firebase document ID
+    const order = state.orders.find(o => o.id === orderId || o.orderId === orderId);
+    if (!order) {
+      throw new Error('Order not found in local state');
+    }
+    
+    // Use the document ID (order.id is the Firebase doc ID)
+    const firebaseDocId = order.id;
+    
+    console.log('🔍 Marking delivered:', {
+      displayOrderId: orderId,
+      firebaseDocId: firebaseDocId
+    });
+    
+    // Update in Firebase
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+    const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+    
+    const app = initializeApp({
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    }, 'deliver-order-' + Date.now());
+    
+    const db = getFirestore(app);
+    const orderRef = doc(db, 'orders', firebaseDocId);
+    
+    await updateDoc(orderRef, {
+      status: 'delivered',
+      deliveredAt: new Date().toISOString(),
+      lastUpdated: new Date().toISOString()
+    });
+    
+    // Update local state
+    order.status = 'delivered';
+    order.deliveredAt = new Date().toISOString();
+    
+    saveData();
+    renderOrders();
+    
+    showSyncStatus('✅ Order marked as delivered!', 'success');
+    alert('✅ Order marked as delivered!');
+    
+  } catch (error) {
+    console.error('Error marking delivered:', error);
+    showSyncStatus('❌ Error updating order', 'error');
+    alert(`❌ Error: ${error.message}`);
   }
 };
 

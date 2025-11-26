@@ -1,0 +1,390 @@
+.segment-builder {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 24px;
+  color: #ffffff;
+}
+
+.segment-builder .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #333;
+}
+
+.segment-builder .panel-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.segment-builder .btn-primary {
+  background: #00ff88;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.segment-builder .btn-primary:hover {
+  background: #00dd77;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+}
+
+.segment-builder .builder-form {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.segment-builder .form-group {
+  margin-bottom: 20px;
+}
+
+.segment-builder .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.segment-builder .form-group input,
+.segment-builder .form-group textarea,
+.segment-builder .form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.segment-builder .form-group input:focus,
+.segment-builder .form-group textarea:focus,
+.segment-builder .form-group select:focus {
+  outline: none;
+  border-color: #00ff88;
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1);
+}
+
+.segment-builder .logic-selector {
+  display: flex;
+  gap: 16px;
+}
+
+.segment-builder .logic-selector label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.segment-builder .logic-selector input[type='radio'] {
+  cursor: pointer;
+}
+
+.segment-builder .rules-section {
+  margin-bottom: 20px;
+}
+
+.segment-builder .rules-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.segment-builder .rule-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto auto;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.segment-builder .rule-item select,
+.segment-builder .rule-item input {
+  padding: 8px 10px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.segment-builder .rule-item select:focus,
+.segment-builder .rule-item input:focus {
+  outline: none;
+  border-color: #00ff88;
+}
+
+.segment-builder .btn-remove {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.segment-builder .btn-remove:hover {
+  background: #dc2626;
+}
+
+.segment-builder .btn-add-rule {
+  background: #333;
+  color: #00ff88;
+  border: 1px solid #444;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.segment-builder .btn-add-rule:hover {
+  background: #444;
+  border-color: #555;
+}
+
+.segment-builder .form-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.segment-builder .btn-secondary {
+  background: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.segment-builder .btn-secondary:hover {
+  background: #444;
+  border-color: #555;
+}
+
+.segment-builder .segments-list {
+  margin-bottom: 24px;
+}
+
+.segment-builder .segments-list h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.segment-builder .empty-state {
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+  padding: 24px;
+}
+
+.segment-builder .segment-item {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.segment-builder .segment-item:hover {
+  border-color: #00ff88;
+  background: #2a2a2a;
+}
+
+.segment-builder .segment-item.inactive {
+  opacity: 0.6;
+}
+
+.segment-builder .segment-info {
+  flex: 1;
+}
+
+.segment-builder .segment-name {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.segment-builder .segment-description {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.segment-builder .segment-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: #666;
+}
+
+.segment-builder .segment-meta span {
+  background: #1a1a1a;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.segment-builder .segment-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.segment-builder .btn-toggle {
+  background: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.segment-builder .btn-toggle.active {
+  background: #10b981;
+  border-color: #059669;
+  color: white;
+}
+
+.segment-builder .btn-toggle:hover {
+  background: #444;
+}
+
+.segment-builder .btn-delete {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.segment-builder .btn-delete:hover {
+  background: #dc2626;
+}
+
+.segment-builder .segment-details {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.segment-builder .segment-details h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.segment-builder .details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.segment-builder .detail-item {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+}
+
+.segment-builder .detail-item .label {
+  display: block;
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.segment-builder .detail-item .value {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: #00ff88;
+}
+
+.segment-builder .rules-display {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.segment-builder .rules-display h4 {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #00ff88;
+}
+
+.segment-builder .rules-display ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.segment-builder .rules-display li {
+  padding: 6px 0;
+  font-size: 12px;
+  color: #ccc;
+  border-bottom: 1px solid #333;
+}
+
+.segment-builder .rules-display li:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .segment-builder .rule-item {
+    grid-template-columns: 1fr;
+  }
+
+  .segment-builder .segment-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .segment-builder .segment-actions {
+    width: 100%;
+  }
+
+  .segment-builder .btn-toggle,
+  .segment-builder .btn-delete {
+    flex: 1;
+  }
+}

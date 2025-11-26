@@ -157,11 +157,14 @@
       ]
     },
     {
-      "id": 1763915268195,
+      "id": 1764200901367,
       "qid": "1222",
       "name": "Dont Look back hoodie",
       "price": 850,
       "originalPrice": 1500,
+      "cost": 800,
+      "profit": 50,
+      "profitMargin": 5.9,
       "category": "Men",
       "type": "Hoodie",
       "rating": 4.5,
@@ -178,32 +181,35 @@
         "XS"
       ],
       "colors": [],
+      "stock": 100,
+      "status": "active",
       "showInHome": true,
       "showInShop": true,
-      "showInCollections": true
+      "showInCollections": true,
+      "isBestSeller": true
     }
   ],
   "collections": [],
   "orders": [
     {
-      "id": "mAsVn48LIsf1XLgRVy9r",
-      "orderId": "ORD-1763911399446",
-      "email": "lolislolpp@gmail.com",
+      "id": "FqpUj0HsXXWIFSy1GH6m",
+      "orderId": "ORD-1764031459429",
       "address": "sdasdada",
-      "fullName": "Mr Oak GAMING",
-      "createdAt": {
-        "seconds": 1763911399,
-        "nanoseconds": 446000000
-      },
+      "pincode": "700055",
+      "lastUpdated": "2025-11-25T15:53:02.252Z",
+      "subtotal": 85,
+      "city": "koltakata",
+      "shippingCost": 0,
       "state": "West Bengal",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
       "items": [
         {
-          "name": "Neon Glitch Hoodie",
-          "id": 1,
-          "price": 85,
           "size": "M",
-          "quantity": 1,
+          "price": 85,
+          "name": "Neon Glitch Hoodie",
           "color": "Black",
+          "quantity": 1,
+          "id": 1,
           "qid": "NGH-001",
           "originalPrice": 170,
           "category": "Men",
@@ -237,50 +243,132 @@
           "orderedColor": "Black"
         }
       ],
-      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
-      "paymentMethod": "cod",
-      "shippingCost": 30,
-      "subtotal": 85,
-      "status": "pending",
-      "totalAmount": 115,
+      "status": "shipped",
+      "orderDate": {
+        "seconds": 1764031459,
+        "nanoseconds": 429000000
+      },
+      "fullName": "Shayak Das",
+      "trackingLink": "https://tracking.com/12345",
+      "createdAt": {
+        "seconds": 1764031459,
+        "nanoseconds": 429000000
+      },
+      "totalAmount": 85,
+      "shippedAt": "2025-11-25T15:53:02.252Z",
+      "paymentMethod": "upi",
+      "phone": "80001812381",
+      "email": "shayakdas6.5.0@gmail.com",
+      "source": "firebase",
+      "pointsEarned": 8,
+      "orderCost": 0,
+      "orderProfit": 0,
+      "orderProfitMargin": 0,
+      "profitCalculatedAt": "2025-11-26T23:45:17.230Z"
+    },
+    {
+      "id": "mAsVn48LIsf1XLgRVy9r",
+      "orderId": "ORD-1763911399446",
+      "email": "lolislolpp@gmail.com",
       "city": "koltakata",
-      "pincode": "700055",
+      "subtotal": 85,
+      "address": "sdasdada",
+      "createdAt": {
+        "seconds": 1763911399,
+        "nanoseconds": 446000000
+      },
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "shippingCost": 30,
+      "paymentMethod": "cod",
       "orderDate": {
         "seconds": 1763911399,
         "nanoseconds": 446000000
       },
+      "state": "West Bengal",
+      "fullName": "Mr Oak GAMING",
+      "status": "pending",
       "phone": "80001812381",
-      "source": "firebase"
+      "pincode": "700055",
+      "items": [
+        {
+          "size": "M",
+          "name": "Neon Glitch Hoodie",
+          "color": "Black",
+          "price": 85,
+          "id": 1,
+          "quantity": 1,
+          "qid": "NGH-001",
+          "originalPrice": 170,
+          "category": "Men",
+          "type": "Hoodie",
+          "rating": 4.5,
+          "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+          "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+          "images": [
+            "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+            "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+          ],
+          "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "colors": [
+            "Black",
+            "White",
+            "Neon Green"
+          ],
+          "tags": [
+            "TRENDING",
+            "BESTSELLER"
+          ],
+          "isBestSeller": true,
+          "isNew": true,
+          "orderedQuantity": 1,
+          "orderedSize": "M",
+          "orderedColor": "Black"
+        }
+      ],
+      "totalAmount": 115,
+      "source": "firebase",
+      "pointsEarned": 11,
+      "orderCost": 0,
+      "orderProfit": 0,
+      "orderProfitMargin": 0,
+      "profitCalculatedAt": "2025-11-26T23:45:17.230Z"
     },
     {
       "id": "9uhZ0XRhlS8Z4j6X4Rke",
       "orderId": "ORD-1763906412534",
+      "city": "koltakata",
       "orderDate": {
         "seconds": 1763906412,
         "nanoseconds": 534000000
       },
-      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
-      "totalAmount": 45,
       "status": "pending",
-      "address": "sdasdada",
-      "subtotal": 45,
-      "fullName": "Mr Oak GAMING",
-      "shippingCost": 0,
-      "email": "lolislolpp@gmail.com",
-      "phone": "80001812381",
       "pincode": "700055",
+      "subtotal": 45,
+      "state": "West Bengal",
+      "email": "lolislolpp@gmail.com",
+      "fullName": "Mr Oak GAMING",
       "createdAt": {
         "seconds": 1763906412,
         "nanoseconds": 534000000
       },
+      "paymentMethod": "upi",
+      "totalAmount": 45,
+      "address": "sdasdada",
+      "phone": "80001812381",
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
       "items": [
         {
-          "size": "M",
-          "id": 2,
+          "color": "Pink",
           "quantity": 1,
           "name": "Vintage Crop Top",
           "price": 45,
-          "color": "Pink",
+          "size": "M",
+          "id": 2,
           "qid": "VCT-002",
           "originalPrice": 90,
           "category": "Women",
@@ -312,10 +400,13 @@
           "orderedColor": "Pink"
         }
       ],
-      "state": "West Bengal",
-      "city": "koltakata",
-      "paymentMethod": "upi",
-      "source": "firebase"
+      "shippingCost": 0,
+      "source": "firebase",
+      "pointsEarned": 4,
+      "orderCost": 0,
+      "orderProfit": 0,
+      "orderProfitMargin": 0,
+      "profitCalculatedAt": "2025-11-26T23:45:17.231Z"
     }
   ],
   "tags": [

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fix Order Count - Elevez Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      color: #00ff88;
+    }
+
+    .header p {
+      color: #888;
+      font-size: 16px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+
+    .status {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .status.info {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #60a5fa;
+    }
+
+    .status.success {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      color: #00ff88;
+    }
+
+    .status.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    .status.warning {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      color: #fbbf24;
+    }
+
+    .btn {
+      background: #00ff88;
+      color: #000;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      background: #00dd77;
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .log {
+      background: #000;
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .log-entry {
+      margin-bottom: 8px;
+      padding: 4px 0;
+    }
+
+    .log-entry.success {
+      color: #00ff88;
+    }
+
+    .log-entry.error {
+      color: #f87171;
+    }
+
+    .log-entry.info {
+      color: #60a5fa;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .stat-card {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #00ff88;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+    }
+
+    .instructions {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .instructions h3 {
+      color: #fbbf24;
+      margin-bottom: 15px;
+    }
+
+    .instructions ol {
+      margin-left: 20px;
+      color: #ccc;
+    }
+
+    .instructions li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔧 Fix Order Count</h1>
+      <p>Migrate existing orders and update user order counts</p>
+    </div>
+
+    <div class="card">
+      <div class="instructions">
+        <h3>📋 What This Tool Does:</h3>
+        <ol>
+          <li>Scans all orders in Firebase</li>
+          <li>Counts orders per user</li>
+          <li>Updates user profiles with correct order count</li>
+          <li>Updates loyalty profiles with correct order count</li>
+          <li>Fixes the "0 orders" display issue</li>
+        </ol>
+      </div>
+
+      <div id="status" class="status info">
+        Ready to fix order counts. Click the button below to start.
+      </div>
+
+      <div class="stats" id="stats" style="display: none;">
+        <div class="stat-card">
+          <div class="stat-value" id="totalOrders">0</div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="usersUpdated">0</div>
+          <div class="stat-label">Users Updated</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="errors">0</div>
+          <div class="stat-label">Errors</div>
+        </div>
+      </div>
+
+      <button id="fixBtn" class="btn" onclick="fixOrderCounts()">
+        🚀 Fix Order Counts Now
+      </button>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom: 15px; color: #00ff88;">📊 Process Log</h3>
+      <div class="log" id="log">
+        <div class="log-entry info">Waiting to start...</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, getDocs, doc, updateDoc, getDoc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.db = db;
+    window.getDocs = getDocs;
+    window.collection = collection;
+    window.doc = doc;
+    window.updateDoc = updateDoc;
+    window.getDoc = getDoc;
+    window.query = query;
+    window.where = where;
+
+    addLog('✅ Firebase initialized successfully', 'success');
+    updateStatus('Firebase connected. Ready to fix order counts.', 'success');
+  </script>
+
+  <script>
+    function addLog(message, type = 'info') {
+      const log = document.getElementById('log');
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function updateStatus(message, type = 'info') {
+      const status = document.getElementById('status');
+      status.textContent = message;
+      status.className = `status ${type}`;
+    }
+
+    function updateStats(totalOrders, usersUpdated, errors) {
+      document.getElementById('stats').style.display = 'grid';
+      document.getElementById('totalOrders').textContent = totalOrders;
+      document.getElementById('usersUpdated').textContent = usersUpdated;
+      document.getElementById('errors').textContent = errors;
+    }
+
+    async function fixOrderCounts() {
+      const btn = document.getElementById('fixBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Processing...';
+
+      try {
+        addLog('🔄 Starting order count fix...', 'info');
+        updateStatus('Processing orders...', 'info');
+
+        // Step 1: Get all orders
+        addLog('📥 Fetching all orders from Firebase...', 'info');
+        const ordersSnapshot = await window.getDocs(window.collection(window.db, 'orders'));
+        const totalOrders = ordersSnapshot.size;
+        addLog(`✅ Found ${totalOrders} total orders`, 'success');
+
+        // Step 2: Count orders per user
+        const userOrderCounts = {};
+        ordersSnapshot.forEach((doc) => {
+          const order = doc.data();
+          const userId = order.userId;
+          if (userId) {
+            userOrderCounts[userId] = (userOrderCounts[userId] || 0) + 1;
+          }
+        });
+
+        const uniqueUsers = Object.keys(userOrderCounts).length;
+        addLog(`👥 Found ${uniqueUsers} unique users with orders`, 'info');
+
+        // Step 3: Update each user's profile
+        let usersUpdated = 0;
+        let errors = 0;
+
+        for (const [userId, orderCount] of Object.entries(userOrderCounts)) {
+          try {
+            addLog(`🔄 Updating user ${userId.substring(0, 8)}... (${orderCount} orders)`, 'info');
+
+            // Update users collection
+            const userRef = window.doc(window.db, 'users', userId);
+            const userDoc = await window.getDoc(userRef);
+            
+            if (userDoc.exists()) {
+              await window.updateDoc(userRef, {
+                orderCount: orderCount,
+                updatedAt: new Date().toISOString()
+              });
+              addLog(`✅ Updated users/${userId} with ${orderCount} orders`, 'success');
+            } else {
+              addLog(`⚠️ User document not found: ${userId}`, 'error');
+            }
+
+            // Update loyaltyProfiles collection
+            const loyaltyRef = window.doc(window.db, 'loyaltyProfiles', userId);
+            const loyaltyDoc = await window.getDoc(loyaltyRef);
+            
+            if (loyaltyDoc.exists()) {
+              await window.updateDoc(loyaltyRef, {
+                orderCount: orderCount,
+                lastUpdated: new Date()
+              });
+              addLog(`✅ Updated loyaltyProfiles/${userId} with ${orderCount} orders`, 'success');
+            }
+
+            usersUpdated++;
+            updateStats(totalOrders, usersUpdated, errors);
+
+          } catch (error) {
+            errors++;
+            addLog(`❌ Error updating user ${userId}: ${error.message}`, 'error');
+            updateStats(totalOrders, usersUpdated, errors);
+          }
+        }
+
+        // Final summary
+        addLog('', 'info');
+        addLog('═══════════════════════════════════', 'info');
+        addLog('✅ ORDER COUNT FIX COMPLETE!', 'success');
+        addLog('═══════════════════════════════════', 'info');
+        addLog(`📊 Total Orders: ${totalOrders}`, 'success');
+        addLog(`👥 Users Updated: ${usersUpdated}`, 'success');
+        addLog(`❌ Errors: ${errors}`, errors > 0 ? 'error' : 'success');
+        addLog('', 'info');
+        addLog('🎉 All user order counts have been updated!', 'success');
+        addLog('💡 Refresh your website to see the updated counts', 'info');
+
+        updateStatus(`✅ Complete! Updated ${usersUpdated} users with correct order counts.`, 'success');
+        btn.textContent = '✅ Fix Complete!';
+
+      } catch (error) {
+        addLog(`❌ Fatal error: ${error.message}`, 'error');
+        updateStatus(`Error: ${error.message}`, 'error');
+        btn.disabled = false;
+        btn.textContent = '🔄 Try Again';
+      }
+    }
+
+    window.fixOrderCounts = fixOrderCounts;
+  </script>
+</body>
+</html>

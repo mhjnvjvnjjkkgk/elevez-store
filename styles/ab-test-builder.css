@@ -1,0 +1,446 @@
+.ab-test-builder {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 24px;
+  color: #ffffff;
+}
+
+.ab-test-builder .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #333;
+}
+
+.ab-test-builder .panel-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.ab-test-builder .btn-primary {
+  background: #00ff88;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.ab-test-builder .btn-primary:hover:not(:disabled) {
+  background: #00dd77;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+}
+
+.ab-test-builder .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ab-test-builder .builder-form {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.ab-test-builder .form-group {
+  margin-bottom: 16px;
+}
+
+.ab-test-builder .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.ab-test-builder .form-group input,
+.ab-test-builder .form-group textarea,
+.ab-test-builder .form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.ab-test-builder .form-group input:focus,
+.ab-test-builder .form-group textarea:focus,
+.ab-test-builder .form-group select:focus {
+  outline: none;
+  border-color: #00ff88;
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1);
+}
+
+.ab-test-builder .form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.ab-test-builder .variants-section {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #333;
+}
+
+.ab-test-builder .variants-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ab-test-builder .variant-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr 100px auto;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.ab-test-builder .variant-item input {
+  padding: 8px 10px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.ab-test-builder .variant-item input:focus {
+  outline: none;
+  border-color: #00ff88;
+}
+
+.ab-test-builder .traffic-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ab-test-builder .traffic-input input {
+  flex: 1;
+  padding: 8px 10px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.ab-test-builder .traffic-input span {
+  color: #999;
+  font-size: 12px;
+}
+
+.ab-test-builder .btn-remove {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.ab-test-builder .btn-remove:hover {
+  background: #dc2626;
+}
+
+.ab-test-builder .traffic-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #1a1a1a;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.ab-test-builder .traffic-total .warning {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.ab-test-builder .btn-add-variant {
+  background: #333;
+  color: #00ff88;
+  border: 1px solid #444;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.ab-test-builder .btn-add-variant:hover {
+  background: #444;
+  border-color: #555;
+}
+
+.ab-test-builder .form-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.ab-test-builder .btn-secondary {
+  background: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.ab-test-builder .btn-secondary:hover {
+  background: #444;
+  border-color: #555;
+}
+
+.ab-test-builder .tests-list {
+  margin-bottom: 24px;
+}
+
+.ab-test-builder .tests-list h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ab-test-builder .empty-state {
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+  padding: 24px;
+}
+
+.ab-test-builder .test-item {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.ab-test-builder .test-item:hover {
+  border-color: #00ff88;
+  background: #2a2a2a;
+}
+
+.ab-test-builder .test-item.status-draft {
+  border-left: 4px solid #999;
+}
+
+.ab-test-builder .test-item.status-running {
+  border-left: 4px solid #3b82f6;
+}
+
+.ab-test-builder .test-item.status-completed {
+  border-left: 4px solid #10b981;
+}
+
+.ab-test-builder .test-info {
+  flex: 1;
+}
+
+.ab-test-builder .test-name {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.ab-test-builder .test-hypothesis {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.ab-test-builder .test-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: #666;
+}
+
+.ab-test-builder .test-meta span {
+  background: #1a1a1a;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.ab-test-builder .test-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.ab-test-builder .btn-start,
+.ab-test-builder .btn-analyze,
+.ab-test-builder .btn-complete,
+.ab-test-builder .btn-view {
+  background: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ab-test-builder .btn-start:hover,
+.ab-test-builder .btn-analyze:hover,
+.ab-test-builder .btn-complete:hover,
+.ab-test-builder .btn-view:hover {
+  background: #444;
+  border-color: #555;
+}
+
+.ab-test-builder .btn-start {
+  background: #3b82f6;
+  border-color: #2563eb;
+}
+
+.ab-test-builder .btn-analyze {
+  background: #f59e0b;
+  border-color: #d97706;
+}
+
+.ab-test-builder .btn-complete {
+  background: #10b981;
+  border-color: #059669;
+}
+
+.ab-test-builder .test-details {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.ab-test-builder .test-details h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ab-test-builder .details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ab-test-builder .detail-item {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+}
+
+.ab-test-builder .detail-item .label {
+  display: block;
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.ab-test-builder .detail-item .value {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #00ff88;
+}
+
+.ab-test-builder .variants-display {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.ab-test-builder .variants-display h4 {
+  margin: 0 0 12px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #00ff88;
+}
+
+.ab-test-builder .variants-table {
+  overflow-x: auto;
+}
+
+.ab-test-builder table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.ab-test-builder table thead {
+  background: #222;
+  border-bottom: 1px solid #333;
+}
+
+.ab-test-builder table th {
+  padding: 8px;
+  text-align: left;
+  font-weight: 600;
+  color: #00ff88;
+}
+
+.ab-test-builder table td {
+  padding: 8px;
+  border-bottom: 1px solid #333;
+  color: #ccc;
+}
+
+@media (max-width: 768px) {
+  .ab-test-builder .test-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .ab-test-builder .test-actions {
+    width: 100%;
+  }
+
+  .ab-test-builder .btn-start,
+  .ab-test-builder .btn-analyze,
+  .ab-test-builder .btn-complete,
+  .ab-test-builder .btn-view {
+    flex: 1;
+  }
+
+  .ab-test-builder .variant-item {
+    grid-template-columns: 1fr;
+  }
+
+  .ab-test-builder .form-row {
+    grid-template-columns: 1fr;
+  }
+}

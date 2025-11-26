@@ -1,0 +1,299 @@
+.notification-center {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 24px;
+  color: #ffffff;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-center .center-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #333;
+}
+
+.notification-center .center-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.notification-center .header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.notification-center .unread-badge {
+  background: #ef4444;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 24px;
+  text-align: center;
+}
+
+.notification-center .btn-mark-all,
+.notification-center .btn-preferences {
+  background: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.notification-center .btn-mark-all:hover,
+.notification-center .btn-preferences:hover {
+  background: #444;
+  border-color: #555;
+}
+
+.notification-center .preferences-panel {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.notification-center .preferences-panel h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.notification-center .preferences-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notification-center .preference-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notification-center .preference-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.notification-center .preference-group input[type='checkbox'] {
+  cursor: pointer;
+}
+
+.notification-center .quiet-hours {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.notification-center .quiet-hours input {
+  padding: 6px 8px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.notification-center .filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.notification-center .filters select {
+  flex: 1;
+  padding: 8px 12px;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.notification-center .filters select:focus {
+  outline: none;
+  border-color: #00ff88;
+}
+
+.notification-center .stats-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #222;
+  border-radius: 6px;
+}
+
+.notification-center .stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.notification-center .stat .label {
+  font-size: 11px;
+  color: #999;
+  text-transform: uppercase;
+}
+
+.notification-center .stat .value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #00ff88;
+}
+
+.notification-center .notifications-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notification-center .empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: #666;
+  font-size: 14px;
+}
+
+.notification-center .notification-item {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.notification-center .notification-item:hover {
+  border-color: #00ff88;
+  background: #2a2a2a;
+}
+
+.notification-center .notification-item.unread {
+  border-left: 3px solid #00ff88;
+  background: #1a2a1a;
+}
+
+.notification-center .notification-item.priority-critical {
+  border-left-color: #ef4444;
+}
+
+.notification-center .notification-item.priority-high {
+  border-left-color: #f59e0b;
+}
+
+.notification-center .notification-item.priority-medium {
+  border-left-color: #3b82f6;
+}
+
+.notification-center .notification-item.priority-low {
+  border-left-color: #10b981;
+}
+
+.notification-center .notification-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.notification-center .notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-center .notification-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.notification-center .notification-message {
+  font-size: 12px;
+  color: #ccc;
+  margin-bottom: 6px;
+  word-break: break-word;
+}
+
+.notification-center .notification-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: #999;
+}
+
+.notification-center .notification-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.notification-center .btn-read,
+.notification-center .btn-delete {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 6px;
+  transition: all 0.3s ease;
+}
+
+.notification-center .btn-read:hover {
+  color: #00ff88;
+}
+
+.notification-center .btn-delete:hover {
+  color: #ef4444;
+}
+
+.btn-primary {
+  background: #00ff88;
+  color: #000;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #00dd77;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .notification-center {
+    max-height: none;
+  }
+
+  .notification-center .filters {
+    flex-direction: column;
+  }
+
+  .notification-center .stats-bar {
+    flex-wrap: wrap;
+  }
+}

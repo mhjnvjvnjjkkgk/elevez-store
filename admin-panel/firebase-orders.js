@@ -127,6 +127,14 @@ async function syncOrdersFromFirebase() {
     
     ordersListener = onSnapshot(ordersQuery, (snapshot) => {
       const firebaseOrders = [];
+      const newOrders = [];
+      
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          // Track new orders for notifications
+          newOrders.push(change.doc.id);
+        }
+      });
       
       snapshot.forEach((doc) => {
         const orderData = doc.data();
@@ -143,15 +151,47 @@ async function syncOrdersFromFirebase() {
           };
         }) || [];
         
-        firebaseOrders.push({
+        // Calculate points earned (10% of total amount, or use existing value)
+        const pointsEarned = orderData.pointsEarned || Math.floor((orderData.totalAmount || 0) / 10);
+        
+        // 🆕 CALCULATE PROFIT AUTOMATICALLY
+        let orderCost = 0;
+        let orderProfit = 0;
+        enrichedItems.forEach(item => {
+          const product = state.products.find(p => p.id === item.id);
+          if (product && product.cost) {
+            const qty = item.orderedQuantity || item.quantity || 1;
+            const itemCost = product.cost * qty;
+            const itemRevenue = item.price * qty;
+            orderCost += itemCost;
+            orderProfit += (itemRevenue - itemCost);
+          }
+        });
+        
+        const orderProfitMargin = orderData.totalAmount > 0 ? ((orderProfit / orderData.totalAmount) * 100).toFixed(1) : 0;
+        
+        const enrichedOrder = {
           id: doc.id,
           orderId: doc.id,
           ...orderData,
           items: enrichedItems,
           source: 'firebase',
           status: orderData.status || 'pending',
-          createdAt: orderData.createdAt || new Date().toISOString()
-        });
+          createdAt: orderData.createdAt || new Date().toISOString(),
+          pointsEarned: pointsEarned,
+          // 🆕 Profit data
+          orderCost: orderCost,
+          orderProfit: orderProfit,
+          orderProfitMargin: parseFloat(orderProfitMargin),
+          profitCalculatedAt: new Date().toISOString()
+        };
+        
+        firebaseOrders.push(enrichedOrder);
+        
+        // 🆕 Show notification for NEW orders with profit
+        if (newOrders.includes(doc.id)) {
+          showNewOrderNotification(enrichedOrder);
+        }
       });
       
       console.log(`📦 Synced ${firebaseOrders.length} orders from Firebase`);

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sync Products from Website</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #00ff88;
+      padding: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 15px;
+      padding: 30px;
+    }
+    h1 {
+      margin: 0 0 20px 0;
+      font-size: 32px;
+    }
+    .status {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      font-family: monospace;
+    }
+    .success { color: #00ff88; }
+    .error { color: #ff3b30; }
+    .warning { color: #ffaa00; }
+    button {
+      background: #00ff88;
+      color: #000;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 10px 10px 10px 0;
+      transition: all 0.3s;
+    }
+    button:hover {
+      background: #00cc6a;
+      transform: translateY(-2px);
+    }
+    button.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    button.secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .product-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .product-card {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    .product-card:hover {
+      border-color: #00ff88;
+      transform: translateY(-5px);
+    }
+    .product-card img {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .product-card .info {
+      padding: 10px;
+    }
+    .product-card .name {
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+    .product-card .price {
+      font-size: 14px;
+      color: #00ff88;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔄 Sync Products from Website</h1>
+    <p style="color: #888; margin-bottom: 20px;">
+      This tool will load products from your website's constants.ts file into the admin panel's localStorage.
+    </p>
+
+    <div class="status" id="status">
+      <p>Ready to sync...</p>
+    </div>
+
+    <button onclick="syncProducts()">🚀 Sync Products Now</button>
+    <button class="secondary" onclick="viewCurrentProducts()">👁️ View Current Products</button>
+    <button class="secondary" onclick="clearProducts()">🗑️ Clear Products</button>
+    <button class="secondary" onclick="window.location.href='index.html'">📦 Open Admin Panel</button>
+
+    <div id="preview"></div>
+  </div>
+
+  <script type="module">
+    // Import products from constants
+    import { PRODUCTS } from '../constants.js';
+    
+    window.WEBSITE_PRODUCTS = PRODUCTS;
+    console.log('✅ Loaded products from constants:', PRODUCTS.length);
+    
+    // Auto-display on load
+    displayProducts(PRODUCTS);
+  </script>
+
+  <script>
+    function displayProducts(products) {
+      const preview = document.getElementById('preview');
+      
+      if (!products || products.length === 0) {
+        preview.innerHTML = '<p class="warning">No products to display</p>';
+        return;
+      }
+
+      preview.innerHTML = `
+        <h3 style="margin-top: 30px; color: #00ff88;">📦 ${products.length} Products Available</h3>
+        <div class="product-preview">
+          ${products.map(p => `
+            <div class="product-card">
+              <img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/400x500/1a1a1a/00ff88?text=No+Image'">
+              <div class="info">
+                <div class="name">${p.name}</div>
+                <div class="price">₹${p.price}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function syncProducts() {
+      const status = document.getElementById('status');
+      
+      if (!window.WEBSITE_PRODUCTS) {
+        status.innerHTML = '<p class="error">❌ Error: Could not load products from constants.ts</p><p>Make sure constants.ts exports PRODUCTS correctly.</p>';
+        return;
+      }
+
+      try {
+        const products = window.WEBSITE_PRODUCTS;
+        
+        status.innerHTML = '<p class="warning">⏳ Syncing products...</p>';
+        
+        // Save to localStorage
+        localStorage.setItem('elevez_products', JSON.stringify(products));
+        localStorage.setItem('elevez_last_save', new Date().toISOString());
+        
+        // Also try to backup to server
+        fetch('http://localhost:3001/save-products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            products: products,
+            collections: [],
+            orders: JSON.parse(localStorage.getItem('elevez_orders') || '[]'),
+            tags: [],
+            categories: [],
+            types: [],
+            colors: []
+          })
+        }).catch(() => {
+          console.log('Server backup skipped (server not running)');
+        });
+        
+        status.innerHTML = `
+          <p class="success">✅ Successfully synced ${products.length} products!</p>
+          <p style="color: #888;">Products are now available in the admin panel.</p>
+          <p style="color: #888;">Last sync: ${new Date().toLocaleString()}</p>
+        `;
+        
+        displayProducts(products);
+        
+        setTimeout(() => {
+          if (confirm('Products synced! Open admin panel now?')) {
+            window.location.href = 'index.html';
+          }
+        }, 1000);
+        
+      } catch (error) {
+        status.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+        console.error('Sync error:', error);
+      }
+    }
+
+    function viewCurrentProducts() {
+      const status = document.getElementById('status');
+      const saved = localStorage.getItem('elevez_products');
+      
+      if (!saved) {
+        status.innerHTML = '<p class="warning">⚠️ No products in localStorage</p>';
+        document.getElementById('preview').innerHTML = '';
+        return;
+      }
+      
+      try {
+        const products = JSON.parse(saved);
+        status.innerHTML = `
+          <p class="success">✅ Found ${products.length} products in localStorage</p>
+          <p style="color: #888;">Storage size: ${(saved.length / 1024).toFixed(2)} KB</p>
+        `;
+        displayProducts(products);
+      } catch (error) {
+        status.innerHTML = `<p class="error">❌ Error parsing products: ${error.message}</p>`;
+      }
+    }
+
+    function clearProducts() {
+      if (!confirm('Are you sure you want to clear all products from admin panel?')) {
+        return;
+      }
+      
+      localStorage.removeItem('elevez_products');
+      localStorage.removeItem('elevez_collections');
+      localStorage.removeItem('elevez_last_save');
+      
+      document.getElementById('status').innerHTML = '<p class="success">✅ Products cleared from localStorage</p>';
+      document.getElementById('preview').innerHTML = '';
+    }
+  </script>
+</body>
+</html>

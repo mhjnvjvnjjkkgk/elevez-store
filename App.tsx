@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, useInView } from 'framer-motion';
-import { ShoppingBag, Menu, X, ArrowRight, ArrowLeft, Star, Play, Check, Truck, Shield, Award, Instagram, Twitter, Mail, MapPin, Phone, Sparkles, Trash2, Eye, Maximize2, Search, ChevronDown, ChevronUp, SlidersHorizontal, Heart, Minus, Plus, Timer, RefreshCw, ShieldCheck, CreditCard, Banknote, Package, User, Lock, LogOut, Gift } from 'lucide-react';
+import { ShoppingBag, Menu, X, ArrowRight, ArrowLeft, Star, Play, Check, Truck, Shield, Award, Instagram, Twitter, Mail, MapPin, Phone, Sparkles, Trash2, Eye, Maximize2, Search, ChevronDown, ChevronUp, ChevronRight, SlidersHorizontal, Heart, Minus, Plus, Timer, RefreshCw, ShieldCheck, CreditCard, Banknote, Package, User, Lock, LogOut, Gift } from 'lucide-react';
 import { PRODUCTS, BRAND_NAME } from './constants';
 import { Product, ProductType, CartItem, CursorVariant } from './types';
 import { auth } from './firebaseConfig';
@@ -11,6 +11,14 @@ import { BuilderComponent, useBuilderContent } from './BuilderComponent';
 import { RewardsPage } from './components/RewardsPage';
 import { OrderDetail } from './components/OrderDetail';
 import { FloatingRewardsButton, RewardsModal } from './components/RewardsModal';
+import { NewsletterSignup } from './components/NewsletterSignup';
+import { ProductRecommendations } from './components/ProductRecommendations';
+import { NewsletterSection } from './components/NewsletterSection';
+import { SocialProofBadges } from './components/SocialProofBadges';
+import { ProductQuickPreview } from './components/ProductQuickPreview';
+import { WishlistButton } from './components/WishlistButton';
+import { ExitIntentPopup } from './components/ExitIntentPopup';
+import { OrderDetailModal } from './components/OrderDetailModal';
 
 // --- Cart Context ---
 interface CartContextType {
@@ -91,16 +99,27 @@ const useQuickView = () => {
 const useCursor = () => {
   const [cursorVariant, setCursorVariant] = useState<'default' | 'hover' | 'money' | 'shop'>('default');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+    
     const mouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
     window.addEventListener("mousemove", mouseMove);
     return () => window.removeEventListener("mousemove", mouseMove);
-  }, []);
+  }, [isMobile]);
 
-  return { cursorVariant, setCursorVariant, mousePosition };
+  return { cursorVariant, setCursorVariant, mousePosition, isMobile };
 };
 
 // --- Interaction Components ---
@@ -619,21 +638,21 @@ const CartSidebar = () => {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-full w-full md:w-[450px] bg-zinc-950 border-l border-white/10 z-[70] flex flex-col shadow-2xl"
+            className="fixed top-0 right-0 h-screen w-full sm:w-96 bg-zinc-950 border-l border-white/10 z-[70] flex flex-col shadow-2xl overflow-hidden"
           >
-            <div className="p-6 border-b border-white/10 flex items-center justify-between">
-              <h2 className="text-2xl font-syne font-bold uppercase">Your Cart <span className="text-[#00ff88]">({items.length})</span></h2>
-              <button onClick={() => setIsCartOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                <X />
+            <div className="p-4 sm:p-6 border-b border-white/10 flex items-center justify-between flex-shrink-0">
+              <h2 className="text-lg sm:text-2xl font-syne font-bold uppercase">Your Cart <span className="text-[#00ff88]">({items.length})</span></h2>
+              <button onClick={() => setIsCartOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors flex-shrink-0">
+                <X size={20} />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
               {items.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-gray-500 gap-4">
                   <ShoppingBag size={48} />
-                  <p>Your cart is empty</p>
-                  <button onClick={() => setIsCartOpen(false)} className="text-[#00ff88] underline">Continue Shopping</button>
+                  <p className="text-sm sm:text-base">Your cart is empty</p>
+                  <button onClick={() => setIsCartOpen(false)} className="text-[#00ff88] underline text-sm">Continue Shopping</button>
                 </div>
               ) : (
                 items.map((item) => (
@@ -642,21 +661,21 @@ const CartSidebar = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     key={item.cartId} 
-                    className="flex gap-4 bg-zinc-900/50 p-3 rounded-lg border border-white/5"
+                    className="flex gap-3 sm:gap-4 bg-zinc-900/50 p-2 sm:p-3 rounded-lg border border-white/5"
                   >
-                    <img src={item.image} alt={item.name} className="w-20 h-24 object-cover rounded bg-zinc-900" loading="lazy" style={{ imageRendering: 'high-quality' }} />
-                    <div className="flex-1 flex flex-col justify-between">
+                    <img src={item.image} alt={item.name} className="w-16 sm:w-20 h-20 sm:h-24 object-cover rounded bg-zinc-900 flex-shrink-0" loading="lazy" style={{ imageRendering: 'high-quality' }} />
+                    <div className="flex-1 flex flex-col justify-between min-w-0">
                       <div>
-                        <h3 className="font-bold text-lg line-clamp-1">{item.name}</h3>
-                        <div className="flex gap-3 text-xs text-gray-400 mt-1">
+                        <h3 className="font-bold text-sm sm:text-lg line-clamp-2">{item.name}</h3>
+                        <div className="flex gap-2 text-xs text-gray-400 mt-1 flex-wrap">
                            <span className="bg-white/10 px-2 py-0.5 rounded">{item.size}</span>
                            {item.color && <span className="bg-white/10 px-2 py-0.5 rounded">{item.color}</span>}
                            <span className="bg-white/10 px-2 py-0.5 rounded">Qty: {item.quantity}</span>
                         </div>
                       </div>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-[#00ff88] font-bold">₹{(item.price * item.quantity).toFixed(2)}</span>
-                        <button onClick={() => removeFromCart(item.cartId)} className="text-zinc-500 hover:text-red-500 transition-colors p-1 hover:bg-red-500/10 rounded">
+                        <span className="text-[#00ff88] font-bold text-sm sm:text-base">₹{(item.price * item.quantity).toFixed(2)}</span>
+                        <button onClick={() => removeFromCart(item.cartId)} className="text-zinc-500 hover:text-red-500 transition-colors p-1 hover:bg-red-500/10 rounded flex-shrink-0">
                           <Trash2 size={16} />
                         </button>
                       </div>
@@ -667,8 +686,8 @@ const CartSidebar = () => {
             </div>
 
             {items.length > 0 && (
-              <div className="p-6 border-t border-white/10 bg-zinc-900/50 backdrop-blur">
-                <div className="flex justify-between mb-4 text-lg font-bold">
+              <div className="p-4 sm:p-6 border-t border-white/10 bg-zinc-900/50 backdrop-blur flex-shrink-0">
+                <div className="flex justify-between mb-4 text-base sm:text-lg font-bold">
                   <span>Subtotal</span>
                   <span>₹{cartTotal.toFixed(2)}</span>
                 </div>
@@ -678,7 +697,7 @@ const CartSidebar = () => {
                     setIsCartOpen(false);
                     navigate('/checkout');
                   }}
-                  className="w-full bg-[#00ff88] text-black font-bold py-4 uppercase tracking-widest hover:bg-white transition-colors rounded-lg shadow-[0_0_20px_rgba(0,255,136,0.2)]"
+                  className="w-full bg-[#00ff88] text-black font-bold py-3 sm:py-4 uppercase tracking-widest hover:bg-white transition-colors rounded-lg shadow-[0_0_20px_rgba(0,255,136,0.2)] text-sm sm:text-base"
                 >
                   Checkout Now
                 </button>
@@ -778,7 +797,7 @@ const BestSellers = () => {
   
   // Get top 4 best-selling products
   const bestSellers = PRODUCTS
-    .filter(p => p.isBestSeller || p.featured)
+    .filter(p => p.isBestSeller || p.isFeatured)
     .slice(0, 4);
 
   return (
@@ -896,7 +915,7 @@ const BestSellers = () => {
           </motion.div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-12">
             {bestSellers.map((product, index) => (
               <motion.div
                 key={product.id}
@@ -1304,29 +1323,54 @@ const CustomerReviews = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-[#00ff88]/5 via-transparent to-transparent pointer-events-none" />
           </motion.div>
 
-          {/* Progress Indicators */}
-          <div className="mt-12 flex flex-col items-center gap-6">
+          {/* Progress Indicators & Navigation */}
+          <div className="mt-12 flex flex-col items-center gap-8">
             {/* Review Counter */}
             <div className="text-center">
               <span className="text-3xl font-bold text-[#00ff88]">{currentIndex + 1}</span>
               <span className="text-gray-500 text-xl"> / {reviews.length}</span>
             </div>
 
+            {/* Navigation Buttons */}
+            <div className="flex gap-4 items-center">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
+                disabled={currentIndex === 0}
+                className="p-3 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed rounded-full transition-all border border-white/20 hover:border-[#00ff88]/50"
+              >
+                <ArrowLeft size={20} className="text-white" />
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setCurrentIndex(Math.min(reviews.length - 1, currentIndex + 1))}
+                disabled={currentIndex === reviews.length - 1}
+                className="p-3 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed rounded-full transition-all border border-white/20 hover:border-[#00ff88]/50"
+              >
+                <ArrowRight size={20} className="text-white" />
+              </motion.button>
+            </div>
+
             {/* Dots */}
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap justify-center">
               {reviews.map((_, index) => (
-                <motion.div
+                <motion.button
                   key={index}
-                  className={`h-2 rounded-full transition-all duration-300 ${
+                  onClick={() => setCurrentIndex(index)}
+                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                     index === currentIndex 
                       ? 'w-12 bg-[#00ff88]' 
-                      : 'w-2 bg-gray-600'
+                      : 'w-2 bg-gray-600 hover:bg-gray-500'
                   }`}
                   animate={{
                     boxShadow: index === currentIndex 
                       ? '0 0 20px rgba(0,255,136,0.5)' 
                       : 'none'
                   }}
+                  whileHover={{ scale: 1.2 }}
                 />
               ))}
             </div>
@@ -1571,16 +1615,16 @@ const ScrollToTop = () => {
 const Toast: React.FC<{ message: string; type?: 'success' | 'error' | 'info' }> = ({ message, type = 'success' }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50, scale: 0.3 }}
+      initial={{ opacity: 0, y: -50, scale: 0.3 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-      className={`fixed bottom-24 right-8 z-50 px-6 py-4 rounded-2xl backdrop-blur-xl border flex items-center gap-3 shadow-2xl ${
+      className={`fixed top-24 left-1/2 -translate-x-1/2 z-[9999] px-6 py-4 rounded-2xl backdrop-blur-xl border flex items-center gap-3 shadow-2xl max-w-md w-auto ${
         type === 'success' ? 'bg-[#00ff88]/20 border-[#00ff88]/50 text-[#00ff88]' :
         type === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' :
         'bg-blue-500/20 border-blue-500/50 text-blue-400'
       }`}
     >
-      <Check className="w-5 h-5" />
+      <Check className="w-5 h-5 flex-shrink-0" />
       <span className="font-semibold">{message}</span>
     </motion.div>
   );
@@ -1647,9 +1691,9 @@ const InteractiveGradientBackground = () => {
       {/* Base gradient layer */}
       <div className="interactive-gradient-bg fixed inset-0 z-0" />
       
-      {/* Cursor glow layer */}
+      {/* Cursor glow layer - hidden on mobile */}
       <motion.div 
-        className="cursor-glow fixed inset-0 z-0 pointer-events-none"
+        className="cursor-glow fixed inset-0 z-0 pointer-events-none hidden md:block"
         animate={{
           opacity: [0.5, 0.8, 0.5],
         }}
@@ -1856,8 +1900,14 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       {/* Why Choose Us Section */}
       <WhyChooseUs />
 
+      {/* Social Proof Badges */}
+      <SocialProofBadges />
+
       {/* Best Sellers Section */}
       <BestSellers />
+
+      {/* Product Recommendations */}
+      <ProductRecommendations limit={4} />
 
       {/* Customer Reviews Carousel */}
       <CustomerReviews />
@@ -1889,7 +1939,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               ))}
            </div>
 
-           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+           <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8">
               {filteredProducts.map((product, index) => (
                  <motion.div
                    key={product.id}
@@ -1990,6 +2040,12 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         </div>
       </section>
       </ScrollAnimatedSection>
+
+      {/* Newsletter Signup - End of Page */}
+      <NewsletterSignup 
+        title="Stay in the Loop"
+        subtitle="Get 10% off your first order + exclusive deals & early access"
+      />
     </div>
   );
 };
@@ -2031,7 +2087,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                           p.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
     return matchesCategory && matchesFilter && matchesSearch;
-  });
+  }).slice(0, 3);
 
   return (
     <div className="min-h-screen pt-32 pb-20 px-6">
@@ -2135,7 +2191,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
           {/* Product Grid */}
           <div className="flex-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
+            <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-6 sm:gap-x-6 sm:gap-y-12">
               <AnimatePresence mode="popLayout">
                 {filteredProducts.map(product => (
                   <motion.div
@@ -2465,32 +2521,298 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   );
 };
 
-const About = () => (
-  <div className="min-h-screen pt-32">
-    <div className="container mx-auto px-6">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="max-w-4xl mx-auto text-center mb-24"
-      >
-        <h1 className="text-6xl md:text-9xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-800 font-syne">ORIGIN</h1>
-        <p className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-          Elevez was born in the digital void. We are not just a clothing brand; we are a movement against the static. 
-          We believe in the fusion of high-fidelity aesthetics and tangible reality. 
-        </p>
-      </motion.div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mb-20">
-        <TiltCard className="md:col-span-2 aspect-[16/9] rounded-2xl overflow-hidden">
-           <img src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?auto=format&fit=crop&q=80&w=1200" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" alt="Studio" />
-        </TiltCard>
-        <TiltCard className="bg-[#00ff88] p-12 rounded-2xl flex flex-col justify-center text-black">
-           <h3 className="text-4xl font-bold mb-4">2024</h3>
-           <p className="text-xl font-medium">The year we broke the code. Established in Neo-Tokyo, expanding globally.</p>
-        </TiltCard>
-      </div>
+const About = () => {
+  const [activeTeamMember, setActiveTeamMember] = useState<number | null>(null);
+
+  const teamMembers = [
+    {
+      name: "Alex Chen",
+      role: "Founder & Creative Director",
+      bio: "Visionary designer blending digital aesthetics with streetwear culture",
+      icon: "👨‍💼"
+    },
+    {
+      name: "Maya Patel",
+      role: "Head of Design",
+      bio: "Crafting innovative designs that push boundaries",
+      icon: "👩‍🎨"
+    },
+    {
+      name: "Jordan Lee",
+      role: "Operations Lead",
+      bio: "Ensuring quality and speed in every delivery",
+      icon: "👨‍💼"
+    },
+    {
+      name: "Sofia Rodriguez",
+      role: "Community Manager",
+      bio: "Building and nurturing our global community",
+      icon: "👩‍💼"
+    }
+  ];
+
+  const processSteps = [
+    { number: "01", title: "Concept", description: "Design & ideation with cutting-edge aesthetics" },
+    { number: "02", title: "Craft", description: "Premium materials and meticulous production" },
+    { number: "03", title: "Quality", description: "Rigorous testing and quality assurance" },
+    { number: "04", title: "Deliver", description: "Direct to you with care and precision" }
+  ];
+
+  const stats = [
+    { number: "10K+", label: "Community Members" },
+    { number: "50+", label: "Countries Shipped" },
+    { number: "100%", label: "Satisfaction Rate" },
+    { number: "5000+", label: "Happy Customers" }
+  ];
+
+  const values = [
+    { title: "Quality", description: "Premium materials and craftsmanship in every piece", icon: "✨" },
+    { title: "Innovation", description: "Pushing boundaries with cutting-edge design", icon: "🚀" },
+    { title: "Community", description: "Building a movement, not just a brand", icon: "🤝" },
+    { title: "Sustainability", description: "Responsible practices for a better future", icon: "🌍" }
+  ];
+
+  return (
+    <div className="min-h-screen bg-black pt-32 pb-20">
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center px-6 mb-20">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#00ff88]/10 via-transparent to-transparent pointer-events-none" />
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-5xl mx-auto text-center relative z-10"
+        >
+          <motion.h1 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="text-7xl md:text-9xl font-black font-syne mb-8 text-transparent bg-clip-text bg-gradient-to-r from-[#00ff88] via-white to-[#00ff88]"
+            style={{ textShadow: '0 0 60px rgba(0, 255, 136, 0.3)' }}
+          >
+            OUR STORY
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="text-xl md:text-3xl text-gray-300 leading-relaxed mb-12 max-w-3xl mx-auto"
+          >
+            Elevez was born in the digital void. We are not just a clothing brand; we are a <span className="text-[#00ff88] font-bold">movement</span> against the static.
+          </motion.p>
+
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="text-[#00ff88] text-4xl"
+          >
+            ↓
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Origin Section */}
+      <section className="max-w-6xl mx-auto px-6 mb-32">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
+          <TiltCard className="md:col-span-2 aspect-[16/9] rounded-3xl overflow-hidden border border-white/10">
+            <img 
+              src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?auto=format&fit=crop&q=80&w=1200" 
+              className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" 
+              alt="Studio" 
+            />
+          </TiltCard>
+          <motion.div
+            initial={{ x: 50, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            className="bg-gradient-to-br from-[#00ff88]/20 to-purple-500/20 p-12 rounded-3xl flex flex-col justify-center border border-[#00ff88]/30 backdrop-blur-xl"
+          >
+            <h3 className="text-5xl font-black font-syne mb-4 text-[#00ff88]">2024</h3>
+            <p className="text-xl text-gray-300 leading-relaxed">The year we broke the code. Established in Neo-Tokyo, expanding globally with a vision to redefine streetwear.</p>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="max-w-6xl mx-auto px-6 mb-32">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-5xl md:text-7xl font-black font-syne mb-8 text-white">Our Mission</h2>
+          <p className="text-2xl text-[#00ff88] font-bold mb-12">Redefining Streetwear for the Digital Age</p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {values.map((value, index) => (
+            <motion.div
+              key={index}
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-gradient-to-br from-black/80 to-black/60 backdrop-blur-xl rounded-2xl p-8 border border-white/10 hover:border-[#00ff88]/50 transition-all duration-300 group"
+            >
+              <div className="text-5xl mb-4">{value.icon}</div>
+              <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-[#00ff88] transition-colors">{value.title}</h3>
+              <p className="text-gray-400 leading-relaxed">{value.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Process Section */}
+      <section className="max-w-6xl mx-auto px-6 mb-32">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-5xl md:text-7xl font-black font-syne mb-8 text-white">How We Create</h2>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {processSteps.map((step, index) => (
+            <motion.div
+              key={index}
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.15 }}
+              className="relative"
+            >
+              <div className="bg-gradient-to-br from-[#00ff88]/10 to-purple-500/10 backdrop-blur-xl rounded-2xl p-8 border border-[#00ff88]/30 h-full">
+                <div className="text-6xl font-black font-syne text-[#00ff88] mb-4 opacity-30">{step.number}</div>
+                <h3 className="text-2xl font-bold text-white mb-3">{step.title}</h3>
+                <p className="text-gray-400">{step.description}</p>
+              </div>
+              {index < processSteps.length - 1 && (
+                <div className="hidden lg:block absolute top-1/2 -right-3 w-6 h-0.5 bg-gradient-to-r from-[#00ff88] to-transparent" />
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Team Section */}
+      <section className="max-w-6xl mx-auto px-6 mb-32">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-5xl md:text-7xl font-black font-syne mb-8 text-white">Meet the Team</h2>
+          <p className="text-xl text-gray-400">The creative minds behind Elevez</p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {teamMembers.map((member, index) => (
+            <motion.div
+              key={index}
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              onHoverStart={() => setActiveTeamMember(index)}
+              onHoverEnd={() => setActiveTeamMember(null)}
+              className="bg-gradient-to-br from-black/80 to-black/60 backdrop-blur-xl rounded-2xl p-8 border border-white/10 hover:border-[#00ff88]/50 transition-all duration-300 cursor-pointer group"
+            >
+              <div className="text-6xl mb-4 group-hover:scale-125 transition-transform">{member.icon}</div>
+              <h3 className="text-xl font-bold text-white mb-2">{member.name}</h3>
+              <p className="text-[#00ff88] font-semibold text-sm mb-3">{member.role}</p>
+              <AnimatePresence>
+                {activeTeamMember === index && (
+                  <motion.p
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="text-gray-400 text-sm"
+                  >
+                    {member.bio}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="max-w-6xl mx-auto px-6 mb-32">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="bg-gradient-to-r from-[#00ff88]/10 via-purple-500/10 to-[#00ff88]/10 backdrop-blur-xl rounded-3xl p-12 border border-[#00ff88]/20"
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ scale: 0.5, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="text-center"
+              >
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 + 0.2 }}
+                  className="text-4xl md:text-5xl font-black font-syne text-[#00ff88] mb-2"
+                  style={{ textShadow: '0 0 20px rgba(0, 255, 136, 0.5)' }}
+                >
+                  {stat.number}
+                </motion.div>
+                <p className="text-gray-400 text-sm md:text-base">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-gradient-to-r from-[#00ff88]/20 to-purple-500/20 backdrop-blur-xl rounded-3xl p-12 md:p-16 border border-[#00ff88]/30 text-center"
+        >
+          <h2 className="text-4xl md:text-6xl font-black font-syne mb-6 text-white">Join the Movement</h2>
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">Be part of a community redefining streetwear. Explore our collection and experience the future of fashion.</p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              to="/shop/all"
+              className="px-8 py-4 bg-[#00ff88] text-black font-bold rounded-full uppercase tracking-widest hover:bg-white transition-colors shadow-[0_0_30px_rgba(0,255,136,0.3)]"
+            >
+              Shop Now
+            </Link>
+            <Link 
+              to="/rewards"
+              className="px-8 py-4 bg-white/10 text-white font-bold rounded-full uppercase tracking-widest hover:bg-white/20 transition-colors border border-white/20"
+            >
+              Join Rewards
+            </Link>
+          </div>
+        </motion.div>
+      </section>
     </div>
-  </div>
-);
+  );
+};
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -2510,6 +2832,10 @@ const Checkout = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountApplied, setDiscountApplied] = useState(false);
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [discountMessage, setDiscountMessage] = useState('');
 
   // Check user authentication state
   useEffect(() => {
@@ -2577,7 +2903,33 @@ const Checkout = () => {
   const [googleMapsError, setGoogleMapsError] = useState(false);
 
   const shippingCost = formData.paymentMethod === 'cod' ? 30 : 0;
-  const totalAmount = cartTotal + shippingCost;
+  const discountAmount = discountApplied ? (cartTotal * discountPercentage) / 100 : 0;
+  const totalAmount = cartTotal + shippingCost - discountAmount;
+
+  // Handle discount code validation
+  const handleApplyDiscount = async () => {
+    if (!discountCode.trim()) {
+      setDiscountMessage('Please enter a discount code');
+      return;
+    }
+
+    try {
+      const { validateDiscountCode } = await import('./services/discountService');
+      const result = validateDiscountCode(discountCode);
+      
+      if (result.valid) {
+        setDiscountApplied(true);
+        setDiscountPercentage(result.percentage);
+        setDiscountMessage(`✓ ${result.percentage}% discount applied!`);
+      } else {
+        setDiscountApplied(false);
+        setDiscountPercentage(0);
+        setDiscountMessage(result.message);
+      }
+    } catch (error) {
+      setDiscountMessage('Error validating code');
+    }
+  };
 
   // Generate a static map preview from the entered address
   const generateMapPreview = async () => {
@@ -3014,6 +3366,42 @@ const Checkout = () => {
                   ))}
                 </div>
 
+                {/* Discount Code Section */}
+                <div className="mb-6 p-4 bg-black/30 rounded-lg border border-white/5">
+                  <label className="text-xs font-bold uppercase text-gray-400 mb-2 block">Have a discount code?</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={discountCode}
+                      onChange={(e) => {
+                        setDiscountCode(e.target.value.toUpperCase());
+                        setDiscountMessage('');
+                      }}
+                      placeholder="Enter code"
+                      className="flex-1 bg-white/5 border border-white/10 px-3 py-2 rounded text-white placeholder-gray-500 focus:border-[#00ff88] outline-none transition-colors text-sm"
+                      disabled={discountApplied}
+                    />
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleApplyDiscount}
+                      disabled={discountApplied}
+                      className="px-4 py-2 bg-[#00ff88]/20 hover:bg-[#00ff88]/30 text-[#00ff88] rounded font-bold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {discountApplied ? '✓ Applied' : 'Apply'}
+                    </motion.button>
+                  </div>
+                  {discountMessage && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`text-xs mt-2 ${discountApplied ? 'text-[#00ff88]' : 'text-red-400'}`}
+                    >
+                      {discountMessage}
+                    </motion.p>
+                  )}
+                </div>
+
                 <div className="space-y-3 pt-4 border-t border-white/10">
                   <div className="flex justify-between text-gray-400">
                     <span>Subtotal</span>
@@ -3025,6 +3413,12 @@ const Checkout = () => {
                       {shippingCost === 0 ? 'FREE' : `₹${shippingCost.toFixed(2)}`}
                     </span>
                   </div>
+                  {discountApplied && (
+                    <div className="flex justify-between text-[#00ff88] font-bold">
+                      <span>Discount ({discountPercentage}%)</span>
+                      <span>-₹{discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-xl font-bold pt-3 border-t border-white/10">
                     <span>Total</span>
                     <span className="text-[#00ff88]">₹{totalAmount.toFixed(2)}</span>
@@ -3124,6 +3518,8 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
   const [orders, setOrders] = useState<any[]>([]);
   const [wishlistProducts, setWishlistProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [showOrderModal, setShowOrderModal] = useState(false);
   const { addToCart } = useCart();
 
   // Check authentication
@@ -3330,12 +3726,13 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                   // Parse order date properly
                   let orderDateStr = 'N/A';
                   try {
-                    if (order.orderDate) {
-                      const date = typeof order.orderDate === 'string' 
-                        ? new Date(order.orderDate)
-                        : order.orderDate.seconds 
-                          ? new Date(order.orderDate.seconds * 1000)
-                          : new Date(order.orderDate);
+                    if (order.orderDate || order.createdAt) {
+                      const dateValue = order.orderDate || order.createdAt;
+                      const date = typeof dateValue === 'string' 
+                        ? new Date(dateValue)
+                        : dateValue.seconds 
+                          ? new Date(dateValue.seconds * 1000)
+                          : new Date(dateValue);
                       orderDateStr = date.toLocaleDateString('en-US', { 
                         year: 'numeric', 
                         month: 'long', 
@@ -3348,35 +3745,82 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                     console.error('Error parsing order date:', e);
                   }
                   
+                  // Determine status badge color and icon
+                  const getStatusDisplay = (status: string) => {
+                    const statusLower = (status || 'pending').toLowerCase();
+                    if (statusLower === 'delivered') return { color: 'text-green-500', icon: '✅', bg: 'bg-green-500/10' };
+                    if (statusLower === 'shipped') return { color: 'text-blue-500', icon: '🚚', bg: 'bg-blue-500/10' };
+                    if (statusLower === 'processing') return { color: 'text-yellow-500', icon: '🔄', bg: 'bg-yellow-500/10' };
+                    return { color: 'text-gray-400', icon: '⏳', bg: 'bg-gray-500/10' };
+                  };
+                  
+                  const statusDisplay = getStatusDisplay(order.status);
+                  
                   return (
-                    <div key={order.id} className="bg-zinc-900/30 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-[#00ff88]/30 transition-colors">
+                    <div key={order.id} className="bg-zinc-900/30 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-[#00ff88]/30 transition-all hover:shadow-lg hover:shadow-[#00ff88]/10">
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <p className="text-sm text-gray-400">
                             Order ID: <span className="text-white font-mono">{order.orderId || order.id}</span>
                           </p>
                           <p className="text-sm text-gray-400 mt-1">{orderDateStr}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            Status: <span className={`font-bold ${order.status === 'completed' ? 'text-green-500' : order.status === 'pending' ? 'text-yellow-500' : 'text-gray-400'}`}>
+                          <div className={`inline-flex items-center gap-2 mt-2 px-3 py-1 rounded-full ${statusDisplay.bg}`}>
+                            <span className="text-lg">{statusDisplay.icon}</span>
+                            <span className={`text-xs font-bold uppercase ${statusDisplay.color}`}>
                               {order.status || 'pending'}
                             </span>
-                          </p>
+                          </div>
                         </div>
                         <div className="text-right">
                           <p className="text-2xl font-bold text-[#00ff88]">₹{order.totalAmount?.toFixed(2)}</p>
                           <p className="text-xs text-gray-400 mt-1">
                             {order.paymentMethod === 'upi' ? 'UPI' : order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod}
                           </p>
+                          {order.pointsEarned && (
+                            <p className="text-xs text-[#00ff88] mt-1">
+                              ⭐ {order.pointsEarned} points earned
+                            </p>
+                          )}
                         </div>
                       </div>
                       
+                      {/* Tracking Link - Prominent Display */}
+                      {order.trackingLink && (order.status === 'shipped' || order.status === 'delivered') && (
+                        <div className="mb-4 p-4 bg-[#00ff88]/10 border border-[#00ff88]/30 rounded-xl">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-[#00ff88] rounded-full flex items-center justify-center">
+                                <Package size={20} className="text-black" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-[#00ff88]">Track Your Package</p>
+                                <p className="text-xs text-gray-400">Click to see real-time tracking</p>
+                              </div>
+                            </div>
+                            <a
+                              href={order.trackingLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 bg-[#00ff88] text-black px-4 py-2 rounded-lg font-bold hover:bg-white transition-colors"
+                            >
+                              <Truck size={16} />
+                              Track Now
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                      
                       <div className="space-y-3 mb-4">
-                        {order.items?.map((item: any, idx: number) => {
+                        {order.items?.slice(0, 2).map((item: any, idx: number) => {
                           const product = PRODUCTS.find(p => p.id === item.id);
                           const itemImage = item.image || product?.image || 'https://via.placeholder.com/60x75?text=No+Image';
                           
                           return (
-                            <div key={idx} className="flex gap-3 pb-3 border-b border-white/5 last:border-0">
+                            <Link
+                              key={idx}
+                              to={`/product/${item.id}`}
+                              className="flex gap-3 pb-3 border-b border-white/5 last:border-0 hover:bg-white/5 p-2 rounded-lg transition-colors cursor-pointer"
+                            >
                               <img 
                                 src={itemImage} 
                                 alt={item.name} 
@@ -3387,7 +3831,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                                 }}
                               />
                               <div className="flex-1">
-                                <p className="font-bold text-sm">{item.name}</p>
+                                <p className="font-bold text-sm hover:text-[#00ff88] transition-colors">{item.name}</p>
                                 <p className="text-xs text-gray-400 mt-1">
                                   {item.size} • {item.color} • Qty: {item.quantity}
                                 </p>
@@ -3395,9 +3839,17 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                                   ₹{(item.price * item.quantity).toFixed(2)}
                                 </p>
                               </div>
-                            </div>
+                              <div className="flex items-center">
+                                <ChevronRight size={20} className="text-gray-400" />
+                              </div>
+                            </Link>
                           );
                         })}
+                        {order.items?.length > 2 && (
+                          <p className="text-xs text-gray-400 text-center py-2">
+                            +{order.items.length - 2} more item{order.items.length - 2 > 1 ? 's' : ''}
+                          </p>
+                        )}
                       </div>
                       
                       <div className="pt-3 border-t border-white/10 space-y-2">
@@ -3410,6 +3862,67 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                           <span>Shipping: {order.shippingCost === 0 ? 'FREE' : `₹${order.shippingCost?.toFixed(2)}`}</span>
                         </div>
                       </div>
+                      
+                      {/* View Full Details Button */}
+                      <button
+                        onClick={() => {
+                          // Convert order to OrderDetailModal format
+                          const modalOrder = {
+                            id: order.id,
+                            orderNumber: (order.orderId || order.id).slice(-8).toUpperCase(),
+                            date: order.createdAt?.toDate?.().toISOString() || new Date().toISOString(),
+                            status: (order.status || 'processing') as any,
+                            items: order.items.map((item: any) => ({
+                              id: item.id || item.name,
+                              name: item.name,
+                              image: item.image || '',
+                              price: item.price,
+                              quantity: item.quantity,
+                              size: item.size,
+                              color: item.color
+                            })),
+                            subtotal: order.subtotal || order.totalAmount,
+                            shipping: order.shippingCost || 0,
+                            tax: 0,
+                            discount: order.discount || 0,
+                            total: order.totalAmount,
+                            customer: {
+                              name: order.fullName,
+                              email: order.email || user?.email || '',
+                              phone: order.phone
+                            },
+                            shippingAddress: {
+                              street: order.address,
+                              city: order.city,
+                              state: order.state,
+                              zip: order.pincode,
+                              country: 'India'
+                            },
+                            payment: {
+                              method: order.paymentMethod === 'upi' ? 'UPI' : order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod,
+                              status: 'paid'
+                            },
+                            tracking: order.trackingLink ? {
+                              number: order.trackingLink.split('/').pop() || '',
+                              carrier: 'Standard Shipping',
+                              url: order.trackingLink
+                            } : undefined,
+                            timeline: [
+                              {
+                                status: 'Order Placed',
+                                date: order.createdAt?.toDate?.().toISOString() || new Date().toISOString(),
+                                description: 'Your order has been received'
+                              }
+                            ]
+                          };
+                          setSelectedOrder(modalOrder);
+                          setShowOrderModal(true);
+                        }}
+                        className="w-full mt-4 bg-white/5 hover:bg-white/10 text-white py-2 rounded-lg font-bold transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Eye size={16} />
+                        View Full Order Details
+                      </button>
                     </div>
                   );
                 })}
@@ -3433,7 +3946,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                 </Link>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                 {wishlistProducts.map((product) => (
                   <div key={product.id} className="bg-zinc-900/30 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden group hover:border-[#00ff88]/30 transition-colors">
                     <div className="relative aspect-[3/4] overflow-hidden bg-zinc-900">
@@ -3469,6 +3982,18 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
           </div>
         </div>
       </div>
+
+      {/* Order Detail Modal */}
+      {selectedOrder && (
+        <OrderDetailModal
+          isOpen={showOrderModal}
+          onClose={() => {
+            setShowOrderModal(false);
+            setSelectedOrder(null);
+          }}
+          order={selectedOrder}
+        />
+      )}
     </div>
   );
 };
@@ -3547,6 +4072,18 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Handle quick add to cart from ProductRecommendations
+  const { addToCart } = useCart();
+  useEffect(() => {
+    const handleQuickAdd = (event: any) => {
+      const { product, size, color, quantity } = event.detail;
+      addToCart(product, size, color, quantity);
+    };
+    
+    window.addEventListener('quickAddToCart', handleQuickAdd);
+    return () => window.removeEventListener('quickAddToCart', handleQuickAdd);
+  }, [addToCart]);
 
   return (
     <>
@@ -3800,6 +4337,23 @@ function App() {
   const { cursorVariant, setCursorVariant, mousePosition } = useCursor();
   const [isRewardsModalOpen, setIsRewardsModalOpen] = useState(false);
 
+  // Initialize Firebase sync on app load
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Sync user profile on login
+        const { firebaseSyncService } = await import('./services/firebaseSyncService');
+        await firebaseSyncService.syncUserProfile(user.uid, {
+          email: user.email || '',
+          displayName: user.displayName || 'User',
+        });
+        console.log('Firebase sync initialized for user:', user.uid);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   // Optimized mouse tracking with throttling for gradient
   useEffect(() => {
     let rafId: number;
@@ -3830,6 +4384,9 @@ function App() {
 
   // Hide default cursor globally - IMMEDIATE injection
   useEffect(() => {
+    // Check if mobile
+    const isMobile = window.innerWidth < 768;
+    
     // Inject CSS immediately and aggressively
     const style = document.createElement('style');
     style.id = 'hide-cursor-global';
@@ -3837,10 +4394,20 @@ function App() {
       *, *::before, *::after,
       html, body, div, span, a, button, input, textarea, select,
       h1, h2, h3, h4, h5, h6, p, img, svg, canvas {
-        cursor: none !important;
+        cursor: ${isMobile ? 'auto' : 'none'} !important;
       }
       *:hover {
-        cursor: none !important;
+        cursor: ${isMobile ? 'auto' : 'none'} !important;
+      }
+      @media (max-width: 768px) {
+        *, *::before, *::after,
+        html, body, div, span, a, button, input, textarea, select,
+        h1, h2, h3, h4, h5, h6, p, img, svg, canvas {
+          cursor: auto !important;
+        }
+        *:hover {
+          cursor: auto !important;
+        }
       }
     `;
     
@@ -3852,8 +4419,8 @@ function App() {
     }
     
     // Also set directly on elements
-    document.documentElement.style.cursor = 'none';
-    document.body.style.cursor = 'none';
+    document.documentElement.style.cursor = isMobile ? 'auto' : 'none';
+    document.body.style.cursor = isMobile ? 'auto' : 'none';
     
     return () => {
       const existingStyle = document.getElementById('hide-cursor-global');
@@ -3898,6 +4465,9 @@ function App() {
             {/* Floating Rewards Button & Modal */}
             <FloatingRewardsButton onClick={() => setIsRewardsModalOpen(true)} />
             <RewardsModal isOpen={isRewardsModalOpen} onClose={() => setIsRewardsModalOpen(false)} />
+            
+            {/* Exit Intent Popup */}
+            <ExitIntentPopup />
           </div>
           
           {/* Optimized Custom Cursor - Rendered OUTSIDE main container for maximum z-index */}

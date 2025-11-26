@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quick Orders Check</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #0a0a0a;
+      color: #fff;
+    }
+    .status {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #00ff88;
+    }
+    .btn {
+      background: #00ff88;
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .btn:hover {
+      background: #00dd77;
+    }
+    .success { color: #00ff88; }
+    .error { color: #ff4444; }
+    .warning { color: #ffaa00; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Quick Orders Check</h1>
+  
+  <div class="status">
+    <h2>Current Status:</h2>
+    <p id="status">Checking...</p>
+  </div>
+  
+  <button class="btn" onclick="checkOrders()">🔄 Check Again</button>
+  <button class="btn" onclick="syncNow()">🔥 Sync from Firebase</button>
+  <button class="btn" onclick="openAdmin()">📊 Open Admin Panel</button>
+  
+  <div class="status" style="margin-top: 20px;">
+    <h2>Instructions:</h2>
+    <ol>
+      <li>Click "🔥 Sync from Firebase" button above</li>
+      <li>Wait for success message</li>
+      <li>Click "📊 Open Admin Panel"</li>
+      <li>Click "Orders" tab</li>
+      <li>Orders should now display!</li>
+    </ol>
+  </div>
+  
+  <script type="module">
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    };
+    
+    let db = null;
+    
+    async function initFirebase() {
+      if (db) return db;
+      
+      const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+      const { getFirestore } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+      
+      const app = initializeApp(firebaseConfig, 'quick-check-' + Date.now());
+      db = getFirestore(app);
+      return db;
+    }
+    
+    window.checkOrders = function() {
+      const localOrders = localStorage.getItem('elevez_orders');
+      const orders = localOrders ? JSON.parse(localOrders) : [];
+      
+      const statusEl = document.getElementById('status');
+      
+      if (orders.length > 0) {
+        statusEl.innerHTML = `
+          <p class="success">✅ Found ${orders.length} orders in localStorage</p>
+          <p>Orders should display in admin panel.</p>
+          <p>If not, click "Open Admin Panel" and refresh the page.</p>
+        `;
+      } else {
+        statusEl.innerHTML = `
+          <p class="warning">⚠️ No orders in localStorage</p>
+          <p>Click "🔥 Sync from Firebase" to load orders.</p>
+        `;
+      }
+    };
+    
+    window.syncNow = async function() {
+      const statusEl = document.getElementById('status');
+      statusEl.innerHTML = '<p class="warning">🔄 Syncing from Firebase...</p>';
+      
+      try {
+        await initFirebase();
+        
+        const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const ordersRef = collection(db, 'orders');
+        const ordersQuery = query(ordersRef, orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(ordersQuery);
+        
+        const orders = [];
+        snapshot.forEach(doc => {
+          orders.push({
+            id: doc.id,
+            orderId: doc.id,
+            ...doc.data(),
+            source: 'firebase'
+          });
+        });
+        
+        if (orders.length > 0) {
+          localStorage.setItem('elevez_orders', JSON.stringify(orders));
+          statusEl.innerHTML = `
+            <p class="success">✅ Successfully synced ${orders.length} orders!</p>
+            <p>Orders saved to localStorage.</p>
+            <p><strong>Next:</strong> Click "📊 Open Admin Panel" below.</p>
+          `;
+        } else {
+          statusEl.innerHTML = `
+            <p class="warning">⚠️ No orders found in Firebase</p>
+            <p>This means no orders have been placed yet.</p>
+            <p>Place a test order from the website first.</p>
+          `;
+        }
+      } catch (error) {
+        statusEl.innerHTML = `
+          <p class="error">❌ Error: ${error.message}</p>
+          <p>Check your internet connection and try again.</p>
+        `;
+        console.error('Sync error:', error);
+      }
+    };
+    
+    window.openAdmin = function() {
+      window.open('http://localhost:3001/admin-panel/', '_blank');
+    };
+    
+    // Auto-check on load
+    checkOrders();
+  </script>
+</body>
+</html>

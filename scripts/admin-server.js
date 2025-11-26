@@ -100,9 +100,121 @@ const server = http.createServer((req, res) => {
     }
   }
   
+  // Serve unified dashboard and assets
+  if (req.method === 'GET' && req.url === '/dashboard') {
+    const dashboardPath = path.join(__dirname, '..', 'admin-panel', 'unified-admin.html');
+    if (fs.existsSync(dashboardPath)) {
+      const content = fs.readFileSync(dashboardPath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(content);
+      console.log('✅ Served dashboard');
+      return;
+    } else {
+      res.writeHead(404);
+      res.end('Dashboard not found: ' + dashboardPath);
+      console.log('❌ Dashboard not found at:', dashboardPath);
+      return;
+    }
+  }
+
+  // Serve unified admin CSS
+  if (req.method === 'GET' && req.url === '/unified-admin.css') {
+    const cssPath = path.join(__dirname, '..', 'admin-panel', 'unified-admin.css');
+    if (fs.existsSync(cssPath)) {
+      const content = fs.readFileSync(cssPath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'text/css; charset=utf-8' });
+      res.end(content);
+      return;
+    }
+  }
+
+  // Serve unified admin JS
+  if (req.method === 'GET' && req.url === '/unified-admin.js') {
+    const jsPath = path.join(__dirname, '..', 'admin-panel', 'unified-admin.js');
+    if (fs.existsSync(jsPath)) {
+      const content = fs.readFileSync(jsPath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8' });
+      res.end(content);
+      return;
+    }
+  }
+
+  // Serve dashboard API
+  if (req.method === 'GET' && req.url === '/dashboard-api.js') {
+    const apiPath = path.join(__dirname, '..', 'admin-panel', 'dashboard-api.js');
+    if (fs.existsSync(apiPath)) {
+      const content = fs.readFileSync(apiPath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8' });
+      res.end(content);
+      return;
+    }
+  }
+
+  // Serve unified admin v2 JS
+  if (req.method === 'GET' && req.url === '/unified-admin-v2.js') {
+    const jsPath = path.join(__dirname, '..', 'admin-panel', 'unified-admin-v2.js');
+    if (fs.existsSync(jsPath)) {
+      const content = fs.readFileSync(jsPath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8' });
+      res.end(content);
+      return;
+    }
+  }
+
+  // Serve discount management system
+  if (req.method === 'GET' && req.url === '/discount-management') {
+    const discountPath = path.join(__dirname, '..', 'admin-panel', 'discount-management.html');
+    if (fs.existsSync(discountPath)) {
+      const content = fs.readFileSync(discountPath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(content);
+      return;
+    }
+  }
+
+  // Serve discount management CSS
+  if (req.method === 'GET' && req.url === '/discount-management.css') {
+    const cssPath = path.join(__dirname, '..', 'admin-panel', 'discount-management.css');
+    if (fs.existsSync(cssPath)) {
+      const content = fs.readFileSync(cssPath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'text/css; charset=utf-8' });
+      res.end(content);
+      return;
+    }
+  }
+
+  // Serve discount service JS
+  if (req.method === 'GET' && req.url === '/discount-service.js') {
+    const servicePath = path.join(__dirname, '..', 'admin-panel', 'discount-service.js');
+    if (fs.existsSync(servicePath)) {
+      const content = fs.readFileSync(servicePath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8' });
+      res.end(content);
+      return;
+    }
+  }
+
+  // Serve discount management JS
+  if (req.method === 'GET' && req.url === '/discount-management.js') {
+    const jsPath = path.join(__dirname, '..', 'admin-panel', 'discount-management.js');
+    if (fs.existsSync(jsPath)) {
+      const content = fs.readFileSync(jsPath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8' });
+      res.end(content);
+      return;
+    }
+  }
+
   // Serve admin panel files
-  if (req.method === 'GET' && req.url.startsWith('/admin-panel/')) {
-    const filePath = path.join(__dirname, '..', req.url);
+  if (req.method === 'GET' && (req.url === '/' || req.url.startsWith('/admin-panel'))) {
+    let filePath;
+    
+    // Handle root path - serve index.html
+    if (req.url === '/') {
+      filePath = path.join(__dirname, '..', 'admin-panel', 'index.html');
+    } else {
+      filePath = path.join(__dirname, '..', req.url);
+    }
     
     // Security: prevent directory traversal
     const normalizedPath = path.normalize(filePath);
@@ -112,6 +224,11 @@ const server = http.createServer((req, res) => {
       res.writeHead(403);
       res.end('Forbidden');
       return;
+    }
+    
+    // If it's a directory, serve index.html
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+      filePath = path.join(filePath, 'index.html');
     }
     
     // Serve the file
@@ -135,7 +252,7 @@ const server = http.createServer((req, res) => {
       return;
     } else {
       res.writeHead(404);
-      res.end('Not Found');
+      res.end('Not Found: ' + filePath);
       return;
     }
   }

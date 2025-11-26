@@ -1,0 +1,454 @@
+.audit-log-viewer {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 24px;
+  color: #ffffff;
+}
+
+.audit-log-viewer .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #333;
+}
+
+.audit-log-viewer .panel-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.audit-log-viewer .header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.audit-log-viewer .btn-secondary {
+  background: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.audit-log-viewer .btn-secondary:hover {
+  background: #444;
+  border-color: #555;
+}
+
+.audit-log-viewer .summary-section {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.audit-log-viewer .summary-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.audit-log-viewer .summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.audit-log-viewer .summary-item {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.audit-log-viewer .summary-item .label {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.audit-log-viewer .summary-item .value {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: #00ff88;
+}
+
+.audit-log-viewer .summary-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.audit-log-viewer .detail-section {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.audit-log-viewer .detail-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #00ff88;
+}
+
+.audit-log-viewer .detail-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.audit-log-viewer .detail-section li {
+  padding: 8px 0;
+  font-size: 13px;
+  color: #ccc;
+  border-bottom: 1px solid #333;
+}
+
+.audit-log-viewer .detail-section li:last-child {
+  border-bottom: none;
+}
+
+.audit-log-viewer .compliance-section {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.audit-log-viewer .compliance-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.audit-log-viewer .compliance-status {
+  margin-bottom: 16px;
+}
+
+.audit-log-viewer .status {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.audit-log-viewer .status.compliant {
+  background: #10b981;
+  color: white;
+}
+
+.audit-log-viewer .status.warning {
+  background: #f59e0b;
+  color: white;
+}
+
+.audit-log-viewer .status.violation {
+  background: #ef4444;
+  color: white;
+}
+
+.audit-log-viewer .compliance-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.audit-log-viewer .metric {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.audit-log-viewer .metric .label {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.audit-log-viewer .metric .value {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: #00ff88;
+}
+
+.audit-log-viewer .recommendations {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.audit-log-viewer .recommendations h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #00ff88;
+}
+
+.audit-log-viewer .recommendations ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.audit-log-viewer .recommendations li {
+  background: #222;
+  border-left: 3px solid #00ff88;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.audit-log-viewer .filters-section {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.audit-log-viewer .filters-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.audit-log-viewer .filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.audit-log-viewer .filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.audit-log-viewer .filter-group label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.audit-log-viewer .filter-group input,
+.audit-log-viewer .filter-group select {
+  padding: 10px 12px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+}
+
+.audit-log-viewer .filter-group input:focus,
+.audit-log-viewer .filter-group select:focus {
+  outline: none;
+  border-color: #00ff88;
+}
+
+.audit-log-viewer .logs-section {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.audit-log-viewer .logs-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.audit-log-viewer .logs-table {
+  overflow-x: auto;
+}
+
+.audit-log-viewer table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.audit-log-viewer table thead {
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+.audit-log-viewer table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #00ff88;
+}
+
+.audit-log-viewer table td {
+  padding: 12px;
+  border-bottom: 1px solid #333;
+  color: #ccc;
+}
+
+.audit-log-viewer table tbody tr {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.audit-log-viewer table tbody tr:hover {
+  background: #1a1a1a;
+}
+
+.audit-log-viewer table tbody tr.selected {
+  background: #2a2a2a;
+  border-left: 3px solid #00ff88;
+}
+
+.audit-log-viewer .log-details {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.audit-log-viewer .log-details h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.audit-log-viewer .details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.audit-log-viewer .detail-item {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.audit-log-viewer .detail-item .label {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.audit-log-viewer .detail-item .value {
+  display: block;
+  font-size: 14px;
+  color: #ccc;
+  word-break: break-word;
+}
+
+.audit-log-viewer .changes-section {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.audit-log-viewer .changes-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #00ff88;
+}
+
+.audit-log-viewer .changes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.audit-log-viewer .change-item {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.audit-log-viewer .change-item h5 {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  color: #00ff88;
+  text-transform: uppercase;
+}
+
+.audit-log-viewer .change-item pre {
+  margin: 0;
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 11px;
+  color: #ccc;
+}
+
+.audit-log-viewer .error-section {
+  background: #1a1a1a;
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.audit-log-viewer .error-section h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ef4444;
+}
+
+.audit-log-viewer .error-section p {
+  margin: 0;
+  font-size: 13px;
+  color: #ccc;
+}
+
+@media (max-width: 768px) {
+  .audit-log-viewer .header-actions {
+    flex-direction: column;
+  }
+
+  .audit-log-viewer .btn-secondary {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .audit-log-viewer .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .audit-log-viewer .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

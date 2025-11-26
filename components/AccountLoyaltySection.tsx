@@ -1,10 +1,11 @@
 // SECTION 5: Account Integration - Loyalty Dashboard
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLoyalty } from '../hooks/useLoyalty';
 import { Gift, Award, TrendingUp, Clock, Copy, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { auth } from '../firebaseConfig';
 
 export const AccountLoyaltySection: React.FC = () => {
   const {
@@ -18,6 +19,30 @@ export const AccountLoyaltySection: React.FC = () => {
   } = useLoyalty();
 
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [orderCount, setOrderCount] = useState<number>(0);
+
+  // Fetch actual order count from Firebase
+  useEffect(() => {
+    const fetchOrderCount = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      try {
+        const db = getFirestore();
+        const ordersQuery = query(
+          collection(db, 'orders'),
+          where('userId', '==', user.uid)
+        );
+        const ordersSnapshot = await getDocs(ordersQuery);
+        setOrderCount(ordersSnapshot.size);
+      } catch (error) {
+        console.error('Error fetching order count:', error);
+        setOrderCount(0);
+      }
+    };
+
+    fetchOrderCount();
+  }, [profile]);
 
   const copyCode = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -97,8 +122,8 @@ export const AccountLoyaltySection: React.FC = () => {
 
         <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/20 text-center">
           <Clock className="w-6 h-6 text-blue-400 mx-auto mb-2" />
-          <p className="text-2xl font-bold text-white">{transactions.length}</p>
-          <p className="text-xs text-white/70">Transactions</p>
+          <p className="text-2xl font-bold text-white">{orderCount}</p>
+          <p className="text-xs text-white/70">Orders</p>
         </div>
       </div>
 

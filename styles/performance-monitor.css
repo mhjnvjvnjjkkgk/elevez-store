@@ -1,0 +1,323 @@
+.performance-monitor {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 24px;
+  color: #ffffff;
+}
+
+.performance-monitor .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #333;
+}
+
+.performance-monitor .panel-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.performance-monitor .time-window-selector select {
+  padding: 8px 12px;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.performance-monitor .time-window-selector select:focus {
+  outline: none;
+  border-color: #00ff88;
+}
+
+.performance-monitor .metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.performance-monitor .metric-card {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.performance-monitor .metric-card:hover {
+  border-color: #00ff88;
+  background: #2a2a2a;
+}
+
+.performance-monitor .metric-label {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.performance-monitor .metric-value {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.performance-monitor .metric-status {
+  font-size: 12px;
+  color: #666;
+}
+
+.performance-monitor .alerts-section {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.performance-monitor .alerts-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.performance-monitor .alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.performance-monitor .alert-item {
+  background: #1a1a1a;
+  border-left: 4px solid #f59e0b;
+  border-radius: 6px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.performance-monitor .alert-item:hover {
+  background: #2a2a2a;
+}
+
+.performance-monitor .alert-item.severity-critical {
+  border-left-color: #ef4444;
+}
+
+.performance-monitor .alert-item.severity-high {
+  border-left-color: #f59e0b;
+}
+
+.performance-monitor .alert-item.severity-medium {
+  border-left-color: #3b82f6;
+}
+
+.performance-monitor .alert-item.severity-low {
+  border-left-color: #10b981;
+}
+
+.performance-monitor .alert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.performance-monitor .alert-type {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.performance-monitor .severity-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.performance-monitor .severity-badge.critical {
+  background: #ef4444;
+  color: white;
+}
+
+.performance-monitor .severity-badge.high {
+  background: #f59e0b;
+  color: white;
+}
+
+.performance-monitor .severity-badge.medium {
+  background: #3b82f6;
+  color: white;
+}
+
+.performance-monitor .severity-badge.low {
+  background: #10b981;
+  color: white;
+}
+
+.performance-monitor .alert-message {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #ccc;
+}
+
+.performance-monitor .alert-details {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 12px;
+}
+
+.performance-monitor .btn-resolve {
+  background: #00ff88;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.performance-monitor .btn-resolve:hover {
+  background: #00dd77;
+}
+
+.performance-monitor .recommendations-section {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.performance-monitor .recommendations-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.performance-monitor .recommendations-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.performance-monitor .recommendations-list li {
+  background: #1a1a1a;
+  border-left: 3px solid #00ff88;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.performance-monitor .metrics-history {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.performance-monitor .metrics-history h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.performance-monitor .metrics-table {
+  overflow-x: auto;
+}
+
+.performance-monitor table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.performance-monitor table thead {
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+.performance-monitor table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #00ff88;
+}
+
+.performance-monitor table td {
+  padding: 12px;
+  border-bottom: 1px solid #333;
+  color: #ccc;
+}
+
+.performance-monitor table tbody tr:hover {
+  background: #1a1a1a;
+}
+
+.performance-monitor .status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.performance-monitor .status.success {
+  background: #10b981;
+  color: white;
+}
+
+.performance-monitor .status.warning {
+  background: #f59e0b;
+  color: white;
+}
+
+.performance-monitor .status.error {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-secondary {
+  background: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 8px;
+}
+
+.btn-secondary:hover {
+  background: #444;
+  border-color: #555;
+}
+
+@media (max-width: 768px) {
+  .performance-monitor .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .performance-monitor .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

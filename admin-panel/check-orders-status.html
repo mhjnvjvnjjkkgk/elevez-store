@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders Status Checker - ELEVEZ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: #fff;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      color: #00ff88;
+    }
+    
+    .subtitle {
+      color: #888;
+      margin-bottom: 40px;
+    }
+    
+    .status-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+    
+    .status-card h2 {
+      color: #00ff88;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+    
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    
+    .info-label {
+      color: #888;
+      font-weight: 500;
+    }
+    
+    .info-value {
+      color: #fff;
+      font-weight: 600;
+    }
+    
+    .success {
+      color: #00ff88;
+    }
+    
+    .error {
+      color: #ff4444;
+    }
+    
+    .warning {
+      color: #ffaa00;
+    }
+    
+    .btn {
+      background: #00ff88;
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-top: 10px;
+    }
+    
+    .btn:hover {
+      background: #00dd77;
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .order-list {
+      margin-top: 20px;
+    }
+    
+    .order-item {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid #00ff88;
+    }
+    
+    .order-item.firebase {
+      border-left-color: #00ff88;
+    }
+    
+    .order-item.local {
+      border-left-color: #666;
+    }
+    
+    .log {
+      background: #000;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    
+    .log-entry {
+      margin-bottom: 5px;
+    }
+    
+    .log-success {
+      color: #00ff88;
+    }
+    
+    .log-error {
+      color: #ff4444;
+    }
+    
+    .log-info {
+      color: #00aaff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 Orders Status Checker</h1>
+    <p class="subtitle">Diagnostic tool to check order sync status</p>
+    
+    <div class="status-card">
+      <h2>📊 Current Status</h2>
+      <div class="info-row">
+        <span class="info-label">LocalStorage Orders</span>
+        <span class="info-value" id="localStorageCount">Checking...</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">State Orders (Admin Panel)</span>
+        <span class="info-value" id="stateOrdersCount">Checking...</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Firebase Connection</span>
+        <span class="info-value" id="firebaseStatus">Checking...</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Firebase Orders</span>
+        <span class="info-value" id="firebaseOrdersCount">Checking...</span>
+      </div>
+      
+      <div style="margin-top: 20px;">
+        <button class="btn" onclick="checkStatus()">🔄 Refresh Status</button>
+        <button class="btn btn-secondary" onclick="syncFromFirebase()">🔥 Sync from Firebase</button>
+        <button class="btn btn-secondary" onclick="clearLocalOrders()">🗑️ Clear Local Orders</button>
+      </div>
+    </div>
+    
+    <div class="status-card">
+      <h2>📦 Orders List</h2>
+      <div id="ordersList">Loading...</div>
+    </div>
+    
+    <div class="status-card">
+      <h2>📝 Activity Log</h2>
+      <div class="log" id="activityLog"></div>
+    </div>
+  </div>
+  
+  <script type="module">
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    };
+    
+    let db = null;
+    let logs = [];
+    
+    function addLog(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      logs.unshift({ timestamp, message, type });
+      if (logs.length > 50) logs.pop();
+      
+      const logContainer = document.getElementById('activityLog');
+      logContainer.innerHTML = logs.map(log => 
+        `<div class="log-entry log-${log.type}">[${log.timestamp}] ${log.message}</div>`
+      ).join('');
+      
+      console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+    
+    async function initFirebase() {
+      try {
+        addLog('Initializing Firebase...', 'info');
+        
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+        const { getFirestore } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        
+        addLog('✅ Firebase initialized successfully', 'success');
+        return true;
+      } catch (error) {
+        addLog(`❌ Firebase initialization failed: ${error.message}`, 'error');
+        return false;
+      }
+    }
+    
+    async function checkStatus() {
+      addLog('🔍 Checking status...', 'info');
+      
+      // Check localStorage
+      const localOrders = localStorage.getItem('elevez_orders');
+      const localOrdersArray = localOrders ? JSON.parse(localOrders) : [];
+      document.getElementById('localStorageCount').textContent = localOrdersArray.length;
+      document.getElementById('localStorageCount').className = localOrdersArray.length > 0 ? 'info-value success' : 'info-value warning';
+      addLog(`📦 LocalStorage: ${localOrdersArray.length} orders`, localOrdersArray.length > 0 ? 'success' : 'info');
+      
+      // Check if admin panel state is accessible
+      if (window.opener && window.opener.state) {
+        const stateOrders = window.opener.state.orders || [];
+        document.getElementById('stateOrdersCount').textContent = stateOrders.length;
+        document.getElementById('stateOrdersCount').className = stateOrders.length > 0 ? 'info-value success' : 'info-value warning';
+        addLog(`📊 Admin Panel State: ${stateOrders.length} orders`, stateOrders.length > 0 ? 'success' : 'info');
+      } else {
+        document.getElementById('stateOrdersCount').textContent = 'N/A (Open from admin panel)';
+        document.getElementById('stateOrdersCount').className = 'info-value warning';
+      }
+      
+      // Check Firebase
+      if (!db) {
+        const initialized = await initFirebase();
+        if (!initialized) {
+          document.getElementById('firebaseStatus').textContent = 'Disconnected';
+          document.getElementById('firebaseStatus').className = 'info-value error';
+          document.getElementById('firebaseOrdersCount').textContent = 'N/A';
+          return;
+        }
+      }
+      
+      document.getElementById('firebaseStatus').textContent = 'Connected';
+      document.getElementById('firebaseStatus').className = 'info-value success';
+      
+      // Fetch Firebase orders
+      try {
+        const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const ordersRef = collection(db, 'orders');
+        const ordersQuery = query(ordersRef, orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(ordersQuery);
+        
+        const firebaseOrders = [];
+        snapshot.forEach(doc => {
+          firebaseOrders.push({ id: doc.id, ...doc.data() });
+        });
+        
+        document.getElementById('firebaseOrdersCount').textContent = firebaseOrders.length;
+        document.getElementById('firebaseOrdersCount').className = firebaseOrders.length > 0 ? 'info-value success' : 'info-value warning';
+        addLog(`🔥 Firebase: ${firebaseOrders.length} orders`, firebaseOrders.length > 0 ? 'success' : 'info');
+        
+        // Display orders
+        displayOrders([...firebaseOrders.map(o => ({ ...o, source: 'firebase' })), ...localOrdersArray.filter(o => o.source !== 'firebase')]);
+        
+      } catch (error) {
+        addLog(`❌ Error fetching Firebase orders: ${error.message}`, 'error');
+        document.getElementById('firebaseOrdersCount').textContent = 'Error';
+        document.getElementById('firebaseOrdersCount').className = 'info-value error';
+      }
+    }
+    
+    function displayOrders(orders) {
+      const container = document.getElementById('ordersList');
+      
+      if (orders.length === 0) {
+        container.innerHTML = '<p style="color: #888;">No orders found</p>';
+        return;
+      }
+      
+      container.innerHTML = orders.map(order => {
+        const date = new Date(order.createdAt || order.date || Date.now()).toLocaleString();
+        const source = order.source === 'firebase' ? '🔥 Firebase' : '💾 Local';
+        const sourceClass = order.source === 'firebase' ? 'firebase' : 'local';
+        
+        return `
+          <div class="order-item ${sourceClass}">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <strong>Order #${order.orderId || order.id}</strong>
+              <span style="font-size: 12px; color: #888;">${source}</span>
+            </div>
+            <div style="font-size: 13px; color: #aaa;">
+              ${order.fullName || order.customerName || 'N/A'} • ${order.email || 'N/A'}
+            </div>
+            <div style="font-size: 13px; color: #aaa; margin-top: 4px;">
+              ${order.items?.length || 0} items • ₹${(order.totalAmount || 0).toFixed(2)} • ${order.status || 'pending'}
+            </div>
+            <div style="font-size: 12px; color: #666; margin-top: 4px;">
+              ${date}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    window.syncFromFirebase = async function() {
+      addLog('🔄 Syncing from Firebase...', 'info');
+      
+      if (!db) {
+        const initialized = await initFirebase();
+        if (!initialized) {
+          alert('❌ Cannot connect to Firebase');
+          return;
+        }
+      }
+      
+      try {
+        const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const ordersRef = collection(db, 'orders');
+        const ordersQuery = query(ordersRef, orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(ordersQuery);
+        
+        const firebaseOrders = [];
+        snapshot.forEach(doc => {
+          firebaseOrders.push({
+            id: doc.id,
+            orderId: doc.id,
+            ...doc.data(),
+            source: 'firebase'
+          });
+        });
+        
+        // Merge with local orders
+        const localOrders = JSON.parse(localStorage.getItem('elevez_orders') || '[]');
+        const nonFirebaseOrders = localOrders.filter(o => o.source !== 'firebase');
+        const mergedOrders = [...firebaseOrders, ...nonFirebaseOrders];
+        
+        // Save to localStorage
+        localStorage.setItem('elevez_orders', JSON.stringify(mergedOrders));
+        
+        addLog(`✅ Synced ${firebaseOrders.length} orders from Firebase`, 'success');
+        alert(`✅ Synced ${firebaseOrders.length} orders from Firebase!\n\nRefresh the admin panel to see them.`);
+        
+        checkStatus();
+        
+      } catch (error) {
+        addLog(`❌ Sync failed: ${error.message}`, 'error');
+        alert(`❌ Sync failed: ${error.message}`);
+      }
+    };
+    
+    window.clearLocalOrders = function() {
+      if (confirm('⚠️ Clear all local orders? This will not affect Firebase orders.')) {
+        localStorage.removeItem('elevez_orders');
+        addLog('🗑️ Local orders cleared', 'info');
+        checkStatus();
+      }
+    };
+    
+    // Initial check
+    checkStatus();
+    
+    // Auto-refresh every 10 seconds
+    setInterval(checkStatus, 10000);
+  </script>
+</body>
+</html>

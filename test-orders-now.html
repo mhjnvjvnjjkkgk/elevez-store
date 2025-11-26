@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Orders</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #0a0a0a;
+      color: #fff;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .status {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border: 1px solid #00ff88;
+    }
+    .btn {
+      background: #00ff88;
+      color: #000;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    .btn:hover {
+      background: #00dd77;
+    }
+    .success { color: #00ff88; }
+    .error { color: #ff4444; }
+    .warning { color: #ffaa00; }
+    pre {
+      background: #000;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Test Orders Connection</h1>
+  
+  <div class="status">
+    <h2>Status:</h2>
+    <div id="status">Click "Test Connection" to start...</div>
+  </div>
+  
+  <button class="btn" onclick="testConnection()">🔥 Test Connection</button>
+  <button class="btn" onclick="loadOrders()">📦 Load Orders</button>
+  <button class="btn" onclick="openAdmin()">📊 Open Admin Panel</button>
+  
+  <div class="status" id="ordersDisplay" style="display: none;">
+    <h2>Orders Found:</h2>
+    <div id="ordersList"></div>
+  </div>
+  
+  <script type="module">
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    };
+    
+    let db = null;
+    
+    async function initFirebase() {
+      if (db) return db;
+      
+      const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+      const { getFirestore } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+      
+      const app = initializeApp(firebaseConfig, 'test-' + Date.now());
+      db = getFirestore(app);
+      return db;
+    }
+    
+    window.testConnection = async function() {
+      const statusEl = document.getElementById('status');
+      statusEl.innerHTML = '<p class="warning">🔄 Testing Firebase connection...</p>';
+      
+      try {
+        await initFirebase();
+        statusEl.innerHTML = '<p class="success">✅ Firebase connected successfully!</p><p>Click "Load Orders" to fetch orders.</p>';
+      } catch (error) {
+        statusEl.innerHTML = `<p class="error">❌ Connection failed: ${error.message}</p>`;
+        console.error('Connection error:', error);
+      }
+    };
+    
+    window.loadOrders = async function() {
+      const statusEl = document.getElementById('status');
+      const ordersDisplay = document.getElementById('ordersDisplay');
+      const ordersList = document.getElementById('ordersList');
+      
+      statusEl.innerHTML = '<p class="warning">🔄 Loading orders from Firebase...</p>';
+      
+      try {
+        await initFirebase();
+        
+        const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const ordersRef = collection(db, 'orders');
+        const ordersQuery = query(ordersRef, orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(ordersQuery);
+        
+        if (snapshot.size === 0) {
+          statusEl.innerHTML = `
+            <p class="warning">⚠️ No orders found in Firebase!</p>
+            <p>This means:</p>
+            <ul>
+              <li>No orders have been placed yet, OR</li>
+              <li>Orders are in a different collection</li>
+            </ul>
+            <p><strong>Solution:</strong> Place a test order from the website first.</p>
+          `;
+          ordersDisplay.style.display = 'none';
+          return;
+        }
+        
+        const orders = [];
+        snapshot.forEach(doc => {
+          orders.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+        
+        statusEl.innerHTML = `<p class="success">✅ Found ${orders.length} orders!</p>`;
+        
+        ordersList.innerHTML = orders.map((order, index) => `
+          <div style="background: #000; padding: 15px; border-radius: 6px; margin: 10px 0;">
+            <h3 style="color: #00ff88; margin: 0 0 10px 0;">Order ${index + 1}: #${order.orderId || order.id}</h3>
+            <p><strong>Customer:</strong> ${order.fullName || order.customerName || 'N/A'}</p>
+            <p><strong>Email:</strong> ${order.email || 'N/A'}</p>
+            <p><strong>Total:</strong> ₹${(order.totalAmount || 0).toFixed(2)}</p>
+            <p><strong>Points:</strong> ⭐ ${order.pointsEarned || Math.floor((order.totalAmount || 0) / 10)} points</p>
+            <p><strong>Status:</strong> ${order.status || 'pending'}</p>
+            <p><strong>Items:</strong> ${order.items?.length || 0} products</p>
+            <details>
+              <summary style="cursor: pointer; color: #00ff88;">View Full Data</summary>
+              <pre>${JSON.stringify(order, null, 2)}</pre>
+            </details>
+          </div>
+        `).join('');
+        
+        ordersDisplay.style.display = 'block';
+        
+        // Save to localStorage for admin panel
+        localStorage.setItem('elevez_orders', JSON.stringify(orders.map(o => ({
+          ...o,
+          source: 'firebase',
+          pointsEarned: o.pointsEarned || Math.floor((o.totalAmount || 0) / 10)
+        }))));
+        
+        console.log('Orders saved to localStorage');
+        
+      } catch (error) {
+        statusEl.innerHTML = `<p class="error">❌ Error loading orders: ${error.message}</p>`;
+        console.error('Load error:', error);
+      }
+    };
+    
+    window.openAdmin = function() {
+      window.open('http://localhost:3001/admin-panel/', '_blank');
+    };
+  </script>
+</body>
+</html>

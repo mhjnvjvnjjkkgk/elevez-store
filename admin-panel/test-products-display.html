@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Products Display</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #0a0a0a;
+      color: #00ff88;
+      padding: 20px;
+    }
+    .test-section {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .success { color: #00ff88; }
+    .error { color: #ff3b30; }
+    .warning { color: #ffaa00; }
+    button {
+      background: #00ff88;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 5px;
+    }
+    button:hover {
+      background: #00cc6a;
+    }
+    pre {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Products Display Diagnostic Tool</h1>
+  
+  <div class="test-section">
+    <h2>📦 LocalStorage Check</h2>
+    <div id="storageCheck"></div>
+    <button onclick="checkStorage()">Check Storage</button>
+    <button onclick="clearStorage()">Clear Storage</button>
+  </div>
+
+  <div class="test-section">
+    <h2>🎨 CSS Variables Check</h2>
+    <div id="cssCheck"></div>
+    <button onclick="checkCSS()">Check CSS</button>
+  </div>
+
+  <div class="test-section">
+    <h2>📋 Products Data</h2>
+    <div id="productsData"></div>
+    <button onclick="showProducts()">Show Products</button>
+  </div>
+
+  <div class="test-section">
+    <h2>🖼️ Image URLs Check</h2>
+    <div id="imageCheck"></div>
+    <button onclick="checkImages()">Check Images</button>
+  </div>
+
+  <div class="test-section">
+    <h2>🔧 Quick Fixes</h2>
+    <button onclick="fixProductImages()">Fix Product Images</button>
+    <button onclick="addTestProduct()">Add Test Product</button>
+    <button onclick="window.location.href='index.html'">Open Admin Panel</button>
+  </div>
+
+  <script>
+    function checkStorage() {
+      const products = localStorage.getItem('elevez_products');
+      const output = document.getElementById('storageCheck');
+      
+      if (!products) {
+        output.innerHTML = '<p class="error">❌ No products found in localStorage</p>';
+        return;
+      }
+      
+      try {
+        const parsed = JSON.parse(products);
+        output.innerHTML = `
+          <p class="success">✅ Found ${parsed.length} products in localStorage</p>
+          <p>Storage size: ${(products.length / 1024).toFixed(2)} KB</p>
+          <pre>${JSON.stringify(parsed.slice(0, 2), null, 2)}</pre>
+        `;
+      } catch (e) {
+        output.innerHTML = `<p class="error">❌ Error parsing products: ${e.message}</p>`;
+      }
+    }
+
+    function clearStorage() {
+      if (confirm('Are you sure you want to clear all products?')) {
+        localStorage.removeItem('elevez_products');
+        localStorage.removeItem('elevez_collections');
+        localStorage.removeItem('elevez_orders');
+        document.getElementById('storageCheck').innerHTML = '<p class="success">✅ Storage cleared</p>';
+      }
+    }
+
+    function checkCSS() {
+      const output = document.getElementById('cssCheck');
+      const root = document.documentElement;
+      const style = getComputedStyle(root);
+      
+      const vars = [
+        '--primary',
+        '--bg-dark',
+        '--bg-card',
+        '--card-bg',
+        '--border',
+        '--text'
+      ];
+      
+      let html = '<ul>';
+      vars.forEach(v => {
+        const value = style.getPropertyValue(v);
+        html += `<li>${v}: <span class="${value ? 'success' : 'error'}">${value || 'NOT DEFINED'}</span></li>`;
+      });
+      html += '</ul>';
+      
+      output.innerHTML = html;
+    }
+
+    function showProducts() {
+      const products = localStorage.getItem('elevez_products');
+      const output = document.getElementById('productsData');
+      
+      if (!products) {
+        output.innerHTML = '<p class="error">❌ No products in storage</p>';
+        return;
+      }
+      
+      try {
+        const parsed = JSON.parse(products);
+        let html = `<p class="success">✅ ${parsed.length} products found</p>`;
+        
+        parsed.forEach((p, i) => {
+          html += `
+            <div style="background: rgba(0,0,0,0.3); padding: 10px; margin: 10px 0; border-radius: 5px;">
+              <strong>${i + 1}. ${p.name}</strong> (${p.qid})<br>
+              Price: ₹${p.price} | Category: ${p.category} | Type: ${p.type}<br>
+              Image: <span class="${p.image ? 'success' : 'error'}">${p.image ? '✅ ' + p.image.substring(0, 50) + '...' : '❌ No image'}</span><br>
+              Images array: ${p.images ? p.images.length + ' images' : 'No images array'}
+            </div>
+          `;
+        });
+        
+        output.innerHTML = html;
+      } catch (e) {
+        output.innerHTML = `<p class="error">❌ Error: ${e.message}</p>`;
+      }
+    }
+
+    function checkImages() {
+      const products = localStorage.getItem('elevez_products');
+      const output = document.getElementById('imageCheck');
+      
+      if (!products) {
+        output.innerHTML = '<p class="error">❌ No products</p>';
+        return;
+      }
+      
+      try {
+        const parsed = JSON.parse(products);
+        let working = 0;
+        let broken = 0;
+        let missing = 0;
+        
+        let html = '<div>';
+        parsed.forEach(p => {
+          if (!p.image && (!p.images || p.images.length === 0)) {
+            missing++;
+            html += `<p class="error">❌ ${p.name}: No image</p>`;
+          } else if (p.image) {
+            working++;
+            html += `<p class="success">✅ ${p.name}: ${p.image.substring(0, 40)}...</p>`;
+          }
+        });
+        html += '</div>';
+        
+        html = `
+          <p>Working: <span class="success">${working}</span> | 
+          Missing: <span class="error">${missing}</span></p>
+        ` + html;
+        
+        output.innerHTML = html;
+      } catch (e) {
+        output.innerHTML = `<p class="error">❌ Error: ${e.message}</p>`;
+      }
+    }
+
+    function fixProductImages() {
+      const products = localStorage.getItem('elevez_products');
+      
+      if (!products) {
+        alert('No products found');
+        return;
+      }
+      
+      try {
+        const parsed = JSON.parse(products);
+        let fixed = 0;
+        
+        parsed.forEach(p => {
+          if (!p.image && p.images && p.images.length > 0) {
+            p.image = p.images[0];
+            fixed++;
+          } else if (!p.image) {
+            p.image = 'https://via.placeholder.com/400x500/1a1a1a/00ff88?text=' + encodeURIComponent(p.name);
+            fixed++;
+          }
+        });
+        
+        localStorage.setItem('elevez_products', JSON.stringify(parsed));
+        alert(`✅ Fixed ${fixed} products. Refresh the admin panel.`);
+      } catch (e) {
+        alert('❌ Error: ' + e.message);
+      }
+    }
+
+    function addTestProduct() {
+      const products = localStorage.getItem('elevez_products');
+      const parsed = products ? JSON.parse(products) : [];
+      
+      const testProduct = {
+        id: Date.now(),
+        qid: 'TEST-' + Date.now(),
+        name: 'Test Product ' + Date.now(),
+        price: 99,
+        originalPrice: 199,
+        category: 'Test',
+        type: 'Test Type',
+        rating: 4.5,
+        description: 'This is a test product',
+        image: 'https://via.placeholder.com/400x500/1a1a1a/00ff88?text=Test+Product',
+        images: ['https://via.placeholder.com/400x500/1a1a1a/00ff88?text=Test+Product'],
+        sizes: ['M', 'L'],
+        colors: ['Black'],
+        tags: ['TEST'],
+        isBestSeller: false,
+        isNew: true
+      };
+      
+      parsed.push(testProduct);
+      localStorage.setItem('elevez_products', JSON.stringify(parsed));
+      alert('✅ Test product added. Check the admin panel.');
+    }
+
+    // Auto-run checks on load
+    window.onload = () => {
+      checkStorage();
+      checkCSS();
+    };
+  </script>
+</body>
+</html>

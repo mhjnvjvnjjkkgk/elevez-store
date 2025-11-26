@@ -34,15 +34,30 @@
           <span class="nav-icon">🗂️</span>
           <span class="nav-text">Collections</span>
         </button>
-        <a href="page-builder.html" class="nav-item" style="text-decoration: none; color: inherit;">
-          <span class="nav-icon">🎨</span>
-          <span class="nav-text">Page Builder</span>
-          <span class="nav-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">V1</span>
+        <button class="nav-item" data-view="sections">
+          <span class="nav-icon">📑</span>
+          <span class="nav-text">Sections</span>
+          <span class="nav-badge" style="background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);">NEW</span>
+        </button>
+        <button class="nav-item" data-view="discounts">
+          <span class="nav-icon">💰</span>
+          <span class="nav-text">Discounts</span>
+          <span class="nav-badge" style="background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);">NEW</span>
+        </button>
+        <button class="nav-item" data-view="user-points">
+          <span class="nav-icon">⭐</span>
+          <span class="nav-text">User Points</span>
+          <span class="nav-badge" style="background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);">NEW</span>
+        </button>
+        <a href="page-builder.html" class="nav-link" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; padding: 15px 20px; color: var(--text-muted); transition: all 0.3s; border-left: 3px solid transparent;">
+          <span class="nav-icon" style="font-size: 20px;">🎨</span>
+          <span class="nav-text" style="font-size: 14px; font-weight: 600;">Page Builder</span>
+          <span class="nav-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin-left: auto;">V1</span>
         </a>
-        <a href="builder-workflow.html" class="nav-item" style="text-decoration: none; color: inherit;">
-          <span class="nav-icon">🔒</span>
-          <span class="nav-text">Private Editor</span>
-          <span class="nav-badge" style="background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);">AUTO</span>
+        <a href="builder-workflow.html" class="nav-link" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px; padding: 15px 20px; color: var(--text-muted); transition: all 0.3s; border-left: 3px solid transparent;">
+          <span class="nav-icon" style="font-size: 20px;">🔒</span>
+          <span class="nav-text" style="font-size: 14px; font-weight: 600;">Private Editor</span>
+          <span class="nav-badge" style="background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%); margin-left: auto;">AUTO</span>
         </a>
       </nav>
 
@@ -74,10 +89,18 @@
           <h2>Products</h2>
           <div class="header-actions">
             <input type="text" class="search-input" id="productSearch" placeholder="🔍 Search products...">
+            <button class="btn btn-secondary" onclick="window.forceSyncFromConstants()" style="background: #ffaa00; color: #000;">🔄 Sync from Website</button>
             <button class="btn btn-primary" onclick="openProductModal()">+ Add Product</button>
           </div>
         </div>
-        <div class="products-grid" id="productsGrid"></div>
+        <div class="products-grid" id="productsGrid">
+          <div style="padding: 40px; text-align: center; color: #888;">
+            <p>Loading products...</p>
+            <button onclick="window.debugAdmin.renderProducts()" style="margin-top: 20px; padding: 15px 30px; background: #00ff88; color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
+              Click here if products don't appear
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Orders View -->
@@ -87,9 +110,12 @@
           <div class="header-actions">
             <input type="text" class="search-input" id="orderSearch" placeholder="🔍 Search orders...">
             <button class="btn btn-secondary" onclick="refreshOrders()">🔄 Refresh</button>
+            <button class="btn btn-secondary" onclick="renderOrders()" style="background: #00ff88; color: #000;">🔧 Force Render</button>
           </div>
         </div>
-        <div class="orders-container" id="ordersContainer"></div>
+        <div class="orders-container" id="ordersContainer">
+          <p style="color: #888; padding: 20px;">Loading orders...</p>
+        </div>
       </div>
 
       <!-- Collections View -->
@@ -99,6 +125,54 @@
           <button class="btn btn-primary" onclick="openCollectionModal()">+ Create Collection</button>
         </div>
         <div class="collections-grid" id="collectionsGrid"></div>
+      </div>
+
+      <!-- Sections View -->
+      <div class="view" id="sections-view">
+        <div class="view-header">
+          <h2>Website Sections</h2>
+          <button class="btn btn-primary" onclick="openAddSectionModal()">+ Add Custom Section</button>
+        </div>
+        <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(0,255,136,0.1);">
+          <p style="margin: 0; color: var(--text-muted); font-size: 14px;">
+            📑 Manage which products appear in different sections of your website. Assign products to sections to control visibility.
+          </p>
+        </div>
+        <div class="sections-grid" id="sectionsGrid"></div>
+      </div>
+
+      <!-- Discounts View -->
+      <div class="view" id="discounts-view">
+        <div class="view-header">
+          <h2>Discount Management</h2>
+          <div class="header-actions">
+            <button class="btn btn-secondary" onclick="exportDiscounts()">📥 Export</button>
+            <button class="btn btn-secondary" onclick="importDiscounts()">📤 Import</button>
+            <button class="btn btn-primary" onclick="openCreateDiscountModal()">➕ New Discount</button>
+          </div>
+        </div>
+        <div class="stats-grid" id="discountStatsGrid"></div>
+        <div class="card">
+          <div class="card-title">💰 All Discounts</div>
+          <div id="discountsContainer"></div>
+        </div>
+      </div>
+
+      <!-- User Points View -->
+      <div class="view" id="user-points-view">
+        <div class="view-header">
+          <h2>User Points Management</h2>
+          <div class="header-actions">
+            <input type="text" class="search-input" id="userPointsSearch" placeholder="🔍 Search by email or name..." onkeyup="filterUserPoints()">
+            <button class="btn btn-secondary" onclick="refreshUserPoints()">🔄 Refresh</button>
+            <button class="btn btn-primary" onclick="openAddPointsModal()">➕ Add Points</button>
+          </div>
+        </div>
+        <div class="stats-grid" id="userPointsStatsGrid"></div>
+        <div class="card">
+          <div class="card-title">👥 All Users</div>
+          <div id="userPointsContainer"></div>
+        </div>
       </div>
     </main>
   </div>
@@ -137,8 +211,23 @@
               <input type="number" id="salePrice" required step="0.01" placeholder="85.00">
             </div>
             <div class="form-group">
+              <label>Production Cost (₹) *</label>
+              <input type="number" id="productCost" required step="0.01" placeholder="50.00">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
               <label>Discount</label>
               <input type="text" id="discountDisplay" readonly class="discount-badge">
+            </div>
+            <div class="form-group">
+              <label>Profit per Unit</label>
+              <input type="text" id="profitDisplay" readonly style="background: rgba(0,255,136,0.1) !important; color: var(--primary) !important; font-weight: 700 !important; text-align: center;">
+            </div>
+            <div class="form-group">
+              <label>Profit Margin</label>
+              <input type="text" id="profitMarginDisplay" readonly style="background: rgba(0,255,136,0.1) !important; color: var(--primary) !important; font-weight: 700 !important; text-align: center;">
             </div>
           </div>
 
@@ -166,6 +255,26 @@
             <div class="form-group">
               <label>Rating *</label>
               <input type="number" id="productRating" required min="1" max="5" step="0.1" value="4.5">
+            </div>
+          </div>
+
+          <!-- Inventory Tracking -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>SKU (Stock Keeping Unit)</label>
+              <input type="text" id="productSKU" placeholder="e.g., NGH-001-BLK-M">
+            </div>
+            <div class="form-group">
+              <label>Stock Quantity</label>
+              <input type="number" id="productStock" min="0" value="0" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label>Product Status</label>
+              <select id="productStatus">
+                <option value="active">Active</option>
+                <option value="draft">Draft</option>
+                <option value="archived">Archived</option>
+              </select>
             </div>
           </div>
 
@@ -366,6 +475,113 @@
     </div>
   </div>
 
+  <!-- Discount Modal -->
+  <div class="modal" id="discountModal">
+    <div class="modal-backdrop" onclick="closeDiscountModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="discountModalTitle">Create New Discount</h3>
+        <button class="close-modal" onclick="closeDiscountModal()">×</button>
+      </div>
+      <form id="discountForm" onsubmit="saveDiscount(event)" style="padding: 20px;">
+        <input type="hidden" id="discountId">
+        <div class="form-group">
+          <label class="form-label">Discount Code</label>
+          <div style="display: flex; gap: 10px;">
+            <input type="text" class="form-input" id="code" placeholder="e.g., SAVE10" required style="flex: 1;">
+            <button type="button" class="btn btn-secondary" onclick="generateCode()">Generate</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Discount Name</label>
+          <input type="text" class="form-input" id="name" placeholder="e.g., 10% Off Everything" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="description" placeholder="Describe this discount" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Discount Type</label>
+            <select class="form-select" id="type" onchange="updateTypeFields()" required>
+              <option value="percentage">Percentage (%)</option>
+              <option value="fixed">Fixed Amount (₹)</option>
+              <option value="free_shipping">Free Shipping</option>
+              <option value="bundle">Bundle Discount</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Discount Value</label>
+            <input type="number" class="form-input" id="value" placeholder="10" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Start Date</label>
+            <input type="date" class="form-input" id="startDate" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-input" id="endDate" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Usage Limit</label>
+            <input type="number" class="form-input" id="usageLimit" placeholder="100" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Minimum Purchase (₹)</label>
+            <input type="number" class="form-input" id="minPurchase" placeholder="0" value="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">
+            <input type="checkbox" id="active" checked> Active
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeDiscountModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Discount</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- User Points Modal -->
+  <div class="modal" id="userPointsModal">
+    <div class="modal-backdrop" onclick="closeUserPointsModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="userPointsModalTitle">Add/Edit Points</h3>
+        <button class="close-modal" onclick="closeUserPointsModal()">×</button>
+      </div>
+      <form id="userPointsForm" onsubmit="saveUserPoints(event)" style="padding: 20px;">
+        <input type="hidden" id="selectedUserId">
+        <div class="user-details" id="userDetailsDisplay"></div>
+        <div class="form-group">
+          <label class="form-label">Action</label>
+          <select class="form-select" id="actionType" onchange="updateActionType()" required>
+            <option value="add">Add Points</option>
+            <option value="deduct">Deduct Points</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Points Amount</label>
+          <input type="number" class="form-input" id="pointsAmount" placeholder="Enter points" min="1" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reason</label>
+          <textarea class="form-textarea" id="pointsReason" placeholder="Why are you adding/deducting points?" rows="3" required></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeUserPointsModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <script>
     // Merge trial products with existing products
@@ -373,9 +589,539 @@
     console.log(`📦 Found ${existing.length} existing products`);
   </script>
   <script src="ai-prompt-config.js"></script>
+  <script src="discount-service.js"></script>
+  <script src="sections-manager.js"></script>
   <script src="admin.js"></script>
+  <script src="order-notifications.js"></script>
   <script type="module" src="firebase-orders.js"></script>
+  <script type="module" src="fix-orders-display.js"></script>
   <script>
+    // Initialize localStorage-based user points management
+    const db = {
+      collection: (name) => ({
+        doc: (id) => ({
+          get: async () => {
+            const users = JSON.parse(localStorage.getItem('admin_users') || '{}');
+            return { data: () => users[id] || null, exists: () => !!users[id] };
+          },
+          update: async (data) => {
+            const users = JSON.parse(localStorage.getItem('admin_users') || '{}');
+            users[id] = { ...users[id], ...data };
+            localStorage.setItem('admin_users', JSON.stringify(users));
+          }
+        }),
+        get: async () => {
+          const users = JSON.parse(localStorage.getItem('admin_users') || '{}');
+          return {
+            forEach: (callback) => {
+              Object.entries(users).forEach(([key, value]) => {
+                callback({ id: key, data: () => value });
+              });
+            }
+          };
+        }
+      })
+    };
+
+    // View switching
+    document.querySelectorAll('.nav-item[data-view]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const view = e.currentTarget.dataset.view;
+        switchView(view);
+      });
+    });
+
+    function switchView(viewName) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(`${viewName}-view`).classList.add('active');
+      event.target.closest('.nav-item').classList.add('active');
+
+      if (viewName === 'discounts') {
+        loadDiscounts();
+      } else if (viewName === 'user-points') {
+        loadUserPoints();
+      }
+    }
+
+    // Discount Management Functions
+    function loadDiscounts() {
+      const discountService = window.DiscountService;
+      const stats = discountService.getUsageStats();
+      const discounts = discountService.getAllDiscounts();
+
+      // Update stats
+      document.getElementById('discountStatsGrid').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Total Discounts</div>
+          <div class="stat-value">${stats.totalDiscounts}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Discounts</div>
+          <div class="stat-value">${stats.activeDiscounts}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Uses</div>
+          <div class="stat-value">${stats.totalUsages}</div>
+        </div>
+      `;
+
+      // Update discounts table
+      const container = document.getElementById('discountsContainer');
+      if (discounts.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">No discounts found</p>';
+        return;
+      }
+
+      container.innerHTML = `
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Value</th>
+              <th>Usage</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${discounts.map(d => {
+              const isExpired = new Date(d.endDate) < new Date();
+              const usagePercent = (d.usageCount / d.usageLimit * 100).toFixed(0);
+              return `
+                <tr>
+                  <td><span style="background: var(--primary); color: var(--bg); padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 12px;">${d.code}</span></td>
+                  <td>${d.name}</td>
+                  <td><span style="background: rgba(68, 136, 255, 0.2); color: #4488ff; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase;">${d.type}</span></td>
+                  <td>${d.type === 'percentage' ? d.value + '%' : '₹' + d.value}</td>
+                  <td>${d.usageCount}/${d.usageLimit}</td>
+                  <td><span style="background: ${isExpired ? 'rgba(255, 68, 68, 0.2); color: #ff4444' : d.active ? 'rgba(0, 255, 136, 0.2); color: var(--primary)' : 'rgba(255, 170, 0, 0.2); color: #ffaa00'}; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase;">${isExpired ? 'Expired' : d.active ? 'Active' : 'Inactive'}</span></td>
+                  <td>
+                    <button class="btn btn-secondary btn-sm" onclick="editDiscount(${d.id})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteDiscount(${d.id})">Delete</button>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function openCreateDiscountModal() {
+      document.getElementById('discountId').value = '';
+      document.getElementById('discountForm').reset();
+      document.getElementById('code').value = window.DiscountService.generateCode();
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('startDate').value = today;
+      const nextMonth = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      document.getElementById('endDate').value = nextMonth;
+      document.getElementById('discountModal').classList.add('active');
+    }
+
+    function closeDiscountModal() {
+      document.getElementById('discountModal').classList.remove('active');
+    }
+
+    function saveDiscount(event) {
+      event.preventDefault();
+      const id = document.getElementById('discountId').value;
+      const data = {
+        code: document.getElementById('code').value,
+        name: document.getElementById('name').value,
+        description: document.getElementById('description').value,
+        type: document.getElementById('type').value,
+        value: parseFloat(document.getElementById('value').value),
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value,
+        usageLimit: parseInt(document.getElementById('usageLimit').value),
+        minPurchase: parseFloat(document.getElementById('minPurchase').value),
+        active: document.getElementById('active').checked,
+        applicableTo: 'all'
+      };
+
+      if (id) {
+        window.DiscountService.updateDiscount(parseInt(id), data);
+        alert('Discount updated successfully!');
+      } else {
+        window.DiscountService.createDiscount(data);
+        alert('Discount created successfully!');
+      }
+
+      closeDiscountModal();
+      loadDiscounts();
+    }
+
+    function deleteDiscount(id) {
+      if (confirm('Are you sure you want to delete this discount?')) {
+        window.DiscountService.deleteDiscount(id);
+        alert('Discount deleted successfully!');
+        loadDiscounts();
+      }
+    }
+
+    function generateCode() {
+      document.getElementById('code').value = window.DiscountService.generateCode();
+    }
+
+    function updateTypeFields() {
+      const type = document.getElementById('type').value;
+      const valueInput = document.getElementById('value');
+      if (type === 'free_shipping') {
+        valueInput.value = '0';
+        valueInput.disabled = true;
+      } else {
+        valueInput.disabled = false;
+      }
+    }
+
+    function exportDiscounts() {
+      const data = window.DiscountService.exportDiscounts();
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'discounts.json';
+      a.click();
+      alert('Discounts exported successfully!');
+    }
+
+    function importDiscounts() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const result = window.DiscountService.importDiscounts(event.target.result);
+          if (result.success) {
+            alert(`Imported ${result.count} discounts successfully!`);
+            loadDiscounts();
+          } else {
+            alert('Import failed: ' + result.error);
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    // User Points Management Functions
+    async function loadUserPoints() {
+      try {
+        const snapshot = await db.collection('users').get();
+        const users = [];
+        snapshot.forEach(doc => {
+          users.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Update stats
+        const totalPoints = users.reduce((sum, u) => sum + (u.totalPoints || 0), 0);
+        const platinumCount = users.filter(u => u.tier === 'platinum').length;
+
+        const statsGrid = document.getElementById('userPointsStatsGrid');
+        if (statsGrid) {
+          statsGrid.innerHTML = `
+            <div class="stat-card">
+              <div class="stat-label">Total Users</div>
+              <div class="stat-value">${users.length}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Total Points</div>
+              <div class="stat-value">${totalPoints.toLocaleString()}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Avg Points/User</div>
+              <div class="stat-value">${users.length > 0 ? Math.floor(totalPoints / users.length) : 0}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Platinum Members</div>
+              <div class="stat-value">${platinumCount}</div>
+            </div>
+          `;
+        }
+
+        // Update users table
+        renderUserPointsTable(users);
+      } catch (error) {
+        console.error('Error loading user points:', error);
+        const container = document.getElementById('userPointsContainer');
+        if (container) {
+          container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Error loading user points. Using localStorage fallback.</p>';
+        }
+      }
+    }
+
+    function renderUserPointsTable(users) {
+      const container = document.getElementById('userPointsContainer');
+      if (users.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">No users found</p>';
+        return;
+      }
+
+      container.innerHTML = `
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Name</th>
+              <th>Points</th>
+              <th>Tier</th>
+              <th>Last Purchase</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${users.map(user => {
+              const lastPurchase = user.lastPurchaseDate ? new Date(user.lastPurchaseDate).toLocaleDateString() : 'Never';
+              const tierColors = {
+                bronze: '#cd7f32',
+                silver: '#c0c0c0',
+                gold: '#ffd700',
+                platinum: '#e5e4e2'
+              };
+              const tierColor = tierColors[user.tier || 'bronze'];
+              return `
+                <tr>
+                  <td><span style="color: var(--primary); font-weight: 600;">${user.email}</span></td>
+                  <td>${user.displayName || 'N/A'}</td>
+                  <td><span style="background: var(--primary); color: var(--bg); padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 12px;">${(user.totalPoints || 0).toLocaleString()}</span></td>
+                  <td><span style="background: rgba(${parseInt(tierColor.slice(1,3), 16)}, ${parseInt(tierColor.slice(3,5), 16)}, ${parseInt(tierColor.slice(5,7), 16)}, 0.2); color: ${tierColor}; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase;">${(user.tier || 'bronze').toUpperCase()}</span></td>
+                  <td>${lastPurchase}</td>
+                  <td>
+                    <button class="btn btn-secondary btn-sm" onclick="viewUserDetails('${user.id}')">View</button>
+                    <button class="btn btn-primary btn-sm" onclick="openAddPointsForUser('${user.id}')">Edit</button>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function filterUserPoints() {
+      const searchTerm = document.getElementById('userPointsSearch').value.toLowerCase();
+      // Implement search filtering
+    }
+
+    function refreshUserPoints() {
+      loadUserPoints();
+    }
+
+    function openAddPointsModal() {
+      document.getElementById('selectedUserId').value = '';
+      document.getElementById('userPointsForm').reset();
+      document.getElementById('userDetailsDisplay').innerHTML = '<p style="color: var(--text-muted);">Select a user first</p>';
+      document.getElementById('userPointsModal').classList.add('active');
+    }
+
+    function openAddPointsForUser(userId) {
+      db.collection('users').doc(userId).get().then(doc => {
+        const user = doc.data();
+        if (!user) {
+          alert('User not found');
+          return;
+        }
+        document.getElementById('selectedUserId').value = userId;
+        document.getElementById('userDetailsDisplay').innerHTML = `
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Email</span>
+            <span style="font-weight: 600; color: var(--primary);">${user.email || 'N/A'}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Current Points</span>
+            <span style="font-weight: 600; color: var(--primary);">${(user.totalPoints || 0).toLocaleString()}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+            <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Tier</span>
+            <span style="font-weight: 600; color: var(--primary);">${(user.tier || 'bronze').toUpperCase()}</span>
+          </div>
+        `;
+        document.getElementById('actionType').value = 'add';
+        document.getElementById('pointsAmount').value = '';
+        document.getElementById('pointsReason').value = '';
+        document.getElementById('userPointsModal').classList.add('active');
+      }).catch(error => {
+        console.error('Error loading user:', error);
+        alert('Error loading user. Using localStorage fallback.');
+        
+        // Fallback to localStorage
+        const users = JSON.parse(localStorage.getItem('admin_users') || '{}');
+        const user = users[userId];
+        
+        if (!user) {
+          alert('User not found');
+          return;
+        }
+
+        document.getElementById('selectedUserId').value = userId;
+        document.getElementById('userDetailsDisplay').innerHTML = `
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Email</span>
+            <span style="font-weight: 600; color: var(--primary);">${user.email || 'N/A'}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Current Points</span>
+            <span style="font-weight: 600; color: var(--primary);">${(user.totalPoints || 0).toLocaleString()}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+            <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Tier</span>
+            <span style="font-weight: 600; color: var(--primary);">${(user.tier || 'bronze').toUpperCase()}</span>
+          </div>
+        `;
+        document.getElementById('actionType').value = 'add';
+        document.getElementById('pointsAmount').value = '';
+        document.getElementById('pointsReason').value = '';
+        document.getElementById('userPointsModal').classList.add('active');
+      });
+    }
+
+    function closeUserPointsModal() {
+      document.getElementById('userPointsModal').classList.remove('active');
+    }
+
+    async function saveUserPoints(event) {
+      event.preventDefault();
+      const userId = document.getElementById('selectedUserId').value;
+      const actionType = document.getElementById('actionType').value;
+      const pointsAmount = parseInt(document.getElementById('pointsAmount').value);
+      const reason = document.getElementById('pointsReason').value;
+
+      if (!userId || !pointsAmount || !reason) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      try {
+        const userRef = db.collection('users').doc(userId);
+        const userDoc = await userRef.get();
+        const user = userDoc.data();
+
+        if (!user) {
+          alert('User not found');
+          return;
+        }
+
+        const balanceBefore = user.totalPoints || 0;
+        let balanceAfter = balanceBefore;
+
+        if (actionType === 'add') {
+          balanceAfter = balanceBefore + pointsAmount;
+        } else {
+          if (balanceBefore < pointsAmount) {
+            alert('Insufficient points to deduct');
+            return;
+          }
+          balanceAfter = balanceBefore - pointsAmount;
+        }
+
+        const transaction = {
+          id: `admin_${actionType}_${userId}_${Date.now()}`,
+          type: actionType === 'add' ? 'admin_add' : 'admin_deduct',
+          amount: pointsAmount,
+          description: reason,
+          adminId: 'admin',
+          timestamp: new Date().toISOString(),
+          balanceBefore,
+          balanceAfter,
+        };
+
+        const calculateTier = (points) => {
+          if (points >= 5000) return 'platinum';
+          if (points >= 2500) return 'gold';
+          if (points >= 1000) return 'silver';
+          return 'bronze';
+        };
+
+        await userRef.update({
+          totalPoints: balanceAfter,
+          pointsHistory: [...(user.pointsHistory || []), transaction],
+          tier: calculateTier(balanceAfter),
+          updatedAt: new Date().toISOString(),
+        });
+
+        alert(`Points ${actionType === 'add' ? 'added' : 'deducted'} successfully!`);
+        closeUserPointsModal();
+        loadUserPoints();
+      } catch (error) {
+        console.error('Error saving points:', error);
+        alert('Error saving points. Using localStorage fallback.');
+        
+        // Fallback to localStorage
+        try {
+          const users = JSON.parse(localStorage.getItem('admin_users') || '{}');
+          const user = users[userId];
+          
+          if (!user) {
+            alert('User not found');
+            return;
+          }
+
+          const balanceBefore = user.totalPoints || 0;
+          let balanceAfter = balanceBefore;
+
+          if (actionType === 'add') {
+            balanceAfter = balanceBefore + pointsAmount;
+          } else {
+            if (balanceBefore < pointsAmount) {
+              alert('Insufficient points to deduct');
+              return;
+            }
+            balanceAfter = balanceBefore - pointsAmount;
+          }
+
+          const transaction = {
+            id: `admin_${actionType}_${userId}_${Date.now()}`,
+            type: actionType === 'add' ? 'admin_add' : 'admin_deduct',
+            amount: pointsAmount,
+            description: reason,
+            adminId: 'admin',
+            timestamp: new Date().toISOString(),
+            balanceBefore,
+            balanceAfter,
+          };
+
+          const calculateTier = (points) => {
+            if (points >= 5000) return 'platinum';
+            if (points >= 2500) return 'gold';
+            if (points >= 1000) return 'silver';
+            return 'bronze';
+          };
+
+          users[userId] = {
+            ...user,
+            totalPoints: balanceAfter,
+            pointsHistory: [...(user.pointsHistory || []), transaction],
+            tier: calculateTier(balanceAfter),
+            updatedAt: new Date().toISOString(),
+          };
+
+          localStorage.setItem('admin_users', JSON.stringify(users));
+          alert(`Points ${actionType === 'add' ? 'added' : 'deducted'} successfully (localStorage)!`);
+          closeUserPointsModal();
+          loadUserPoints();
+        } catch (fallbackError) {
+          console.error('Fallback error:', fallbackError);
+          alert('Failed to save points');
+        }
+      }
+    }
+
+    function updateActionType() {
+      // Can add custom logic here if needed
+    }
+
+    function viewUserDetails(userId) {
+      db.collection('users').doc(userId).get().then(doc => {
+        const user = doc.data();
+        alert(`User: ${user.email}\nPoints: ${user.totalPoints}\nTier: ${user.tier}`);
+      });
+    }
+
     // Start Firebase order sync after page loads
     window.addEventListener('load', () => {
       setTimeout(() => {
@@ -385,9 +1131,8 @@
           window.startAutoSync();
         } else {
           console.error('❌ startAutoSync not found. Firebase orders script may not have loaded.');
-          console.log('Available window functions:', Object.keys(window).filter(k => k.includes('sync') || k.includes('firebase')));
         }
-      }, 3000); // Increased delay to 3 seconds
+      }, 3000);
     });
   </script>
 </body>

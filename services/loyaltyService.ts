@@ -29,6 +29,7 @@ export interface LoyaltyProfile {
   joinedAt: any;
   lastUpdated: any;
   phoneNumber?: string;
+  orderCount?: number; // Track total number of orders
   socialShares: {
     instagram: boolean;
     whatsapp: boolean;
@@ -152,6 +153,7 @@ export async function createLoyaltyProfile(userId: string, email: string): Promi
     tier: 'Bronze',
     joinedAt: serverTimestamp(),
     lastUpdated: serverTimestamp(),
+    orderCount: 0, // Initialize order count
     socialShares: {
       instagram: false,
       whatsapp: false,
@@ -289,6 +291,13 @@ export async function awardOrderPoints(
   const points = basePoints * tierMultiplier;
 
   await awardPoints(userId, points, `Order #${orderId}`, { orderId, orderTotal });
+  
+  // Increment order count
+  const profileRef = doc(db, 'loyaltyProfiles', userId);
+  await updateDoc(profileRef, {
+    orderCount: increment(1),
+    lastUpdated: serverTimestamp()
+  });
   
   return points;
 }

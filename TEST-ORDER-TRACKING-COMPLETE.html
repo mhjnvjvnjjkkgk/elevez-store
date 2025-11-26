@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>🧪 Complete Order Tracking Test</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #00ff88;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .test-section {
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,255,136,0.3);
+      margin-bottom: 20px;
+    }
+    .test-section h2 {
+      color: #00ff88;
+      margin-top: 0;
+      font-size: 20px;
+    }
+    .btn {
+      background: #00ff88;
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      margin: 5px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    .btn:hover {
+      background: #00dd77;
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background: rgba(0,255,136,0.2);
+      color: #00ff88;
+      border: 1px solid #00ff88;
+    }
+    .order-card {
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(0,255,136,0.2);
+    }
+    .order-card h3 {
+      margin: 0 0 10px 0;
+      color: #00ff88;
+      font-size: 16px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 5px 0;
+    }
+    .status-pending { background: rgba(255,170,0,0.2); color: #ffaa00; border: 1px solid #ffaa00; }
+    .status-shipped { background: rgba(0,255,136,0.2); color: #00ff88; border: 1px solid #00ff88; }
+    .status-delivered { background: rgba(0,255,136,0.3); color: #00ff88; border: 1px solid #00ff88; }
+    pre {
+      background: #000;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 12px;
+      border: 1px solid rgba(0,255,136,0.2);
+    }
+    .success { color: #00ff88; }
+    .error { color: #ff4444; }
+    .warning { color: #ffaa00; }
+    .info { color: #00aaff; }
+    #results {
+      margin-top: 20px;
+    }
+    .tracking-input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(0,255,136,0.3);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      font-size: 14px;
+      margin: 10px 0;
+    }
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Complete Order Tracking System Test</h1>
+    
+    <div class="test-section">
+      <h2>📊 Step 1: Check Firebase Connection</h2>
+      <p>First, let's verify we can connect to Firebase and see the orders.</p>
+      <button class="btn" onclick="testFirebaseConnection()">🔥 Test Firebase Connection</button>
+      <button class="btn btn-secondary" onclick="loadAllOrders()">📦 Load All Orders</button>
+    </div>
+    
+    <div class="test-section">
+      <h2>🔍 Step 2: View Order Details</h2>
+      <p>See all orders with their actual Firebase document IDs.</p>
+      <div id="orders-list"></div>
+    </div>
+    
+    <div class="test-section">
+      <h2>🚚 Step 3: Test Shipping</h2>
+      <p>Select an order and add a tracking link to test the shipping functionality.</p>
+      <div id="shipping-test"></div>
+    </div>
+    
+    <div class="test-section">
+      <h2>✅ Step 4: Test Delivery</h2>
+      <p>Mark a shipped order as delivered.</p>
+      <div id="delivery-test"></div>
+    </div>
+    
+    <div id="results"></div>
+  </div>
+  
+  <script type="module">
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    };
+    
+    let db = null;
+    let allOrders = [];
+    
+    function log(message, type = 'info') {
+      const resultsDiv = document.getElementById('results');
+      const className = type;
+      const timestamp = new Date().toLocaleTimeString();
+      resultsDiv.innerHTML += `<p class="${className}">[${timestamp}] ${message}</p>`;
+      resultsDiv.scrollTop = resultsDiv.scrollHeight;
+    }
+    
+    async function initFirebase() {
+      if (db) return db;
+      
+      try {
+        log('🔄 Initializing Firebase...', 'info');
+        
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+        const { getFirestore } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const app = initializeApp(firebaseConfig, 'test-' + Date.now());
+        db = getFirestore(app);
+        
+        log('✅ Firebase initialized successfully!', 'success');
+        return db;
+      } catch (error) {
+        log(`❌ Firebase initialization failed: ${error.message}`, 'error');
+        throw error;
+      }
+    }
+    
+    window.testFirebaseConnection = async function() {
+      try {
+        await initFirebase();
+        log('✅ Firebase connection successful!', 'success');
+        log('📊 Project ID: ' + firebaseConfig.projectId, 'info');
+      } catch (error) {
+        log(`❌ Connection failed: ${error.message}`, 'error');
+      }
+    };
+    
+    window.loadAllOrders = async function() {
+      try {
+        log('🔄 Loading orders from Firebase...', 'info');
+        
+        await initFirebase();
+        
+        const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const ordersRef = collection(db, 'orders');
+        const ordersQuery = query(ordersRef, orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(ordersQuery);
+        
+        allOrders = [];
+        snapshot.forEach(doc => {
+          allOrders.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+        
+        log(`✅ Loaded ${allOrders.length} orders from Firebase`, 'success');
+        
+        displayOrders();
+        
+      } catch (error) {
+        log(`❌ Error loading orders: ${error.message}`, 'error');
+        console.error(error);
+      }
+    };
+    
+    function displayOrders() {
+      const ordersList = document.getElementById('orders-list');
+      const shippingTest = document.getElementById('shipping-test');
+      const deliveryTest = document.getElementById('delivery-test');
+      
+      if (allOrders.length === 0) {
+        ordersList.innerHTML = '<p class="warning">No orders found. Please load orders first.</p>';
+        return;
+      }
+      
+      let ordersHtml = '<div class="test-grid">';
+      let shippingHtml = '<select id="order-to-ship" class="tracking-input"><option value="">Select an order to ship</option>';
+      let deliveryHtml = '<select id="order-to-deliver" class="tracking-input"><option value="">Select an order to deliver</option>';
+      
+      allOrders.forEach(order => {
+        const statusClass = `status-${order.status || 'pending'}`;
+        
+        ordersHtml += `
+          <div class="order-card">
+            <h3>🆔 ${order.id}</h3>
+            <p><strong>Customer:</strong> ${order.fullName || 'N/A'}</p>
+            <p><strong>Email:</strong> ${order.email || 'N/A'}</p>
+            <p><strong>Total:</strong> ₹${(order.totalAmount || 0).toFixed(2)}</p>
+            <p><strong>Status:</strong> <span class="status-badge ${statusClass}">${order.status || 'pending'}</span></p>
+            ${order.trackingLink ? `<p><strong>Tracking:</strong> <a href="${order.trackingLink}" target="_blank" style="color: #00ff88;">${order.trackingLink}</a></p>` : ''}
+            <p style="font-size: 11px; color: #888;">Created: ${new Date(order.createdAt).toLocaleString()}</p>
+          </div>
+        `;
+        
+        if (order.status === 'pending' || order.status === 'processing') {
+          shippingHtml += `<option value="${order.id}">${order.id} - ${order.fullName}</option>`;
+        }
+        
+        if (order.status === 'shipped') {
+          deliveryHtml += `<option value="${order.id}">${order.id} - ${order.fullName}</option>`;
+        }
+      });
+      
+      ordersHtml += '</div>';
+      shippingHtml += '</select><input type="text" id="tracking-link" class="tracking-input" placeholder="Enter tracking link (e.g., https://tracking.com/12345)"><button class="btn" onclick="testShipOrder()">🚚 Ship Selected Order</button>';
+      deliveryHtml += '</select><button class="btn" onclick="testMarkDelivered()">✅ Mark Selected Order as Delivered</button>';
+      
+      ordersList.innerHTML = ordersHtml;
+      shippingTest.innerHTML = shippingHtml;
+      deliveryTest.innerHTML = deliveryHtml;
+    }
+    
+    window.testShipOrder = async function() {
+      const orderId = document.getElementById('order-to-ship').value;
+      const trackingLink = document.getElementById('tracking-link').value.trim();
+      
+      if (!orderId) {
+        log('⚠️ Please select an order to ship', 'warning');
+        return;
+      }
+      
+      if (!trackingLink) {
+        log('⚠️ Please enter a tracking link', 'warning');
+        return;
+      }
+      
+      try {
+        new URL(trackingLink);
+      } catch (e) {
+        log('⚠️ Please enter a valid URL', 'warning');
+        return;
+      }
+      
+      try {
+        log(`🚚 Shipping order ${orderId}...`, 'info');
+        
+        await initFirebase();
+        
+        const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const orderRef = doc(db, 'orders', orderId);
+        
+        await updateDoc(orderRef, {
+          status: 'shipped',
+          trackingLink: trackingLink,
+          shippedAt: new Date().toISOString(),
+          lastUpdated: new Date().toISOString()
+        });
+        
+        log(`✅ Order ${orderId} shipped successfully!`, 'success');
+        log(`📦 Tracking link: ${trackingLink}`, 'info');
+        
+        // Reload orders
+        setTimeout(() => loadAllOrders(), 1000);
+        
+      } catch (error) {
+        log(`❌ Error shipping order: ${error.message}`, 'error');
+        console.error(error);
+      }
+    };
+    
+    window.testMarkDelivered = async function() {
+      const orderId = document.getElementById('order-to-deliver').value;
+      
+      if (!orderId) {
+        log('⚠️ Please select an order to mark as delivered', 'warning');
+        return;
+      }
+      
+      try {
+        log(`✅ Marking order ${orderId} as delivered...`, 'info');
+        
+        await initFirebase();
+        
+        const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const orderRef = doc(db, 'orders', orderId);
+        
+        await updateDoc(orderRef, {
+          status: 'delivered',
+          deliveredAt: new Date().toISOString(),
+          lastUpdated: new Date().toISOString()
+        });
+        
+        log(`✅ Order ${orderId} marked as delivered!`, 'success');
+        
+        // Reload orders
+        setTimeout(() => loadAllOrders(), 1000);
+        
+      } catch (error) {
+        log(`❌ Error marking order as delivered: ${error.message}`, 'error');
+        console.error(error);
+      }
+    };
+    
+    // Auto-load on page load
+    setTimeout(() => {
+      testFirebaseConnection();
+      setTimeout(() => loadAllOrders(), 1000);
+    }, 500);
+  </script>
+</body>
+</html>
