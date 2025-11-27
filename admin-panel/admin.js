@@ -2058,10 +2058,22 @@ window.editProduct = (id) => {
   document.getElementById('productQID').value = product.qid || '';
   document.getElementById('normalPrice').value = product.originalPrice;
   document.getElementById('salePrice').value = product.price;
+  document.getElementById('productCost').value = product.cost || '';
   document.getElementById('productCategory').value = product.category;
   document.getElementById('productType').value = product.type;
   document.getElementById('productRating').value = product.rating;
   document.getElementById('productDescription').value = product.description || '';
+  
+  // Load inventory fields
+  if (document.getElementById('productSKU')) {
+    document.getElementById('productSKU').value = product.sku || '';
+  }
+  if (document.getElementById('productStock')) {
+    document.getElementById('productStock').value = product.stock || 0;
+  }
+  if (document.getElementById('productStatus')) {
+    document.getElementById('productStatus').value = product.status || 'active';
+  }
   
   // Load section visibility flags (default to true if not set)
   document.getElementById('showInHome').checked = product.showInHome !== false;
@@ -2101,6 +2113,27 @@ window.editProduct = (id) => {
   
   const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
   document.getElementById('discountDisplay').value = `${discount}% OFF`;
+  
+  // Calculate and display profit if cost exists
+  if (product.cost && product.cost > 0) {
+    const profit = product.price - product.cost;
+    const profitMargin = ((profit / product.price) * 100).toFixed(1);
+    document.getElementById('profitDisplay').value = `₹${profit.toFixed(0)}`;
+    document.getElementById('profitMarginDisplay').value = `${profitMargin}%`;
+    
+    // Color code based on margin
+    const profitMarginDisplay = document.getElementById('profitMarginDisplay');
+    if (profitMargin < 20) {
+      profitMarginDisplay.style.background = 'rgba(255, 59, 48, 0.1)';
+      profitMarginDisplay.style.color = '#ff3b30';
+    } else if (profitMargin < 40) {
+      profitMarginDisplay.style.background = 'rgba(255, 170, 0, 0.1)';
+      profitMarginDisplay.style.color = '#ffaa00';
+    } else {
+      profitMarginDisplay.style.background = 'rgba(0, 255, 136, 0.1)';
+      profitMarginDisplay.style.color = 'var(--primary)';
+    }
+  }
 };
 
 window.deleteProduct = (id) => {

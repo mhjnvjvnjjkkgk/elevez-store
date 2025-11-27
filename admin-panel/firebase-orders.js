@@ -188,9 +188,16 @@ async function syncOrdersFromFirebase() {
         
         firebaseOrders.push(enrichedOrder);
         
-        // 🆕 Show notification for NEW orders with profit
+        // 🆕 Show notification for NEW orders with profit (only if not already shown)
         if (newOrders.includes(doc.id)) {
-          showNewOrderNotification(enrichedOrder);
+          // Check if we've already shown notification for this order
+          const shownNotifications = JSON.parse(localStorage.getItem('elevez_shown_notifications') || '[]');
+          if (!shownNotifications.includes(doc.id)) {
+            showNewOrderNotification(enrichedOrder);
+            // Mark as shown
+            shownNotifications.push(doc.id);
+            localStorage.setItem('elevez_shown_notifications', JSON.stringify(shownNotifications));
+          }
         }
       });
       

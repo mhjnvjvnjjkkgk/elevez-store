@@ -62,13 +62,6 @@ function showNewOrderNotification(order) {
     setTimeout(() => notification.remove(), 300);
   }, 10000);
   
-  // Play notification sound (optional)
-  try {
-    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGGS57OihUBELTKXh8bllHAU2jdXvzn0pBSh+zPDajzsKElyx6OyrWBUIQ5zd8sFuJAUuhM/z24k2CBhkuezooVARC0yl4fG5ZRwFNo3V7859KQUofsz');
-    audio.volume = 0.3;
-    audio.play().catch(() => {}); // Ignore if autoplay blocked
-  } catch (e) {}
-  
   console.log('🔔 New order notification shown:', order.orderId);
 }
 

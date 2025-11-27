@@ -432,6 +432,137 @@ const server = http.createServer((req, res) => {
         console.error('❌ Error updating App.tsx:', error.message);
       }
     });
+  } else if (req.method === 'POST' && req.url === '/sync-deploy') {
+    // New unified sync and deploy endpoint
+    let body = '';
+    
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        
+        console.log('\n🚀 SYNC & DEPLOY INITIATED');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log(`📊 Products: ${data.products || 0}`);
+        console.log(`🗂️  Collections: ${data.collections || 0}`);
+        console.log(`⏰ Timestamp: ${data.timestamp}`);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+        
+        import('child_process').then(({ exec }) => {
+          // Step 1: Add all files
+          console.log('📦 Step 1/3: Adding files to git...');
+          exec('git add .', (error, stdout, stderr) => {
+            if (error) {
+              console.error('❌ Git add failed:', error.message);
+              res.writeHead(500, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({
+                success: false,
+                error: 'Git add failed: ' + error.message
+              }));
+              return;
+            }
+            
+            // Step 2: Commit
+            const timestamp = new Date().toLocaleString();
+            const commitMessage = `Admin Panel Sync: ${data.products || 0} products - ${timestamp}`;
+            console.log(`💾 Step 2/3: Committing changes...`);
+            console.log(`   Message: "${commitMessage}"`);
+            
+            exec(`git commit -m "${commitMessage}"`, (error, stdout, stderr) => {
+              // Check if there's nothing to commit (not an error)
+              if (error && !error.message.includes('nothing to commit')) {
+                console.error('❌ Git commit failed:', error.message);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                  success: false,
+                  error: 'Git commit failed: ' + error.message
+                }));
+                return;
+              }
+              
+              if (error && error.message.includes('nothing to commit')) {
+                console.log('ℹ️  No changes to commit');
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                  success: true,
+                  message: 'No changes to deploy',
+                  noChanges: true
+                }));
+                return;
+              }
+              
+              console.log('✅ Committed successfully!');
+              
+              // Step 3: Push to GitHub
+              console.log('🚀 Step 3/3: Pushing to GitHub...');
+              exec('git push origin main', (error, stdout, stderr) => {
+                if (error) {
+                  // Try master branch as fallback
+                  exec('git push origin master', (error2, stdout2, stderr2) => {
+                    if (error2) {
+                      console.error('❌ Git push failed:', error2.message);
+                      res.writeHead(500, { 'Content-Type': 'application/json' });
+                      res.end(JSON.stringify({
+                        success: false,
+                        error: 'Git push failed: ' + error2.message
+                      }));
+                      return;
+                    }
+                    
+                    console.log('✅ Pushed to GitHub (master branch)!');
+                    console.log('🎉 DEPLOYMENT COMPLETE!');
+                    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+                    console.log('🌐 Vercel will auto-deploy in 1-2 minutes');
+                    console.log('📊 Check: https://vercel.com/dashboard');
+                    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+                    
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({
+                      success: true,
+                      message: 'Successfully deployed to GitHub!',
+                      branch: 'master'
+                    }));
+                  });
+                  return;
+                }
+                
+                console.log('✅ Pushed to GitHub (main branch)!');
+                console.log(stdout);
+                console.log('\n🎉 DEPLOYMENT COMPLETE!');
+                console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+                console.log('📊 Deployment Status:');
+                console.log('   1. GitHub: ✅ Push successful');
+                console.log('   2. Vercel: 🔄 Building...');
+                console.log('   3. Live Site: ⏳ Will update in 1-2 minutes');
+                console.log('');
+                console.log('🌐 Check deployment:');
+                console.log('   - Vercel: https://vercel.com/dashboard');
+                console.log('   - GitHub: https://github.com/mhjnvjvnjjkkgk/elevez-store');
+                console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+                
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                  success: true,
+                  message: 'Successfully deployed to GitHub!',
+                  branch: 'main'
+                }));
+              });
+            });
+          });
+        });
+        
+      } catch (error) {
+        console.error('❌ Sync & Deploy error:', error.message);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          error: error.message
+        }));
+      }
+    });
   } else if (req.method === 'POST' && req.url === '/deploy-website') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     
