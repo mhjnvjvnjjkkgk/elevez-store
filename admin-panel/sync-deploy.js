@@ -63,7 +63,7 @@ class SyncDeployManager {
     const collections = window.collections || [];
     const orders = window.orders || [];
 
-    const response = await fetch('http://localhost:3001/save-products', {
+    const response = await fetch('/api/save-products', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ products, collections, orders })
@@ -78,21 +78,29 @@ class SyncDeployManager {
 
   // Trigger deployment
   async triggerDeploy() {
-    const response = await fetch('http://localhost:3001/sync-deploy', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        timestamp: new Date().toISOString(),
-        products: window.products?.length || 0,
-        collections: window.collections?.length || 0
-      })
-    });
+    try {
+      const response = await fetch('/api/sync-deploy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          products: window.products?.length || 0,
+          collections: window.collections?.length || 0
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error('Deployment request failed');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        throw new Error('Cannot connect to admin server. Make sure both servers are running (npm run dev & npm run admin).');
+      }
+      throw error;
     }
-
-    return await response.json();
   }
 
   // Show success notification
@@ -127,6 +135,15 @@ class SyncDeployManager {
   showErrorNotification(error) {
     const notification = document.createElement('div');
     notification.className = 'deploy-notification error';
+    
+    // Determine helpful message based on error
+    let helpText = 'Make sure the admin server is running and Git is configured.';
+    if (error.includes('Cannot connect')) {
+      helpText = 'Run: npm run admin (or START-ADMIN-PANEL.bat)';
+    } else if (error.includes('Git')) {
+      helpText = 'Check Git configuration: git config user.name and git config user.email';
+    }
+    
     notification.innerHTML = `
       <div class="notification-content">
         <div class="notification-icon">❌</div>
@@ -134,7 +151,7 @@ class SyncDeployManager {
           <h3>Deployment Failed</h3>
           <p>${error}</p>
           <p style="margin-top: 10px; font-size: 12px; opacity: 0.8;">
-            Make sure the admin server is running and Git is configured.
+            ${helpText}
           </p>
         </div>
         <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
@@ -142,12 +159,12 @@ class SyncDeployManager {
     `;
     document.body.appendChild(notification);
 
-    // Auto-remove after 8 seconds
+    // Auto-remove after 10 seconds
     setTimeout(() => {
       if (notification.parentElement) {
         notification.remove();
       }
-    }, 8000);
+    }, 10000);
   }
 }
 
