@@ -107,9 +107,13 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
           return;
         }
 
-        const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+        console.log('🛒 Creating order for user:', user.uid);
         
-        // Create order with real user data
+        // Calculate points to be earned (1 point per ₹10 spent)
+        const pointsToEarn = Math.floor(total / 10);
+        console.log('💰 Points to be earned:', pointsToEarn);
+        
+        // Create order with real user data - this saves to Firebase
         const orderResult = await createOrder(
           user.uid,
           cartItems,
@@ -120,39 +124,31 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
         );
 
         if (!orderResult.success || !orderResult.data) {
-          setError('Failed to create order');
+          console.error('❌ Failed to create order:', orderResult.error);
+          setError(orderResult.error || 'Failed to create order');
           setLoading(false);
           return;
         }
 
-        // Sync order to Firebase
-        const syncResult = await firebaseSyncService.syncOrder(user.uid, {
-          orderNumber,
-          items: cartItems,
-          subtotal,
-          tax,
-          shipping: selectedShipping.cost,
-          discount: discountAmount,
-          total,
-          status: 'pending',
-          paymentStatus: 'pending',
-          shippingAddress: shippingAddress as Address,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+        const order = orderResult.data;
+        console.log('✅ Order created successfully:', order.orderNumber, 'ID:', order.id);
+        console.log('📦 Order details:', {
+          userId: order.userId,
+          orderNumber: order.orderNumber,
+          total: order.total,
+          items: order.items.length,
+          pointsEarned: pointsToEarn
         });
 
-        if (!syncResult.success) {
-          setError('Failed to sync order');
-          setLoading(false);
-          return;
-        }
-
-        // Add points to user account (1 point per rupee)
+        // Add points to user account (1 point per ₹10 spent)
+        console.log('💰 Adding points for purchase...');
+        console.log(`Awarding ${pointsToEarn} points for order total ₹${order.total}`);
+        
         await userPointsService.addPointsFromPurchase(
           user.uid,
-          total,
-          orderNumber,
-          1 // 1 point per rupee
+          order.total,
+          order.orderNumber,
+          0.1 // 1 point per ₹10 (0.1 points per rupee)
         );
 
         // Sync user points to Firebase
@@ -164,6 +160,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
             userPoints.tier,
             userPoints.totalPoints
           );
+          console.log('✅ Points synced to Firebase:', userPoints.totalPoints);
+          console.log('✅ User tier:', userPoints.tier);
+        } else {
+          console.warn('⚠️ Could not load user points after purchase');
         }
 
         // Record discount usage if applied
@@ -173,25 +173,30 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
             user.uid,
             appliedDiscount.code,
             discountAmount,
-            orderNumber
+            order.orderNumber
           );
+          console.log('✅ Discount usage recorded');
         }
 
         // Log purchase activity
         await firebaseSyncService.logActivity(
           user.uid,
           'purchase',
-          `Completed purchase: ${orderNumber}`,
+          `Completed purchase: ${order.orderNumber}`,
           {
-            orderNumber,
-            total,
+            orderId: order.id,
+            orderNumber: order.orderNumber,
+            total: order.total,
             itemCount: cartItems.length,
           }
         );
+        console.log('✅ Activity logged');
 
         // Clear cart
         await firebaseSyncService.clearCart(user.uid);
+        console.log('✅ Cart cleared');
 
+        console.log('🎉 Order process complete! Order should now be visible in My Account');
         setCurrentStep('confirmation');
       } catch (err) {
         console.error('Error placing order:', err);

@@ -3536,29 +3536,62 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
     return () => unsubscribe();
   }, []);
 
-  // Load user data
+  // Load user data - COMPREHENSIVE AUTO-LOADER
   const loadUserData = async (userId: string) => {
     try {
-      const { getUserProfile, getUserOrders } = await import('./services/userService');
+      console.log('🔄 Auto-loading all user data for:', userId);
       
-      // Get user profile and wishlist
-      const profileResult = await getUserProfile(userId);
-      if (profileResult.success) {
-        setUserProfile(profileResult.data);
-        
-        // Get wishlist products
-        const wishlistIds = profileResult.data.wishlist || [];
-        const wishlistProds = PRODUCTS.filter(p => wishlistIds.includes(p.id));
+      const { userDataLoaderService } = await import('./services/userDataLoaderService');
+      
+      // Load ALL user data at once
+      const userData = await userDataLoaderService.loadAllUserData(userId);
+      
+      // Set profile
+      if (userData.profile) {
+        setUserProfile(userData.profile);
+      }
+      
+      // Set wishlist
+      if (userData.wishlist && userData.wishlist.length > 0) {
+        const wishlistProds = PRODUCTS.filter(p => userData.wishlist.includes(p.id));
         setWishlistProducts(wishlistProds);
       }
       
-      // Get user orders
-      const ordersResult = await getUserOrders(userId);
-      if (ordersResult.success) {
-        setOrders(ordersResult.data);
+      // Set orders
+      if (userData.orders) {
+        setOrders(userData.orders);
       }
+      
+      console.log('✅ All user data loaded:', {
+        orders: userData.orderCount,
+        points: userData.points?.points || 0,
+        tier: userData.tier,
+        wishlist: userData.wishlist.length
+      });
+      
+      // Set up real-time listeners for live updates
+      const cleanup = userDataLoaderService.setupRealtimeListeners(userId, {
+        onPointsUpdate: (points) => {
+          console.log('🔄 Real-time points update:', points.points);
+          // Points will auto-update in loyalty components via their own listeners
+        },
+        onOrdersUpdate: (orders) => {
+          console.log('🔄 Real-time orders update:', orders.length);
+          setOrders(orders);
+        },
+        onProfileUpdate: (profile) => {
+          console.log('🔄 Real-time profile update');
+          setUserProfile(profile);
+          const wishlistIds = profile.wishlist || [];
+          const wishlistProds = PRODUCTS.filter(p => wishlistIds.includes(p.id));
+          setWishlistProducts(wishlistProds);
+        }
+      });
+      
+      // Cleanup on unmount
+      return cleanup;
     } catch (error) {
-      console.error('Error loading user data:', error);
+      console.error('❌ Error loading user data:', error);
     } finally {
       setLoading(false);
     }

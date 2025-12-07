@@ -4,41 +4,8 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: 27/11/2025, 6:15:17 am
+// Last update: 8/12/2025, 4:56:04 am
 export const PRODUCTS: Product[] = [
-  {
-    "id": 1,
-    "qid": "NGH-001",
-    "name": "Neon Glitch Hoodie",
-    "price": 85,
-    "originalPrice": 170,
-    "category": "Men",
-    "type": "Hoodie",
-    "rating": 4.5,
-    "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
-    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-    "images": [
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
-    ],
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL"
-    ],
-    "colors": [
-      "Black",
-      "White",
-      "Neon Green"
-    ],
-    "tags": [
-      "TRENDING",
-      "BESTSELLER"
-    ],
-    "isBestSeller": true,
-    "isNew": true
-  },
   {
     "id": 2,
     "qid": "VCT-002",
@@ -163,7 +130,7 @@ export const PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": 1764200901367,
+    "id": 1765149944844,
     "qid": "1222",
     "name": "Dont Look back hoodie",
     "price": 850,
@@ -184,15 +151,61 @@ export const PRODUCTS: Product[] = [
     "sizes": [
       "M",
       "S",
-      "XS"
+      "XS",
+      "L",
+      "XL",
+      "XXL"
     ],
-    "colors": [],
+    "colors": [
+      "Black"
+    ],
+    "tags": [
+      "ALL"
+    ],
     "stock": 100,
     "status": "active",
     "showInHome": true,
     "showInShop": true,
     "showInCollections": true,
     "isBestSeller": true
+  },
+  {
+    "id": 1765149958744,
+    "qid": "NGH-001",
+    "name": "Neon Glitch Hoodie",
+    "price": 85,
+    "originalPrice": 170,
+    "cost": 10,
+    "profit": 75,
+    "profitMargin": 88.2,
+    "category": "Men",
+    "type": "Hoodie",
+    "rating": 4.5,
+    "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [],
+    "tags": [
+      "TRENDING",
+      "BESTSELLER",
+      "ALL"
+    ],
+    "stock": 0,
+    "status": "active",
+    "showInHome": true,
+    "showInShop": true,
+    "showInCollections": true,
+    "isBestSeller": true,
+    "isNew": true
   }
 ];
 
@@ -207,7 +220,8 @@ export const AVAILABLE_TAGS = [
   "NEW",
   "BESTSELLER",
   "VINTAGE",
-  "COLORFUL"
+  "COLORFUL",
+  "ALL"
 ];
 
 // Available Categories (Custom)

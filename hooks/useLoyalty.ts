@@ -32,7 +32,7 @@ export function useLoyalty() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load loyalty profile
+  // Load loyalty profile with real-time updates
   const loadProfile = useCallback(async () => {
     if (!user) {
       setProfile(null);
@@ -42,10 +42,13 @@ export function useLoyalty() {
 
     try {
       setLoading(true);
+      console.log('🔄 Loading loyalty profile for:', user.uid);
+      
       let userProfile = await getLoyaltyProfile(user.uid);
       
       // Create profile if doesn't exist
       if (!userProfile) {
+        console.log('Creating new loyalty profile...');
         userProfile = await createLoyaltyProfile(user.uid, user.email || '');
       }
       
@@ -94,6 +97,45 @@ export function useLoyalty() {
       loadDiscountCodes();
     }
   }, [profile, loadTransactions, loadDiscountCodes]);
+
+  // Real-time listener for points updates
+  useEffect(() => {
+    if (!user) return;
+
+    console.log('🔄 Setting up real-time points listener for:', user.uid);
+
+    // Import Firebase dynamically
+    const setupListener = async () => {
+      const { doc, onSnapshot } = await import('firebase/firestore');
+      const { db } = await import('../firebaseConfig');
+
+      const pointsRef = doc(db, 'userPoints', user.uid);
+      
+      const unsubscribe = onSnapshot(pointsRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const pointsData = snapshot.data();
+          console.log('🔄 Real-time points update:', pointsData.points);
+          
+          // Update profile with new points
+          setProfile(prev => prev ? {
+            ...prev,
+            points: pointsData.points || 0,
+            tier: pointsData.tier || prev.tier,
+            totalPointsEarned: pointsData.totalPointsEarned || prev.totalPointsEarned
+          } : null);
+        }
+      });
+
+      return unsubscribe;
+    };
+
+    let cleanup: (() => void) | undefined;
+    setupListener().then(unsub => { cleanup = unsub; });
+
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, [user]);
 
   // Claim social share points
   const claimSocialPoints = useCallback(async (platform: 'instagram' | 'whatsapp' | 'facebook') => {

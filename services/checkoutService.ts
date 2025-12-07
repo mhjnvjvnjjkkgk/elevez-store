@@ -47,6 +47,7 @@ export interface Order {
   shipping: number;
   discount: number;
   total: number;
+  pointsEarned: number;
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   shippingAddress: Address;
   billingAddress: Address;
@@ -226,6 +227,9 @@ export async function createOrder(
     const tax = calculateTax(subtotal);
     const total = calculateTotal(subtotal, tax, shippingMethod.cost, discountAmount);
 
+    // Calculate points earned (1 point per ₹10 spent)
+    const pointsEarned = Math.floor(total / 10);
+
     // Generate order number
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
@@ -244,8 +248,8 @@ export async function createOrder(
     const estimatedDelivery = new Date();
     estimatedDelivery.setDate(estimatedDelivery.getDate() + shippingMethod.estimatedDays);
 
-    // Create order document
-    const docRef = await addDoc(collection(db, 'orders'), {
+    // Create order document with all fields for persistence
+    const orderData = {
       userId,
       orderNumber,
       items: orderItems,
@@ -254,6 +258,7 @@ export async function createOrder(
       shipping: shippingMethod.cost,
       discount: discountAmount,
       total,
+      pointsEarned,
       status: 'pending',
       shippingAddress,
       billingAddress,
@@ -263,7 +268,12 @@ export async function createOrder(
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
       estimatedDelivery: Timestamp.fromDate(estimatedDelivery),
-    });
+    };
+
+    const docRef = await addDoc(collection(db, 'orders'), orderData);
+    
+    console.log(`Order created successfully: ${orderNumber} (ID: ${docRef.id}) for user ${userId}`);
+    console.log(`Points earned: ${pointsEarned}`);
 
     return {
       success: true,
@@ -277,6 +287,7 @@ export async function createOrder(
         shipping: shippingMethod.cost,
         discount: discountAmount,
         total,
+        pointsEarned,
         status: 'pending',
         shippingAddress,
         billingAddress,

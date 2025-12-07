@@ -48,6 +48,7 @@ export interface UserOrder {
   shipping: number;
   discount: number;
   total: number;
+  pointsEarned?: number;
   status: string;
   paymentStatus: string;
   shippingAddress: any;
@@ -87,8 +88,8 @@ class FirebaseSyncService {
         userId,
         email: currentUser.email || userData.email || '',
         displayName: currentUser.displayName || userData.displayName || 'User',
-        phoneNumber: userData.phoneNumber,
-        profileImage: currentUser.photoURL || userData.profileImage,
+        phoneNumber: userData.phoneNumber || null,
+        profileImage: currentUser.photoURL || userData.profileImage || null,
         createdAt: userSnap.exists() ? (userSnap.data() as any).createdAt : new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),

@@ -651,27 +651,76 @@ function renderDashboard() {
   const avgPrice = totalProducts > 0 ? totalValue / totalProducts : 0;
   const totalOrders = state.orders.length;
   const pendingOrders = state.orders.filter(o => o.status === 'pending' || o.status === 'processing').length;
-  const completedOrders = state.orders.filter(o => o.status === 'completed');
-  const totalRevenue = completedOrders.reduce((sum, o) => sum + o.totalAmount, 0);
   
-  // Calculate total profit from completed orders
+  // Calculate revenue and profit from ALL orders (not just completed)
+  let totalRevenue = 0;
   let totalProfit = 0;
   let totalCost = 0;
-  completedOrders.forEach(order => {
-    if (order.items) {
+  
+  console.log('📊 Dashboard Calculation (admin.js):');
+  console.log(`   Total Orders: ${totalOrders}`);
+  console.log(`   Products Available: ${totalProducts}`);
+  
+  state.orders.forEach((order, idx) => {
+    console.log(`\n   Order ${idx + 1}: ${order.id}`);
+    console.log(`      Status: ${order.status}`);
+    console.log(`      Total Amount: $${order.totalAmount || order.total || 0}`);
+    
+    if (order.items && order.items.length > 0) {
       order.items.forEach(item => {
-        const product = state.products.find(p => p.id === item.id);
-        if (product && product.cost) {
-          const itemCost = product.cost * item.quantity;
-          const itemRevenue = item.price * item.quantity;
-          totalCost += itemCost;
-          totalProfit += (itemRevenue - itemCost);
+        // Try multiple ways to find the product
+        const product = state.products.find(p => 
+          p.id == item.id ||  // Loose equality to match "1" with 1
+          p.id === item.id ||
+          p.id === item.productId ||
+          p.name === item.name ||
+          p.qid === item.qid ||
+          String(p.id) === String(item.id)  // Convert both to strings
+        );
+        
+        if (product) {
+          const itemPrice = item.price || product.price || 0;
+          const itemCost = product.productionCost || product.cost || 0;
+          const quantity = item.quantity || item.orderedQuantity || 1;
+          
+          const itemRevenue = itemPrice * quantity;
+          const itemTotalCost = itemCost * quantity;
+          
+          totalRevenue += itemRevenue;
+          totalCost += itemTotalCost;
+          totalProfit += (itemRevenue - itemTotalCost);
+          
+          console.log(`      ✅ ${item.name}: $${itemPrice} × ${quantity} (cost: $${itemCost})`);
+        } else {
+          console.warn(`      ❌ Product NOT FOUND for item: ${item.name} (id: ${item.id})`);
+          console.warn(`         Available product IDs: ${state.products.map(p => p.id).join(', ')}`);
+          
+          // Use item price as fallback
+          const itemPrice = item.price || 0;
+          const quantity = item.quantity || item.orderedQuantity || 1;
+          if (itemPrice > 0) {
+            totalRevenue += itemPrice * quantity;
+            console.log(`      Using item price: $${itemPrice} × ${quantity}`);
+          }
         }
       });
+    } else {
+      // No items, use order total
+      const orderTotal = order.totalAmount || order.total || 0;
+      if (orderTotal > 0) {
+        totalRevenue += orderTotal;
+        console.log(`      Using order total: $${orderTotal}`);
+      }
     }
   });
   
   const avgProfitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
+  
+  console.log('\n💰 Final Totals:');
+  console.log(`   Revenue: $${totalRevenue.toFixed(2)}`);
+  console.log(`   Cost: $${totalCost.toFixed(2)}`);
+  console.log(`   Profit: $${totalProfit.toFixed(2)}`);
+  console.log(`   Margin: ${avgProfitMargin}%`);
   
   // Find best performing products by profit
   const productProfits = state.products
@@ -698,15 +747,15 @@ function renderDashboard() {
       <div class="stat-label">Pending Orders</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">₹${totalRevenue.toFixed(0)}</div>
+      <div class="stat-value">$${totalRevenue.toFixed(2)}</div>
       <div class="stat-label">Total Revenue</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value" style="color: var(--primary);">₹${totalProfit.toFixed(0)}</div>
+      <div class="stat-value" style="color: var(--primary);">$${totalProfit.toFixed(2)}</div>
       <div class="stat-label">Total Profit</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value" style="color: var(--primary);">₹${totalCost.toFixed(0)}</div>
+      <div class="stat-value" style="color: var(--primary);">$${totalCost.toFixed(2)}</div>
       <div class="stat-label">Cost of Goods Sold</div>
     </div>
     <div class="stat-card">
@@ -718,7 +767,7 @@ function renderDashboard() {
       ${productProfits.length > 0 ? productProfits.map(p => `
         <div style="font-size: 12px; margin: 5px 0; display: flex; justify-content: space-between;">
           <span style="color: var(--text-muted);">${p.name.substring(0, 20)}${p.name.length > 20 ? '...' : ''}</span>
-          <span style="color: var(--primary); font-weight: 600;">₹${p.profit.toFixed(0)} (${p.margin}%)</span>
+          <span style="color: var(--primary); font-weight: 600;">$${p.profit.toFixed(2)} (${p.margin}%)</span>
         </div>
       `).join('') : '<div style="font-size: 12px; color: var(--text-muted);">No profit data yet</div>'}
     </div>

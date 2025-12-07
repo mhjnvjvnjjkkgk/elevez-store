@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Management - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .stat-label {
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .search-bar {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .search-bar button {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .search-bar button:hover {
+            background: #00dd77;
+        }
+
+        .users-table {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #0a0a0a;
+            padding: 15px;
+            text-align: left;
+            color: #00ff88;
+            font-weight: 600;
+            border-bottom: 1px solid #333;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #222;
+        }
+
+        tr:hover {
+            background: #222;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .tier-bronze {
+            background: #cd7f32;
+            color: white;
+        }
+
+        .tier-silver {
+            background: #c0c0c0;
+            color: black;
+        }
+
+        .tier-gold {
+            background: #ffd700;
+            color: black;
+        }
+
+        .tier-platinum {
+            background: #e5e4e2;
+            color: black;
+        }
+
+        .action-btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 0.9em;
+        }
+
+        .action-btn:hover {
+            background: #444;
+        }
+
+        .action-btn.primary {
+            background: #00ff88;
+            color: black;
+        }
+
+        .action-btn.primary:hover {
+            background: #00dd77;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #00ff88;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .spinner {
+            border: 4px solid #333;
+            border-top: 4px solid #00ff88;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: #00ff8820;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            background: #ff000020;
+            border: 1px solid #ff0000;
+            color: #ff6666;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👥 Users Management</h1>
+        <p class="subtitle">Manage all registered users and their points</p>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalPoints">0</div>
+                <div class="stat-label">Total Points Distributed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalOrders">0</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalRevenue">₹0</div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search by email or name...">
+            <button onclick="searchUsers()">🔍 Search</button>
+            <button onclick="loadUsers()">🔄 Refresh</button>
+        </div>
+
+        <!-- Users Table -->
+        <div class="users-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Points</th>
+                        <th>Tier</th>
+                        <th>Orders</th>
+                        <th>Total Spent</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="8" class="loading">
+                            <div class="spinner"></div>
+                            Loading users...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Points Modal -->
+    <div class="modal" id="addPointsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Points</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalMessage"></div>
+            <div class="form-group">
+                <label>User Email</label>
+                <input type="text" id="modalUserEmail" readonly>
+            </div>
+            <div class="form-group">
+                <label>Current Points</label>
+                <input type="text" id="modalCurrentPoints" readonly>
+            </div>
+            <div class="form-group">
+                <label>Points to Add (use negative to subtract)</label>
+                <input type="number" id="modalPointsToAdd" placeholder="e.g., 100 or -50">
+            </div>
+            <div class="form-group">
+                <label>Reason (optional)</label>
+                <textarea id="modalReason" placeholder="e.g., Bonus points for loyalty"></textarea>
+            </div>
+            <button class="action-btn primary" onclick="submitAddPoints()" style="width: 100%;">
+                ✅ Add Points
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs, 
+            doc, 
+            getDoc,
+            updateDoc,
+            addDoc,
+            query,
+            where,
+            serverTimestamp,
+            setDoc
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        // Firebase configuration - CORRECT PROJECT
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+            authDomain: "elevez-ed97f.firebaseapp.com",
+            projectId: "elevez-ed97f",
+            storageBucket: "elevez-ed97f.firebasestorage.app",
+            messagingSenderId: "440636781018",
+            appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let allUsers = [];
+        let selectedUser = null;
+
+        // Load all users from multiple sources
+        window.loadUsers = async function() {
+            console.log('Loading users from all sources...');
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '<tr><td colspan="8" class="loading"><div class="spinner"></div>Loading users...</td></tr>';
+
+            try {
+                const usersMap = new Map();
+
+                // Method 1: Get users from userPoints collection (most reliable)
+                console.log('Loading from userPoints collection...');
+                const pointsSnapshot = await getDocs(collection(db, 'userPoints'));
+                console.log('Found', pointsSnapshot.size, 'users in userPoints');
+
+                for (const pointsDoc of pointsSnapshot.docs) {
+                    const userId = pointsDoc.id;
+                    const pointsData = pointsDoc.data();
+
+                    // Get user orders
+                    const ordersQuery = query(collection(db, 'orders'), where('userId', '==', userId));
+                    const ordersSnapshot = await getDocs(ordersQuery);
+                    
+                    let totalSpent = 0;
+                    let userEmail = 'N/A';
+                    
+                    ordersSnapshot.forEach(orderDoc => {
+                        const orderData = orderDoc.data();
+                        totalSpent += orderData.total || 0;
+                        if (orderData.shippingAddress && orderData.shippingAddress.email) {
+                            userEmail = orderData.shippingAddress.email;
+                        }
+                    });
+
+                    // Try to get email from users collection
+                    const userDoc = await getDoc(doc(db, 'users', userId));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        userEmail = userData.email || userEmail;
+                    }
+
+                    usersMap.set(userId, {
+                        id: userId,
+                        email: userEmail,
+                        name: pointsData.displayName || 'N/A',
+                        points: pointsData.points || 0,
+                        tier: pointsData.tier || 'bronze',
+                        orderCount: ordersSnapshot.size,
+                        totalSpent: totalSpent,
+                        createdAt: pointsData.createdAt || null
+                    });
+                }
+
+                // Method 2: Get users from orders collection (users who have ordered)
+                console.log('Loading from orders collection...');
+                const ordersSnapshot = await getDocs(collection(db, 'orders'));
+                console.log('Found', ordersSnapshot.size, 'orders');
+
+                const userOrdersMap = new Map();
+                ordersSnapshot.forEach(orderDoc => {
+                    const orderData = orderDoc.data();
+                    const userId = orderData.userId;
+                    
+                    if (!userOrdersMap.has(userId)) {
+                        userOrdersMap.set(userId, {
+                            orders: [],
+                            totalSpent: 0,
+                            email: orderData.shippingAddress?.email || 'N/A'
+                        });
+                    }
+                    
+                    const userOrders = userOrdersMap.get(userId);
+                    userOrders.orders.push(orderData);
+                    userOrders.totalSpent += orderData.total || 0;
+                });
+
+                // Merge order data with existing users
+                for (const [userId, orderData] of userOrdersMap.entries()) {
+                    if (!usersMap.has(userId)) {
+                        // Get or create points for this user
+                        const pointsDoc = await getDoc(doc(db, 'userPoints', userId));
+                        const points = pointsDoc.exists() ? pointsDoc.data() : { points: 0, tier: 'bronze' };
+
+                        usersMap.set(userId, {
+                            id: userId,
+                            email: orderData.email,
+                            name: 'N/A',
+                            points: points.points || 0,
+                            tier: points.tier || 'bronze',
+                            orderCount: orderData.orders.length,
+                            totalSpent: orderData.totalSpent,
+                            createdAt: null
+                        });
+                    }
+                }
+
+                // Method 3: Get users from users collection
+                console.log('Loading from users collection...');
+                const usersSnapshot = await getDocs(collection(db, 'users'));
+                console.log('Found', usersSnapshot.size, 'users in users collection');
+
+                for (const userDoc of usersSnapshot.docs) {
+                    const userId = userDoc.id;
+                    const userData = userDoc.data();
+
+                    if (!usersMap.has(userId)) {
+                        // Get user points
+                        const pointsDoc = await getDoc(doc(db, 'userPoints', userId));
+                        const points = pointsDoc.exists() ? pointsDoc.data() : { points: 0, tier: 'bronze' };
+
+                        // Use stored data from users collection
+                        const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+
+                        usersMap.set(userId, {
+                            id: userId,
+                            email: userData.email || 'N/A',
+                            name: fullName || userData.displayName || userData.name || 'N/A',
+                            points: points.points || 0,
+                            tier: points.tier || 'bronze',
+                            orderCount: userData.orderCount || 0,
+                            totalSpent: userData.totalSpent || 0,
+                            createdAt: userData.createdAt || null
+                        });
+                    } else {
+                        // Update existing user with profile data
+                        const user = usersMap.get(userId);
+                        const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+                        if (fullName) user.name = fullName;
+                        if (userData.email) user.email = userData.email;
+                        if (userData.totalSpent) user.totalSpent = userData.totalSpent;
+                        if (userData.orderCount) user.orderCount = userData.orderCount;
+                    }
+                }
+
+                const users = Array.from(usersMap.values());
+                console.log('Total unique users found:', users.length);
+
+                allUsers = users;
+                displayUsers(users);
+                updateStats(users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                tbody.innerHTML = '<tr><td colspan="8" class="error-message">Error loading users: ' + error.message + '</td></tr>';
+            }
+        };
+
+        // Display users in table
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: #888;">No users found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td><strong>${user.name || user.email.split('@')[0]}</strong></td>
+                    <td>${user.email}</td>
+                    <td><strong style="color: #00ff88;">${user.points}</strong></td>
+                    <td><span class="tier-badge tier-${user.tier}">${user.tier.toUpperCase()}</span></td>
+                    <td>${user.orderCount}</td>
+                    <td>₹${user.totalSpent.toFixed(2)}</td>
+                    <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
+                    <td>
+                        <button class="action-btn primary" onclick="openAddPointsModal('${user.id}', '${user.name || user.email.split('@')[0]}', '${user.email}', ${user.points})">
+                            ⭐ Add Points
+                        </button>
+                        <button class="action-btn" onclick="viewUserDetails('${user.id}')">
+                            👁️ View
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Update stats
+        function updateStats(users) {
+            const totalUsers = users.length;
+            const totalPoints = users.reduce((sum, user) => sum + user.points, 0);
+            const totalOrders = users.reduce((sum, user) => sum + user.orderCount, 0);
+            const totalRevenue = users.reduce((sum, user) => sum + user.totalSpent, 0);
+
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('totalPoints').textContent = totalPoints.toLocaleString();
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('totalRevenue').textContent = '₹' + totalRevenue.toFixed(2);
+        }
+
+        // Search users
+        window.searchUsers = function() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allUsers.filter(user => 
+                user.email.toLowerCase().includes(searchTerm) ||
+                user.name.toLowerCase().includes(searchTerm)
+            );
+            displayUsers(filtered);
+        };
+
+        // Open add points modal
+        window.openAddPointsModal = function(userId, name, email, currentPoints) {
+            selectedUser = { id: userId, name, email, currentPoints };
+            document.getElementById('modalUserEmail').value = `${name} (${email})`;
+            document.getElementById('modalCurrentPoints').value = currentPoints;
+            document.getElementById('modalPointsToAdd').value = '';
+            document.getElementById('modalReason').value = '';
+            document.getElementById('modalMessage').innerHTML = '';
+            document.getElementById('addPointsModal').classList.add('active');
+        };
+
+        // Close modal
+        window.closeModal = function() {
+            document.getElementById('addPointsModal').classList.remove('active');
+            selectedUser = null;
+        };
+
+        // Submit add points
+        window.submitAddPoints = async function() {
+            const pointsToAdd = parseInt(document.getElementById('modalPointsToAdd').value);
+            const reason = document.getElementById('modalReason').value || 'Admin adjustment';
+            const messageDiv = document.getElementById('modalMessage');
+
+            if (isNaN(pointsToAdd) || pointsToAdd === 0) {
+                messageDiv.innerHTML = '<div class="error-message">Please enter a valid number of points</div>';
+                return;
+            }
+
+            try {
+                messageDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Adding points...</div>';
+
+                // Get current points
+                const pointsRef = doc(db, 'userPoints', selectedUser.id);
+                const pointsDoc = await getDoc(pointsRef);
+                const currentData = pointsDoc.exists() ? pointsDoc.data() : { points: 0, tier: 'bronze' };
+                
+                const newPoints = Math.max(0, (currentData.points || 0) + pointsToAdd);
+                
+                // Calculate new tier
+                const newTier = newPoints >= 3000 ? 'platinum' : 
+                               newPoints >= 1500 ? 'gold' : 
+                               newPoints >= 500 ? 'silver' : 'bronze';
+
+                // Update or create points document
+                if (pointsDoc.exists()) {
+                    await updateDoc(pointsRef, {
+                        points: newPoints,
+                        tier: newTier,
+                        updatedAt: serverTimestamp()
+                    });
+                } else {
+                    await setDoc(pointsRef, {
+                        userId: selectedUser.id,
+                        points: newPoints,
+                        tier: newTier,
+                        totalPointsEarned: newPoints,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                }
+
+                // Log transaction
+                await addDoc(collection(db, 'pointsTransactions'), {
+                    userId: selectedUser.id,
+                    type: 'admin-adjustment',
+                    points: pointsToAdd,
+                    reason: reason,
+                    adminNote: reason,
+                    timestamp: serverTimestamp()
+                });
+
+                messageDiv.innerHTML = '<div class="success-message">✅ Points added successfully! New balance: ' + newPoints + '</div>';
+                
+                // Reload users after 1 second
+                setTimeout(() => {
+                    closeModal();
+                    loadUsers();
+                }, 1500);
+            } catch (error) {
+                console.error('Error adding points:', error);
+                messageDiv.innerHTML = '<div class="error-message">Error: ' + error.message + '</div>';
+            }
+        };
+
+        // View user details
+        window.viewUserDetails = function(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (user) {
+                alert(`User Details:\n\nEmail: ${user.email}\nPoints: ${user.points}\nTier: ${user.tier}\nOrders: ${user.orderCount}\nTotal Spent: ₹${user.totalSpent.toFixed(2)}`);
+            }
+        };
+
+        // Load users on page load
+        loadUsers();
+    </script>
+</body>
+</html>

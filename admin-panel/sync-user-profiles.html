@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sync User Profiles</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; padding: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #00ff88; margin-bottom: 20px; }
+        .info { background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        button { background: #00ff88; color: black; border: none; padding: 15px 30px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 1.1em; }
+        button:hover { background: #00dd77; }
+        button:disabled { background: #333; color: #666; cursor: not-allowed; }
+        .log { background: #0a0a0a; border: 1px solid #333; border-radius: 10px; padding: 20px; margin-top: 20px; max-height: 400px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.9em; }
+        .log-entry { margin-bottom: 5px; }
+        .log-success { color: #00ff88; }
+        .log-error { color: #ff6666; }
+        .log-info { color: #88ccff; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .stat-card { background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 15px; text-align: center; }
+        .stat-value { font-size: 2em; font-weight: bold; color: #00ff88; }
+        .stat-label { color: #888; margin-top: 5px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Sync User Profiles</h1>
+        
+        <div class="info">
+            <p><strong>What this does:</strong></p>
+            <p>This script will scan all existing orders and create/update user profiles in the database with:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Full name (firstName + lastName)</li>
+                <li>Email address</li>
+                <li>Phone number</li>
+                <li>Total amount spent</li>
+                <li>Order count</li>
+            </ul>
+        </div>
+
+        <button id="syncBtn" onclick="syncUserProfiles()">Start Sync</button>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="ordersProcessed">0</div>
+                <div class="stat-label">Orders Processed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="usersCreated">0</div>
+                <div class="stat-label">Users Created/Updated</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="errors">0</div>
+                <div class="stat-label">Errors</div>
+            </div>
+        </div>
+
+        <div class="log" id="log"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs, 
+            doc, 
+            getDoc,
+            setDoc,
+            updateDoc,
+            serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+            authDomain: "elevez-ed97f.firebaseapp.com",
+            projectId: "elevez-ed97f",
+            storageBucket: "elevez-ed97f.firebasestorage.app",
+            messagingSenderId: "440636781018",
+            appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        window.syncUserProfiles = async function() {
+            const btn = document.getElementById('syncBtn');
+            btn.disabled = true;
+            btn.textContent = 'Syncing...';
+
+            let ordersProcessed = 0;
+            let usersCreated = 0;
+            let errors = 0;
+
+            try {
+                log('🔄 Starting user profile sync...', 'info');
+                
+                // Get all orders
+                const ordersSnapshot = await getDocs(collection(db, 'orders'));
+                log(`📦 Found ${ordersSnapshot.size} orders`, 'info');
+
+                // Group orders by userId
+                const userOrdersMap = new Map();
+
+                ordersSnapshot.forEach(orderDoc => {
+                    const order = orderDoc.data();
+                    const userId = order.userId;
+
+                    if (!userId) {
+                        log(`⚠️ Order ${orderDoc.id} has no userId`, 'error');
+                        errors++;
+                        return;
+                    }
+
+                    if (!userOrdersMap.has(userId)) {
+                        userOrdersMap.set(userId, []);
+                    }
+                    userOrdersMap.get(userId).push(order);
+                    ordersProcessed++;
+                });
+
+                document.getElementById('ordersProcessed').textContent = ordersProcessed;
+
+                log(`👥 Found ${userOrdersMap.size} unique users`, 'info');
+
+                // Process each user
+                for (const [userId, orders] of userOrdersMap.entries()) {
+                    try {
+                        // Get data from most recent order
+                        const latestOrder = orders[0];
+                        const shippingAddress = latestOrder.shippingAddress || {};
+
+                        const firstName = shippingAddress.firstName || '';
+                        const lastName = shippingAddress.lastName || '';
+                        const email = shippingAddress.email || '';
+                        const phone = shippingAddress.phone || '';
+
+                        // Calculate totals
+                        const totalSpent = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+                        const orderCount = orders.length;
+
+                        // Check if user exists
+                        const userRef = doc(db, 'users', userId);
+                        const userDoc = await getDoc(userRef);
+
+                        if (userDoc.exists()) {
+                            // Update existing user
+                            await updateDoc(userRef, {
+                                firstName: firstName || userDoc.data().firstName,
+                                lastName: lastName || userDoc.data().lastName,
+                                email: email || userDoc.data().email,
+                                phone: phone || userDoc.data().phone,
+                                totalSpent,
+                                orderCount,
+                                updatedAt: serverTimestamp()
+                            });
+                            log(`✅ Updated user: ${firstName} ${lastName} (${email})`, 'success');
+                        } else {
+                            // Create new user
+                            await setDoc(userRef, {
+                                userId,
+                                firstName,
+                                lastName,
+                                email,
+                                phone,
+                                totalSpent,
+                                orderCount,
+                                createdAt: serverTimestamp(),
+                                updatedAt: serverTimestamp()
+                            });
+                            log(`✅ Created user: ${firstName} ${lastName} (${email})`, 'success');
+                        }
+
+                        usersCreated++;
+                        document.getElementById('usersCreated').textContent = usersCreated;
+
+                    } catch (error) {
+                        log(`❌ Error processing user ${userId}: ${error.message}`, 'error');
+                        errors++;
+                        document.getElementById('errors').textContent = errors;
+                    }
+                }
+
+                log('🎉 Sync completed!', 'success');
+                btn.textContent = 'Sync Complete!';
+
+            } catch (error) {
+                log(`❌ Fatal error: ${error.message}`, 'error');
+                btn.textContent = 'Sync Failed';
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>

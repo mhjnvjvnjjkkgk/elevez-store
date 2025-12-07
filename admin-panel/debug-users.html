@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Users</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #0a0a0a;
+            color: #00ff88;
+            padding: 20px;
+        }
+        .log {
+            background: #1a1a1a;
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 3px solid #00ff88;
+        }
+        .error {
+            border-left-color: #ff0000;
+            color: #ff6666;
+        }
+        .success {
+            border-left-color: #00ff88;
+        }
+        button {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Users Loading</h1>
+    <button onclick="testFirebase()">Test Firebase Connection</button>
+    <button onclick="testOrders()">Test Orders Collection</button>
+    <button onclick="testUserPoints()">Test UserPoints Collection</button>
+    <button onclick="testUsers()">Test Users Collection</button>
+    <button onclick="clearLogs()">Clear Logs</button>
+    <div id="logs"></div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+            authDomain: "elevez-ed97f.firebaseapp.com",
+            projectId: "elevez-ed97f",
+            storageBucket: "elevez-ed97f.firebasestorage.app",
+            messagingSenderId: "440636781018",
+            appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+        };
+
+        let app, db;
+
+        function log(message, type = 'log') {
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            document.getElementById('logs').appendChild(div);
+            console.log(message);
+        }
+
+        window.testFirebase = async function() {
+            try {
+                log('Initializing Firebase...', 'log');
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                log('✅ Firebase initialized successfully!', 'success');
+                log('Project ID: ' + firebaseConfig.projectId, 'success');
+            } catch (error) {
+                log('❌ Firebase initialization failed: ' + error.message, 'error');
+                console.error(error);
+            }
+        };
+
+        window.testOrders = async function() {
+            if (!db) {
+                log('❌ Firebase not initialized. Click "Test Firebase Connection" first.', 'error');
+                return;
+            }
+
+            try {
+                log('Querying orders collection...', 'log');
+                const ordersSnapshot = await getDocs(collection(db, 'orders'));
+                log(`✅ Found ${ordersSnapshot.size} orders`, 'success');
+                
+                if (ordersSnapshot.size > 0) {
+                    const userIds = new Set();
+                    ordersSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        if (data.userId) {
+                            userIds.add(data.userId);
+                        }
+                    });
+                    log(`📊 Unique user IDs in orders: ${userIds.size}`, 'success');
+                    log(`User IDs: ${Array.from(userIds).join(', ')}`, 'log');
+                }
+            } catch (error) {
+                log('❌ Error querying orders: ' + error.message, 'error');
+                console.error(error);
+            }
+        };
+
+        window.testUserPoints = async function() {
+            if (!db) {
+                log('❌ Firebase not initialized. Click "Test Firebase Connection" first.', 'error');
+                return;
+            }
+
+            try {
+                log('Querying userPoints collection...', 'log');
+                const pointsSnapshot = await getDocs(collection(db, 'userPoints'));
+                log(`✅ Found ${pointsSnapshot.size} users in userPoints`, 'success');
+                
+                if (pointsSnapshot.size > 0) {
+                    pointsSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        log(`User ${doc.id}: ${data.points || 0} points, tier: ${data.tier || 'N/A'}`, 'log');
+                    });
+                }
+            } catch (error) {
+                log('❌ Error querying userPoints: ' + error.message, 'error');
+                console.error(error);
+            }
+        };
+
+        window.testUsers = async function() {
+            if (!db) {
+                log('❌ Firebase not initialized. Click "Test Firebase Connection" first.', 'error');
+                return;
+            }
+
+            try {
+                log('Querying users collection...', 'log');
+                const usersSnapshot = await getDocs(collection(db, 'users'));
+                log(`✅ Found ${usersSnapshot.size} users in users collection`, 'success');
+                
+                if (usersSnapshot.size > 0) {
+                    usersSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        log(`User ${doc.id}: ${data.email || 'N/A'}`, 'log');
+                    });
+                }
+            } catch (error) {
+                log('❌ Error querying users: ' + error.message, 'error');
+                console.error(error);
+            }
+        };
+
+        window.clearLogs = function() {
+            document.getElementById('logs').innerHTML = '';
+        };
+
+        // Auto-initialize
+        testFirebase();
+    </script>
+</body>
+</html>

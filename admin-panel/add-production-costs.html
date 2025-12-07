@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Production Costs to Products</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { color: #00ff88; margin-bottom: 20px; }
+        .section { background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .section h2 { color: #00ff88; margin-bottom: 15px; font-size: 1.2em; }
+        button { background: #00ff88; color: black; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-weight: 600; margin-right: 10px; font-size: 1em; }
+        button:hover { background: #00dd77; }
+        button.secondary { background: #333; color: white; }
+        .log { background: #0a0a0a; border: 1px solid #333; border-radius: 5px; padding: 15px; margin-top: 15px; max-height: 500px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.9em; }
+        .log-entry { margin-bottom: 5px; padding: 3px 0; }
+        .log-success { color: #00ff88; }
+        .log-error { color: #ff6666; }
+        .log-info { color: #88ccff; }
+        .log-warn { color: #ffaa00; }
+        .products-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .products-table th { background: #0a0a0a; padding: 12px; text-align: left; color: #00ff88; border-bottom: 1px solid #333; }
+        .products-table td { padding: 12px; border-bottom: 1px solid #222; }
+        .products-table tr:hover { background: #222; }
+        .has-cost { color: #00ff88; }
+        .no-cost { color: #ff6666; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: #0a0a0a; border: 1px solid #333; border-radius: 5px; padding: 15px; }
+        .stat-value { font-size: 1.8em; font-weight: bold; color: #00ff88; }
+        .stat-label { color: #888; margin-top: 5px; font-size: 0.9em; }
+        input[type="number"] { background: #0a0a0a; border: 1px solid #333; color: white; padding: 8px; border-radius: 5px; width: 100px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Add Production Costs to Products</h1>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="section">
+            <h2>1. Check Current Products</h2>
+            <button onclick="checkProducts()">📊 Check Products</button>
+            <button onclick="showProducts()" class="secondary">👁️ Show All Products</button>
+            <div class="log" id="checkLog"></div>
+            <div id="productsTable"></div>
+        </div>
+
+        <div class="section">
+            <h2>2. Add Production Costs</h2>
+            <p style="color: #888; margin-bottom: 15px;">
+                This will add realistic production costs to all products that don't have them.
+                Products with existing costs will be preserved.
+            </p>
+            <button onclick="addProductionCosts()">✅ Add Production Costs</button>
+            <button onclick="syncToFirebase()" class="secondary">🔥 Sync to Firebase</button>
+            <div class="log" id="addLog"></div>
+        </div>
+
+        <div class="section">
+            <h2>3. Verify Dashboard Calculations</h2>
+            <button onclick="verifyDashboard()">🧪 Test Dashboard Calculations</button>
+            <div class="log" id="verifyLog"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs, 
+            doc, 
+            setDoc,
+            updateDoc
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+            authDomain: "elevez-ed97f.firebaseapp.com",
+            projectId: "elevez-ed97f",
+            storageBucket: "elevez-ed97f.firebasestorage.app",
+            messagingSenderId: "440636781018",
+            appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let currentProducts = [];
+
+        function log(elementId, message, type = 'info') {
+            const logDiv = document.getElementById(elementId);
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateStats(products) {
+            const withCost = products.filter(p => p.productionCost || p.cost).length;
+            const withoutCost = products.length - withCost;
+            const avgCost = products.filter(p => p.productionCost || p.cost)
+                .reduce((sum, p) => sum + (p.productionCost || p.cost || 0), 0) / (withCost || 1);
+
+            document.getElementById('stats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${products.length}</div>
+                    <div class="stat-label">Total Products</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value has-cost">${withCost}</div>
+                    <div class="stat-label">With Production Cost</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value no-cost">${withoutCost}</div>
+                    <div class="stat-label">Without Production Cost</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$${avgCost.toFixed(2)}</div>
+                    <div class="stat-label">Avg Production Cost</div>
+                </div>
+            `;
+        }
+
+        window.checkProducts = async function() {
+            const logId = 'checkLog';
+            document.getElementById(logId).innerHTML = '';
+            log(logId, '🔍 Checking products...', 'info');
+
+            try {
+                // Load from localStorage
+                const localProducts = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+                log(logId, `📦 Found ${localProducts.length} products in localStorage`, 'info');
+
+                // Load from Firebase
+                const productsSnapshot = await getDocs(collection(db, 'products'));
+                const firebaseProducts = [];
+                productsSnapshot.forEach(doc => {
+                    firebaseProducts.push({ id: doc.id, ...doc.data() });
+                });
+                log(logId, `🔥 Found ${firebaseProducts.length} products in Firebase`, 'info');
+
+                // Use Firebase if available, otherwise localStorage
+                currentProducts = firebaseProducts.length > 0 ? firebaseProducts : localProducts;
+
+                // Check which products have production costs
+                let withCost = 0;
+                let withoutCost = 0;
+
+                currentProducts.forEach(product => {
+                    const hasCost = product.productionCost || product.cost;
+                    if (hasCost) {
+                        withCost++;
+                        log(logId, `✅ ${product.name}: $${hasCost}`, 'success');
+                    } else {
+                        withoutCost++;
+                        log(logId, `❌ ${product.name}: NO COST`, 'error');
+                    }
+                });
+
+                log(logId, `\n📊 Summary:`, 'info');
+                log(logId, `   ✅ ${withCost} products have production costs`, 'success');
+                log(logId, `   ❌ ${withoutCost} products need production costs`, 'error');
+
+                updateStats(currentProducts);
+            } catch (error) {
+                log(logId, `❌ Error: ${error.message}`, 'error');
+            }
+        };
+
+        window.showProducts = function() {
+            if (currentProducts.length === 0) {
+                alert('Please check products first!');
+                return;
+            }
+
+            const tableHtml = `
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Production Cost</th>
+                            <th>Profit</th>
+                            <th>Margin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${currentProducts.map(p => {
+                            const cost = p.productionCost || p.cost || 0;
+                            const profit = p.price - cost;
+                            const margin = p.price > 0 ? ((profit / p.price) * 100).toFixed(1) : 0;
+                            const hasCost = cost > 0;
+                            
+                            return `
+                                <tr>
+                                    <td>${p.id}</td>
+                                    <td>${p.name}</td>
+                                    <td>$${p.price}</td>
+                                    <td class="${hasCost ? 'has-cost' : 'no-cost'}">
+                                        ${hasCost ? `$${cost}` : 'NOT SET'}
+                                    </td>
+                                    <td>${hasCost ? `$${profit.toFixed(2)}` : '-'}</td>
+                                    <td>${hasCost ? `${margin}%` : '-'}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('productsTable').innerHTML = tableHtml;
+        };
+
+        window.addProductionCosts = function() {
+            const logId = 'addLog';
+            document.getElementById(logId).innerHTML = '';
+            
+            if (currentProducts.length === 0) {
+                log(logId, '❌ Please check products first!', 'error');
+                return;
+            }
+
+            log(logId, '💰 Adding production costs...', 'info');
+
+            // Realistic production cost ranges based on product type and price
+            const costRules = {
+                'Hoodie': { min: 0.25, max: 0.35 }, // 25-35% of price
+                'T-Shirt': { min: 0.20, max: 0.30 }, // 20-30% of price
+                'Crop Top': { min: 0.20, max: 0.30 },
+                'Oversized T-Shirt': { min: 0.22, max: 0.32 },
+                'default': { min: 0.20, max: 0.35 }
+            };
+
+            let added = 0;
+            let skipped = 0;
+
+            currentProducts.forEach(product => {
+                // Skip if already has production cost
+                if (product.productionCost || product.cost) {
+                    log(logId, `⏭️ ${product.name}: Already has cost ($${product.productionCost || product.cost})`, 'info');
+                    skipped++;
+                    return;
+                }
+
+                // Get cost rule for product type
+                const rule = costRules[product.type] || costRules.default;
+                
+                // Calculate production cost (random within range)
+                const costPercentage = rule.min + Math.random() * (rule.max - rule.min);
+                const productionCost = Math.round(product.price * costPercentage * 100) / 100;
+
+                // Add production cost
+                product.productionCost = productionCost;
+                
+                const profit = product.price - productionCost;
+                const margin = ((profit / product.price) * 100).toFixed(1);
+                
+                log(logId, `✅ ${product.name}: Added cost $${productionCost} (${margin}% margin)`, 'success');
+                added++;
+            });
+
+            // Save to localStorage
+            localStorage.setItem('elevez_products', JSON.stringify(currentProducts));
+            log(logId, `\n💾 Saved to localStorage`, 'success');
+
+            log(logId, `\n📊 Summary:`, 'info');
+            log(logId, `   ✅ Added costs to ${added} products`, 'success');
+            log(logId, `   ⏭️ Skipped ${skipped} products (already have costs)`, 'info');
+            log(logId, `\n💡 Next: Click "Sync to Firebase" to save to cloud`, 'warn');
+
+            updateStats(currentProducts);
+            showProducts();
+        };
+
+        window.syncToFirebase = async function() {
+            const logId = 'addLog';
+            
+            if (currentProducts.length === 0) {
+                log(logId, '❌ No products to sync!', 'error');
+                return;
+            }
+
+            log(logId, '\n🔥 Syncing to Firebase...', 'info');
+
+            try {
+                let synced = 0;
+                
+                for (const product of currentProducts) {
+                    try {
+                        const productRef = doc(db, 'products', String(product.id));
+                        await setDoc(productRef, product, { merge: true });
+                        log(logId, `✅ Synced: ${product.name}`, 'success');
+                        synced++;
+                    } catch (err) {
+                        log(logId, `❌ Failed to sync ${product.name}: ${err.message}`, 'error');
+                    }
+                }
+
+                log(logId, `\n🎉 Successfully synced ${synced}/${currentProducts.length} products to Firebase!`, 'success');
+                log(logId, `💡 Dashboard will now use real production costs!`, 'success');
+            } catch (error) {
+                log(logId, `❌ Error: ${error.message}`, 'error');
+            }
+        };
+
+        window.verifyDashboard = async function() {
+            const logId = 'verifyLog';
+            document.getElementById(logId).innerHTML = '';
+            log(logId, '🧪 Testing dashboard calculations...', 'info');
+
+            try {
+                // Load products
+                const products = currentProducts.length > 0 ? currentProducts : 
+                    JSON.parse(localStorage.getItem('elevez_products') || '[]');
+                
+                log(logId, `📦 Loaded ${products.length} products`, 'info');
+
+                // Load orders
+                const ordersSnapshot = await getDocs(collection(db, 'orders'));
+                const orders = [];
+                ordersSnapshot.forEach(doc => {
+                    orders.push({ id: doc.id, ...doc.data() });
+                });
+                
+                log(logId, `📦 Loaded ${orders.length} orders`, 'info');
+
+                // Calculate metrics
+                let totalRevenue = 0;
+                let totalCost = 0;
+                let itemsProcessed = 0;
+                let itemsWithCost = 0;
+
+                orders.forEach(order => {
+                    (order.items || []).forEach(item => {
+                        itemsProcessed++;
+                        
+                        // Find product
+                        const product = products.find(p => 
+                            String(p.id) === String(item.id) || 
+                            p.name === item.name
+                        );
+
+                        if (product) {
+                            const itemPrice = item.price || product.price || 0;
+                            const itemCost = product.productionCost || product.cost || 0;
+                            const quantity = item.quantity || 1;
+
+                            totalRevenue += itemPrice * quantity;
+                            totalCost += itemCost * quantity;
+
+                            if (itemCost > 0) {
+                                itemsWithCost++;
+                                log(logId, `✅ ${item.name}: $${itemPrice} - $${itemCost} = $${(itemPrice - itemCost).toFixed(2)} profit`, 'success');
+                            } else {
+                                log(logId, `⚠️ ${item.name}: No production cost!`, 'warn');
+                            }
+                        } else {
+                            log(logId, `❌ Product not found: ${item.name}`, 'error');
+                        }
+                    });
+                });
+
+                const totalProfit = totalRevenue - totalCost;
+                const profitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
+
+                log(logId, `\n📊 Dashboard Metrics:`, 'info');
+                log(logId, `   Total Revenue: $${totalRevenue.toFixed(2)}`, 'info');
+                log(logId, `   Total Cost: $${totalCost.toFixed(2)}`, 'info');
+                log(logId, `   Total Profit: $${totalProfit.toFixed(2)}`, 'success');
+                log(logId, `   Profit Margin: ${profitMargin}%`, 'success');
+                log(logId, `\n   Items Processed: ${itemsProcessed}`, 'info');
+                log(logId, `   Items with Cost: ${itemsWithCost}`, itemsWithCost === itemsProcessed ? 'success' : 'warn');
+
+                if (itemsWithCost < itemsProcessed) {
+                    log(logId, `\n⚠️ Warning: ${itemsProcessed - itemsWithCost} items don't have production costs!`, 'warn');
+                    log(logId, `💡 Add production costs to all products for accurate calculations`, 'warn');
+                }
+            } catch (error) {
+                log(logId, `❌ Error: ${error.message}`, 'error');
+            }
+        };
+
+        // Auto-check on load
+        window.addEventListener('load', () => {
+            checkProducts();
+        });
+    </script>
+</body>
+</html>

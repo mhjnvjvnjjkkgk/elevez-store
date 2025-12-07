@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Order Persistence</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        button.success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .orders-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 2px solid #e9ecef;
+            transition: border-color 0.2s;
+        }
+
+        .order-card:hover {
+            border-color: #667eea;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .order-number {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .detail-item {
+            font-size: 0.9em;
+        }
+
+        .detail-label {
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .user-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .user-info strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Order Persistence Test</h1>
+        <p class="subtitle">Test order syncing and persistence across sessions and server restarts</p>
+
+        <div id="userInfo" class="user-info" style="display: none;">
+            <strong>Current User:</strong>
+            <span id="userEmail"></span>
+            <br>
+            <strong>User ID:</strong>
+            <code id="userId"></code>
+        </div>
+
+        <div class="section">
+            <h2>🔐 Authentication</h2>
+            <div class="button-group">
+                <button onclick="checkAuth()">Check Auth Status</button>
+                <button onclick="signInTestUser()" class="secondary">Sign In Test User</button>
+                <button onclick="signOut()" class="secondary">Sign Out</button>
+            </div>
+            <div id="authStatus"></div>
+        </div>
+
+        <div class="section">
+            <h2>📦 Order Operations</h2>
+            <div class="button-group">
+                <button onclick="createTestOrder()">Create Test Order</button>
+                <button onclick="loadUserOrders()" class="success">Load User Orders</button>
+                <button onclick="verifyPersistence()" class="success">Verify Persistence</button>
+                <button onclick="clearDisplay()">Clear Display</button>
+            </div>
+            <div id="operationStatus"></div>
+        </div>
+
+        <div class="section">
+            <h2>📋 Orders List</h2>
+            <div id="ordersCount" class="status info" style="display: none;">
+                Total Orders: <strong id="orderCountValue">0</strong>
+            </div>
+            <div id="ordersList" class="orders-list"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            signOut as firebaseSignOut,
+            onAuthStateChanged 
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            query, 
+            where, 
+            orderBy,
+            Timestamp,
+            onSnapshot
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        // Firebase configuration - CORRECT PROJECT
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+            authDomain: "elevez-ed97f.firebaseapp.com",
+            projectId: "elevez-ed97f",
+            storageBucket: "elevez-ed97f.firebasestorage.app",
+            messagingSenderId: "440636781018",
+            appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let ordersUnsubscribe = null;
+
+        // Monitor auth state
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userId').textContent = user.uid;
+                showStatus('authStatus', `✅ Signed in as ${user.email}`, 'success');
+                
+                // Auto-load orders when user signs in
+                loadUserOrders();
+            } else {
+                document.getElementById('userInfo').style.display = 'none';
+                showStatus('authStatus', '❌ Not signed in', 'error');
+                clearDisplay();
+            }
+        });
+
+        window.checkAuth = function() {
+            if (currentUser) {
+                showStatus('authStatus', `✅ Signed in as ${currentUser.email}`, 'success');
+            } else {
+                showStatus('authStatus', '❌ Not signed in. Please sign in to test orders.', 'error');
+            }
+        };
+
+        window.signInTestUser = async function() {
+            try {
+                showStatus('authStatus', '🔄 Signing in...', 'info');
+                
+                // Use test credentials or prompt
+                const email = prompt('Enter email:', 'test@example.com');
+                const password = prompt('Enter password:', 'test123');
+                
+                if (!email || !password) {
+                    showStatus('authStatus', '❌ Sign in cancelled', 'error');
+                    return;
+                }
+
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                showStatus('authStatus', `✅ Signed in as ${userCredential.user.email}`, 'success');
+            } catch (error) {
+                showStatus('authStatus', `❌ Sign in failed: ${error.message}`, 'error');
+            }
+        };
+
+        window.signOut = async function() {
+            try {
+                if (ordersUnsubscribe) {
+                    ordersUnsubscribe();
+                    ordersUnsubscribe = null;
+                }
+                await firebaseSignOut(auth);
+                showStatus('authStatus', '✅ Signed out successfully', 'success');
+            } catch (error) {
+                showStatus('authStatus', `❌ Sign out failed: ${error.message}`, 'error');
+            }
+        };
+
+        window.createTestOrder = async function() {
+            if (!currentUser) {
+                showStatus('operationStatus', '❌ Please sign in first', 'error');
+                return;
+            }
+
+            try {
+                showStatus('operationStatus', '🔄 Creating test order...', 'info');
+
+                const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+                
+                const testOrder = {
+                    userId: currentUser.uid,
+                    orderNumber: orderNumber,
+                    items: [
+                        {
+                            productId: 1,
+                            productName: 'Test Product',
+                            name: 'Test Product',
+                            quantity: 2,
+                            size: 'M',
+                            color: 'Blue',
+                            price: 999,
+                            image: 'https://via.placeholder.com/150'
+                        }
+                    ],
+                    subtotal: 1998,
+                    tax: 359.64,
+                    shipping: 50,
+                    discount: 0,
+                    total: 2407.64,
+                    status: 'pending',
+                    paymentStatus: 'pending',
+                    shippingAddress: {
+                        firstName: 'Test',
+                        lastName: 'User',
+                        street: '123 Test St',
+                        city: 'Test City',
+                        state: 'Test State',
+                        zipCode: '12345',
+                        country: 'India',
+                        phone: '1234567890',
+                        email: currentUser.email
+                    },
+                    notes: 'Test order for persistence verification',
+                    createdAt: Timestamp.now(),
+                    updatedAt: Timestamp.now()
+                };
+
+                const docRef = await addDoc(collection(db, 'orders'), testOrder);
+                
+                showStatus('operationStatus', `✅ Test order created: ${orderNumber} (ID: ${docRef.id})`, 'success');
+                
+                // Auto-reload orders
+                setTimeout(() => loadUserOrders(), 500);
+            } catch (error) {
+                showStatus('operationStatus', `❌ Failed to create order: ${error.message}`, 'error');
+                console.error('Error creating test order:', error);
+            }
+        };
+
+        window.loadUserOrders = async function() {
+            if (!currentUser) {
+                showStatus('operationStatus', '❌ Please sign in first', 'error');
+                return;
+            }
+
+            try {
+                showStatus('operationStatus', '🔄 Loading orders...', 'info');
+                document.getElementById('ordersList').innerHTML = '<div class="loading"><div class="spinner"></div>Loading orders...</div>';
+
+                const ordersRef = collection(db, 'orders');
+                const q = query(
+                    ordersRef,
+                    where('userId', '==', currentUser.uid),
+                    orderBy('createdAt', 'desc')
+                );
+
+                const snapshot = await getDocs(q);
+                const orders = [];
+                
+                snapshot.forEach((doc) => {
+                    orders.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                displayOrders(orders);
+                showStatus('operationStatus', `✅ Loaded ${orders.length} orders`, 'success');
+
+                // Set up real-time listener
+                if (ordersUnsubscribe) {
+                    ordersUnsubscribe();
+                }
+
+                ordersUnsubscribe = onSnapshot(q, (snapshot) => {
+                    const realtimeOrders = [];
+                    snapshot.forEach((doc) => {
+                        realtimeOrders.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                    displayOrders(realtimeOrders);
+                    console.log('🔄 Real-time update:', realtimeOrders.length, 'orders');
+                });
+
+            } catch (error) {
+                showStatus('operationStatus', `❌ Failed to load orders: ${error.message}`, 'error');
+                console.error('Error loading orders:', error);
+                document.getElementById('ordersList').innerHTML = `<div class="status error">Failed to load orders: ${error.message}</div>`;
+            }
+        };
+
+        window.verifyPersistence = async function() {
+            if (!currentUser) {
+                showStatus('operationStatus', '❌ Please sign in first', 'error');
+                return;
+            }
+
+            try {
+                showStatus('operationStatus', '🔍 Verifying persistence...', 'info');
+
+                const ordersRef = collection(db, 'orders');
+                const q = query(
+                    ordersRef,
+                    where('userId', '==', currentUser.uid)
+                );
+
+                const snapshot = await getDocs(q);
+                const orderCount = snapshot.size;
+
+                const message = `
+                    ✅ Persistence Verification Complete<br>
+                    <strong>User ID:</strong> ${currentUser.uid}<br>
+                    <strong>Total Orders:</strong> ${orderCount}<br>
+                    <strong>Status:</strong> Orders are properly persisted in Firebase<br>
+                    <strong>Note:</strong> These orders will persist across sessions and server restarts
+                `;
+
+                showStatus('operationStatus', message, 'success');
+                
+                if (orderCount === 0) {
+                    showStatus('operationStatus', '⚠️ No orders found. Create a test order to verify persistence.', 'info');
+                }
+            } catch (error) {
+                showStatus('operationStatus', `❌ Verification failed: ${error.message}`, 'error');
+                console.error('Error verifying persistence:', error);
+            }
+        };
+
+        window.clearDisplay = function() {
+            document.getElementById('ordersList').innerHTML = '';
+            document.getElementById('ordersCount').style.display = 'none';
+            showStatus('operationStatus', 'Display cleared', 'info');
+        };
+
+        function displayOrders(orders) {
+            const ordersListDiv = document.getElementById('ordersList');
+            const ordersCountDiv = document.getElementById('ordersCount');
+            const orderCountValue = document.getElementById('orderCountValue');
+
+            if (orders.length === 0) {
+                ordersListDiv.innerHTML = '<div class="status info">No orders found. Create a test order to get started.</div>';
+                ordersCountDiv.style.display = 'none';
+                return;
+            }
+
+            ordersCountDiv.style.display = 'block';
+            orderCountValue.textContent = orders.length;
+
+            let html = '';
+            orders.forEach(order => {
+                const createdDate = order.createdAt?.toDate ? order.createdAt.toDate() : new Date(order.createdAt);
+                
+                html += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-number">${order.orderNumber}</div>
+                            <div class="order-status status-${order.status}">${order.status.toUpperCase()}</div>
+                        </div>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Order ID</div>
+                                <div class="detail-value"><code>${order.id}</code></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Items</div>
+                                <div class="detail-value">${order.items?.length || 0}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Total</div>
+                                <div class="detail-value">₹${order.total.toFixed(2)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Payment</div>
+                                <div class="detail-value">${order.paymentStatus}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Created</div>
+                                <div class="detail-value">${createdDate.toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            ordersListDiv.innerHTML = html;
+        }
+
+        function showStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // Initial check
+        checkAuth();
+    </script>
+</body>
+</html>

@@ -43,7 +43,7 @@ export interface PointsTransaction {
 
 class UserPointsService {
   private db = getFirestore();
-  private usersCollection = 'users';
+  private pointsCollection = 'userPoints'; // Changed from 'users' to 'userPoints'
   private pointsSubcollection = 'points';
 
   /**
@@ -51,11 +51,11 @@ class UserPointsService {
    */
   async getUserPoints(userId: string): Promise<UserPoints | null> {
     try {
-      const userRef = doc(this.db, this.usersCollection, userId);
-      const userSnap = await getDoc(userRef);
+      const pointsRef = doc(this.db, this.pointsCollection, userId);
+      const pointsSnap = await getDoc(pointsRef);
 
-      if (userSnap.exists()) {
-        return userSnap.data() as UserPoints;
+      if (pointsSnap.exists()) {
+        return pointsSnap.data() as UserPoints;
       }
 
       // Create new user points record
@@ -74,7 +74,8 @@ class UserPointsService {
         orderCount: 0,
       };
 
-      await setDoc(userRef, newUserPoints);
+      await setDoc(pointsRef, newUserPoints);
+      console.log('✅ Created new user points record in userPoints collection:', userId);
       return newUserPoints;
     } catch (error) {
       console.error('Error getting user points:', error);
@@ -93,7 +94,10 @@ class UserPointsService {
   ): Promise<boolean> {
     try {
       const userPoints = await this.getUserPoints(userId);
-      if (!userPoints) return false;
+      if (!userPoints) {
+        console.error('❌ Could not get user points for:', userId);
+        return false;
+      }
 
       const pointsToAdd = Math.floor(orderAmount * pointsPerRupee);
       const balanceBefore = userPoints.totalPoints;
@@ -110,8 +114,8 @@ class UserPointsService {
         balanceAfter,
       };
 
-      const userRef = doc(this.db, this.usersCollection, userId);
-      await updateDoc(userRef, {
+      const pointsRef = doc(this.db, this.pointsCollection, userId);
+      await updateDoc(pointsRef, {
         totalPoints: balanceAfter,
         pointsHistory: [...userPoints.pointsHistory, transaction],
         tier: this.calculateTier(balanceAfter),
@@ -120,6 +124,7 @@ class UserPointsService {
         orderCount: (userPoints.orderCount || 0) + 1, // Increment order count
       });
 
+      console.log(`✅ Added ${pointsToAdd} points to user ${userId}. New balance: ${balanceAfter}`);
       return true;
     } catch (error) {
       console.error('Error adding purchase points:', error);
@@ -154,8 +159,8 @@ class UserPointsService {
         balanceAfter,
       };
 
-      const userRef = doc(this.db, this.usersCollection, userId);
-      await updateDoc(userRef, {
+      const pointsRef = doc(this.db, this.pointsCollection, userId);
+      await updateDoc(pointsRef, {
         totalPoints: balanceAfter,
         pointsHistory: [...userPoints.pointsHistory, transaction],
         tier: this.calculateTier(balanceAfter),
@@ -201,8 +206,8 @@ class UserPointsService {
         balanceAfter,
       };
 
-      const userRef = doc(this.db, this.usersCollection, userId);
-      await updateDoc(userRef, {
+      const pointsRef = doc(this.db, this.pointsCollection, userId);
+      await updateDoc(pointsRef, {
         totalPoints: balanceAfter,
         pointsHistory: [...userPoints.pointsHistory, transaction],
         tier: this.calculateTier(balanceAfter),
@@ -246,8 +251,8 @@ class UserPointsService {
         balanceAfter,
       };
 
-      const userRef = doc(this.db, this.usersCollection, userId);
-      await updateDoc(userRef, {
+      const pointsRef = doc(this.db, this.pointsCollection, userId);
+      await updateDoc(pointsRef, {
         totalPoints: balanceAfter,
         pointsHistory: [...userPoints.pointsHistory, transaction],
         tier: this.calculateTier(balanceAfter),
@@ -266,8 +271,8 @@ class UserPointsService {
    */
   async getAllUsersPoints(): Promise<UserPoints[]> {
     try {
-      const usersRef = collection(this.db, this.usersCollection);
-      const querySnapshot = await getDocs(usersRef);
+      const pointsRef = collection(this.db, this.pointsCollection);
+      const querySnapshot = await getDocs(pointsRef);
       
       const users: UserPoints[] = [];
       querySnapshot.forEach((doc) => {
@@ -347,8 +352,8 @@ class UserPointsService {
    */
   async searchUsersByEmail(email: string): Promise<UserPoints[]> {
     try {
-      const usersRef = collection(this.db, this.usersCollection);
-      const q = query(usersRef, where('email', '==', email));
+      const pointsRef = collection(this.db, this.pointsCollection);
+      const q = query(pointsRef, where('email', '==', email));
       const querySnapshot = await getDocs(q);
 
       const users: UserPoints[] = [];

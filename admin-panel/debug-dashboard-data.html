@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Dashboard Data</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f0f23;
+      color: #fff;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 { color: #00ff88; }
+    h2 { color: #667eea; margin-top: 30px; }
+    .section {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    pre {
+      background: #000;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+    .stat {
+      display: inline-block;
+      background: rgba(0,255,136,0.1);
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin: 5px;
+      border: 1px solid rgba(0,255,136,0.3);
+    }
+    .warning {
+      background: rgba(255,170,0,0.1);
+      border-color: rgba(255,170,0,0.3);
+      color: #ffaa00;
+    }
+    .error {
+      background: rgba(255,68,68,0.1);
+      border-color: rgba(255,68,68,0.3);
+      color: #ff4444;
+    }
+    button {
+      background: #00ff88;
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background: #00dd77;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Debug Dashboard Data</h1>
+  <p>This tool helps debug why dashboard shows incorrect values</p>
+
+  <div>
+    <button onclick="debugData()">🔍 Debug All Data</button>
+    <button onclick="testCalculation()">💰 Test Calculation</button>
+    <button onclick="location.reload()">🔄 Refresh</button>
+  </div>
+
+  <div id="output"></div>
+
+  <script type="module">
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    };
+
+    let db = null;
+
+    async function initFirebase() {
+      try {
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+        const { getFirestore } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        
+        console.log('✅ Firebase initialized');
+        return true;
+      } catch (error) {
+        console.error('❌ Firebase init error:', error);
+        return false;
+      }
+    }
+
+    async function loadFromFirebase(collectionName) {
+      try {
+        const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const snapshot = await getDocs(collection(db, collectionName));
+        const data = [];
+        snapshot.forEach(doc => {
+          data.push({ id: doc.id, ...doc.data() });
+        });
+        
+        return data;
+      } catch (error) {
+        console.error(`Error loading ${collectionName}:`, error);
+        return [];
+      }
+    }
+
+    window.debugData = async function() {
+      const output = document.getElementById('output');
+      output.innerHTML = '<h2>🔄 Loading data...</h2>';
+
+      // Initialize Firebase
+      await initFirebase();
+
+      // Load from localStorage
+      const localProducts = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+      const localOrders = JSON.parse(localStorage.getItem('elevez_orders') || '[]');
+
+      // Load from Firebase
+      const firebaseProducts = await loadFromFirebase('products');
+      const firebaseOrders = await loadFromFirebase('orders');
+
+      let html = '';
+
+      // Products comparison
+      html += `<div class="section">
+        <h2>📦 Products</h2>
+        <div class="stat">localStorage: ${localProducts.length}</div>
+        <div class="stat">Firebase: ${firebaseProducts.length}</div>
+        
+        <h3>Sample Product (localStorage):</h3>
+        <pre>${JSON.stringify(localProducts[0], null, 2)}</pre>
+        
+        <h3>Sample Product (Firebase):</h3>
+        <pre>${JSON.stringify(firebaseProducts[0], null, 2)}</pre>
+      </div>`;
+
+      // Orders comparison
+      html += `<div class="section">
+        <h2>🛒 Orders</h2>
+        <div class="stat">localStorage: ${localOrders.length}</div>
+        <div class="stat">Firebase: ${firebaseOrders.length}</div>
+        
+        <h3>Sample Order (localStorage):</h3>
+        <pre>${JSON.stringify(localOrders[0], null, 2)}</pre>
+        
+        <h3>Sample Order (Firebase):</h3>
+        <pre>${JSON.stringify(firebaseOrders[0], null, 2)}</pre>
+      </div>`;
+
+      // Check for mismatches
+      html += `<div class="section">
+        <h2>⚠️ Potential Issues</h2>`;
+
+      // Check if products have costs
+      const productsWithCost = firebaseProducts.filter(p => p.productionCost || p.cost);
+      if (productsWithCost.length === 0) {
+        html += `<div class="stat error">❌ NO products have production costs set!</div>`;
+      } else {
+        html += `<div class="stat">✅ ${productsWithCost.length}/${firebaseProducts.length} products have costs</div>`;
+      }
+
+      // Check if orders have items
+      const ordersWithItems = firebaseOrders.filter(o => o.items && o.items.length > 0);
+      if (ordersWithItems.length === 0) {
+        html += `<div class="stat error">❌ NO orders have items!</div>`;
+      } else {
+        html += `<div class="stat">✅ ${ordersWithItems.length}/${firebaseOrders.length} orders have items</div>`;
+      }
+
+      // Check if order items have prices
+      let itemsWithPrice = 0;
+      let totalItems = 0;
+      firebaseOrders.forEach(order => {
+        (order.items || []).forEach(item => {
+          totalItems++;
+          if (item.price) itemsWithPrice++;
+        });
+      });
+      
+      if (itemsWithPrice === 0 && totalItems > 0) {
+        html += `<div class="stat error">❌ NO order items have prices!</div>`;
+      } else {
+        html += `<div class="stat">✅ ${itemsWithPrice}/${totalItems} items have prices</div>`;
+      }
+
+      html += `</div>`;
+
+      output.innerHTML = html;
+    };
+
+    window.testCalculation = async function() {
+      const output = document.getElementById('output');
+      output.innerHTML = '<h2>💰 Testing Calculation...</h2>';
+
+      await initFirebase();
+
+      const products = await loadFromFirebase('products');
+      const orders = await loadFromFirebase('orders');
+
+      let html = '<div class="section"><h2>💰 Revenue Calculation Test</h2>';
+
+      let totalRevenue = 0;
+      let totalCost = 0;
+
+      orders.forEach((order, idx) => {
+        html += `<h3>Order ${idx + 1}: ${order.id}</h3>`;
+        html += `<div>Status: ${order.status}</div>`;
+        html += `<div>Total Amount: $${order.totalAmount || order.total || 0}</div>`;
+        html += `<div>Items: ${(order.items || []).length}</div>`;
+
+        (order.items || []).forEach((item, itemIdx) => {
+          html += `<div style="margin-left: 20px; margin-top: 10px;">`;
+          html += `<strong>Item ${itemIdx + 1}: ${item.name}</strong><br>`;
+          
+          // Try to find product
+          const product = products.find(p => 
+            p.id === item.id || 
+            p.id === item.productId ||
+            p.name === item.name ||
+            p.qid === item.qid
+          );
+
+          if (product) {
+            const itemPrice = item.price || product.price || 0;
+            const itemCost = product.productionCost || product.cost || 0;
+            const quantity = item.quantity || item.orderedQuantity || 1;
+
+            const itemRevenue = itemPrice * quantity;
+            const itemTotalCost = itemCost * quantity;
+
+            totalRevenue += itemRevenue;
+            totalCost += itemTotalCost;
+
+            html += `✅ Product Found: ${product.name}<br>`;
+            html += `Price: $${itemPrice} × ${quantity} = $${itemRevenue.toFixed(2)}<br>`;
+            html += `Cost: $${itemCost} × ${quantity} = $${itemTotalCost.toFixed(2)}<br>`;
+            html += `Profit: $${(itemRevenue - itemTotalCost).toFixed(2)}`;
+          } else {
+            html += `<span class="error">❌ Product NOT FOUND</span><br>`;
+            html += `Tried: id=${item.id}, productId=${item.productId}, name=${item.name}, qid=${item.qid}<br>`;
+            
+            const itemPrice = item.price || 0;
+            const quantity = item.quantity || item.orderedQuantity || 1;
+            if (itemPrice > 0) {
+              totalRevenue += itemPrice * quantity;
+              html += `Using item price: $${itemPrice} × ${quantity} = $${(itemPrice * quantity).toFixed(2)}`;
+            }
+          }
+
+          html += `</div>`;
+        });
+      });
+
+      const totalProfit = totalRevenue - totalCost;
+      const profitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
+
+      html += `<div class="section">
+        <h2>📊 Final Totals</h2>
+        <div class="stat">Total Revenue: $${totalRevenue.toFixed(2)}</div>
+        <div class="stat">Total Cost: $${totalCost.toFixed(2)}</div>
+        <div class="stat">Total Profit: $${totalProfit.toFixed(2)}</div>
+        <div class="stat">Profit Margin: ${profitMargin}%</div>
+      </div>`;
+
+      html += `</div>`;
+
+      output.innerHTML = html;
+    };
+
+    // Auto-run on load
+    window.addEventListener('load', () => {
+      debugData();
+    });
+  </script>
+</body>
+</html>

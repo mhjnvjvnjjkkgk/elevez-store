@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Gift, Copy, Check } from 'lucide-react';
 import { generateDiscountCode } from '../services/discountService';
+import { db } from '../firebaseConfig';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 interface ExitIntentPopupProps {
   onClose?: () => void;
@@ -13,42 +15,11 @@ export const ExitIntentPopup: React.FC<ExitIntentPopupProps> = ({ onClose }) => 
   const [submitted, setSubmitted] = useState(false);
   const [discountCode, setDiscountCode] = useState<string>('');
   const [copied, setCopied] = useState(false);
-  const [popupPosition, setPopupPosition] = useState({ left: 0, top: 0 });
 
   useEffect(() => {
     const handleMouseLeave = (e: MouseEvent) => {
       // Only trigger if mouse is leaving from top of page
       if (e.clientY <= 0 && !isVisible && !submitted) {
-        // Calculate popup dimensions
-        const popupWidth = 448; // max-w-md = 28rem = 448px
-        const popupHeight = 500; // approximate height
-        const padding = 20; // minimum padding from edges
-        
-        // Calculate position to keep popup fully visible
-        let left = e.clientX - (popupWidth / 2); // Center on cursor X
-        let top = e.clientY + 80; // Below cursor
-        
-        // Ensure popup doesn't go off right edge
-        if (left + popupWidth > window.innerWidth - padding) {
-          left = window.innerWidth - popupWidth - padding;
-        }
-        
-        // Ensure popup doesn't go off left edge
-        if (left < padding) {
-          left = padding;
-        }
-        
-        // Ensure popup doesn't go off bottom edge
-        if (top + popupHeight > window.innerHeight - padding) {
-          top = window.innerHeight - popupHeight - padding;
-        }
-        
-        // Ensure popup doesn't go off top edge
-        if (top < padding) {
-          top = padding;
-        }
-        
-        setPopupPosition({ left, top });
         setIsVisible(true);
       }
     };
@@ -57,18 +28,38 @@ export const ExitIntentPopup: React.FC<ExitIntentPopupProps> = ({ onClose }) => 
     return () => document.removeEventListener('mouseleave', handleMouseLeave);
   }, [isVisible, submitted]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      // Generate a unique discount code for this user
-      const code = generateDiscountCode(15, 'exit-intent', 1);
-      setDiscountCode(code);
-      setSubmitted(true);
-      
-      // Auto-close after 4 seconds
-      setTimeout(() => {
-        handleClose();
-      }, 4000);
+      try {
+        // Generate a unique discount code for this user
+        const code = generateDiscountCode(15, 'exit-intent', 1);
+        
+        // Save email to Firebase users collection
+        await addDoc(collection(db, 'users'), {
+          email: email,
+          source: 'exit-intent',
+          discountCode: code,
+          totalPoints: 0,
+          tier: 'bronze',
+          createdAt: serverTimestamp(),
+          subscribed: true
+        });
+        
+        setDiscountCode(code);
+        setSubmitted(true);
+        
+        // Auto-close after 4 seconds
+        setTimeout(() => {
+          handleClose();
+        }, 4000);
+      } catch (error) {
+        console.error('Error saving email:', error);
+        // Still show success to user even if save fails
+        const code = generateDiscountCode(15, 'exit-intent', 1);
+        setDiscountCode(code);
+        setSubmitted(true);
+      }
     }
   };
 
@@ -104,11 +95,9 @@ export const ExitIntentPopup: React.FC<ExitIntentPopupProps> = ({ onClose }) => 
             initial={{ scale: 0.8, opacity: 0, y: -20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: -20 }}
-            className="fixed z-[9999] w-full max-w-md px-4"
+            className="fixed z-[9999] w-full max-w-md px-4 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
             style={{ 
-              pointerEvents: 'auto',
-              left: `${popupPosition.left}px`,
-              top: `${popupPosition.top}px`
+              pointerEvents: 'auto'
             }}
           >
             <div className="bg-gradient-to-br from-black to-zinc-900 border-2 border-[#00ff88]/50 rounded-3xl p-8 relative overflow-hidden shadow-2xl shadow-[#00ff88]/20">

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug User Orders</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #00ff88;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background: #00dd77;
+        }
+
+        button.secondary {
+            background: #333;
+            color: white;
+        }
+
+        button.secondary:hover {
+            background: #444;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .status.success {
+            background: #00ff8820;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .status.error {
+            background: #ff000020;
+            border: 1px solid #ff0000;
+            color: #ff6666;
+        }
+
+        .status.info {
+            background: #0088ff20;
+            border: 1px solid #0088ff;
+            color: #66bbff;
+        }
+
+        pre {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .order-card {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .order-number {
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .order-status {
+            background: #333;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .grid-item {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .grid-item label {
+            color: #888;
+            font-size: 0.85em;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .grid-item value {
+            color: white;
+            font-weight: 600;
+        }
+
+        code {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug User Orders</h1>
+        <p style="color: #888; margin-bottom: 20px;">Diagnose order visibility issues</p>
+
+        <div class="section">
+            <h2>1. Authentication Status</h2>
+            <button onclick="checkAuth()">Check Auth</button>
+            <button onclick="signInUser()" class="secondary">Sign In</button>
+            <button onclick="signOutUser()" class="secondary">Sign Out</button>
+            <div id="authStatus"></div>
+        </div>
+
+        <div class="section">
+            <h2>2. Query Orders from Firebase</h2>
+            <button onclick="queryOrders()">Query Orders</button>
+            <button onclick="queryAllOrders()" class="secondary">Query All Orders (Admin)</button>
+            <div id="queryStatus"></div>
+            <div id="queryResults"></div>
+        </div>
+
+        <div class="section">
+            <h2>3. Create Test Order</h2>
+            <button onclick="createTestOrder()">Create Test Order</button>
+            <div id="createStatus"></div>
+        </div>
+
+        <div class="section">
+            <h2>4. Firebase Console Check</h2>
+            <p style="color: #888; margin-bottom: 10px;">Check these in Firebase Console:</p>
+            <ul style="color: #888; margin-left: 20px; line-height: 1.8;">
+                <li>Go to Firebase Console → Firestore Database</li>
+                <li>Check if <code>orders</code> collection exists</li>
+                <li>Check if orders have correct <code>userId</code> field</li>
+                <li>Verify <code>createdAt</code> field exists and is a Timestamp</li>
+                <li>Check Firestore Rules allow reading orders</li>
+            </ul>
+            <button onclick="openFirebaseConsole()">Open Firebase Console</button>
+        </div>
+
+        <div class="section">
+            <h2>5. Debug Logs</h2>
+            <button onclick="clearLogs()">Clear Logs</button>
+            <pre id="debugLogs">Logs will appear here...</pre>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged 
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            query, 
+            where, 
+            orderBy,
+            Timestamp
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        // Firebase configuration - CORRECT PROJECT
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+            authDomain: "elevez-ed97f.firebaseapp.com",
+            projectId: "elevez-ed97f",
+            storageBucket: "elevez-ed97f.firebasestorage.app",
+            messagingSenderId: "440636781018",
+            appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let logs = [];
+
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push(`[${timestamp}] ${message}`);
+            document.getElementById('debugLogs').textContent = logs.join('\n');
+            console.log(message);
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                addLog(`✅ User signed in: ${user.email} (${user.uid})`);
+                showStatus('authStatus', `Signed in as: ${user.email}<br>User ID: <code>${user.uid}</code>`, 'success');
+            } else {
+                addLog('❌ No user signed in');
+                showStatus('authStatus', 'Not signed in', 'error');
+            }
+        });
+
+        window.checkAuth = function() {
+            if (currentUser) {
+                addLog(`Current user: ${currentUser.email} (${currentUser.uid})`);
+                showStatus('authStatus', `Signed in as: ${currentUser.email}<br>User ID: <code>${currentUser.uid}</code>`, 'success');
+            } else {
+                addLog('No user signed in');
+                showStatus('authStatus', 'Not signed in. Please sign in to test.', 'error');
+            }
+        };
+
+        window.signInUser = async function() {
+            const email = prompt('Enter email:', 'test@example.com');
+            const password = prompt('Enter password:', 'test123');
+            
+            if (!email || !password) return;
+
+            try {
+                addLog(`Attempting to sign in: ${email}`);
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                addLog(`✅ Signed in successfully: ${userCredential.user.email}`);
+            } catch (error) {
+                addLog(`❌ Sign in failed: ${error.message}`);
+                showStatus('authStatus', `Sign in failed: ${error.message}`, 'error');
+            }
+        };
+
+        window.signOutUser = async function() {
+            try {
+                await signOut(auth);
+                addLog('✅ Signed out successfully');
+            } catch (error) {
+                addLog(`❌ Sign out failed: ${error.message}`);
+            }
+        };
+
+        window.queryOrders = async function() {
+            if (!currentUser) {
+                showStatus('queryStatus', 'Please sign in first', 'error');
+                return;
+            }
+
+            try {
+                addLog(`📦 Querying orders for user: ${currentUser.uid}`);
+                showStatus('queryStatus', 'Querying orders...', 'info');
+
+                const ordersRef = collection(db, 'orders');
+                const q = query(
+                    ordersRef,
+                    where('userId', '==', currentUser.uid),
+                    orderBy('createdAt', 'desc')
+                );
+
+                addLog('Executing Firebase query...');
+                const snapshot = await getDocs(q);
+                
+                addLog(`📊 Query returned ${snapshot.size} documents`);
+
+                if (snapshot.empty) {
+                    showStatus('queryStatus', '⚠️ No orders found for this user', 'info');
+                    document.getElementById('queryResults').innerHTML = '<div class="status info">No orders found. Try creating a test order.</div>';
+                    return;
+                }
+
+                const orders = [];
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    addLog(`📄 Order: ${doc.id} - ${data.orderNumber}`);
+                    orders.push({
+                        id: doc.id,
+                        ...data
+                    });
+                });
+
+                showStatus('queryStatus', `✅ Found ${orders.length} orders`, 'success');
+                displayOrders(orders);
+
+            } catch (error) {
+                addLog(`❌ Query failed: ${error.message}`);
+                showStatus('queryStatus', `Query failed: ${error.message}`, 'error');
+                console.error('Query error:', error);
+            }
+        };
+
+        window.queryAllOrders = async function() {
+            try {
+                addLog('📦 Querying ALL orders (admin view)');
+                showStatus('queryStatus', 'Querying all orders...', 'info');
+
+                const ordersRef = collection(db, 'orders');
+                const snapshot = await getDocs(ordersRef);
+                
+                addLog(`📊 Total orders in database: ${snapshot.size}`);
+
+                if (snapshot.empty) {
+                    showStatus('queryStatus', '⚠️ No orders in database', 'info');
+                    return;
+                }
+
+                const orders = [];
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    addLog(`📄 Order: ${doc.id} - User: ${data.userId} - ${data.orderNumber}`);
+                    orders.push({
+                        id: doc.id,
+                        ...data
+                    });
+                });
+
+                showStatus('queryStatus', `✅ Found ${orders.length} total orders`, 'success');
+                displayOrders(orders);
+
+            } catch (error) {
+                addLog(`❌ Query failed: ${error.message}`);
+                showStatus('queryStatus', `Query failed: ${error.message}`, 'error');
+            }
+        };
+
+        window.createTestOrder = async function() {
+            if (!currentUser) {
+                showStatus('createStatus', 'Please sign in first', 'error');
+                return;
+            }
+
+            try {
+                addLog('🛒 Creating test order...');
+                showStatus('createStatus', 'Creating test order...', 'info');
+
+                const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+                
+                const testOrder = {
+                    userId: currentUser.uid,
+                    orderNumber: orderNumber,
+                    items: [
+                        {
+                            productId: 1,
+                            productName: 'Test Product',
+                            name: 'Test Product',
+                            quantity: 1,
+                            size: 'M',
+                            color: 'Blue',
+                            price: 999,
+                            image: 'https://via.placeholder.com/150'
+                        }
+                    ],
+                    subtotal: 999,
+                    tax: 179.82,
+                    shipping: 50,
+                    discount: 0,
+                    total: 1228.82,
+                    status: 'pending',
+                    paymentStatus: 'pending',
+                    shippingAddress: {
+                        firstName: 'Test',
+                        lastName: 'User',
+                        street: '123 Test St',
+                        city: 'Test City',
+                        state: 'Test State',
+                        zipCode: '12345',
+                        country: 'India',
+                        phone: '1234567890',
+                        email: currentUser.email
+                    },
+                    notes: 'Debug test order',
+                    createdAt: Timestamp.now(),
+                    updatedAt: Timestamp.now()
+                };
+
+                addLog(`Creating order: ${orderNumber}`);
+                const docRef = await addDoc(collection(db, 'orders'), testOrder);
+                
+                addLog(`✅ Order created: ${orderNumber} (ID: ${docRef.id})`);
+                showStatus('createStatus', `✅ Test order created: ${orderNumber}<br>Order ID: <code>${docRef.id}</code>`, 'success');
+
+                // Auto-query orders after creation
+                setTimeout(() => queryOrders(), 1000);
+
+            } catch (error) {
+                addLog(`❌ Failed to create order: ${error.message}`);
+                showStatus('createStatus', `Failed to create order: ${error.message}`, 'error');
+                console.error('Create order error:', error);
+            }
+        };
+
+        window.openFirebaseConsole = function() {
+            window.open('https://console.firebase.google.com/project/elevez-ed97f/firestore/data', '_blank');
+        };
+
+        window.clearLogs = function() {
+            logs = [];
+            document.getElementById('debugLogs').textContent = 'Logs cleared...';
+        };
+
+        function displayOrders(orders) {
+            let html = '';
+            orders.forEach(order => {
+                const createdDate = order.createdAt?.toDate ? order.createdAt.toDate() : new Date(order.createdAt);
+                
+                html += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-number">${order.orderNumber}</div>
+                            <div class="order-status">${order.status}</div>
+                        </div>
+                        <div class="grid">
+                            <div class="grid-item">
+                                <label>Order ID</label>
+                                <value><code>${order.id}</code></value>
+                            </div>
+                            <div class="grid-item">
+                                <label>User ID</label>
+                                <value><code>${order.userId}</code></value>
+                            </div>
+                            <div class="grid-item">
+                                <label>Total</label>
+                                <value>₹${order.total.toFixed(2)}</value>
+                            </div>
+                            <div class="grid-item">
+                                <label>Items</label>
+                                <value>${order.items?.length || 0}</value>
+                            </div>
+                            <div class="grid-item">
+                                <label>Status</label>
+                                <value>${order.status}</value>
+                            </div>
+                            <div class="grid-item">
+                                <label>Payment</label>
+                                <value>${order.paymentStatus}</value>
+                            </div>
+                            <div class="grid-item">
+                                <label>Created</label>
+                                <value>${createdDate.toLocaleString()}</value>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('queryResults').innerHTML = html;
+        }
+
+        function showStatus(elementId, message, type) {
+            document.getElementById(elementId).innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // Initial check
+        addLog('🚀 Debug tool initialized');
+        checkAuth();
+    </script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Firebase Indexes - Visual Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .step h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .index-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .index-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .field {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .field strong {
+            color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px 10px 10px 0;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .checklist {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .checklist h3 {
+            color: #0066cc;
+            margin-bottom: 15px;
+        }
+
+        .checklist label {
+            display: block;
+            padding: 8px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checklist label:hover {
+            background: rgba(0, 102, 204, 0.1);
+            border-radius: 5px;
+        }
+
+        .checklist input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+
+        .video-placeholder {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            color: #6c757d;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .quick-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .quick-link:hover {
+            transform: translateY(-5px);
+        }
+
+        .timer {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Create Firebase Indexes</h1>
+        <p class="subtitle">Follow these simple steps to enable orders and points!</p>
+
+        <div class="warning">
+            <strong>⚠️ Important:</strong> Your orders won't show until you create these indexes. It only takes 5 minutes!
+        </div>
+
+        <div class="timer">
+            ⏱️ <strong>Total Time:</strong> 5 minutes + 2-5 minutes wait
+        </div>
+
+        <!-- Quick Links -->
+        <div class="quick-links">
+            <a href="https://console.firebase.google.com/project/elevez-ed97f/firestore/indexes" target="_blank" class="quick-link">
+                🚀 Open Firebase Console
+            </a>
+            <a href="#step1" class="quick-link">
+                📋 View Instructions
+            </a>
+            <a href="#checklist" class="quick-link">
+                ✅ Checklist
+            </a>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="step" id="step1">
+            <h2>
+                <span class="step-number">1</span>
+                Open Firebase Console
+            </h2>
+            <p>Click the button below to open Firebase Console directly to the Indexes page:</p>
+            <button onclick="window.open('https://console.firebase.google.com/project/elevez-ed97f/firestore/indexes', '_blank')">
+                🚀 Open Firebase Indexes Page
+            </button>
+            <p style="margin-top: 10px; color: #666;">
+                Or manually: Firebase Console → elevez-ed97f → Firestore Database → Indexes tab
+            </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step">
+            <h2>
+                <span class="step-number">2</span>
+                Create Index #1 - Orders
+            </h2>
+            <div class="index-card">
+                <h3>📦 Orders Index</h3>
+                <p><strong>Purpose:</strong> Allows loading user orders in My Account page</p>
+                <div class="field"><strong>Collection ID:</strong> orders</div>
+                <div class="field"><strong>Field 1:</strong> userId → Ascending ⬆️</div>
+                <div class="field"><strong>Field 2:</strong> createdAt → Descending ⬇️</div>
+                <p style="margin-top: 10px;">
+                    1. Click "Create Index" button<br>
+                    2. Enter collection: <code>orders</code><br>
+                    3. Add field: <code>userId</code> (Ascending)<br>
+                    4. Add field: <code>createdAt</code> (Descending)<br>
+                    5. Click "Create"
+                </p>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step">
+            <h2>
+                <span class="step-number">3</span>
+                Create Index #2 - Discount Codes
+            </h2>
+            <div class="index-card">
+                <h3>🎟️ Discount Codes Index</h3>
+                <p><strong>Purpose:</strong> Allows loading user discount codes</p>
+                <div class="field"><strong>Collection ID:</strong> discountCodes</div>
+                <div class="field"><strong>Field 1:</strong> userId → Ascending ⬆️</div>
+                <div class="field"><strong>Field 2:</strong> createdAt → Descending ⬇️</div>
+                <p style="margin-top: 10px;">
+                    1. Click "Create Index" button again<br>
+                    2. Enter collection: <code>discountCodes</code><br>
+                    3. Add field: <code>userId</code> (Ascending)<br>
+                    4. Add field: <code>createdAt</code> (Descending)<br>
+                    5. Click "Create"
+                </p>
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step">
+            <h2>
+                <span class="step-number">4</span>
+                Create Index #3 - Points Transactions
+            </h2>
+            <div class="index-card">
+                <h3>⭐ Points Transactions Index</h3>
+                <p><strong>Purpose:</strong> Allows loading user points history</p>
+                <div class="field"><strong>Collection ID:</strong> pointsTransactions</div>
+                <div class="field"><strong>Field 1:</strong> userId → Ascending ⬆️</div>
+                <div class="field"><strong>Field 2:</strong> timestamp → Descending ⬇️</div>
+                <p style="margin-top: 10px;">
+                    1. Click "Create Index" button again<br>
+                    2. Enter collection: <code>pointsTransactions</code><br>
+                    3. Add field: <code>userId</code> (Ascending)<br>
+                    4. Add field: <code>timestamp</code> (Descending)<br>
+                    5. Click "Create"
+                </p>
+            </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step">
+            <h2>
+                <span class="step-number">5</span>
+                Wait for Indexes to Build
+            </h2>
+            <p>After creating all 3 indexes:</p>
+            <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                <li>Status will show "Building" (yellow/orange)</li>
+                <li>Wait 2-5 minutes (usually 2-3 minutes)</li>
+                <li>Status will change to "Enabled" (green)</li>
+                <li>All 3 indexes must show "Enabled"</li>
+            </ul>
+            <div class="warning" style="margin-top: 15px;">
+                <strong>⏳ Don't refresh your website yet!</strong> Wait until all indexes show "Enabled" status.
+            </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="step">
+            <h2>
+                <span class="step-number">6</span>
+                Test Your Orders
+            </h2>
+            <p>Once all indexes are "Enabled":</p>
+            <ol style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                <li>Refresh your website</li>
+                <li>Sign in to your account</li>
+                <li>Go to My Account → Orders</li>
+                <li>Orders should now appear! 🎉</li>
+            </ol>
+            <button onclick="window.open('debug-user-orders.html', '_blank')" style="margin-top: 15px;">
+                🔍 Open Debug Tool to Test
+            </button>
+        </div>
+
+        <!-- Checklist -->
+        <div class="checklist" id="checklist">
+            <h3>✅ Completion Checklist</h3>
+            <label>
+                <input type="checkbox" id="check1">
+                Opened Firebase Console
+            </label>
+            <label>
+                <input type="checkbox" id="check2">
+                Navigated to Firestore Database → Indexes
+            </label>
+            <label>
+                <input type="checkbox" id="check3">
+                Created orders index (userId + createdAt)
+            </label>
+            <label>
+                <input type="checkbox" id="check4">
+                Created discountCodes index (userId + createdAt)
+            </label>
+            <label>
+                <input type="checkbox" id="check5">
+                Created pointsTransactions index (userId + timestamp)
+            </label>
+            <label>
+                <input type="checkbox" id="check6">
+                Waited for all indexes to show "Enabled" status
+            </label>
+            <label>
+                <input type="checkbox" id="check7">
+                Refreshed website and tested orders
+            </label>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success">
+            <h3>🎉 Success!</h3>
+            <p>Once all checkboxes are checked, your system is fully functional:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>✅ Orders will load in My Account</li>
+                <li>✅ Points will sync automatically</li>
+                <li>✅ Discount codes will work</li>
+                <li>✅ No more index errors</li>
+            </ul>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="step">
+            <h2>🔧 Troubleshooting</h2>
+            <p><strong>Index stuck on "Building":</strong></p>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+                <li>This is normal, just wait</li>
+                <li>Can take up to 10 minutes for first index</li>
+                <li>Don't refresh the page</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong>Can't find "Create Index" button:</strong></p>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+                <li>Make sure you're in Firestore Database (not Realtime Database)</li>
+                <li>Click the "Indexes" tab at the top</li>
+                <li>You need to be project owner</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong>Still getting errors:</strong></p>
+            <ul style="margin-left: 20px; margin-top: 5px;">
+                <li>Check all 3 indexes are "Enabled"</li>
+                <li>Clear browser cache</li>
+                <li>Wait a few more minutes</li>
+                <li>Try signing out and back in</li>
+            </ul>
+        </div>
+
+        <!-- Quick Actions -->
+        <div style="text-align: center; margin-top: 40px; padding-top: 40px; border-top: 2px solid #e9ecef;">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Quick Actions</h2>
+            <button onclick="window.open('https://console.firebase.google.com/project/elevez-ed97f/firestore/indexes', '_blank')">
+                🚀 Open Firebase Console
+            </button>
+            <button onclick="window.open('debug-user-orders.html', '_blank')">
+                🔍 Test Orders
+            </button>
+            <button onclick="window.location.reload()">
+                🔄 Refresh This Page
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Auto-save checklist progress
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            // Load saved state
+            const saved = localStorage.getItem(checkbox.id);
+            if (saved === 'true') {
+                checkbox.checked = true;
+            }
+
+            // Save on change
+            checkbox.addEventListener('change', () => {
+                localStorage.setItem(checkbox.id, checkbox.checked);
+                
+                // Check if all done
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                if (allChecked) {
+                    alert('🎉 Congratulations! All steps completed!\n\nYour orders should now be working. Test them in My Account → Orders page.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

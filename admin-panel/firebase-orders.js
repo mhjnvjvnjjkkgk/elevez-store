@@ -262,6 +262,14 @@ window.refreshOrders = async () => {
   await syncOrdersFromFirebase();
 };
 
-// Export functions
+// Export functions and Firebase instance
 window.syncOrdersFromFirebase = syncOrdersFromFirebase;
 window.startAutoSync = startAutoSync;
+
+// Export Firebase manager for dashboard metrics
+window.firebaseOrdersManager = {
+  get db() { return db; },
+  get isFirebaseAvailable() { return isFirebaseAvailable; },
+  initFirebase: initFirebase,
+  syncOrdersFromFirebase: syncOrdersFromFirebase
+};
