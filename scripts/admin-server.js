@@ -305,6 +305,79 @@ const server = http.createServer((req, res) => {
     }
   }
 
+  // ===== API ENDPOINTS FOR SHARED DATA (Cross-origin localStorage fix) =====
+
+  // POST /api/save-shopify-data - Save products and collections to JSON files
+  if (req.method === 'POST' && req.url === '/api/save-shopify-data') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        const dataDir = path.join(__dirname, '..', 'public', 'data');
+
+        // Ensure data directory exists
+        if (!fs.existsSync(dataDir)) {
+          fs.mkdirSync(dataDir, { recursive: true });
+        }
+
+        // Save products
+        if (data.products && data.products.length > 0) {
+          const productsPath = path.join(dataDir, 'products.json');
+          fs.writeFileSync(productsPath, JSON.stringify(data.products, null, 2));
+          console.log('✅ Saved', data.products.length, 'products to', productsPath);
+        }
+
+        // Save collections
+        if (data.collections && data.collections.length > 0) {
+          const collectionsPath = path.join(dataDir, 'collections.json');
+          fs.writeFileSync(collectionsPath, JSON.stringify(data.collections, null, 2));
+          console.log('✅ Saved', data.collections.length, 'collections to', collectionsPath);
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          productsSaved: data.products?.length || 0,
+          collectionsSaved: data.collections?.length || 0
+        }));
+      } catch (error) {
+        console.error('❌ Error saving shopify data:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: error.message }));
+      }
+    });
+    return;
+  }
+
+  // GET /api/get-shopify-data - Retrieve products and collections from JSON files
+  if (req.method === 'GET' && req.url === '/api/get-shopify-data') {
+    try {
+      const dataDir = path.join(__dirname, '..', 'public', 'data');
+
+      let products = [];
+      let collections = [];
+
+      const productsPath = path.join(dataDir, 'products.json');
+      if (fs.existsSync(productsPath)) {
+        products = JSON.parse(fs.readFileSync(productsPath, 'utf8'));
+      }
+
+      const collectionsPath = path.join(dataDir, 'collections.json');
+      if (fs.existsSync(collectionsPath)) {
+        collections = JSON.parse(fs.readFileSync(collectionsPath, 'utf8'));
+      }
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ products, collections }));
+    } catch (error) {
+      console.error('❌ Error getting shopify data:', error);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: error.message }));
+    }
+    return;
+  }
+
   if (req.method === 'POST' && req.url === '/upload-image') {
     let body = [];
 

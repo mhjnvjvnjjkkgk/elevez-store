@@ -214,22 +214,26 @@
       "id": "2S4PVagw7A2ab4iQLhQA",
       "orderId": "ORD-1765144878816",
       "state": "West Bengal",
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
-      "totalAmount": 85,
-      "address": "sdasdada",
-      "paymentMethod": "upi",
-      "city": "koltakata",
-      "status": "pending",
-      "pincode": "700055",
-      "phone": "80001812381",
       "shippingCost": 0,
+      "fullName": "Shayak Das",
+      "paymentMethod": "upi",
+      "totalAmount": 85,
+      "status": "pending",
+      "subtotal": 85,
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "address": "sdasdada",
+      "city": "koltakata",
+      "createdAt": {
+        "seconds": 1765144878,
+        "nanoseconds": 816000000
+      },
       "items": [
         {
-          "size": "M",
-          "name": "Neon Glitch Hoodie",
-          "price": 85,
-          "id": 1,
           "color": "Black",
+          "name": "Neon Glitch Hoodie",
+          "id": 1,
+          "size": "M",
+          "price": 85,
           "quantity": 1,
           "qid": "NGH-001",
           "originalPrice": 170,
@@ -241,56 +245,34 @@
           "orderedColor": "Black"
         }
       ],
-      "createdAt": {
-        "seconds": 1765144878,
-        "nanoseconds": 816000000
-      },
-      "fullName": "Shayak Das",
-      "subtotal": 85,
       "orderDate": {
         "seconds": 1765144878,
         "nanoseconds": 816000000
       },
+      "phone": "80001812381",
+      "pincode": "700055",
       "email": "shayakdas6.5.0@gmail.com",
       "source": "firebase",
       "pointsEarned": 8,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2025-12-17T13:02:48.873Z"
+      "profitCalculatedAt": "2025-12-17T15:36:32.356Z"
     },
     {
       "id": "SuTQGC4vIytM2WrHUXzg",
       "orderId": "ORD-1764264646243",
-      "email": "shayakdas6.5.0@gmail.com",
       "shippingCost": 0,
-      "totalAmount": 45,
-      "status": "pending",
-      "createdAt": {
-        "seconds": 1764264646,
-        "nanoseconds": 243000000
-      },
-      "fullName": "Shayak Das",
       "city": "koltakata",
-      "address": "sdasdada",
-      "orderDate": {
-        "seconds": 1764264646,
-        "nanoseconds": 243000000
-      },
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
-      "pincode": "700055",
-      "phone": "80001812381",
       "paymentMethod": "upi",
-      "subtotal": 45,
-      "state": "West Bengal",
       "items": [
         {
-          "size": "M",
+          "price": 45,
           "id": 2,
+          "color": "Pink",
           "quantity": 1,
           "name": "Vintage Crop Top",
-          "price": 45,
-          "color": "Pink",
+          "size": "M",
           "qid": "VCT-002",
           "images": [
             "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
@@ -323,42 +305,66 @@
           "orderedColor": "Pink"
         }
       ],
+      "createdAt": {
+        "seconds": 1764264646,
+        "nanoseconds": 243000000
+      },
+      "pincode": "700055",
+      "phone": "80001812381",
+      "email": "shayakdas6.5.0@gmail.com",
+      "orderDate": {
+        "seconds": 1764264646,
+        "nanoseconds": 243000000
+      },
+      "status": "pending",
+      "totalAmount": 45,
+      "subtotal": 45,
+      "state": "West Bengal",
+      "address": "sdasdada",
+      "fullName": "Shayak Das",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
       "source": "firebase",
       "pointsEarned": 4,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2025-12-17T13:02:48.873Z"
+      "profitCalculatedAt": "2025-12-17T15:36:32.356Z"
     },
     {
       "id": "FqpUj0HsXXWIFSy1GH6m",
       "orderId": "ORD-1764031459429",
-      "shippingCost": 0,
-      "shippedAt": "2025-11-25T15:53:02.252Z",
-      "status": "shipped",
-      "createdAt": {
-        "seconds": 1764031459,
-        "nanoseconds": 429000000
-      },
       "orderDate": {
         "seconds": 1764031459,
         "nanoseconds": 429000000
       },
-      "lastUpdated": "2025-11-25T15:53:02.252Z",
+      "paymentMethod": "upi",
       "subtotal": 85,
       "pincode": "700055",
-      "phone": "80001812381",
-      "address": "sdasdada",
       "totalAmount": 85,
       "state": "West Bengal",
+      "city": "koltakata",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "trackingLink": "https://tracking.com/12345",
+      "fullName": "Shayak Das",
+      "createdAt": {
+        "seconds": 1764031459,
+        "nanoseconds": 429000000
+      },
+      "status": "shipped",
+      "address": "sdasdada",
+      "email": "shayakdas6.5.0@gmail.com",
+      "shippingCost": 0,
+      "shippedAt": "2025-11-25T15:53:02.252Z",
+      "phone": "80001812381",
+      "lastUpdated": "2025-11-25T15:53:02.252Z",
       "items": [
         {
-          "quantity": 1,
-          "color": "Black",
-          "price": 85,
           "id": 1,
-          "size": "M",
           "name": "Neon Glitch Hoodie",
+          "quantity": 1,
+          "size": "M",
+          "price": 85,
+          "color": "Black",
           "qid": "NGH-001",
           "originalPrice": 170,
           "category": "Men",
@@ -369,44 +375,30 @@
           "orderedColor": "Black"
         }
       ],
-      "city": "koltakata",
-      "paymentMethod": "upi",
-      "email": "shayakdas6.5.0@gmail.com",
-      "trackingLink": "https://tracking.com/12345",
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
-      "fullName": "Shayak Das",
       "source": "firebase",
       "pointsEarned": 8,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2025-12-17T13:02:48.873Z"
+      "profitCalculatedAt": "2025-12-17T15:36:32.356Z"
     },
     {
       "id": "mAsVn48LIsf1XLgRVy9r",
       "orderId": "ORD-1763911399446",
+      "totalAmount": 115,
+      "email": "lolislolpp@gmail.com",
+      "subtotal": 85,
       "paymentMethod": "cod",
       "fullName": "Mr Oak GAMING",
-      "createdAt": {
-        "seconds": 1763911399,
-        "nanoseconds": 446000000
-      },
-      "email": "lolislolpp@gmail.com",
-      "pincode": "700055",
-      "totalAmount": 115,
-      "state": "West Bengal",
       "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
-      "shippingCost": 30,
-      "city": "koltakata",
-      "subtotal": 85,
       "items": [
         {
-          "price": 85,
-          "quantity": 1,
-          "name": "Neon Glitch Hoodie",
-          "color": "Black",
           "size": "M",
+          "quantity": 1,
+          "color": "Black",
           "id": 1,
+          "name": "Neon Glitch Hoodie",
+          "price": 85,
           "qid": "NGH-001",
           "originalPrice": 170,
           "category": "Men",
@@ -418,42 +410,57 @@
         }
       ],
       "status": "pending",
+      "pincode": "700055",
+      "state": "West Bengal",
+      "shippingCost": 30,
+      "phone": "80001812381",
       "orderDate": {
         "seconds": 1763911399,
         "nanoseconds": 446000000
       },
+      "city": "koltakata",
+      "createdAt": {
+        "seconds": 1763911399,
+        "nanoseconds": 446000000
+      },
       "address": "sdasdada",
-      "phone": "80001812381",
       "source": "firebase",
       "pointsEarned": 11,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2025-12-17T13:02:48.873Z"
+      "profitCalculatedAt": "2025-12-17T15:36:32.356Z"
     },
     {
       "id": "9uhZ0XRhlS8Z4j6X4Rke",
       "orderId": "ORD-1763906412534",
-      "shippingCost": 0,
-      "status": "pending",
-      "phone": "80001812381",
-      "pincode": "700055",
       "subtotal": 45,
+      "city": "koltakata",
+      "email": "lolislolpp@gmail.com",
+      "orderDate": {
+        "seconds": 1763906412,
+        "nanoseconds": 534000000
+      },
+      "phone": "80001812381",
+      "totalAmount": 45,
       "createdAt": {
         "seconds": 1763906412,
         "nanoseconds": 534000000
       },
-      "state": "West Bengal",
+      "shippingCost": 0,
       "address": "sdasdada",
-      "fullName": "Mr Oak GAMING",
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "pincode": "700055",
+      "state": "West Bengal",
+      "paymentMethod": "upi",
       "items": [
         {
           "price": 45,
+          "color": "Pink",
+          "id": 2,
           "quantity": 1,
           "name": "Vintage Crop Top",
           "size": "M",
-          "id": 2,
-          "color": "Pink",
           "qid": "VCT-002",
           "images": [
             "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
@@ -486,21 +493,14 @@
           "orderedColor": "Pink"
         }
       ],
-      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
-      "orderDate": {
-        "seconds": 1763906412,
-        "nanoseconds": 534000000
-      },
-      "city": "koltakata",
-      "totalAmount": 45,
-      "paymentMethod": "upi",
-      "email": "lolislolpp@gmail.com",
+      "fullName": "Mr Oak GAMING",
+      "status": "pending",
       "source": "firebase",
       "pointsEarned": 4,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2025-12-17T13:02:48.873Z"
+      "profitCalculatedAt": "2025-12-17T15:36:32.357Z"
     },
     {
       "id": "2S4PVagw7A2ab4iQLhQA",

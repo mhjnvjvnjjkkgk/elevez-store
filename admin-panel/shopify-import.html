@@ -509,6 +509,95 @@
             }
         `;
 
+        // GraphQL query for collections
+        const COLLECTIONS_QUERY = `
+            query GetAllCollections($first: Int!) {
+                collections(first: $first) {
+                    edges {
+                        node {
+                            id
+                            handle
+                            title
+                            description
+                            image { url altText }
+                            products(first: 100) {
+                                edges {
+                                    node {
+                                        id
+                                        handle
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        // Global variables for collections
+        let importedCollections = [];
+        window.importedCollections = [];
+
+        // Fetch collections from Shopify
+        async function fetchShopifyCollections() {
+            const response = await fetch(STOREFRONT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN,
+                },
+                body: JSON.stringify({
+                    query: COLLECTIONS_QUERY,
+                    variables: { first: 50 }
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Shopify API error: ${response.status}`);
+            }
+
+            const json = await response.json();
+            if (json.errors) {
+                throw new Error(json.errors[0]?.message || 'GraphQL error');
+            }
+
+            return json.data.collections.edges.map(edge => edge.node);
+        }
+
+        // Parse collection to local format
+        function parseCollection(node, index) {
+            const productHandles = node.products.edges.map(e => e.node.handle);
+
+            // Detect if this is a special collection for section mapping
+            const handleLower = node.handle.toLowerCase();
+            const titleLower = node.title.toLowerCase();
+
+            let sectionMapping = null;
+            if (handleLower.includes('best-seller') || titleLower.includes('best seller')) {
+                sectionMapping = 'bestSellers';
+            } else if (handleLower.includes('new') || titleLower.includes('new arrival')) {
+                sectionMapping = 'newArrivals';
+            } else if (handleLower.includes('featured')) {
+                sectionMapping = 'featured';
+            }
+
+            return {
+                id: `shopify-${node.handle}`,
+                shopifyId: node.id,
+                handle: node.handle,
+                name: node.title,
+                description: node.description || '',
+                image: node.image?.url || '',
+                productHandles: productHandles,
+                productCount: productHandles.length,
+                sectionMapping: sectionMapping,
+                order: index,
+                isSystem: false,
+                source: 'shopify',
+                importedAt: new Date().toISOString()
+            };
+        }
+
         // Fetch from Shopify
         async function fetchShopifyProducts() {
             const response = await fetch(STOREFRONT_URL, {
@@ -610,14 +699,51 @@
                 updateStatus('🔄', 'Connecting to Shopify...', true, 10);
                 console.log('🔄 Starting Shopify import...');
 
+                // Fetch products
                 const shopifyProducts = await fetchShopifyProducts();
                 console.log('✅ Fetched products:', shopifyProducts.length);
                 console.log('📦 Product titles:', shopifyProducts.map(p => p.title));
 
-                updateStatus('📦', `Found ${shopifyProducts.length} products, processing...`, true, 40);
+                updateStatus('📦', `Found ${shopifyProducts.length} products, fetching collections...`, true, 30);
 
+                // Fetch collections
+                let shopifyCollections = [];
+                try {
+                    shopifyCollections = await fetchShopifyCollections();
+                    console.log('✅ Fetched collections:', shopifyCollections.length);
+                    console.log('📂 Collection titles:', shopifyCollections.map(c => c.title));
+                } catch (collectionError) {
+                    console.warn('⚠️ Could not fetch collections:', collectionError.message);
+                }
+
+                updateStatus('⚙️', `Processing ${shopifyProducts.length} products and ${shopifyCollections.length} collections...`, true, 50);
+
+                // Parse products
                 importedProducts = shopifyProducts.map((p, i) => parseProduct(p, i));
                 console.log('✅ Parsed products:', importedProducts.length);
+
+                // Parse collections and map to products
+                importedCollections = shopifyCollections.map((c, i) => parseCollection(c, i));
+                window.importedCollections = importedCollections;
+                console.log('✅ Parsed collections:', importedCollections.length);
+
+                // Map collection section flags to products
+                importedCollections.forEach(collection => {
+                    if (collection.sectionMapping) {
+                        collection.productHandles.forEach(handle => {
+                            const product = importedProducts.find(p => p.handle === handle);
+                            if (product) {
+                                if (collection.sectionMapping === 'bestSellers') {
+                                    product.isBestSeller = true;
+                                } else if (collection.sectionMapping === 'newArrivals') {
+                                    product.isNew = true;
+                                } else if (collection.sectionMapping === 'featured') {
+                                    product.isFeatured = true;
+                                }
+                            }
+                        });
+                    }
+                });
 
                 updateStatus('💾', 'Saving to Firebase...', true, 70);
 
@@ -625,7 +751,7 @@
                 renderProducts();
                 updateStats();
                 console.log('🎉 Products rendered!');
-                updateStatus('✅', `Successfully imported ${importedProducts.length} products from Shopify!`, true, 100);
+                updateStatus('✅', `Successfully imported ${importedProducts.length} products and ${importedCollections.length} collections!`, true, 100);
 
                 // Try to save to Firebase in background (optional)
                 try {
@@ -833,6 +959,7 @@
         // =========================================
         window.syncToWebsite = async function () {
             console.log('🚀 syncToWebsite called! importedProducts:', importedProducts.length);
+            console.log('📂 syncToWebsite importedCollections:', importedCollections?.length || 0, importedCollections);
 
             if (importedProducts.length === 0) {
                 alert('❌ No products to sync! Import from Shopify first.\n\nClick "Import from Shopify" button first, wait for products to load, then click "Sync to Website".');
@@ -905,9 +1032,10 @@
                         variants: product.variants || [],
                         inStock: product.inStock !== false,
                         stock: 100, // Default stock
-                        isBestSeller: false,
-                        isNew: true,
-                        isFeatured: false,
+                        // Preserve section mapping flags from import
+                        isBestSeller: product.isBestSeller || false,
+                        isNew: product.isNew || true,
+                        isFeatured: product.isFeatured || false,
                         source: 'shopify',
                         importedAt: new Date().toISOString(),
                         lastSyncedAt: new Date().toISOString()
@@ -919,25 +1047,92 @@
                 // Filter out duplicates (products already synced)
                 const productsToAdd = newProducts.filter(p => !existingIds.has(p.shopifyHandle));
 
-                if (productsToAdd.length === 0) {
-                    updateStatus('⚠️', 'All products already synced! No new products to add.', false);
+                // Get all products (existing + new)
+                const allProducts = productsToAdd.length > 0
+                    ? [...existingProducts, ...productsToAdd]
+                    : existingProducts;
+
+                // Always save products (even if no new ones, to update existing data)
+                if (productsToAdd.length > 0) {
+                    localStorage.setItem('elevez_products', JSON.stringify(allProducts));
+                    localStorage.setItem('elevez_last_save', new Date().toISOString());
+                    console.log('✅ Saved', productsToAdd.length, 'new products');
+                }
+
+                // ALWAYS save collections (even if no new products)
+                // Use window.importedCollections which is set during import
+                const collectionsToSave = window.importedCollections || importedCollections || [];
+                console.log('📂 Collections to save:', collectionsToSave.length);
+
+                if (collectionsToSave && collectionsToSave.length > 0) {
+                    const existingCollections = JSON.parse(localStorage.getItem('elevez_collections') || '[]');
+                    const existingCollectionIds = new Set(existingCollections.map(c => c.handle));
+
+                    // Filter new collections and merge
+                    const newCollections = collectionsToSave.filter(c => !existingCollectionIds.has(c.handle));
+                    const allCollections = [...existingCollections, ...newCollections];
+
+                    // Add "All Products" collection if not exists
+                    if (!allCollections.find(c => c.handle === 'all')) {
+                        allCollections.unshift({
+                            id: 'all',
+                            handle: 'all',
+                            name: 'All Products',
+                            description: 'Browse all products',
+                            image: '',
+                            productHandles: allProducts.map(p => p.shopifyHandle || p.handle),
+                            productCount: allProducts.length,
+                            sectionMapping: null,
+                            order: -1,
+                            isSystem: true,
+                            source: 'local',
+                            importedAt: new Date().toISOString()
+                        });
+                    } else {
+                        // Update the All Products collection with new product handles
+                        const allColl = allCollections.find(c => c.handle === 'all');
+                        if (allColl) {
+                            allColl.productHandles = allProducts.map(p => p.shopifyHandle || p.handle);
+                            allColl.productCount = allProducts.length;
+                        }
+                    }
+
+                    localStorage.setItem('elevez_collections', JSON.stringify(allCollections));
+                    console.log('✅ Saved', allCollections.length, 'collections to localStorage');
+                }
+
+                // Also save to server for cross-origin access (different ports have separate localStorage)
+                try {
+                    const collectionsToSaveToServer = collectionsToSave || [];
+                    const response = await fetch('/api/save-shopify-data', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            products: allProducts,
+                            collections: collectionsToSaveToServer
+                        })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        console.log('✅ Saved to server:', result.productsSaved, 'products,', result.collectionsSaved, 'collections');
+                    }
+                } catch (serverError) {
+                    console.warn('⚠️ Could not save to server (will work via localStorage):', serverError.message);
+                }
+
+                // Report results
+                if (productsToAdd.length === 0 && (!collectionsToSave || collectionsToSave.length === 0)) {
+                    updateStatus('⚠️', 'All products already synced! No new data to add.', false);
                     return;
                 }
 
-                // Merge with existing products
-                const allProducts = [...existingProducts, ...productsToAdd];
-
-                // Save to localStorage
-                localStorage.setItem('elevez_products', JSON.stringify(allProducts));
-                localStorage.setItem('elevez_last_save', new Date().toISOString());
-
-                updateStatus('✅', `Successfully synced ${productsToAdd.length} products to website!`, true, 100);
+                updateStatus('✅', `Synced ${productsToAdd.length} products and ${collectionsToSave?.length || 0} collections!`, true, 100);
                 console.log('✅ Products saved to localStorage:', productsToAdd.length);
                 console.log('📦 Total products in database:', allProducts.length);
 
                 // Auto-redirect to Product Manager after 2 seconds
                 setTimeout(() => {
-                    alert(`✅ ${productsToAdd.length} Shopify products synced!\n\nTotal: ${allProducts.length} products\n\nRedirecting to Product Manager...`);
+                    alert(`✅ Shopify Sync Complete!\n\n📦 ${productsToAdd.length} new products synced\n📂 ${collectionsToSave?.length || 0} collections imported\n\nTotal: ${allProducts.length} products\n\nRedirecting to Product Manager...`);
                     window.location.href = 'index.html?refresh=' + Date.now();
                 }, 1500);
 

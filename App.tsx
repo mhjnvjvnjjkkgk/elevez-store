@@ -11,6 +11,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 import { PRODUCTS, BRAND_NAME } from './constants';
+import { localCollectionService } from './services/localCollectionService';
 import { Product, ProductType, CartItem, CursorVariant } from './types';
 import { auth } from './firebaseConfig';
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
@@ -854,11 +855,22 @@ const ScrollAnimatedSection: React.FC<{
 const BestSellers = () => {
   const navigate = useNavigate();
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [bestSellers, setBestSellers] = useState<any[]>([]);
 
-  // Get top 4 best-selling products
-  const bestSellers = PRODUCTS
-    .filter(p => p.isBestSeller || p.isFeatured)
-    .slice(0, 4);
+  useEffect(() => {
+    // Try to get best sellers from localStorage first
+    const localProducts = localCollectionService.getProductsBySection('bestSellers');
+
+    if (localProducts.length > 0) {
+      setBestSellers(localProducts.slice(0, 4));
+    } else {
+      // Fallback to constants
+      const fromConstants = PRODUCTS
+        .filter(p => p.isBestSeller || p.isFeatured)
+        .slice(0, 4);
+      setBestSellers(fromConstants);
+    }
+  }, []);
 
   return (
     <ScrollAnimatedSection>
@@ -2067,9 +2079,38 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const searchParams = new URLSearchParams(location.search);
   const tagFilter = searchParams.get('tag');
   const typeFilter = searchParams.get('type');
+  const collectionParam = searchParams.get('collection');
 
   const [filter, setFilter] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCollection, setSelectedCollection] = useState<string>('all');
+  const [products, setProducts] = useState<any[]>([]);
+  const [collections, setCollections] = useState<any[]>([]);
+
+  // Load products and collections from localStorage
+  useEffect(() => {
+    // Load products from localStorage first, fallback to constants
+    const storedProducts = localStorage.getItem('elevez_products');
+    if (storedProducts) {
+      try {
+        const parsed = JSON.parse(storedProducts);
+        setProducts(parsed.length > 0 ? parsed : PRODUCTS);
+      } catch (e) {
+        setProducts(PRODUCTS);
+      }
+    } else {
+      setProducts(PRODUCTS);
+    }
+
+    // Load collections from localStorage
+    const storedCollections = localCollectionService.getAllCollections();
+    setCollections(storedCollections);
+
+    // Handle collection URL param
+    if (collectionParam) {
+      setSelectedCollection(collectionParam);
+    }
+  }, [collectionParam]);
 
   useEffect(() => {
     if (typeFilter) setFilter(typeFilter);
@@ -2077,15 +2118,27 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     else setFilter('All');
   }, [tagFilter, typeFilter]);
 
-  const filteredProducts = PRODUCTS.filter(p => {
+  const filteredProducts = products.filter(p => {
     // Only show products that are enabled for shop (default to true if not set)
     if (p.showInShop === false) return false;
 
+    // Collection filter
+    if (selectedCollection !== 'all') {
+      const collection = collections.find(c => c.handle === selectedCollection);
+      if (collection) {
+        const productHandle = p.shopifyHandle || p.handle;
+        if (!collection.productHandles?.includes(productHandle) &&
+          !p.collections?.includes(collection.name)) {
+          return false;
+        }
+      }
+    }
+
     // Show ALL products in "all" category
-    const matchesCategory = category === 'all' || !category ? true : p.category.toLowerCase() === category || p.category === 'Unisex';
+    const matchesCategory = category === 'all' || !category ? true : p.category?.toLowerCase() === category || p.category === 'Unisex';
     let matchesFilter = true;
     if (filter === 'All') matchesFilter = true;
-    else if (['Hoodie', 'T-Shirt', 'Crop Top', 'Oversized'].includes(filter)) matchesFilter = p.type.includes(filter);
+    else if (['Hoodie', 'T-Shirt', 'Crop Top', 'Oversized'].includes(filter)) matchesFilter = p.type?.includes(filter);
     else if (['Men', 'Women', 'Unisex'].includes(filter)) matchesFilter = p.category === filter;
     else if (filter === 'OLD') matchesFilter = p.tags?.includes('VINTAGE');
     else if (filter === 'BOLD') matchesFilter = p.tags?.includes('COLORFUL');
@@ -2094,11 +2147,11 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     else if (filter === 'Under') matchesFilter = p.price < 50;
     else if (filter === '₹100+') matchesFilter = p.price >= 100;
 
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesSearch = p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.tags?.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
     return matchesCategory && matchesFilter && matchesSearch;
-  }).slice(0, 3);
+  });
 
   return (
     <div className="min-h-screen pt-32 pb-20 px-6">
@@ -2184,8 +2237,33 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                 ))}
               </FilterSection>
 
-              <FilterSection title="Collections">
-                {['ESSENTIAL', 'PREMIUM', 'OLD', 'BOLD'].map(c => (
+              <FilterSection title="Collections" defaultOpen={true}>
+                {/* All Products option */}
+                <button
+                  onClick={() => setSelectedCollection('all')}
+                  onMouseEnter={() => setCursorVariant('hover')}
+                  onMouseLeave={() => setCursorVariant('default')}
+                  className={`block w-full text-left text-sm py-1 hover:text-[#00ff88] transition-colors ${selectedCollection === 'all' ? 'text-[#00ff88] font-bold' : 'text-gray-400'}`}
+                >
+                  All Products ({products.length})
+                </button>
+
+                {/* Dynamic collections from localStorage */}
+                {collections.filter(c => c.handle !== 'all').map(collection => (
+                  <button
+                    key={collection.handle}
+                    onClick={() => setSelectedCollection(collection.handle)}
+                    onMouseEnter={() => setCursorVariant('hover')}
+                    onMouseLeave={() => setCursorVariant('default')}
+                    className={`block w-full text-left text-sm py-1 hover:text-[#00ff88] transition-colors flex justify-between items-center ${selectedCollection === collection.handle ? 'text-[#00ff88] font-bold' : 'text-gray-400'}`}
+                  >
+                    <span>{collection.name}</span>
+                    <span className="text-xs opacity-70">({collection.productCount || 0})</span>
+                  </button>
+                ))}
+
+                {/* Fallback static collections if no Shopify collections */}
+                {collections.length <= 1 && ['ESSENTIAL', 'PREMIUM'].map(c => (
                   <button
                     key={c}
                     onClick={() => setFilter(c)}
@@ -2193,7 +2271,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                     onMouseLeave={() => setCursorVariant('default')}
                     className={`block w-full text-left text-sm py-1 hover:text-[#00ff88] transition-colors ${filter === c ? 'text-[#00ff88] font-bold' : 'text-gray-400'}`}
                   >
-                    {c === 'OLD' ? 'Old Money' : c === 'BOLD' ? 'Bold & Vibrant' : c.charAt(0) + c.slice(1).toLowerCase()}
+                    {c.charAt(0) + c.slice(1).toLowerCase()}
                   </button>
                 ))}
               </FilterSection>
@@ -2240,22 +2318,45 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
 const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const { id } = useParams();
-  const product = PRODUCTS.find(p => p.id === Number(id));
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState('');
+  const [product, setProduct] = useState<any>(null);
   const { scrollY } = useScroll();
   const imageY = useTransform(scrollY, [0, 500], [0, 100]);
 
+  // Find product from localStorage first, then constants
   useEffect(() => {
-    if (product) {
-      setActiveImage(product.image);
-      if (product.colors?.[0]) setSelectedColor(product.colors[0]);
+    // Try localStorage first
+    const storedProducts = localStorage.getItem('elevez_products');
+    if (storedProducts) {
+      try {
+        const parsed = JSON.parse(storedProducts);
+        const found = parsed.find((p: any) =>
+          p.id === Number(id) || p.shopifyId === id || p.handle === id
+        );
+        if (found) {
+          setProduct(found);
+          setActiveImage(found.image);
+          if (found.colors?.[0]) setSelectedColor(found.colors[0]);
+          return;
+        }
+      } catch (e) {
+        console.error('Error parsing localStorage products:', e);
+      }
     }
-  }, [product]);
+
+    // Fallback to constants
+    const constantsProduct = PRODUCTS.find(p => p.id === Number(id));
+    if (constantsProduct) {
+      setProduct(constantsProduct);
+      setActiveImage(constantsProduct.image);
+      if (constantsProduct.colors?.[0]) setSelectedColor(constantsProduct.colors[0]);
+    }
+  }, [id]);
 
   if (!product) return <div className="min-h-screen flex items-center justify-center">Product Not Found</div>;
 
@@ -2386,9 +2487,17 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               <div className="font-mono font-bold text-white">02d 23h 59m 54s</div>
             </div>
 
-            <p className="text-gray-300 leading-relaxed mb-8">
-              Premium 180gsm cotton with personality-driven design. Engineered for durability and style in the urban environment.
-            </p>
+            {/* Product Description - Supports HTML from Shopify */}
+            {product.descriptionHtml ? (
+              <div
+                className="text-gray-300 leading-relaxed mb-8 prose prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+              />
+            ) : (
+              <p className="text-gray-300 leading-relaxed mb-8">
+                {product.description || 'Premium quality streetwear with personality-driven design. Engineered for durability and style in the urban environment.'}
+              </p>
+            )}
 
             {/* Color Selector */}
             {product.colors && (
