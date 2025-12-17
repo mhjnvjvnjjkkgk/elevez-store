@@ -34,7 +34,7 @@ class LocalCollectionService {
             if (stored) {
                 const collections = JSON.parse(stored) as LocalCollection[];
                 if (collections.length > 1) {
-                    return collections.sort((a, b) => a.order - b.order);
+                    return collections;
                 }
             }
 
@@ -113,7 +113,9 @@ class LocalCollectionService {
 
             // Filter products by handles in collection
             return products.filter((p: any) =>
-                collection.productHandles.includes(p.shopifyHandle || p.handle)
+                collection.productHandles.includes(p.shopifyHandle) ||
+                collection.productHandles.includes(p.handle) ||
+                collection.productHandles.includes(String(p.id))
             );
         } catch (error) {
             console.error('Error getting collection products:', error);

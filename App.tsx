@@ -2127,8 +2127,15 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       const collection = collections.find(c => c.handle === selectedCollection);
       if (collection) {
         const productHandle = p.shopifyHandle || p.handle;
-        if (!collection.productHandles?.includes(productHandle) &&
-          !p.collections?.includes(collection.name)) {
+        const productId = String(p.id);
+
+        const inCollection =
+          collection.productHandles?.includes(productHandle) ||
+          collection.productHandles?.includes(p.handle) ||
+          collection.productHandles?.includes(productId) ||
+          p.collections?.includes(collection.name); // Legacy fallback
+
+        if (!inCollection) {
           return false;
         }
       }
