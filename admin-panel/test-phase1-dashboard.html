@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 1 Dashboard Test</title>
+  <link rel="stylesheet" href="dashboard-metrics.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #0a0a0a;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    .test-header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      padding: 30px;
+      border-radius: 16px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(0,255,136,0.2);
+    }
+    .test-header h1 {
+      margin: 0 0 10px 0;
+      color: #00ff88;
+    }
+    .test-header p {
+      margin: 0;
+      color: rgba(255,255,255,0.7);
+    }
+    .test-controls {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    .test-btn {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .test-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,255,136,0.3);
+    }
+    .test-btn.secondary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+    }
+    .test-status {
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .status-item:last-child {
+      border-bottom: none;
+    }
+    .status-label {
+      color: rgba(255,255,255,0.6);
+    }
+    .status-value {
+      font-weight: 700;
+    }
+    .status-value.success {
+      color: #00ff88;
+    }
+    .status-value.error {
+      color: #ff4444;
+    }
+    .status-value.warning {
+      color: #ffaa00;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-header">
+    <h1>🧪 Phase 1 Dashboard Test</h1>
+    <p>Test and verify the Enhanced Dashboard Metrics system</p>
+  </div>
+
+  <div class="test-controls">
+    <button class="test-btn" onclick="testDashboardLoad()">🔍 Test Dashboard Load</button>
+    <button class="test-btn" onclick="testMetricsCalculation()">📊 Test Metrics Calculation</button>
+    <button class="test-btn" onclick="testRenderDashboard()">🎨 Test Render Dashboard</button>
+    <button class="test-btn secondary" onclick="viewConsoleLog()">📝 View Console Log</button>
+    <button class="test-btn secondary" onclick="clearAndReload()">🔄 Clear & Reload</button>
+  </div>
+
+  <div class="test-status" id="testStatus">
+    <h3 style="margin-top: 0;">Test Status</h3>
+    <div class="status-item">
+      <span class="status-label">Dashboard Script Loaded:</span>
+      <span class="status-value" id="scriptLoaded">Checking...</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">DashboardMetrics Class:</span>
+      <span class="status-value" id="classAvailable">Checking...</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Render Function:</span>
+      <span class="status-value" id="renderFunction">Checking...</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Products in Storage:</span>
+      <span class="status-value" id="productsCount">Checking...</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Orders in Storage:</span>
+      <span class="status-value" id="ordersCount">Checking...</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Last Test Result:</span>
+      <span class="status-value" id="lastTestResult">Not tested yet</span>
+    </div>
+  </div>
+
+  <div class="stats-grid" id="statsGrid"></div>
+
+  <script src="dashboard-metrics.js"></script>
+  <script>
+    // Auto-check status on load
+    window.addEventListener('load', () => {
+      setTimeout(checkStatus, 500);
+    });
+
+    function checkStatus() {
+      // Check if script loaded
+      const scriptLoaded = document.getElementById('scriptLoaded');
+      scriptLoaded.textContent = typeof DashboardMetrics !== 'undefined' ? '✅ Yes' : '❌ No';
+      scriptLoaded.className = 'status-value ' + (typeof DashboardMetrics !== 'undefined' ? 'success' : 'error');
+
+      // Check if class available
+      const classAvailable = document.getElementById('classAvailable');
+      classAvailable.textContent = window.dashboardMetrics ? '✅ Yes' : '❌ No';
+      classAvailable.className = 'status-value ' + (window.dashboardMetrics ? 'success' : 'error');
+
+      // Check if render function available
+      const renderFunction = document.getElementById('renderFunction');
+      const hasRender = window.dashboardMetrics && typeof window.dashboardMetrics.renderDashboard === 'function';
+      renderFunction.textContent = hasRender ? '✅ Yes' : '❌ No';
+      renderFunction.className = 'status-value ' + (hasRender ? 'success' : 'error');
+
+      // Check products
+      const products = JSON.parse(localStorage.getItem('elevez_products') || '[]');
+      const productsCount = document.getElementById('productsCount');
+      productsCount.textContent = products.length + ' products';
+      productsCount.className = 'status-value ' + (products.length > 0 ? 'success' : 'warning');
+
+      // Check orders
+      const orders = JSON.parse(localStorage.getItem('elevez_orders') || '[]');
+      const ordersCount = document.getElementById('ordersCount');
+      ordersCount.textContent = orders.length + ' orders';
+      ordersCount.className = 'status-value ' + (orders.length > 0 ? 'success' : 'warning');
+    }
+
+    function testDashboardLoad() {
+      console.log('🧪 Testing Dashboard Load...');
+      const result = document.getElementById('lastTestResult');
+      
+      try {
+        if (!window.dashboardMetrics) {
+          throw new Error('DashboardMetrics not loaded');
+        }
+        
+        console.log('✅ Dashboard Metrics loaded successfully');
+        console.log('   - Class:', window.dashboardMetrics.constructor.name);
+        console.log('   - Methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(window.dashboardMetrics)));
+        
+        result.textContent = '✅ Dashboard loaded successfully';
+        result.className = 'status-value success';
+      } catch (error) {
+        console.error('❌ Dashboard load test failed:', error);
+        result.textContent = '❌ Failed: ' + error.message;
+        result.className = 'status-value error';
+      }
+      
+      checkStatus();
+    }
+
+    async function testMetricsCalculation() {
+      console.log('🧪 Testing Metrics Calculation...');
+      const result = document.getElementById('lastTestResult');
+      
+      try {
+        if (!window.dashboardMetrics) {
+          throw new Error('DashboardMetrics not loaded');
+        }
+        
+        const metrics = await window.dashboardMetrics.calculateMetrics();
+        
+        if (!metrics) {
+          throw new Error('Metrics calculation returned null');
+        }
+        
+        console.log('✅ Metrics calculated successfully:');
+        console.log('   Revenue:', metrics.revenue);
+        console.log('   Orders:', metrics.orders);
+        console.log('   Products:', metrics.products);
+        console.log('   Users:', metrics.users);
+        console.log('   Best Sellers:', metrics.bestSellers.length);
+        
+        result.textContent = `✅ Metrics calculated: ${metrics.orders.total} orders, ${metrics.revenue.total.toFixed(2)} revenue`;
+        result.className = 'status-value success';
+      } catch (error) {
+        console.error('❌ Metrics calculation test failed:', error);
+        result.textContent = '❌ Failed: ' + error.message;
+        result.className = 'status-value error';
+      }
+      
+      checkStatus();
+    }
+
+    async function testRenderDashboard() {
+      console.log('🧪 Testing Dashboard Render...');
+      const result = document.getElementById('lastTestResult');
+      
+      try {
+        if (!window.dashboardMetrics) {
+          throw new Error('DashboardMetrics not loaded');
+        }
+        
+        await window.dashboardMetrics.renderDashboard();
+        
+        const grid = document.getElementById('statsGrid');
+        if (!grid || !grid.innerHTML) {
+          throw new Error('Dashboard did not render any content');
+        }
+        
+        console.log('✅ Dashboard rendered successfully');
+        console.log('   - Grid HTML length:', grid.innerHTML.length);
+        console.log('   - Cards rendered:', grid.querySelectorAll('.stat-card').length);
+        
+        result.textContent = `✅ Dashboard rendered: ${grid.querySelectorAll('.stat-card').length} cards`;
+        result.className = 'status-value success';
+      } catch (error) {
+        console.error('❌ Dashboard render test failed:', error);
+        result.textContent = '❌ Failed: ' + error.message;
+        result.className = 'status-value error';
+      }
+      
+      checkStatus();
+    }
+
+    function viewConsoleLog() {
+      console.log('📝 Console Log View');
+      console.log('='.repeat(50));
+      console.log('Dashboard Metrics Status:');
+      console.log('  - Loaded:', !!window.dashboardMetrics);
+      console.log('  - Type:', typeof window.dashboardMetrics);
+      console.log('  - Constructor:', window.dashboardMetrics?.constructor.name);
+      console.log('');
+      console.log('Available Methods:');
+      if (window.dashboardMetrics) {
+        Object.getOwnPropertyNames(Object.getPrototypeOf(window.dashboardMetrics)).forEach(method => {
+          console.log('  -', method);
+        });
+      }
+      console.log('');
+      console.log('Storage Data:');
+      console.log('  - Products:', JSON.parse(localStorage.getItem('elevez_products') || '[]').length);
+      console.log('  - Orders:', JSON.parse(localStorage.getItem('elevez_orders') || '[]').length);
+      console.log('  - Users:', JSON.parse(localStorage.getItem('elevez_users') || '[]').length);
+      console.log('='.repeat(50));
+      alert('Check the browser console (F12) for detailed log');
+    }
+
+    function clearAndReload() {
+      if (confirm('This will reload the page. Continue?')) {
+        window.location.reload();
+      }
+    }
+  </script>
+</body>
+</html>

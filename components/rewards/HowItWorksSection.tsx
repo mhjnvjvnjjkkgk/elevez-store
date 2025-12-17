@@ -1,13 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag, Gift, Sparkles, TrendingUp, ArrowRight, Zap } from 'lucide-react';
+import { loyaltyRulesService } from '../../services/loyaltyRulesService';
 
 export const HowItWorksSection: React.FC = () => {
+  const [earningRate, setEarningRate] = useState<string>('1 point per $10');
+
+  // Load dynamic earning rate
+  useEffect(() => {
+    const loadEarningRate = async () => {
+      const rules = await loyaltyRulesService.getRules();
+      const rate = rules.pointsEarning.pointsPerDollar;
+      
+      // Format rate for display
+      if (rate >= 1) {
+        setEarningRate(`${rate} points per ₹1`);
+      } else {
+        const dollarsPerPoint = Math.round(1 / rate);
+        setEarningRate(`1 point per ₹${dollarsPerPoint}`);
+      }
+    };
+    loadEarningRate();
+
+    // Subscribe to real-time updates
+    const unsubscribe = loyaltyRulesService.onRulesChange((rules) => {
+      const rate = rules.pointsEarning.pointsPerDollar;
+      if (rate >= 1) {
+        setEarningRate(`${rate} points per ₹1`);
+      } else {
+        const dollarsPerPoint = Math.round(1 / rate);
+        setEarningRate(`1 point per ₹${dollarsPerPoint}`);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const steps = [
     {
       icon: ShoppingBag,
       title: 'Shop & Earn',
-      description: 'Earn points with every purchase. The more you shop, the more you earn!',
+      description: `Earn ${earningRate} spent. The more you shop, the more you earn!`,
       color: 'from-[#00ff88] to-cyan-500',
       glowColor: 'rgba(0, 255, 136, 0.3)'
     },

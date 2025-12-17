@@ -1,20 +1,23 @@
 // User Points Service - Real Loyalty Points Management
 // Handles persistent user points with Firebase integration
+// ✅ NOW USES DYNAMIC LOYALTY RULES - NO HARDCODED VALUES
 
-import { 
-  getFirestore, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  collection, 
-  getDocs, 
-  updateDoc, 
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  getDocs,
+  updateDoc,
   increment,
+  serverTimestamp,
   query,
   where,
   Timestamp
 } from 'firebase/firestore';
 import { auth } from '../firebaseConfig';
+import { loyaltyRulesService } from './loyaltyRulesService';
 
 export interface UserPoints {
   userId: string;
@@ -85,12 +88,12 @@ class UserPointsService {
 
   /**
    * Add points from purchase
+   * ✅ NOW USES DYNAMIC LOYALTY RULES
    */
   async addPointsFromPurchase(
     userId: string,
     orderAmount: number,
-    orderId: string,
-    pointsPerRupee: number = 1 // 1 point per rupee
+    orderId: string
   ): Promise<boolean> {
     try {
       const userPoints = await this.getUserPoints(userId);
@@ -99,7 +102,12 @@ class UserPointsService {
         return false;
       }
 
-      const pointsToAdd = Math.floor(orderAmount * pointsPerRupee);
+      // ✅ Calculate points using dynamic rules with tier multiplier
+      const pointsToAdd = await loyaltyRulesService.calculatePointsEarned(
+        orderAmount,
+        userPoints.tier
+      );
+
       const balanceBefore = userPoints.totalPoints;
       const balanceAfter = balanceBefore + pointsToAdd;
 
@@ -107,24 +115,48 @@ class UserPointsService {
         id: `purchase_${orderId}_${Date.now()}`,
         type: 'purchase',
         amount: pointsToAdd,
-        description: `Points earned from order #${orderId}`,
+        description: `Points earned from order #${orderId} (${userPoints.tier} tier)`,
         orderId,
         timestamp: new Date().toISOString(),
         balanceBefore,
         balanceAfter,
       };
 
+      // ✅ Calculate new tier using dynamic rules
+      const newTier = await loyaltyRulesService.calculateTier(balanceAfter);
+
       const pointsRef = doc(this.db, this.pointsCollection, userId);
       await updateDoc(pointsRef, {
         totalPoints: balanceAfter,
         pointsHistory: [...userPoints.pointsHistory, transaction],
-        tier: this.calculateTier(balanceAfter),
+        tier: newTier.id as 'bronze' | 'silver' | 'gold' | 'platinum',
         updatedAt: new Date().toISOString(),
         lastPurchaseDate: new Date().toISOString(),
-        orderCount: (userPoints.orderCount || 0) + 1, // Increment order count
+        orderCount: (userPoints.orderCount || 0) + 1,
       });
 
-      console.log(`✅ Added ${pointsToAdd} points to user ${userId}. New balance: ${balanceAfter}`);
+      // ALSO sync to loyaltyProfiles collection for website consistency
+      try {
+        const loyaltyRef = doc(this.db, 'loyaltyProfiles', userId);
+        const loyaltySnap = await getDoc(loyaltyRef);
+
+        if (loyaltySnap.exists()) {
+          const tierCapitalized = newTier.id.charAt(0).toUpperCase() + newTier.id.slice(1);
+          await updateDoc(loyaltyRef, {
+            points: balanceAfter,
+            totalPointsEarned: balanceAfter,
+            tier: tierCapitalized as 'Bronze' | 'Silver' | 'Gold' | 'Platinum',
+            orderCount: increment(1),
+            lastUpdated: serverTimestamp()
+          });
+          console.log(`📊 Also synced points to loyaltyProfiles: ${balanceAfter} points`);
+        }
+      } catch (loyaltySyncError) {
+        console.warn('Could not sync to loyaltyProfiles:', loyaltySyncError);
+        // Not critical, continue
+      }
+
+      console.log(`✅ Added ${pointsToAdd} points to user ${userId} (${userPoints.tier} → ${newTier.id}). New balance: ${balanceAfter}`);
       return true;
     } catch (error) {
       console.error('Error adding purchase points:', error);
@@ -134,6 +166,7 @@ class UserPointsService {
 
   /**
    * Admin: Add points to user
+   * ✅ NOW USES DYNAMIC LOYALTY RULES FOR TIER CALCULATION
    */
   async adminAddPoints(
     userId: string,
@@ -159,14 +192,18 @@ class UserPointsService {
         balanceAfter,
       };
 
+      // ✅ Calculate new tier using dynamic rules
+      const newTier = await loyaltyRulesService.calculateTier(balanceAfter);
+
       const pointsRef = doc(this.db, this.pointsCollection, userId);
       await updateDoc(pointsRef, {
         totalPoints: balanceAfter,
         pointsHistory: [...userPoints.pointsHistory, transaction],
-        tier: this.calculateTier(balanceAfter),
+        tier: newTier.id as 'bronze' | 'silver' | 'gold' | 'platinum',
         updatedAt: new Date().toISOString(),
       });
 
+      console.log(`✅ Admin added ${pointsToAdd} points to user ${userId}. New tier: ${newTier.id}`);
       return true;
     } catch (error) {
       console.error('Error adding admin points:', error);
@@ -176,6 +213,7 @@ class UserPointsService {
 
   /**
    * Admin: Deduct points from user
+   * ✅ NOW USES DYNAMIC LOYALTY RULES FOR TIER CALCULATION
    */
   async adminDeductPoints(
     userId: string,
@@ -206,14 +244,18 @@ class UserPointsService {
         balanceAfter,
       };
 
+      // ✅ Calculate new tier using dynamic rules
+      const newTier = await loyaltyRulesService.calculateTier(balanceAfter);
+
       const pointsRef = doc(this.db, this.pointsCollection, userId);
       await updateDoc(pointsRef, {
         totalPoints: balanceAfter,
         pointsHistory: [...userPoints.pointsHistory, transaction],
-        tier: this.calculateTier(balanceAfter),
+        tier: newTier.id as 'bronze' | 'silver' | 'gold' | 'platinum',
         updatedAt: new Date().toISOString(),
       });
 
+      console.log(`✅ Admin deducted ${pointsToDeduct} points from user ${userId}. New tier: ${newTier.id}`);
       return true;
     } catch (error) {
       console.error('Error deducting admin points:', error);
@@ -223,6 +265,7 @@ class UserPointsService {
 
   /**
    * Redeem points
+   * ✅ NOW USES DYNAMIC LOYALTY RULES FOR TIER CALCULATION
    */
   async redeemPoints(
     userId: string,
@@ -251,14 +294,18 @@ class UserPointsService {
         balanceAfter,
       };
 
+      // ✅ Calculate new tier using dynamic rules
+      const newTier = await loyaltyRulesService.calculateTier(balanceAfter);
+
       const pointsRef = doc(this.db, this.pointsCollection, userId);
       await updateDoc(pointsRef, {
         totalPoints: balanceAfter,
         pointsHistory: [...userPoints.pointsHistory, transaction],
-        tier: this.calculateTier(balanceAfter),
+        tier: newTier.id as 'bronze' | 'silver' | 'gold' | 'platinum',
         updatedAt: new Date().toISOString(),
       });
 
+      console.log(`✅ User ${userId} redeemed ${pointsToRedeem} points. New tier: ${newTier.id}`);
       return true;
     } catch (error) {
       console.error('Error redeeming points:', error);
@@ -273,7 +320,7 @@ class UserPointsService {
     try {
       const pointsRef = collection(this.db, this.pointsCollection);
       const querySnapshot = await getDocs(pointsRef);
-      
+
       const users: UserPoints[] = [];
       querySnapshot.forEach((doc) => {
         users.push(doc.data() as UserPoints);
@@ -301,50 +348,26 @@ class UserPointsService {
 
   /**
    * Calculate tier based on points
+   * ✅ NOW USES DYNAMIC LOYALTY RULES - DEPRECATED, USE loyaltyRulesService.calculateTier()
+   * @deprecated Use loyaltyRulesService.calculateTier() instead
    */
-  private calculateTier(points: number): 'bronze' | 'silver' | 'gold' | 'platinum' {
-    if (points >= 5000) return 'platinum';
-    if (points >= 2500) return 'gold';
-    if (points >= 1000) return 'silver';
-    return 'bronze';
+  private async calculateTier(points: number): Promise<'bronze' | 'silver' | 'gold' | 'platinum'> {
+    const tier = await loyaltyRulesService.calculateTier(points);
+    return tier.id as 'bronze' | 'silver' | 'gold' | 'platinum';
   }
 
   /**
    * Get tier benefits
+   * ✅ NOW USES DYNAMIC LOYALTY RULES
    */
-  getTierBenefits(tier: string) {
-    const benefits: Record<string, any> = {
-      bronze: {
-        name: 'Bronze',
-        pointsRequired: 0,
-        discountPercentage: 0,
-        freeShippingThreshold: 500,
-        description: 'Entry level member',
-      },
-      silver: {
-        name: 'Silver',
-        pointsRequired: 1000,
-        discountPercentage: 5,
-        freeShippingThreshold: 300,
-        description: 'Loyal member',
-      },
-      gold: {
-        name: 'Gold',
-        pointsRequired: 2500,
-        discountPercentage: 10,
-        freeShippingThreshold: 100,
-        description: 'VIP member',
-      },
-      platinum: {
-        name: 'Platinum',
-        pointsRequired: 5000,
-        discountPercentage: 15,
-        freeShippingThreshold: 0,
-        description: 'Elite member - Free shipping always',
-      },
-    };
-
-    return benefits[tier] || benefits.bronze;
+  async getTierBenefits(tierId: string) {
+    const benefits = await loyaltyRulesService.getTierBenefits(tierId);
+    if (!benefits) {
+      // Fallback to default bronze
+      const rules = await loyaltyRulesService.getRules();
+      return rules.tiers[0];
+    }
+    return benefits;
   }
 
   /**
@@ -374,11 +397,11 @@ class UserPointsService {
   async getUserStatistics() {
     try {
       const allUsers = await this.getAllUsersPoints();
-      
+
       return {
         totalUsers: allUsers.length,
         totalPointsDistributed: allUsers.reduce((sum, u) => sum + u.totalPoints, 0),
-        averagePointsPerUser: allUsers.length > 0 
+        averagePointsPerUser: allUsers.length > 0
           ? Math.floor(allUsers.reduce((sum, u) => sum + u.totalPoints, 0) / allUsers.length)
           : 0,
         tierDistribution: {

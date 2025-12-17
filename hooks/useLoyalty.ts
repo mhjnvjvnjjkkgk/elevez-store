@@ -20,17 +20,34 @@ import {
   getTierConfig,
   getNextTier,
   getPointsToNextTier,
-  REDEMPTION_OPTIONS,
   POINTS_RULES
 } from '../services/loyaltyService';
+import { loyaltyRulesService, RedemptionRule } from '../services/loyaltyRulesService';
 
 export function useLoyalty() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<LoyaltyProfile | null>(null);
   const [transactions, setTransactions] = useState<PointsTransaction[]>([]);
   const [discountCodes, setDiscountCodes] = useState<DiscountCode[]>([]);
+  const [redemptionOptions, setRedemptionOptions] = useState<RedemptionRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Load dynamic redemption options from Firebase
+  useEffect(() => {
+    const loadRedemptionOptions = async () => {
+      const rules = await loyaltyRulesService.getRules();
+      setRedemptionOptions(rules.redemption);
+    };
+    loadRedemptionOptions();
+
+    // Subscribe to real-time updates
+    const unsubscribe = loyaltyRulesService.onRulesChange((rules) => {
+      setRedemptionOptions(rules.redemption);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // Load loyalty profile with real-time updates
   const loadProfile = useCallback(async () => {
@@ -43,15 +60,15 @@ export function useLoyalty() {
     try {
       setLoading(true);
       console.log('🔄 Loading loyalty profile for:', user.uid);
-      
+
       let userProfile = await getLoyaltyProfile(user.uid);
-      
+
       // Create profile if doesn't exist
       if (!userProfile) {
         console.log('Creating new loyalty profile...');
         userProfile = await createLoyaltyProfile(user.uid, user.email || '');
       }
-      
+
       setProfile(userProfile);
       setError(null);
     } catch (err: any) {
@@ -109,19 +126,20 @@ export function useLoyalty() {
       const { doc, onSnapshot } = await import('firebase/firestore');
       const { db } = await import('../firebaseConfig');
 
-      const pointsRef = doc(db, 'userPoints', user.uid);
-      
-      const unsubscribe = onSnapshot(pointsRef, (snapshot) => {
+      // ✅ CRITICAL: Listen to loyaltyProfiles (central source of truth)
+      const profileRef = doc(db, 'loyaltyProfiles', user.uid);
+
+      const unsubscribe = onSnapshot(profileRef, (snapshot) => {
         if (snapshot.exists()) {
-          const pointsData = snapshot.data();
-          console.log('🔄 Real-time points update:', pointsData.points);
-          
+          const profileData = snapshot.data();
+          console.log('🔄 Real-time points update from loyaltyProfiles:', profileData.totalPoints || profileData.points);
+
           // Update profile with new points
           setProfile(prev => prev ? {
             ...prev,
-            points: pointsData.points || 0,
-            tier: pointsData.tier || prev.tier,
-            totalPointsEarned: pointsData.totalPointsEarned || prev.totalPointsEarned
+            points: profileData.totalPoints || profileData.points || 0,
+            tier: profileData.tier || prev.tier,
+            totalPointsEarned: profileData.totalPoints || profileData.points || prev.totalPointsEarned
           } : null);
         }
       });
@@ -244,12 +262,20 @@ export function useLoyalty() {
     }
   }, [loadDiscountCodes]);
 
-  // Get tier info
-  const tierInfo = profile ? getTierConfig(profile.tier) : null;
-  const nextTier = profile ? getNextTier(profile.tier) : null;
-  const pointsToNextTier = profile ? getPointsToNextTier(profile.totalPointsEarned, profile.tier) : 0;
-  const tierProgress = nextTier 
-    ? ((profile!.totalPointsEarned - tierInfo!.minPoints) / (nextTier.minPoints - tierInfo!.minPoints)) * 100
+  // Get tier info (async, so we need to handle it properly)
+  const [tierInfo, setTierInfo] = useState<any>(null);
+  const [nextTier, setNextTier] = useState<any>(null);
+
+  useEffect(() => {
+    if (profile) {
+      getTierConfig(profile.tier).then(setTierInfo);
+      getNextTier(profile.tier).then(setNextTier);
+    }
+  }, [profile]);
+
+  const pointsToNextTier = profile && nextTier ? nextTier.pointsRequired - profile.totalPointsEarned : 0;
+  const tierProgress = nextTier && tierInfo
+    ? ((profile!.totalPointsEarned - tierInfo.pointsRequired) / (nextTier.pointsRequired - tierInfo.pointsRequired)) * 100
     : 100;
 
   // Get available discount codes (unused and not expired)
@@ -270,7 +296,11 @@ export function useLoyalty() {
     nextTier,
     pointsToNextTier,
     tierProgress,
-    redemptionOptions: REDEMPTION_OPTIONS,
+    redemptionOptions: redemptionOptions.map(opt => ({
+      points: opt.pointsRequired,
+      discount: opt.dollarValue,
+      label: opt.name
+    })),
     pointsRules: POINTS_RULES,
     claimSocialPoints,
     claimPhonePoints,

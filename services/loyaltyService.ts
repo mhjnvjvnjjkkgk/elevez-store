@@ -1,19 +1,21 @@
 // SECTION 1: Data Architecture & Firebase Backend
-import { 
-  collection, 
-  doc, 
-  getDoc, 
-  setDoc, 
-  updateDoc, 
-  addDoc, 
-  query, 
-  where, 
-  orderBy, 
+// ✅ NOW USES DYNAMIC LOYALTY RULES - NO HARDCODED VALUES
+import {
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  addDoc,
+  query,
+  where,
+  orderBy,
   getDocs,
   serverTimestamp,
   increment
 } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import { loyaltyRulesService } from './loyaltyRulesService';
 
 // ============================================
 // TYPE DEFINITIONS
@@ -145,7 +147,7 @@ export const REDEMPTION_OPTIONS = [
 
 export async function createLoyaltyProfile(userId: string, email: string): Promise<LoyaltyProfile> {
   const profileRef = doc(db, 'loyaltyProfiles', userId);
-  
+
   const profile: LoyaltyProfile = {
     userId,
     points: POINTS_RULES.SIGNUP,
@@ -162,7 +164,7 @@ export async function createLoyaltyProfile(userId: string, email: string): Promi
   };
 
   await setDoc(profileRef, profile);
-  
+
   // Log signup bonus
   await logPointsTransaction({
     userId,
@@ -178,11 +180,11 @@ export async function createLoyaltyProfile(userId: string, email: string): Promi
 export async function getLoyaltyProfile(userId: string): Promise<LoyaltyProfile | null> {
   const profileRef = doc(db, 'loyaltyProfiles', userId);
   const profileSnap = await getDoc(profileRef);
-  
+
   if (profileSnap.exists()) {
     return profileSnap.data() as LoyaltyProfile;
   }
-  
+
   return null;
 }
 
@@ -203,38 +205,72 @@ export async function getPointsHistory(userId: string, limit: number = 50): Prom
     where('userId', '==', userId),
     orderBy('timestamp', 'desc')
   );
-  
+
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as PointsTransaction));
 }
 
 // ============================================
 // TIER CALCULATION
+// ✅ NOW USES DYNAMIC LOYALTY RULES
 // ============================================
 
-export function calculateTier(totalPoints: number): TierLevel {
-  for (let i = TIER_CONFIGS.length - 1; i >= 0; i--) {
-    if (totalPoints >= TIER_CONFIGS[i].minPoints) {
-      return TIER_CONFIGS[i].name;
-    }
+export async function calculateTier(totalPoints: number): Promise<TierLevel> {
+  const tier = await loyaltyRulesService.calculateTier(totalPoints);
+  return tier.name as TierLevel;
+}
+
+export async function getTierConfig(tier: TierLevel): Promise<TierConfig> {
+  const rules = await loyaltyRulesService.getRules();
+  const tierConfig = rules.tiers.find(t => t.name.toLowerCase() === tier.toLowerCase());
+
+  if (!tierConfig) {
+    // Fallback to bronze
+    return TIER_CONFIGS[0];
   }
-  return 'Bronze';
+
+  // Convert to legacy format
+  return {
+    name: tier,
+    minPoints: tierConfig.pointsRequired,
+    color: tierConfig.color,
+    gradient: `linear-gradient(135deg, ${tierConfig.color} 0%, ${tierConfig.color}99 100%)`,
+    benefits: [
+      `Earn ${tierConfig.benefits.earningMultiplier}x points`,
+      `${tierConfig.benefits.discountPercentage}% discount`,
+      tierConfig.benefits.freeShippingThreshold === 0
+        ? 'Free shipping on all orders'
+        : `Free shipping on orders above ₹${tierConfig.benefits.freeShippingThreshold}`,
+      ...(tierConfig.benefits.exclusiveAccess ? ['Exclusive access'] : []),
+      ...(tierConfig.benefits.prioritySupport ? ['Priority support'] : [])
+    ],
+    icon: tierConfig.icon
+  };
 }
 
-export function getTierConfig(tier: TierLevel): TierConfig {
-  return TIER_CONFIGS.find(t => t.name === tier) || TIER_CONFIGS[0];
-}
+export async function getNextTier(currentTier: TierLevel): Promise<TierConfig | null> {
+  const rules = await loyaltyRulesService.getRules();
+  const currentIndex = rules.tiers.findIndex(t => t.name.toLowerCase() === currentTier.toLowerCase());
 
-export function getNextTier(currentTier: TierLevel): TierConfig | null {
-  const currentIndex = TIER_CONFIGS.findIndex(t => t.name === currentTier);
-  if (currentIndex < TIER_CONFIGS.length - 1) {
-    return TIER_CONFIGS[currentIndex + 1];
+  if (currentIndex < rules.tiers.length - 1) {
+    const nextTierData = rules.tiers[currentIndex + 1];
+    return {
+      name: nextTierData.name as TierLevel,
+      minPoints: nextTierData.pointsRequired,
+      color: nextTierData.color,
+      gradient: `linear-gradient(135deg, ${nextTierData.color} 0%, ${nextTierData.color}99 100%)`,
+      benefits: [
+        `Earn ${nextTierData.benefits.earningMultiplier}x points`,
+        `${nextTierData.benefits.discountPercentage}% discount`
+      ],
+      icon: nextTierData.icon
+    };
   }
   return null;
 }
 
-export function getPointsToNextTier(currentPoints: number, currentTier: TierLevel): number {
-  const nextTier = getNextTier(currentTier);
+export async function getPointsToNextTier(currentPoints: number, currentTier: TierLevel): Promise<number> {
+  const nextTier = await getNextTier(currentTier);
   if (!nextTier) return 0;
   return Math.max(0, nextTier.minPoints - currentPoints);
 }
@@ -251,12 +287,14 @@ export async function awardPoints(
 ): Promise<void> {
   const profileRef = doc(db, 'loyaltyProfiles', userId);
   const profile = await getLoyaltyProfile(userId);
-  
+
   if (!profile) throw new Error('Loyalty profile not found');
 
   const newPoints = profile.points + points;
   const newTotalPoints = profile.totalPointsEarned + points;
-  const newTier = calculateTier(newTotalPoints);
+
+  // ✅ Use dynamic tier calculation
+  const newTier = await calculateTier(newTotalPoints);
 
   await updateDoc(profileRef, {
     points: newPoints,
@@ -273,6 +311,8 @@ export async function awardPoints(
     timestamp: serverTimestamp(),
     metadata
   });
+
+  console.log(`✅ Awarded ${points} points to user ${userId}. New tier: ${newTier}`);
 }
 
 export async function awardOrderPoints(
@@ -283,22 +323,19 @@ export async function awardOrderPoints(
   const profile = await getLoyaltyProfile(userId);
   if (!profile) throw new Error('Loyalty profile not found');
 
-  const tierConfig = getTierConfig(profile.tier);
-  const tierMultiplier = TIER_CONFIGS.findIndex(t => t.name === profile.tier) + 1;
-  
-  // Calculate points: 1 point per ₹10 spent, multiplied by tier
-  const basePoints = Math.floor(orderTotal / 10);
-  const points = basePoints * tierMultiplier;
+  // ✅ Use dynamic rules for points calculation with tier multiplier
+  const points = await loyaltyRulesService.calculatePointsEarned(orderTotal, profile.tier.toLowerCase());
 
   await awardPoints(userId, points, `Order #${orderId}`, { orderId, orderTotal });
-  
+
   // Increment order count
   const profileRef = doc(db, 'loyaltyProfiles', userId);
   await updateDoc(profileRef, {
     orderCount: increment(1),
     lastUpdated: serverTimestamp()
   });
-  
+
+  console.log(`✅ Awarded ${points} points for order ${orderId} (${profile.tier} tier)`);
   return points;
 }
 
@@ -312,21 +349,21 @@ export async function claimSocialSharePoints(
 ): Promise<boolean> {
   const profileRef = doc(db, 'loyaltyProfiles', userId);
   const profile = await getLoyaltyProfile(userId);
-  
+
   if (!profile) throw new Error('Loyalty profile not found');
-  
+
   if (profile.socialShares[platform]) {
     return false; // Already claimed
   }
 
   const points = POINTS_RULES[`${platform.toUpperCase()}_SHARE` as keyof typeof POINTS_RULES] as number;
-  
+
   await updateDoc(profileRef, {
     [`socialShares.${platform}`]: true
   });
 
   await awardPoints(userId, points, `Shared on ${platform}`);
-  
+
   return true;
 }
 
@@ -337,9 +374,9 @@ export async function claimSocialSharePoints(
 export async function claimPhoneNumberPoints(userId: string, phoneNumber: string): Promise<boolean> {
   const profileRef = doc(db, 'loyaltyProfiles', userId);
   const profile = await getLoyaltyProfile(userId);
-  
+
   if (!profile) throw new Error('Loyalty profile not found');
-  
+
   if (profile.phoneNumber) {
     return false; // Already claimed
   }
@@ -349,7 +386,7 @@ export async function claimPhoneNumberPoints(userId: string, phoneNumber: string
   });
 
   await awardPoints(userId, POINTS_RULES.PHONE_NUMBER, 'Added phone number');
-  
+
   return true;
 }
 
@@ -369,14 +406,21 @@ export async function redeemPointsForDiscount(
   discountAmount: number
 ): Promise<DiscountCode> {
   const profile = await getLoyaltyProfile(userId);
-  
-  if (!profile) throw new Error('Loyalty profile not found');
-  if (profile.points < pointsCost) throw new Error('Insufficient points');
 
-  // Deduct points
+  if (!profile) throw new Error('Loyalty profile not found');
+
+  // Use totalPoints (from admin) or fallback to points
+  const currentPoints = (profile as any).totalPoints || profile.points || 0;
+  console.log('🔍 Redeem check - Current points:', currentPoints, 'Cost:', pointsCost);
+
+  if (currentPoints < pointsCost) throw new Error(`Insufficient points. You have ${currentPoints} but need ${pointsCost}.`);
+
+  // Deduct points from totalPoints (central field)
   const profileRef = doc(db, 'loyaltyProfiles', userId);
+  const newPoints = currentPoints - pointsCost;
   await updateDoc(profileRef, {
-    points: profile.points - pointsCost,
+    totalPoints: newPoints,
+    points: newPoints, // Also update legacy field for compatibility
     lastUpdated: serverTimestamp()
   });
 
@@ -424,11 +468,11 @@ export async function validateDiscountCode(code: string, userId: string): Promis
   );
 
   const snapshot = await getDocs(q);
-  
+
   if (snapshot.empty) return null;
 
   const discountData = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as DiscountCode;
-  
+
   // Check expiry
   const expiryDate = new Date(discountData.expiresAt);
   if (expiryDate < new Date()) {

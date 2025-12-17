@@ -9,6 +9,7 @@ import { SHIPPING_METHODS, calculateTax, calculateTotal, Address, createOrder } 
 import { checkoutDiscountService } from '../services/checkoutDiscountService';
 import { userPointsService } from '../services/userPointsService';
 import { firebaseSyncService } from '../services/firebaseSyncService';
+import { loyaltyRulesService } from '../services/loyaltyRulesService';
 
 type CheckoutStep = 'cart' | 'shipping' | 'payment' | 'confirmation';
 
@@ -47,6 +48,12 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
   const [appliedDiscount, setAppliedDiscount] = useState<any>(null);
   const [discountError, setDiscountError] = useState<string | null>(null);
 
+  // Points preview state
+  const [pointsPreview, setPointsPreview] = useState(0);
+  const [userTier, setUserTier] = useState<string>('bronze');
+  const [tierMultiplier, setTierMultiplier] = useState(1.0);
+  const [redemptionOptions, setRedemptionOptions] = useState<any[]>([]);
+
   // Check authentication
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -58,20 +65,67 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
     return () => unsubscribe();
   }, [navigate]);
 
+  // Load user tier and calculate points preview
+  useEffect(() => {
+    const loadUserTierAndPreview = async () => {
+      if (!user) return;
+
+      try {
+        // Get user's current points and tier
+        const userPoints = await userPointsService.getUserPoints(user.uid);
+        if (userPoints) {
+          const tier = await loyaltyRulesService.calculateTier(userPoints.totalPoints);
+          setUserTier(tier.id);
+          setTierMultiplier(tier.benefits.earningMultiplier);
+        }
+
+        // Calculate points preview for this order
+        const preview = await loyaltyRulesService.calculatePointsEarned(total, userTier);
+        setPointsPreview(preview);
+      } catch (error) {
+        console.error('Error loading tier and preview:', error);
+      }
+    };
+
+    loadUserTierAndPreview();
+  }, [user, total, userTier]);
+
+  // Load redemption options
+  useEffect(() => {
+    const loadRedemptionOptions = async () => {
+      if (!user) return;
+
+      try {
+        const userPoints = await userPointsService.getUserPoints(user.uid);
+        if (userPoints) {
+          const options = await loyaltyRulesService.getRedemptionOptions(
+            userPoints.totalPoints,
+            subtotal
+          );
+          setRedemptionOptions(options);
+        }
+      } catch (error) {
+        console.error('Error loading redemption options:', error);
+      }
+    };
+
+    loadRedemptionOptions();
+  }, [user, subtotal]);
+
   // Calculate totals
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = calculateTax(subtotal);
   const total = calculateTotal(subtotal, tax, selectedShipping.cost, discountAmount);
 
   // Handle discount application
-  const handleApplyDiscount = () => {
+  const handleApplyDiscount = async () => {
     if (!discountCode.trim()) {
       setDiscountError('Please enter a discount code');
       return;
     }
 
-    const result = checkoutDiscountService.calculateDiscount(discountCode, subtotal);
-    
+    const result = await checkoutDiscountService.calculateDiscount(discountCode, subtotal, user?.uid);
+
     if (!result.valid) {
       setDiscountError(result.message || 'Invalid discount code');
       setDiscountAmount(0);
@@ -108,11 +162,11 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
         }
 
         console.log('🛒 Creating order for user:', user.uid);
-        
-        // Calculate points to be earned (1 point per ₹10 spent)
-        const pointsToEarn = Math.floor(total / 10);
-        console.log('💰 Points to be earned:', pointsToEarn);
-        
+
+        // Calculate points to be earned using dynamic rules
+        const pointsToEarn = await loyaltyRulesService.calculatePointsEarned(total, userTier);
+        console.log('💰 Points to be earned:', pointsToEarn, `(tier: ${userTier}, multiplier: ${tierMultiplier}x)`);
+
         // Create order with real user data - this saves to Firebase
         const orderResult = await createOrder(
           user.uid,
@@ -140,15 +194,14 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
           pointsEarned: pointsToEarn
         });
 
-        // Add points to user account (1 point per ₹10 spent)
+        // Add points to user account using dynamic rules
         console.log('💰 Adding points for purchase...');
         console.log(`Awarding ${pointsToEarn} points for order total ₹${order.total}`);
-        
+
         await userPointsService.addPointsFromPurchase(
           user.uid,
           order.total,
-          order.orderNumber,
-          0.1 // 1 point per ₹10 (0.1 points per rupee)
+          order.orderNumber
         );
 
         // Sync user points to Firebase
@@ -168,7 +221,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
 
         // Record discount usage if applied
         if (appliedDiscount) {
-          checkoutDiscountService.recordUsage(appliedDiscount.code);
+          await checkoutDiscountService.recordUsage(appliedDiscount.code, user?.uid);
           await firebaseSyncService.syncDiscountUsage(
             user.uid,
             appliedDiscount.code,
@@ -225,20 +278,18 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
         {steps.map((step, index) => (
           <React.Fragment key={step}>
             <motion.div
-              className={`flex items-center justify-center w-10 h-10 rounded-full font-bold transition-all ${
-                steps.indexOf(currentStep) >= index
+              className={`flex items-center justify-center w-10 h-10 rounded-full font-bold transition-all ${steps.indexOf(currentStep) >= index
                   ? 'bg-[#00ff88] text-black'
                   : 'bg-zinc-800 text-gray-400'
-              }`}
+                }`}
               whileHover={{ scale: 1.1 }}
             >
               {steps.indexOf(currentStep) > index ? <Check size={20} /> : index + 1}
             </motion.div>
             {index < steps.length - 1 && (
               <div
-                className={`flex-1 h-1 mx-2 transition-colors ${
-                  steps.indexOf(currentStep) > index ? 'bg-[#00ff88]' : 'bg-zinc-800'
-                }`}
+                className={`flex-1 h-1 mx-2 transition-colors ${steps.indexOf(currentStep) > index ? 'bg-[#00ff88]' : 'bg-zinc-800'
+                  }`}
               />
             )}
           </React.Fragment>
@@ -256,7 +307,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
       className="space-y-6"
     >
       <h2 className="text-2xl font-bold">Order Review</h2>
-      
+
       <div className="space-y-4">
         {cartItems.map((item) => (
           <div key={item.cartId} className="flex gap-4 bg-zinc-900/50 p-4 rounded-lg border border-white/10">
@@ -390,11 +441,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
         {SHIPPING_METHODS.map((method) => (
           <label
             key={method.id}
-            className={`flex items-center gap-4 p-4 bg-zinc-900/50 border-2 rounded-lg cursor-pointer transition-all ${
-              selectedShipping.id === method.id
+            className={`flex items-center gap-4 p-4 bg-zinc-900/50 border-2 rounded-lg cursor-pointer transition-all ${selectedShipping.id === method.id
                 ? 'border-[#00ff88] bg-[#00ff88]/5'
                 : 'border-white/10 hover:border-white/20'
-            }`}
+              }`}
           >
             <input
               type="radio"
@@ -591,6 +641,36 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
                 <span>Total</span>
                 <span className="text-[#00ff88]">₹{total.toFixed(2)}</span>
               </div>
+
+              {/* Points Preview */}
+              {pointsPreview > 0 && (
+                <div className="bg-[#00ff88]/10 border border-[#00ff88]/30 rounded-lg p-3 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300">You'll earn:</span>
+                    <span className="text-[#00ff88] font-bold">{pointsPreview} points</span>
+                  </div>
+                  {tierMultiplier > 1.0 && (
+                    <p className="text-xs text-gray-400 mt-1">
+                      Includes {tierMultiplier}x tier bonus! 🎉
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Redemption Options */}
+              {redemptionOptions.length > 0 && currentStep === 'payment' && (
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-400">Available Rewards:</p>
+                  {redemptionOptions.slice(0, 2).map(option => (
+                    <div key={option.id} className="bg-zinc-900/50 border border-white/10 rounded-lg p-2 text-xs">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300">{option.name}</span>
+                        <span className="text-[#00ff88] font-bold">{option.pointsRequired} pts</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Navigation Buttons */}
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4">

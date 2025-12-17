@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useMotionValue } from 'framer-motion';
 import { useLoyalty } from '../hooks/useLoyalty';
+import { loyaltyRulesService } from '../services/loyaltyRulesService';
 import { 
   Gift, Star, TrendingUp, Award, Share2, Phone, 
   Instagram, MessageCircle, Facebook, Sparkles, 
@@ -49,6 +50,38 @@ export const RewardsPage: React.FC = () => {
     tierProgress,
     loading
   } = useLoyalty();
+
+  // Dynamic rules state
+  const [dynamicRules, setDynamicRules] = useState<any>(null);
+  const [earningRate, setEarningRate] = useState<number>(0.1);
+  const [tierThresholds, setTierThresholds] = useState<any[]>([]);
+
+  // Load dynamic rules on mount
+  useEffect(() => {
+    const loadRules = async () => {
+      try {
+        const rules = await loyaltyRulesService.getRules();
+        setDynamicRules(rules);
+        setEarningRate(rules.pointsEarning.pointsPerDollar);
+        setTierThresholds(rules.tiers);
+        console.log('✅ Loaded dynamic loyalty rules:', rules);
+      } catch (error) {
+        console.error('❌ Error loading loyalty rules:', error);
+      }
+    };
+
+    loadRules();
+
+    // Subscribe to real-time rule changes
+    const unsubscribe = loyaltyRulesService.onRulesChange((rules) => {
+      console.log('🔄 Loyalty rules updated in real-time');
+      setDynamicRules(rules);
+      setEarningRate(rules.pointsEarning.pointsPerDollar);
+      setTierThresholds(rules.tiers);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const headerY = useTransform(scrollYProgress, [0, 0.2], [0, -50]);
   const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);

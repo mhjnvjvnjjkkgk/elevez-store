@@ -1,0 +1,21 @@
+.scroll-reveal {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  line-height: 1.2;
+}
+
+.scroll-reveal-text {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em; /* Adjust gap between words */
+  width: 100%;
+}
+
+.word {
+  display: inline-block;
+  opacity: 0;
+  transform-origin: 0% 100%;
+  will-change: opacity, transform, filter;
+}

@@ -1,6 +1,7 @@
 import { doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { userActivityService } from './userActivityService';
+import { loyaltyRulesService } from './loyaltyRulesService';
 
 export interface UserPointsData {
   userId: string;
@@ -70,11 +71,14 @@ class UserPointsManagementService {
       const currentPoints = await this.getUserPoints(userId);
       const newBalance = currentPoints.currentBalance + amount;
       
+      // ✅ Use dynamic loyalty rules for tier calculation
+      const tierConfig = await loyaltyRulesService.calculateTier(newBalance);
+      
       const pointsRef = doc(db, `users/${userId}/points`, 'data');
       await updateDoc(pointsRef, {
         currentBalance: newBalance,
         totalEarned: currentPoints.totalEarned + amount,
-        tier: this.calculateTier(newBalance),
+        tier: tierConfig.id as 'bronze' | 'silver' | 'gold' | 'platinum',
         lastUpdated: new Date()
       });
       
@@ -115,11 +119,14 @@ class UserPointsManagementService {
       
       const newBalance = currentPoints.currentBalance - amount;
       
+      // ✅ Use dynamic loyalty rules for tier calculation
+      const tierConfig = await loyaltyRulesService.calculateTier(newBalance);
+      
       const pointsRef = doc(db, `users/${userId}/points`, 'data');
       await updateDoc(pointsRef, {
         currentBalance: newBalance,
         totalSpent: currentPoints.totalSpent + amount,
-        tier: this.calculateTier(newBalance),
+        tier: tierConfig.id as 'bronze' | 'silver' | 'gold' | 'platinum',
         lastUpdated: new Date()
       });
       
@@ -155,12 +162,15 @@ class UserPointsManagementService {
       const currentPoints = await this.getUserPoints(userId);
       const difference = newBalance - currentPoints.currentBalance;
       
+      // ✅ Use dynamic loyalty rules for tier calculation
+      const tierConfig = await loyaltyRulesService.calculateTier(newBalance);
+      
       const pointsRef = doc(db, `users/${userId}/points`, 'data');
       await updateDoc(pointsRef, {
         currentBalance: newBalance,
         totalEarned: currentPoints.totalEarned + (difference > 0 ? difference : 0),
         totalSpent: currentPoints.totalSpent + (difference < 0 ? Math.abs(difference) : 0),
-        tier: this.calculateTier(newBalance),
+        tier: tierConfig.id as 'bronze' | 'silver' | 'gold' | 'platinum',
         lastUpdated: new Date()
       });
       
@@ -216,12 +226,12 @@ class UserPointsManagementService {
 
   /**
    * Calculate tier based on points
+   * ✅ NOW USES DYNAMIC LOYALTY RULES - DEPRECATED
+   * @deprecated Use loyaltyRulesService.calculateTier() instead
    */
-  private calculateTier(points: number): 'bronze' | 'silver' | 'gold' | 'platinum' {
-    if (points >= 5000) return 'platinum';
-    if (points >= 2000) return 'gold';
-    if (points >= 1000) return 'silver';
-    return 'bronze';
+  private async calculateTier(points: number): Promise<'bronze' | 'silver' | 'gold' | 'platinum'> {
+    const tierConfig = await loyaltyRulesService.calculateTier(points);
+    return tierConfig.id as 'bronze' | 'silver' | 'gold' | 'platinum';
   }
 
   /**

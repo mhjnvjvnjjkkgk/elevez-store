@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLoyalty } from '../../hooks/useLoyalty';
-import { TIER_CONFIGS } from '../../services/loyaltyService';
+import { loyaltyRulesService, TierConfig } from '../../services/loyaltyRulesService';
 import { Check, Lock } from 'lucide-react';
 
 export const TiersBenefitsSection: React.FC = () => {
   const { profile, tierInfo } = useLoyalty();
+  const [tiers, setTiers] = useState<TierConfig[]>([]);
+
+  // Load dynamic tiers from Firebase
+  useEffect(() => {
+    const loadTiers = async () => {
+      const rules = await loyaltyRulesService.getRules();
+      setTiers(rules.tiers);
+    };
+    loadTiers();
+
+    // Subscribe to real-time updates
+    const unsubscribe = loyaltyRulesService.onRulesChange((rules) => {
+      setTiers(rules.tiers);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <section className="py-20 px-4 bg-black/20">
@@ -21,9 +38,9 @@ export const TiersBenefitsSection: React.FC = () => {
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {TIER_CONFIGS.map((tier, index) => {
+          {tiers.map((tier, index) => {
             const isCurrentTier = tierInfo?.name === tier.name;
-            const isUnlocked = profile && profile.totalPointsEarned >= tier.minPoints;
+            const isUnlocked = profile && profile.totalPointsEarned >= tier.pointsRequired;
 
             return (
               <motion.div
@@ -65,34 +82,83 @@ export const TiersBenefitsSection: React.FC = () => {
                   
                   {/* Min Points */}
                   <p className="text-center text-white/70 text-sm mb-6">
-                    {tier.minPoints === 0 ? 'Starting tier' : `${tier.minPoints}+ points`}
+                    {tier.pointsRequired === 0 ? 'Starting tier' : `${tier.pointsRequired}+ points`}
                   </p>
 
                   {/* Benefits List */}
                   <div className="space-y-3">
-                    {tier.benefits.map((benefit, i) => (
-                      <div key={i} className="flex items-start gap-2">
+                    {/* Discount Benefit */}
+                    {tier.benefits.discountPercentage > 0 && (
+                      <div className="flex items-start gap-2">
                         <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
                           isUnlocked ? 'text-green-400' : 'text-white/30'
                         }`} />
                         <p className={`text-sm ${isUnlocked ? 'text-white' : 'text-white/50'}`}>
-                          {benefit}
+                          {tier.benefits.discountPercentage}% discount on all orders
                         </p>
                       </div>
-                    ))}
+                    )}
+                    
+                    {/* Earning Multiplier */}
+                    {tier.benefits.earningMultiplier > 1 && (
+                      <div className="flex items-start gap-2">
+                        <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                          isUnlocked ? 'text-green-400' : 'text-white/30'
+                        }`} />
+                        <p className={`text-sm ${isUnlocked ? 'text-white' : 'text-white/50'}`}>
+                          {tier.benefits.earningMultiplier}x points on purchases
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Free Shipping */}
+                    {tier.benefits.freeShippingThreshold > 0 && (
+                      <div className="flex items-start gap-2">
+                        <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                          isUnlocked ? 'text-green-400' : 'text-white/30'
+                        }`} />
+                        <p className={`text-sm ${isUnlocked ? 'text-white' : 'text-white/50'}`}>
+                          Free shipping on orders over ₹{tier.benefits.freeShippingThreshold}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Exclusive Access */}
+                    {tier.benefits.exclusiveAccess && (
+                      <div className="flex items-start gap-2">
+                        <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                          isUnlocked ? 'text-green-400' : 'text-white/30'
+                        }`} />
+                        <p className={`text-sm ${isUnlocked ? 'text-white' : 'text-white/50'}`}>
+                          Exclusive access to new products
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Priority Support */}
+                    {tier.benefits.prioritySupport && (
+                      <div className="flex items-start gap-2">
+                        <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                          isUnlocked ? 'text-green-400' : 'text-white/30'
+                        }`} />
+                        <p className={`text-sm ${isUnlocked ? 'text-white' : 'text-white/50'}`}>
+                          Priority customer support
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Progress to this tier */}
-                  {!isUnlocked && profile && (
+                  {!isUnlocked && profile && tier.pointsRequired > 0 && (
                     <div className="mt-6 pt-6 border-t border-white/10">
                       <p className="text-xs text-white/70 mb-2">
-                        {tier.minPoints - profile.totalPointsEarned} points to unlock
+                        {tier.pointsRequired - profile.totalPointsEarned} points to unlock
                       </p>
                       <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
                           style={{ 
-                            width: `${Math.min(100, (profile.totalPointsEarned / tier.minPoints) * 100)}%` 
+                            width: `${Math.min(100, (profile.totalPointsEarned / tier.pointsRequired) * 100)}%` 
                           }}
                         />
                       </div>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnose Points Issue</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { color: #00ff88; margin-bottom: 20px; }
+        .section { background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .section h2 { color: #00ff88; margin-bottom: 15px; font-size: 1.2em; }
+        button { background: #00ff88; color: black; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-weight: 600; margin-right: 10px; font-size: 1em; }
+        button:hover { background: #00dd77; }
+        button.danger { background: #ff6666; color: white; }
+        .log { background: #0a0a0a; border: 1px solid #333; border-radius: 5px; padding: 15px; margin-top: 15px; max-height: 500px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.9em; }
+        .log-entry { margin-bottom: 5px; padding: 3px 0; }
+        .log-success { color: #00ff88; }
+        .log-error { color: #ff6666; }
+        .log-info { color: #88ccff; }
+        .log-warn { color: #ffaa00; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: #0a0a0a; border: 1px solid #333; border-radius: 5px; padding: 15px; }
+        .stat-value { font-size: 1.8em; font-weight: bold; color: #00ff88; }
+        .stat-label { color: #888; margin-top: 5px; font-size: 0.9em; }
+        .user-card { background: #0a0a0a; border: 1px solid #333; border-radius: 5px; padding: 15px; margin-bottom: 10px; }
+        .user-card h3 { color: #00ff88; margin-bottom: 10px; }
+        .user-card .detail { color: #888; margin: 5px 0; }
+        .user-card .detail span { color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnose Points Issue</h1>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="section">
+            <h2>Step 1: Check All Collections</h2>
+            <button onclick="checkAllCollections()">🔍 Check All Collections</button>
+            <div class="log" id="collectionsLog"></div>
+        </div>
+
+        <div class="section">
+            <h2>Step 2: Check User Orders & Expected Points</h2>
+            <button onclick="checkUserOrders()">📦 Check User Orders</button>
+            <div class="log" id="ordersLog"></div>
+            <div id="userCards"></div>
+        </div>
+
+        <div class="section">
+            <h2>Step 3: Fix Points for All Users</h2>
+            <p style="color: #888; margin-bottom: 15px;">
+                This will calculate points from all orders and create/update userPoints documents.
+            </p>
+            <button onclick="fixAllUserPoints()">✅ Fix All User Points</button>
+            <button onclick="testSingleUser()" class="danger">🧪 Test Single User</button>
+            <div class="log" id="fixLog"></div>
+        </div>
+
+        <div class="section">
+            <h2>Step 4: Verify Fix</h2>
+            <button onclick="verifyFix()">✅ Verify Points Are Fixed</button>
+            <div class="log" id="verifyLog"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs, 
+            doc, 
+            getDoc,
+            setDoc,
+            updateDoc,
+            serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+            authDomain: "elevez-ed97f.firebaseapp.com",
+            projectId: "elevez-ed97f",
+            storageBucket: "elevez-ed97f.firebasestorage.app",
+            messagingSenderId: "440636781018",
+            appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let allOrders = [];
+        let allUsers = new Map();
+
+        function log(elementId, message, type = 'info') {
+            const logDiv = document.getElementById(elementId);
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function updateStats(data) {
+            document.getElementById('stats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${data.totalUsers || 0}</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${data.totalOrders || 0}</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${data.usersWithPoints || 0}</div>
+                    <div class="stat-label">Users with Points</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${data.totalPoints || 0}</div>
+                    <div class="stat-label">Total Points</div>
+                </div>
+            `;
+        }
+
+        window.checkAllCollections = async function() {
+            const logId = 'collectionsLog';
+            document.getElementById(logId).innerHTML = '';
+            log(logId, '🔍 Checking all Firebase collections...', 'info');
+
+            try {
+                // Check orders
+                const ordersSnapshot = await getDocs(collection(db, 'orders'));
+                log(logId, `📦 orders: ${ordersSnapshot.size} documents`, 'info');
+
+                // Check userPoints
+                const userPointsSnapshot = await getDocs(collection(db, 'userPoints'));
+                log(logId, `⭐ userPoints: ${userPointsSnapshot.size} documents`, userPointsSnapshot.size > 0 ? 'success' : 'warn');
+
+                if (userPointsSnapshot.size === 0) {
+                    log(logId, '⚠️ userPoints collection is EMPTY! This is the problem.', 'error');
+                }
+
+                // Check users
+                const usersSnapshot = await getDocs(collection(db, 'users'));
+                log(logId, `👤 users: ${usersSnapshot.size} documents`, 'info');
+
+                // Check pointsTransactions
+                const transactionsSnapshot = await getDocs(collection(db, 'pointsTransactions'));
+                log(logId, `💰 pointsTransactions: ${transactionsSnapshot.size} documents`, 'info');
+
+                log(logId, '\n📊 Analysis:', 'info');
+                if (ordersSnapshot.size > 0 && userPointsSnapshot.size === 0) {
+                    log(logId, '❌ PROBLEM FOUND: Orders exist but userPoints is empty!', 'error');
+                    log(logId, '💡 Solution: Run "Fix All User Points" to create userPoints documents', 'warn');
+                } else if (userPointsSnapshot.size > 0) {
+                    log(logId, '✅ userPoints collection exists', 'success');
+                    
+                    // Check if points are actually > 0
+                    let usersWithPoints = 0;
+                    userPointsSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        if ((data.totalPoints || data.points || 0) > 0) {
+                            usersWithPoints++;
+                        }
+                    });
+                    
+                    if (usersWithPoints === 0) {
+                        log(logId, '⚠️ userPoints documents exist but all have 0 points!', 'warn');
+                        log(logId, '💡 Solution: Run "Fix All User Points" to recalculate', 'warn');
+                    } else {
+                        log(logId, `✅ ${usersWithPoints} users have points > 0`, 'success');
+                    }
+                }
+
+            } catch (error) {
+                log(logId, `❌ Error: ${error.message}`, 'error');
+            }
+        };
+
+        window.checkUserOrders = async function() {
+            const logId = 'ordersLog';
+            document.getElementById(logId).innerHTML = '';
+            log(logId, '📦 Analyzing user orders...', 'info');
+
+            try {
+                // Load all orders
+                const ordersSnapshot = await getDocs(collection(db, 'orders'));
+                allOrders = [];
+                ordersSnapshot.forEach(doc => {
+                    allOrders.push({ id: doc.id, ...doc.data() });
+                });
+
+                log(logId, `Found ${allOrders.length} orders`, 'info');
+
+                // Group by user
+                allUsers.clear();
+                allOrders.forEach(order => {
+                    const userId = order.userId;
+                    if (!userId) {
+                        log(logId, `⚠️ Order ${order.id} has no userId!`, 'warn');
+                        return;
+                    }
+
+                    if (!allUsers.has(userId)) {
+                        allUsers.set(userId, {
+                            userId,
+                            email: order.shippingAddress?.email || order.email || 'N/A',
+                            name: `${order.shippingAddress?.firstName || ''} ${order.shippingAddress?.lastName || ''}`.trim() || 'Unknown',
+                            orders: [],
+                            totalSpent: 0,
+                            expectedPoints: 0,
+                            actualPoints: 0
+                        });
+                    }
+
+                    const user = allUsers.get(userId);
+                    user.orders.push(order);
+                    user.totalSpent += order.total || 0;
+                    user.expectedPoints += Math.floor((order.total || 0) / 10); // 1 point per $10
+                });
+
+                log(logId, `Found ${allUsers.size} unique users`, 'info');
+
+                // Check actual points in userPoints collection
+                for (const [userId, user] of allUsers.entries()) {
+                    try {
+                        const pointsDoc = await getDoc(doc(db, 'userPoints', userId));
+                        if (pointsDoc.exists()) {
+                            const data = pointsDoc.data();
+                            user.actualPoints = data.totalPoints || data.points || 0;
+                            user.tier = data.tier || 'bronze';
+                        }
+                    } catch (err) {
+                        log(logId, `⚠️ Error loading points for ${userId}: ${err.message}`, 'warn');
+                    }
+                }
+
+                // Display results
+                let usersWithMismatch = 0;
+                const userCardsDiv = document.getElementById('userCards');
+                userCardsDiv.innerHTML = '';
+
+                for (const [userId, user] of allUsers.entries()) {
+                    const mismatch = user.expectedPoints !== user.actualPoints;
+                    if (mismatch) usersWithMismatch++;
+
+                    const card = document.createElement('div');
+                    card.className = 'user-card';
+                    card.innerHTML = `
+                        <h3>${user.name} (${user.email})</h3>
+                        <div class="detail">User ID: <span>${userId}</span></div>
+                        <div class="detail">Orders: <span>${user.orders.length}</span></div>
+                        <div class="detail">Total Spent: <span>$${user.totalSpent.toFixed(2)}</span></div>
+                        <div class="detail" style="color: ${mismatch ? '#ffaa00' : '#00ff88'}">
+                            Expected Points: <span>${user.expectedPoints}</span>
+                        </div>
+                        <div class="detail" style="color: ${mismatch ? '#ff6666' : '#00ff88'}">
+                            Actual Points: <span>${user.actualPoints}</span>
+                        </div>
+                        ${mismatch ? '<div class="detail" style="color: #ff6666">❌ MISMATCH - Needs Fix!</div>' : '<div class="detail" style="color: #00ff88">✅ Points Match</div>'}
+                    `;
+                    userCardsDiv.appendChild(card);
+
+                    if (mismatch) {
+                        log(logId, `❌ ${user.name}: Expected ${user.expectedPoints}, Got ${user.actualPoints}`, 'error');
+                    } else {
+                        log(logId, `✅ ${user.name}: ${user.actualPoints} points (correct)`, 'success');
+                    }
+                }
+
+                log(logId, `\n📊 Summary:`, 'info');
+                log(logId, `   Total Users: ${allUsers.size}`, 'info');
+                log(logId, `   Users with Mismatched Points: ${usersWithMismatch}`, usersWithMismatch > 0 ? 'error' : 'success');
+
+                updateStats({
+                    totalUsers: allUsers.size,
+                    totalOrders: allOrders.length,
+                    usersWithPoints: Array.from(allUsers.values()).filter(u => u.actualPoints > 0).length,
+                    totalPoints: Array.from(allUsers.values()).reduce((sum, u) => sum + u.actualPoints, 0)
+                });
+
+            } catch (error) {
+                log(logId, `❌ Error: ${error.message}`, 'error');
+            }
+        };
+
+        function calculateTier(points) {
+            if (points >= 5000) return 'platinum';
+            if (points >= 2500) return 'gold';
+            if (points >= 1000) return 'silver';
+            return 'bronze';
+        }
+
+        window.fixAllUserPoints = async function() {
+            const logId = 'fixLog';
+            document.getElementById(logId).innerHTML = '';
+
+            if (allUsers.size === 0) {
+                log(logId, '❌ Please run "Check User Orders" first!', 'error');
+                return;
+            }
+
+            log(logId, '🔧 Fixing points for all users...', 'info');
+
+            try {
+                let fixed = 0;
+                let errors = 0;
+
+                for (const [userId, user] of allUsers.entries()) {
+                    try {
+                        const pointsRef = doc(db, 'userPoints', userId);
+                        const tier = calculateTier(user.expectedPoints);
+
+                        const pointsData = {
+                            userId,
+                            email: user.email,
+                            displayName: user.name,
+                            totalPoints: user.expectedPoints,
+                            points: user.expectedPoints, // Add both fields for compatibility
+                            tier,
+                            pointsHistory: [],
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString(),
+                            orderCount: user.orders.length,
+                            lastPurchaseDate: new Date().toISOString()
+                        };
+
+                        await setDoc(pointsRef, pointsData, { merge: true });
+                        
+                        log(logId, `✅ ${user.name}: Set to ${user.expectedPoints} points (${tier})`, 'success');
+                        fixed++;
+
+                    } catch (err) {
+                        log(logId, `❌ Failed to fix ${user.name}: ${err.message}`, 'error');
+                        errors++;
+                    }
+                }
+
+                log(logId, `\n🎉 Fix Complete!`, 'success');
+                log(logId, `   ✅ Fixed: ${fixed} users`, 'success');
+                if (errors > 0) {
+                    log(logId, `   ❌ Errors: ${errors} users`, 'error');
+                }
+
+                log(logId, `\n💡 Next: Refresh the Users Management page to see updated points`, 'info');
+
+            } catch (error) {
+                log(logId, `❌ Error: ${error.message}`, 'error');
+            }
+        };
+
+        window.testSingleUser = async function() {
+            const logId = 'fixLog';
+            
+            if (allUsers.size === 0) {
+                log(logId, '❌ Please run "Check User Orders" first!', 'error');
+                return;
+            }
+
+            // Get first user
+            const [userId, user] = Array.from(allUsers.entries())[0];
+            
+            log(logId, `\n🧪 Testing with user: ${user.name}`, 'info');
+            log(logId, `   User ID: ${userId}`, 'info');
+            log(logId, `   Expected Points: ${user.expectedPoints}`, 'info');
+
+            try {
+                const pointsRef = doc(db, 'userPoints', userId);
+                const tier = calculateTier(user.expectedPoints);
+
+                const pointsData = {
+                    userId,
+                    email: user.email,
+                    displayName: user.name,
+                    totalPoints: user.expectedPoints,
+                    points: user.expectedPoints,
+                    tier,
+                    pointsHistory: [],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    orderCount: user.orders.length
+                };
+
+                log(logId, `\n📝 Writing to Firebase:`, 'info');
+                log(logId, JSON.stringify(pointsData, null, 2), 'info');
+
+                await setDoc(pointsRef, pointsData, { merge: true });
+                
+                log(logId, `\n✅ Successfully wrote to userPoints/${userId}`, 'success');
+
+                // Verify
+                const verifyDoc = await getDoc(pointsRef);
+                if (verifyDoc.exists()) {
+                    const data = verifyDoc.data();
+                    log(logId, `\n✅ Verified - Read back from Firebase:`, 'success');
+                    log(logId, `   totalPoints: ${data.totalPoints}`, 'success');
+                    log(logId, `   points: ${data.points}`, 'success');
+                    log(logId, `   tier: ${data.tier}`, 'success');
+                } else {
+                    log(logId, `\n❌ Verification failed - document not found!`, 'error');
+                }
+
+            } catch (error) {
+                log(logId, `❌ Error: ${error.message}`, 'error');
+                log(logId, `Stack: ${error.stack}`, 'error');
+            }
+        };
+
+        window.verifyFix = async function() {
+            const logId = 'verifyLog';
+            document.getElementById(logId).innerHTML = '';
+            log(logId, '✅ Verifying fix...', 'info');
+
+            try {
+                // Check userPoints collection
+                const userPointsSnapshot = await getDocs(collection(db, 'userPoints'));
+                log(logId, `📊 userPoints collection: ${userPointsSnapshot.size} documents`, 'info');
+
+                let usersWithPoints = 0;
+                let totalPoints = 0;
+
+                userPointsSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const points = data.totalPoints || data.points || 0;
+                    if (points > 0) {
+                        usersWithPoints++;
+                        totalPoints += points;
+                        log(logId, `✅ ${data.displayName || data.email}: ${points} points (${data.tier})`, 'success');
+                    } else {
+                        log(logId, `⚠️ ${data.displayName || data.email}: 0 points`, 'warn');
+                    }
+                });
+
+                log(logId, `\n📊 Results:`, 'info');
+                log(logId, `   Total Users: ${userPointsSnapshot.size}`, 'info');
+                log(logId, `   Users with Points: ${usersWithPoints}`, usersWithPoints > 0 ? 'success' : 'error');
+                log(logId, `   Total Points: ${totalPoints}`, 'info');
+
+                if (usersWithPoints === 0) {
+                    log(logId, `\n❌ Still no points! Check Firebase permissions.`, 'error');
+                } else {
+                    log(logId, `\n🎉 Success! Points are now in userPoints collection!`, 'success');
+                    log(logId, `💡 Refresh Users Management page to see the points`, 'info');
+                }
+
+            } catch (error) {
+                log(logId, `❌ Error: ${error.message}`, 'error');
+            }
+        };
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            checkAllCollections();
+        });
+    </script>
+</body>
+</html>

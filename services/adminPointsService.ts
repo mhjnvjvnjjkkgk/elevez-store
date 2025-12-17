@@ -15,6 +15,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { getLoyaltyProfile, logPointsTransaction, calculateTier } from './loyaltyService';
+import { loyaltyRulesService } from './loyaltyRulesService';
 
 // ============================================
 // TYPE DEFINITIONS
@@ -88,7 +89,9 @@ export const adminAddPoints = async (
     const previousTier = profile.tier;
     const newPoints = previousPoints + points;
     const newTotalPoints = profile.totalPointsEarned + points;
-    const newTier = calculateTier(newTotalPoints);
+    // ✅ Use dynamic loyalty rules for tier calculation
+    const tierConfig = await loyaltyRulesService.calculateTier(newTotalPoints);
+    const newTier = tierConfig.name;
 
     // Update loyalty profile
     const profileRef = doc(db, 'loyaltyProfiles', userId);
@@ -167,7 +170,9 @@ export const adminRemovePoints = async (
     const newPoints = Math.max(0, previousPoints - points);
     const pointsRemoved = previousPoints - newPoints;
     const newTotalPoints = Math.max(0, profile.totalPointsEarned - pointsRemoved);
-    const newTier = calculateTier(newTotalPoints);
+    // ✅ Use dynamic loyalty rules for tier calculation
+    const tierConfig = await loyaltyRulesService.calculateTier(newTotalPoints);
+    const newTier = tierConfig.name;
 
     // Update loyalty profile
     const profileRef = doc(db, 'loyaltyProfiles', userId);

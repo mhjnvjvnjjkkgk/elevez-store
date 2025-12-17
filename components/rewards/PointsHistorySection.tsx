@@ -56,11 +56,19 @@ export const PointsHistorySection: React.FC = () => {
 
     // Add transactions
     transactions.forEach(transaction => {
+      // Determine if this is a positive (earning) transaction
+      // Admin adjustments with positive points should show as 'earn'
+      const isEarning =
+        transaction.type === 'earn' ||
+        transaction.type === 'admin_add' ||
+        (transaction.type === 'admin-adjustment' && transaction.points > 0) ||
+        (transaction.reason?.toLowerCase().includes('added') && transaction.points > 0);
+
       history.push({
         id: transaction.id,
-        type: transaction.type,
-        points: transaction.points,
-        reason: transaction.reason,
+        type: isEarning ? 'earn' : 'redeem',
+        points: Math.abs(transaction.points), // Always show absolute value
+        reason: transaction.reason || (isEarning ? 'Admin adjustment' : 'Points redeemed'),
         timestamp: transaction.timestamp,
         source: 'transaction'
       });
@@ -150,16 +158,16 @@ export const PointsHistorySection: React.FC = () => {
                   {/* Glow effect on hover */}
                   <div className="absolute inset-0 bg-gradient-to-r from-[#00ff88]/0 via-[#00ff88]/5 to-[#00ff88]/0 
                                 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
+
                   <div className="relative z-10">
                     <div className="flex items-start justify-between gap-4">
                       {/* Left: Icon and Details */}
                       <div className="flex items-start gap-4 flex-1">
                         <div className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0
-                                      ${item.type === 'earn' 
-                                        ? 'bg-gradient-to-br from-[#00ff88]/20 to-green-500/20 border border-[#00ff88]/30' 
-                                        : 'bg-gradient-to-br from-red-500/20 to-pink-500/20 border border-red-500/30'
-                                      }`}>
+                                      ${item.type === 'earn'
+                            ? 'bg-gradient-to-br from-[#00ff88]/20 to-green-500/20 border border-[#00ff88]/30'
+                            : 'bg-gradient-to-br from-red-500/20 to-pink-500/20 border border-red-500/30'
+                          }`}>
                           {item.source === 'order' ? (
                             <ShoppingBag className="w-7 h-7 text-[#00ff88]" />
                           ) : item.type === 'earn' ? (
@@ -168,10 +176,10 @@ export const PointsHistorySection: React.FC = () => {
                             <TrendingDown className="w-7 h-7 text-red-400" />
                           )}
                         </div>
-                        
+
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold text-lg mb-1">{item.reason}</p>
-                          
+
                           {/* Order details if available */}
                           {item.orderDetails && (
                             <div className="mt-2 space-y-1">
@@ -190,7 +198,7 @@ export const PointsHistorySection: React.FC = () => {
                               </p>
                             </div>
                           )}
-                          
+
                           <p className="text-white/40 text-sm mt-2 flex items-center gap-2">
                             <Clock className="w-3 h-3" />
                             {item.timestamp?.toDate?.()?.toLocaleDateString('en-US', {
@@ -206,14 +214,13 @@ export const PointsHistorySection: React.FC = () => {
 
                       {/* Right: Points and Action */}
                       <div className="text-right flex-shrink-0 flex flex-col items-end gap-2">
-                        <p className={`text-4xl font-black font-syne ${
-                          item.type === 'earn' ? 'text-[#00ff88]' : 'text-red-400'
-                        }`}
-                        style={{
-                          textShadow: item.type === 'earn' 
-                            ? '0 0 20px rgba(0, 255, 136, 0.3)' 
-                            : '0 0 20px rgba(239, 68, 68, 0.3)'
-                        }}>
+                        <p className={`text-4xl font-black font-syne ${item.type === 'earn' ? 'text-[#00ff88]' : 'text-red-400'
+                          }`}
+                          style={{
+                            textShadow: item.type === 'earn'
+                              ? '0 0 20px rgba(0, 255, 136, 0.3)'
+                              : '0 0 20px rgba(239, 68, 68, 0.3)'
+                          }}>
                           {item.type === 'earn' ? '+' : '-'}{item.points}
                         </p>
                         <p className="text-white/50 text-xs uppercase tracking-wider">points</p>

@@ -50,18 +50,18 @@ const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
+
   if (req.method === 'OPTIONS') {
     res.writeHead(200);
     res.end();
     return;
   }
-  
+
   // Proxy to Vite dev server for visual builder
   if (req.method === 'GET' && req.url.startsWith('/vite-proxy')) {
     const targetUrl = req.url.replace('/vite-proxy', '');
     const viteUrl = `http://localhost:5173${targetUrl || '/'}`;
-    
+
     // Proxy the request to Vite
     import('http').then(({ default: http }) => {
       http.get(viteUrl, (viteRes) => {
@@ -79,14 +79,14 @@ const server = http.createServer((req, res) => {
     });
     return;
   }
-  
+
   // Serve App.tsx for the page builder
   if (req.method === 'GET' && req.url === '/App.tsx') {
     const appPath = path.join(__dirname, '..', 'App.tsx');
-    
+
     if (fs.existsSync(appPath)) {
       const content = fs.readFileSync(appPath, 'utf8');
-      res.writeHead(200, { 
+      res.writeHead(200, {
         'Content-Type': 'text/plain',
         'Access-Control-Allow-Origin': '*'
       });
@@ -99,7 +99,7 @@ const server = http.createServer((req, res) => {
       return;
     }
   }
-  
+
   // Serve unified dashboard and assets
   if (req.method === 'GET' && req.url === '/dashboard') {
     const dashboardPath = path.join(__dirname, '..', 'admin-panel', 'unified-admin.html');
@@ -161,6 +161,54 @@ const server = http.createServer((req, res) => {
     }
   }
 
+  // Serve Discount Panel Files
+  const discountFiles = [
+    'discount-panel.html',
+    'discount-service.js',
+    'discount-panel-app.js',
+    'firebase-config.js'
+  ];
+
+  // Strip query string for file lookup
+  const urlWithoutQuery = req.url.split('?')[0];
+  const requestedFile = urlWithoutQuery.startsWith('/') ? urlWithoutQuery.slice(1) : urlWithoutQuery;
+
+  if (req.method === 'GET' && discountFiles.includes(requestedFile)) {
+    const filePath = path.join(__dirname, '..', 'admin-panel', requestedFile);
+    if (fs.existsSync(filePath)) {
+      let contentType = 'text/plain';
+      if (requestedFile.endsWith('.html')) contentType = 'text/html; charset=utf-8';
+      else if (requestedFile.endsWith('.js')) contentType = 'application/javascript; charset=utf-8';
+
+      const content = fs.readFileSync(filePath, 'utf8');
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(content);
+      console.log(`✅ Served ${requestedFile}`);
+      return;
+    }
+  }
+
+  // Serve Loyalty & User Management Pages
+  const loyaltyFiles = [
+    'loyalty-rules.html',
+    'loyalty-admin-complete.html',
+    'users-management.html',
+    'user-points-panel.html',
+    'test-loyalty-rules-system.html',
+    'test-loyalty-sync.html'
+  ];
+
+  if (req.method === 'GET' && loyaltyFiles.includes(requestedFile)) {
+    const filePath = path.join(__dirname, '..', 'admin-panel', requestedFile);
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(content);
+      console.log(`✅ Served loyalty/user page: ${requestedFile}`);
+      return;
+    }
+  }
+
   // Serve discount management system
   if (req.method === 'GET' && req.url === '/discount-management') {
     const discountPath = path.join(__dirname, '..', 'admin-panel', 'discount-management.html');
@@ -205,32 +253,32 @@ const server = http.createServer((req, res) => {
     }
   }
 
-  // Serve admin panel files
-  if (req.method === 'GET' && (req.url === '/' || req.url.startsWith('/admin-panel'))) {
+  // Serve admin panel files - handle root, /index.html, and /admin-panel routes
+  if (req.method === 'GET' && (urlWithoutQuery === '/' || urlWithoutQuery === '/index.html' || urlWithoutQuery.startsWith('/admin-panel'))) {
     let filePath;
-    
-    // Handle root path - serve index.html
-    if (req.url === '/') {
+
+    // Handle root path and /index.html - serve index.html
+    if (urlWithoutQuery === '/' || urlWithoutQuery === '/index.html') {
       filePath = path.join(__dirname, '..', 'admin-panel', 'index.html');
     } else {
-      filePath = path.join(__dirname, '..', req.url);
+      filePath = path.join(__dirname, '..', urlWithoutQuery);
     }
-    
+
     // Security: prevent directory traversal
     const normalizedPath = path.normalize(filePath);
     const adminPanelDir = path.join(__dirname, '..', 'admin-panel');
-    
+
     if (!normalizedPath.startsWith(adminPanelDir)) {
       res.writeHead(403);
       res.end('Forbidden');
       return;
     }
-    
+
     // If it's a directory, serve index.html
     if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
       filePath = path.join(filePath, 'index.html');
     }
-    
+
     // Serve the file
     if (fs.existsSync(filePath)) {
       const ext = path.extname(filePath);
@@ -243,10 +291,10 @@ const server = http.createServer((req, res) => {
         '.jpg': 'image/jpeg',
         '.gif': 'image/gif'
       };
-      
+
       const contentType = mimeTypes[ext] || 'application/octet-stream';
       const content = fs.readFileSync(filePath);
-      
+
       res.writeHead(200, { 'Content-Type': contentType });
       res.end(content);
       return;
@@ -256,23 +304,23 @@ const server = http.createServer((req, res) => {
       return;
     }
   }
-  
+
   if (req.method === 'POST' && req.url === '/upload-image') {
     let body = [];
-    
+
     req.on('data', chunk => {
       body.push(chunk);
     });
-    
+
     req.on('end', () => {
       try {
         const boundary = req.headers['content-type'].split('boundary=')[1];
         const bodyBuffer = Buffer.concat(body);
         const bodyString = bodyBuffer.toString('binary');
-        
+
         // Parse multipart form data
         const parts = bodyString.split('--' + boundary);
-        
+
         for (const part of parts) {
           if (part.includes('Content-Disposition: form-data')) {
             const filenameMatch = part.match(/filename="(.+?)"/);
@@ -281,21 +329,21 @@ const server = http.createServer((req, res) => {
               const contentStart = part.indexOf('\r\n\r\n') + 4;
               const contentEnd = part.lastIndexOf('\r\n');
               const fileContent = part.substring(contentStart, contentEnd);
-              
+
               // Generate unique filename
               const timestamp = Date.now();
               const ext = path.extname(filename);
               const basename = path.basename(filename, ext);
               const uniqueFilename = `${basename}-${timestamp}${ext}`;
               const filepath = path.join(imagesDir, uniqueFilename);
-              
+
               // Write file
               fs.writeFileSync(filepath, fileContent, 'binary');
-              
+
               // Generate URLs
               const localUrl = `/images/products/${uniqueFilename}`;
               const githubUrl = getGitHubRawUrl(uniqueFilename);
-              
+
               res.writeHead(200, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({
                 success: true,
@@ -304,11 +352,11 @@ const server = http.createServer((req, res) => {
                 filename: uniqueFilename,
                 message: 'Image uploaded. Will be available on GitHub after sync & deploy.'
               }));
-              
+
               console.log(`✅ Image uploaded: ${uniqueFilename}`);
               console.log(`📍 Local URL: ${localUrl}`);
               console.log(`🌐 GitHub URL: ${githubUrl}`);
-              
+
               // Auto-commit image to git
               import('child_process').then(({ exec }) => {
                 const relativePath = `public/images/products/${uniqueFilename}`;
@@ -322,9 +370,9 @@ const server = http.createServer((req, res) => {
             }
           }
         }
-        
+
         throw new Error('No file found in request');
-        
+
       } catch (error) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -336,28 +384,28 @@ const server = http.createServer((req, res) => {
     });
   } else if (req.method === 'POST' && req.url === '/save-products') {
     let body = '';
-    
+
     req.on('data', chunk => {
       body += chunk.toString();
     });
-    
+
     req.on('end', () => {
       try {
         const data = JSON.parse(body);
-        
+
         // Save products to JSON file as backup
         const backupPath = path.join(__dirname, 'products-backup.json');
         fs.writeFileSync(backupPath, JSON.stringify(data, null, 2), 'utf8');
-        
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: true,
           message: 'Products backed up successfully',
           count: data.products?.length || 0
         }));
-        
+
         console.log(`💾 Products backed up: ${data.products?.length || 0} products`);
-        
+
       } catch (error) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -370,7 +418,7 @@ const server = http.createServer((req, res) => {
   } else if (req.method === 'GET' && req.url === '/load-products') {
     try {
       const backupPath = path.join(__dirname, 'products-backup.json');
-      
+
       if (fs.existsSync(backupPath)) {
         const data = fs.readFileSync(backupPath, 'utf8');
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -391,28 +439,28 @@ const server = http.createServer((req, res) => {
     }
   } else if (req.method === 'POST' && req.url === '/update-app-tsx') {
     let body = '';
-    
+
     req.on('data', chunk => {
       body += chunk.toString();
     });
-    
+
     req.on('end', () => {
       try {
         const data = JSON.parse(body);
         const { code, sections } = data;
-        
+
         // Backup current App.tsx
         const appPath = path.join(__dirname, '..', 'App.tsx');
         const backupPath = path.join(__dirname, '..', `App.tsx.backup.${Date.now()}`);
-        
+
         if (fs.existsSync(appPath)) {
           fs.copyFileSync(appPath, backupPath);
           console.log('📦 Backed up App.tsx');
         }
-        
+
         // Write new App.tsx
         fs.writeFileSync(appPath, code, 'utf8');
-        
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: true,
@@ -420,9 +468,9 @@ const server = http.createServer((req, res) => {
           backup: backupPath,
           sections: sections.length
         }));
-        
+
         console.log(`✅ Updated App.tsx with ${sections.length} sections`);
-        
+
       } catch (error) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -435,22 +483,22 @@ const server = http.createServer((req, res) => {
   } else if (req.method === 'POST' && req.url === '/sync-deploy') {
     // New unified sync and deploy endpoint
     let body = '';
-    
+
     req.on('data', chunk => {
       body += chunk.toString();
     });
-    
+
     req.on('end', () => {
       try {
         const data = JSON.parse(body);
-        
+
         console.log('\n🚀 SYNC & DEPLOY INITIATED');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         console.log(`📊 Products: ${data.products || 0}`);
         console.log(`🗂️  Collections: ${data.collections || 0}`);
         console.log(`⏰ Timestamp: ${data.timestamp}`);
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-        
+
         import('child_process').then(({ exec }) => {
           // Step 1: Add all files
           console.log('📦 Step 1/3: Adding files to git...');
@@ -464,13 +512,13 @@ const server = http.createServer((req, res) => {
               }));
               return;
             }
-            
+
             // Step 2: Commit
             const timestamp = new Date().toLocaleString();
             const commitMessage = `Admin Panel Sync: ${data.products || 0} products - ${timestamp}`;
             console.log(`💾 Step 2/3: Committing changes...`);
             console.log(`   Message: "${commitMessage}"`);
-            
+
             exec(`git commit -m "${commitMessage}"`, (error, stdout, stderr) => {
               // Check if there's nothing to commit (not an error)
               if (error && !error.message.includes('nothing to commit')) {
@@ -482,7 +530,7 @@ const server = http.createServer((req, res) => {
                 }));
                 return;
               }
-              
+
               if (error && error.message.includes('nothing to commit')) {
                 console.log('ℹ️  No changes to commit');
                 res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -493,9 +541,9 @@ const server = http.createServer((req, res) => {
                 }));
                 return;
               }
-              
+
               console.log('✅ Committed successfully!');
-              
+
               // Step 3: Push to GitHub
               console.log('🚀 Step 3/3: Pushing to GitHub...');
               exec('git push origin main', (error, stdout, stderr) => {
@@ -511,14 +559,14 @@ const server = http.createServer((req, res) => {
                       }));
                       return;
                     }
-                    
+
                     console.log('✅ Pushed to GitHub (master branch)!');
                     console.log('🎉 DEPLOYMENT COMPLETE!');
                     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
                     console.log('🌐 Vercel will auto-deploy in 1-2 minutes');
                     console.log('📊 Check: https://vercel.com/dashboard');
                     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-                    
+
                     res.writeHead(200, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({
                       success: true,
@@ -528,7 +576,7 @@ const server = http.createServer((req, res) => {
                   });
                   return;
                 }
-                
+
                 console.log('✅ Pushed to GitHub (main branch)!');
                 console.log(stdout);
                 console.log('\n🎉 DEPLOYMENT COMPLETE!');
@@ -542,7 +590,7 @@ const server = http.createServer((req, res) => {
                 console.log('   - Vercel: https://vercel.com/dashboard');
                 console.log('   - GitHub: https://github.com/mhjnvjvnjjkkgk/elevez-store');
                 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-                
+
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({
                   success: true,
@@ -553,7 +601,7 @@ const server = http.createServer((req, res) => {
             });
           });
         });
-        
+
       } catch (error) {
         console.error('❌ Sync & Deploy error:', error.message);
         res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -565,7 +613,7 @@ const server = http.createServer((req, res) => {
     });
   } else if (req.method === 'POST' && req.url === '/deploy-website') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    
+
     // Auto-deploy using existing git workflow
     import('child_process').then(({ exec }) => {
       exec('git add . && git commit -m "Visual builder update" && git push origin main', (error, stdout, stderr) => {
@@ -577,23 +625,23 @@ const server = http.createServer((req, res) => {
         }
       });
     });
-    
+
     res.end(JSON.stringify({
       success: true,
       message: 'Deployment started'
     }));
   } else if (req.method === 'POST' && req.url === '/update-constants') {
     let body = '';
-    
+
     req.on('data', chunk => {
       body += chunk.toString();
     });
-    
+
     req.on('end', () => {
       try {
         const data = JSON.parse(body);
         const { products, collections, tags, categories, types, colors } = data;
-        
+
         const tsCode = `import { Product } from './types';
 
 export const BRAND_NAME = "ELEVEZ";
@@ -646,11 +694,11 @@ export function getCollectionProducts(collectionId: string): Product[] {
   });
 }
 `;
-        
+
         // Write to constants.ts
         const constantsPath = path.join(__dirname, '..', 'constants.ts');
         fs.writeFileSync(constantsPath, tsCode, 'utf8');
-        
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: true,
@@ -659,13 +707,13 @@ export function getCollectionProducts(collectionId: string): Product[] {
           collections: collections.length,
           timestamp: new Date().toISOString()
         }));
-        
+
         console.log(`✅ Updated constants.ts - ${products.length} products, ${collections.length} collections`);
         console.log(`📄 Collections page will show all ${products.length} products automatically`);
-        
+
         // Auto-commit and deploy with enhanced error handling
         console.log('🚀 Starting auto-deployment...');
-        
+
         import('child_process').then(({ exec }) => {
           // Step 1: Add all files including images
           console.log('📦 Adding files to git...');
@@ -675,12 +723,12 @@ export function getCollectionProducts(collectionId: string): Product[] {
               console.log('ℹ️ Make sure git is initialized: git init');
               return;
             }
-            
+
             // Step 2: Commit with timestamp
             const timestamp = new Date().toLocaleString();
             const commitMessage = `Auto-update: ${products.length} products and images - ${timestamp}`;
             console.log(`💾 Committing: "${commitMessage}"`);
-            
+
             exec(`git commit -m "${commitMessage}"`, (error, stdout, stderr) => {
               if (error) {
                 // Check if it's "nothing to commit" (not an error)
@@ -691,9 +739,9 @@ export function getCollectionProducts(collectionId: string): Product[] {
                 }
                 return;
               }
-              
+
               console.log('✅ Committed successfully!');
-              
+
               // Step 3: Push to GitHub
               console.log('🚀 Pushing to GitHub...');
               exec('git push origin main', (error, stdout, stderr) => {
@@ -731,7 +779,7 @@ export function getCollectionProducts(collectionId: string): Product[] {
             });
           });
         });
-        
+
       } catch (error) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -742,6 +790,31 @@ export function getCollectionProducts(collectionId: string): Product[] {
       }
     });
   } else {
+    // Try to serve from admin-panel directory if not handled above
+    // Strip query string from URL
+    const urlPath = req.url.split('?')[0];
+    const potentialAssetPath = path.join(__dirname, '..', 'admin-panel', urlPath);
+    if (fs.existsSync(potentialAssetPath) && fs.statSync(potentialAssetPath).isFile()) {
+      const ext = path.extname(potentialAssetPath);
+      const mimeTypes = {
+        '.html': 'text/html',
+        '.js': 'application/javascript',
+        '.css': 'text/css',
+        '.json': 'application/json',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.gif': 'image/gif',
+        '.svg': 'image/svg+xml'
+      };
+
+      const contentType = mimeTypes[ext] || 'application/octet-stream';
+      const content = fs.readFileSync(potentialAssetPath);
+
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(content);
+      return;
+    }
+
     res.writeHead(404);
     res.end('Not Found');
   }
@@ -755,7 +828,7 @@ server.listen(PORT, () => {
   console.log(`✨ Admin panel can now auto-update constants.ts!`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
   console.log(`👀 Watching for updates from admin panel...`);
-  
+
   // Setup WebSocket for hot-reload
   setupHotReload();
 });
@@ -764,37 +837,37 @@ server.listen(PORT, () => {
 function setupHotReload() {
   try {
     const wss = new WebSocketServer({ port: WS_PORT });
-    
+
     console.log(`🔥 Hot-Reload Server: ws://localhost:${WS_PORT}`);
-    
+
     wss.on('connection', (ws) => {
       connectedClients.add(ws);
       console.log(`✅ Client connected for hot-reload (${connectedClients.size} total)`);
-      
+
       ws.on('close', () => {
         connectedClients.delete(ws);
         console.log(`❌ Client disconnected (${connectedClients.size} remaining)`);
       });
     });
-    
+
     // Watch admin panel files for changes
     const adminPanelDir = path.join(__dirname, '..', 'admin-panel');
-    
+
     fs.watch(adminPanelDir, { recursive: true }, (eventType, filename) => {
       if (filename && (filename.endsWith('.js') || filename.endsWith('.css') || filename.endsWith('.html'))) {
         console.log(`📝 File changed: ${filename}`);
-        
+
         // Notify all connected clients to reload
         connectedClients.forEach(client => {
           if (client.readyState === 1) { // WebSocket.OPEN
             client.send(JSON.stringify({ type: 'reload', file: filename }));
           }
         });
-        
+
         console.log(`🔄 Sent reload signal to ${connectedClients.size} client(s)`);
       }
     });
-    
+
   } catch (error) {
     console.warn('⚠️ Hot-reload not available:', error.message);
   }

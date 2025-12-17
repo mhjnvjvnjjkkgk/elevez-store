@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -266,8 +267,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .success-message {
@@ -289,6 +295,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>👥 Users Management</h1>
@@ -380,11 +387,11 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-        import { 
-            getFirestore, 
-            collection, 
-            getDocs, 
-            doc, 
+        import {
+            getFirestore,
+            collection,
+            getDocs,
+            doc,
             getDoc,
             updateDoc,
             addDoc,
@@ -411,7 +418,7 @@
         let selectedUser = null;
 
         // Load all users from multiple sources
-        window.loadUsers = async function() {
+        window.loadUsers = async function () {
             console.log('Loading users from all sources...');
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '<tr><td colspan="8" class="loading"><div class="spinner"></div>Loading users...</td></tr>';
@@ -431,10 +438,10 @@
                     // Get user orders
                     const ordersQuery = query(collection(db, 'orders'), where('userId', '==', userId));
                     const ordersSnapshot = await getDocs(ordersQuery);
-                    
+
                     let totalSpent = 0;
                     let userEmail = 'N/A';
-                    
+
                     ordersSnapshot.forEach(orderDoc => {
                         const orderData = orderDoc.data();
                         totalSpent += orderData.total || 0;
@@ -454,12 +461,65 @@
                         id: userId,
                         email: userEmail,
                         name: pointsData.displayName || 'N/A',
-                        points: pointsData.points || 0,
+                        points: pointsData.totalPoints || pointsData.points || 0,
                         tier: pointsData.tier || 'bronze',
                         orderCount: ordersSnapshot.size,
                         totalSpent: totalSpent,
                         createdAt: pointsData.createdAt || null
                     });
+                }
+
+                // Method 1b: Also get users from loyaltyProfiles collection (where signup bonus is stored)
+                console.log('Loading from loyaltyProfiles collection...');
+                const loyaltySnapshot = await getDocs(collection(db, 'loyaltyProfiles'));
+                console.log('Found', loyaltySnapshot.size, 'users in loyaltyProfiles');
+
+                for (const loyaltyDoc of loyaltySnapshot.docs) {
+                    const userId = loyaltyDoc.id;
+                    const loyaltyData = loyaltyDoc.data();
+
+                    if (!usersMap.has(userId)) {
+                        // Get user orders
+                        const ordersQuery = query(collection(db, 'orders'), where('userId', '==', userId));
+                        const ordersSnapshot = await getDocs(ordersQuery);
+
+                        let totalSpent = 0;
+                        let userEmail = 'N/A';
+
+                        ordersSnapshot.forEach(orderDoc => {
+                            const orderData = orderDoc.data();
+                            totalSpent += orderData.total || 0;
+                            if (orderData.shippingAddress && orderData.shippingAddress.email) {
+                                userEmail = orderData.shippingAddress.email;
+                            }
+                        });
+
+                        // Try to get email from users collection
+                        const userDoc = await getDoc(doc(db, 'users', userId));
+                        if (userDoc.exists()) {
+                            const userData = userDoc.data();
+                            userEmail = userData.email || userEmail;
+                        }
+
+                        // ✅ Use totalPoints as primary (central source of truth)
+                        usersMap.set(userId, {
+                            id: userId,
+                            email: userEmail,
+                            name: 'N/A',
+                            points: loyaltyData.totalPoints ?? loyaltyData.points ?? 0,
+                            tier: (loyaltyData.tier || 'Bronze').toLowerCase(),
+                            orderCount: ordersSnapshot.size,
+                            totalSpent: totalSpent,
+                            createdAt: loyaltyData.joinedAt || null
+                        });
+                    } else {
+                        // ✅ CRITICAL: loyaltyProfiles ALWAYS overrides userPoints
+                        const existingUser = usersMap.get(userId);
+                        const loyaltyPoints = loyaltyData.totalPoints ?? loyaltyData.points ?? 0;
+                        // Always use loyaltyProfiles points (it's the central truth)
+                        existingUser.points = loyaltyPoints;
+                        existingUser.tier = (loyaltyData.tier || existingUser.tier).toLowerCase();
+                    }
                 }
 
                 // Method 2: Get users from orders collection (users who have ordered)
@@ -471,7 +531,10 @@
                 ordersSnapshot.forEach(orderDoc => {
                     const orderData = orderDoc.data();
                     const userId = orderData.userId;
-                    
+
+                    // Skip orders without valid userId
+                    if (!userId) return;
+
                     if (!userOrdersMap.has(userId)) {
                         userOrdersMap.set(userId, {
                             orders: [],
@@ -479,10 +542,16 @@
                             email: orderData.shippingAddress?.email || 'N/A'
                         });
                     }
-                    
+
                     const userOrders = userOrdersMap.get(userId);
                     userOrders.orders.push(orderData);
-                    userOrders.totalSpent += orderData.total || 0;
+
+                    // ✅ Check multiple possible field names for order total
+                    const orderTotal = orderData.total || orderData.totalAmount || orderData.grandTotal ||
+                        (orderData.subtotal ? orderData.subtotal + (orderData.shipping || 0) + (orderData.tax || 0) : 0);
+                    userOrders.totalSpent += orderTotal;
+
+                    console.log(`📦 Order for ${userId}: total=${orderData.total}, totalAmount=${orderData.totalAmount}, subtotal=${orderData.subtotal}, calculated=${orderTotal}`);
                 });
 
                 // Merge order data with existing users
@@ -490,18 +559,24 @@
                     if (!usersMap.has(userId)) {
                         // Get or create points for this user
                         const pointsDoc = await getDoc(doc(db, 'userPoints', userId));
-                        const points = pointsDoc.exists() ? pointsDoc.data() : { points: 0, tier: 'bronze' };
+                        const points = pointsDoc.exists() ? pointsDoc.data() : { totalPoints: 0, points: 0, tier: 'bronze' };
 
                         usersMap.set(userId, {
                             id: userId,
                             email: orderData.email,
                             name: 'N/A',
-                            points: points.points || 0,
+                            points: points.totalPoints || points.points || 0,
                             tier: points.tier || 'bronze',
                             orderCount: orderData.orders.length,
                             totalSpent: orderData.totalSpent,
                             createdAt: null
                         });
+                    } else {
+                        // ✅ CRITICAL: Update existing user with order totals
+                        const existingUser = usersMap.get(userId);
+                        existingUser.orderCount = orderData.orders.length;
+                        existingUser.totalSpent = orderData.totalSpent;
+                        console.log(`✅ Updated ${existingUser.email} with totalSpent: ${orderData.totalSpent}`);
                     }
                 }
 
@@ -517,7 +592,7 @@
                     if (!usersMap.has(userId)) {
                         // Get user points
                         const pointsDoc = await getDoc(doc(db, 'userPoints', userId));
-                        const points = pointsDoc.exists() ? pointsDoc.data() : { points: 0, tier: 'bronze' };
+                        const points = pointsDoc.exists() ? pointsDoc.data() : { totalPoints: 0, points: 0, tier: 'bronze' };
 
                         // Use stored data from users collection
                         const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
@@ -526,7 +601,7 @@
                             id: userId,
                             email: userData.email || 'N/A',
                             name: fullName || userData.displayName || userData.name || 'N/A',
-                            points: points.points || 0,
+                            points: points.totalPoints || points.points || 0,
                             tier: points.tier || 'bronze',
                             orderCount: userData.orderCount || 0,
                             totalSpent: userData.totalSpent || 0,
@@ -558,7 +633,7 @@
         // Display users in table
         function displayUsers(users) {
             const tbody = document.getElementById('usersTableBody');
-            
+
             if (users.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: #888;">No users found</td></tr>';
                 return;
@@ -599,9 +674,9 @@
         }
 
         // Search users
-        window.searchUsers = function() {
+        window.searchUsers = function () {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allUsers.filter(user => 
+            const filtered = allUsers.filter(user =>
                 user.email.toLowerCase().includes(searchTerm) ||
                 user.name.toLowerCase().includes(searchTerm)
             );
@@ -609,7 +684,7 @@
         };
 
         // Open add points modal
-        window.openAddPointsModal = function(userId, name, email, currentPoints) {
+        window.openAddPointsModal = function (userId, name, email, currentPoints) {
             selectedUser = { id: userId, name, email, currentPoints };
             document.getElementById('modalUserEmail').value = `${name} (${email})`;
             document.getElementById('modalCurrentPoints').value = currentPoints;
@@ -620,13 +695,13 @@
         };
 
         // Close modal
-        window.closeModal = function() {
+        window.closeModal = function () {
             document.getElementById('addPointsModal').classList.remove('active');
             selectedUser = null;
         };
 
         // Submit add points
-        window.submitAddPoints = async function() {
+        window.submitAddPoints = async function () {
             const pointsToAdd = parseInt(document.getElementById('modalPointsToAdd').value);
             const reason = document.getElementById('modalReason').value || 'Admin adjustment';
             const messageDiv = document.getElementById('modalMessage');
@@ -639,31 +714,69 @@
             try {
                 messageDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Adding points...</div>';
 
-                // Get current points
+                // ✅ CRITICAL: Read current points from loyaltyProfiles (CENTRAL SOURCE OF TRUTH)
+                const loyaltyRef = doc(db, 'loyaltyProfiles', selectedUser.id);
+                const loyaltyDoc = await getDoc(loyaltyRef);
+
+                let currentPoints = 0;
+                if (loyaltyDoc.exists()) {
+                    const loyaltyData = loyaltyDoc.data();
+                    currentPoints = loyaltyData.totalPoints ?? loyaltyData.points ?? 0;
+                    console.log('📊 Current points from loyaltyProfiles:', currentPoints);
+                } else {
+                    // Fallback: check userPoints if loyaltyProfiles doesn't exist
+                    const pointsRef = doc(db, 'userPoints', selectedUser.id);
+                    const pointsDoc = await getDoc(pointsRef);
+                    if (pointsDoc.exists()) {
+                        const pointsData = pointsDoc.data();
+                        currentPoints = pointsData.totalPoints ?? pointsData.points ?? 0;
+                    }
+                    console.log('📊 Current points from userPoints fallback:', currentPoints);
+                }
+
+                const newPoints = Math.max(0, currentPoints + pointsToAdd);
+                console.log(`✅ Adding ${pointsToAdd} to ${currentPoints} = ${newPoints}`);
+
+                // Calculate new tier
+                const newTier = newPoints >= 3000 ? 'platinum' :
+                    newPoints >= 1500 ? 'gold' :
+                        newPoints >= 500 ? 'silver' : 'bronze';
+
+                // ✅ Update loyaltyProfiles FIRST (central source of truth)
+                if (loyaltyDoc.exists()) {
+                    await updateDoc(loyaltyRef, {
+                        totalPoints: newPoints,
+                        points: newPoints,
+                        tier: newTier,
+                        updatedAt: serverTimestamp()
+                    });
+                } else {
+                    await setDoc(loyaltyRef, {
+                        odid: selectedUser.id,
+                        email: selectedUser.email || '',
+                        totalPoints: newPoints,
+                        points: newPoints,
+                        tier: newTier,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                }
+
+                // Also update userPoints for backward compatibility
                 const pointsRef = doc(db, 'userPoints', selectedUser.id);
                 const pointsDoc = await getDoc(pointsRef);
-                const currentData = pointsDoc.exists() ? pointsDoc.data() : { points: 0, tier: 'bronze' };
-                
-                const newPoints = Math.max(0, (currentData.points || 0) + pointsToAdd);
-                
-                // Calculate new tier
-                const newTier = newPoints >= 3000 ? 'platinum' : 
-                               newPoints >= 1500 ? 'gold' : 
-                               newPoints >= 500 ? 'silver' : 'bronze';
-
-                // Update or create points document
                 if (pointsDoc.exists()) {
                     await updateDoc(pointsRef, {
-                        points: newPoints,
+                        totalPoints: newPoints,
                         tier: newTier,
                         updatedAt: serverTimestamp()
                     });
                 } else {
                     await setDoc(pointsRef, {
                         userId: selectedUser.id,
-                        points: newPoints,
+                        totalPoints: newPoints,
                         tier: newTier,
-                        totalPointsEarned: newPoints,
+                        pointsHistory: [],
                         createdAt: serverTimestamp(),
                         updatedAt: serverTimestamp()
                     });
@@ -679,8 +792,12 @@
                     timestamp: serverTimestamp()
                 });
 
+
+                // Note: loyaltyProfiles already updated above as central source of truth
+                console.log('✅ Points updated successfully. loyaltyProfiles:', newPoints, 'points');
+
                 messageDiv.innerHTML = '<div class="success-message">✅ Points added successfully! New balance: ' + newPoints + '</div>';
-                
+
                 // Reload users after 1 second
                 setTimeout(() => {
                     closeModal();
@@ -693,7 +810,7 @@
         };
 
         // View user details
-        window.viewUserDetails = function(userId) {
+        window.viewUserDetails = function (userId) {
             const user = allUsers.find(u => u.id === userId);
             if (user) {
                 alert(`User Details:\n\nEmail: ${user.email}\nPoints: ${user.points}\nTier: ${user.tier}\nOrders: ${user.orderCount}\nTotal Spent: ₹${user.totalSpent.toFixed(2)}`);
@@ -704,4 +821,5 @@
         loadUsers();
     </script>
 </body>
+
 </html>

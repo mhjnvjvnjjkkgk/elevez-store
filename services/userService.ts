@@ -14,6 +14,7 @@ import {
   Timestamp
 } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import { loyaltyRulesService } from './loyaltyRulesService';
 
 export interface User {
   uid: string;
@@ -42,22 +43,19 @@ export interface PointsTransaction {
 }
 
 // Calculate tier based on total points
-export function calculateTier(points: number): User['tier'] {
-  if (points >= 3000) return 'platinum';
-  if (points >= 1500) return 'gold';
-  if (points >= 500) return 'silver';
-  return 'bronze';
+// ✅ NOW USES DYNAMIC LOYALTY RULES - DEPRECATED
+// @deprecated Use loyaltyRulesService.calculateTier() instead
+export async function calculateTier(points: number): Promise<User['tier']> {
+  const tierConfig = await loyaltyRulesService.calculateTier(points);
+  return tierConfig.id as User['tier'];
 }
 
 // Get tier multiplier for points earning
-export function getTierMultiplier(tier: User['tier']): number {
-  switch (tier) {
-    case 'platinum': return 3;
-    case 'gold': return 2;
-    case 'silver': return 1.5;
-    case 'bronze': return 1;
-    default: return 1;
-  }
+// ✅ NOW USES DYNAMIC LOYALTY RULES - DEPRECATED
+// @deprecated Use loyaltyRulesService.getTierBenefits() instead
+export async function getTierMultiplier(tier: User['tier']): Promise<number> {
+  const benefits = await loyaltyRulesService.getTierBenefits(tier);
+  return benefits?.earningMultiplier || 1;
 }
 
 // Ensure user exists in database (create if not exists)
@@ -168,7 +166,9 @@ export async function updateUserPoints(
 
     const currentPoints = userDoc.data().totalPoints || 0;
     const newPoints = Math.max(0, currentPoints + pointsChange);
-    const newTier = calculateTier(newPoints);
+    // ✅ Use dynamic loyalty rules for tier calculation
+    const tierConfig = await loyaltyRulesService.calculateTier(newPoints);
+    const newTier = tierConfig.id as User['tier'];
 
     // Update user points and tier
     await updateDoc(userRef, {
@@ -208,10 +208,8 @@ export async function awardOrderPoints(
       throw new Error('User not found');
     }
 
-    // Calculate points: 1 point per ₹10 spent, multiplied by tier
-    const tierMultiplier = getTierMultiplier(user.tier);
-    const basePoints = Math.floor(orderTotal / 10);
-    const pointsEarned = Math.floor(basePoints * tierMultiplier);
+    // ✅ Calculate points using dynamic loyalty rules with tier multiplier
+    const pointsEarned = await loyaltyRulesService.calculatePointsEarned(orderTotal, user.tier);
 
     // Award points
     await updateUserPoints(

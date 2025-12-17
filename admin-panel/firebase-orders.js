@@ -18,47 +18,58 @@ let isFirebaseAvailable = false;
 
 async function initFirebase() {
   try {
-    console.log('🔄 Initializing Firebase for admin panel...');
-    
+    console.log('🔄 Initializing Firebase for admin panel orders...');
+
     // Import Firebase modules
-    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+    const { initializeApp, getApps, getApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
     const { getFirestore } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-    
+
     console.log('📦 Firebase modules loaded');
-    
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
+
+    // Check if Firebase is already initialized
+    let app;
+    if (getApps().length > 0) {
+      // Use existing app
+      app = getApp();
+      console.log('✅ Using existing Firebase app');
+    } else {
+      // Initialize new app
+      app = initializeApp(firebaseConfig);
+      console.log('✅ Created new Firebase app');
+    }
+
     db = getFirestore(app);
     isFirebaseAvailable = true;
-    
-    console.log('✅ Firebase initialized for admin panel');
+
+    console.log('✅ Firebase initialized for admin panel orders');
     console.log('📊 Project:', firebaseConfig.projectId);
-    
+
     // Show status if function is available
     if (typeof showSyncStatus === 'function') {
       showSyncStatus('✅ Firebase connected - Real-time order sync active', 'success');
     }
-    
+
     return true;
   } catch (error) {
     console.error('❌ Firebase initialization error:', error);
     console.error('Error details:', error.message);
-    
+
     // Show status if function is available
     if (typeof showSyncStatus === 'function') {
       showSyncStatus('⚠️ Firebase unavailable - Using local orders only', 'error');
     }
-    
+
     isFirebaseAvailable = false;
     return false;
   }
 }
 
+
 // Get product details by ID (including trial products)
 function getProductDetails(productId) {
   // Check in current products
   let product = state.products.find(p => p.id === productId);
-  
+
   // If not found, check if it's a trial product
   if (!product) {
     const trialProducts = [
@@ -95,7 +106,7 @@ function getProductDetails(productId) {
     ];
     product = trialProducts.find(p => p.id === productId);
   }
-  
+
   return product || {
     id: productId,
     qid: `UNKNOWN-${productId}`,
@@ -107,7 +118,7 @@ function getProductDetails(productId) {
 
 async function syncOrdersFromFirebase() {
   console.log('🔄 syncOrdersFromFirebase called');
-  
+
   if (!db) {
     console.log('📡 Firebase not initialized, initializing now...');
     const initialized = await initFirebase();
@@ -116,29 +127,29 @@ async function syncOrdersFromFirebase() {
       return;
     }
   }
-  
+
   try {
     console.log('📥 Setting up Firebase listener for orders...');
     const { collection, onSnapshot, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-    
+
     // Listen to orders collection in real-time
     const ordersRef = collection(db, 'orders');
     const ordersQuery = query(ordersRef, orderBy('createdAt', 'desc'));
-    
+
     ordersListener = onSnapshot(ordersQuery, (snapshot) => {
       const firebaseOrders = [];
       const newOrders = [];
-      
+
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
           // Track new orders for notifications
           newOrders.push(change.doc.id);
         }
       });
-      
+
       snapshot.forEach((doc) => {
         const orderData = doc.data();
-        
+
         // Enrich order with full product details
         const enrichedItems = orderData.items?.map(item => {
           const productDetails = getProductDetails(item.id);
@@ -150,10 +161,10 @@ async function syncOrdersFromFirebase() {
             orderedColor: item.color
           };
         }) || [];
-        
+
         // Calculate points earned (10% of total amount, or use existing value)
         const pointsEarned = orderData.pointsEarned || Math.floor((orderData.totalAmount || 0) / 10);
-        
+
         // 🆕 CALCULATE PROFIT AUTOMATICALLY
         let orderCost = 0;
         let orderProfit = 0;
@@ -167,9 +178,9 @@ async function syncOrdersFromFirebase() {
             orderProfit += (itemRevenue - itemCost);
           }
         });
-        
+
         const orderProfitMargin = orderData.totalAmount > 0 ? ((orderProfit / orderData.totalAmount) * 100).toFixed(1) : 0;
-        
+
         const enrichedOrder = {
           id: doc.id,
           orderId: doc.id,
@@ -185,9 +196,9 @@ async function syncOrdersFromFirebase() {
           orderProfitMargin: parseFloat(orderProfitMargin),
           profitCalculatedAt: new Date().toISOString()
         };
-        
+
         firebaseOrders.push(enrichedOrder);
-        
+
         // 🆕 Show notification for NEW orders with profit (only if not already shown)
         if (newOrders.includes(doc.id)) {
           // Check if we've already shown notification for this order
@@ -200,22 +211,22 @@ async function syncOrdersFromFirebase() {
           }
         }
       });
-      
+
       console.log(`📦 Synced ${firebaseOrders.length} orders from Firebase`);
-      
+
       // Merge with local orders (remove old firebase orders first)
       const localOrders = state.orders.filter(o => o.source !== 'firebase');
       state.orders = [...firebaseOrders, ...localOrders];
-      
+
       // Save to localStorage
       localStorage.setItem('elevez_orders', JSON.stringify(state.orders));
-      
+
       // Update UI
       if (state.currentView === 'orders') {
         renderOrders();
       }
       updateOrdersBadge();
-      
+
       // Show notification for new orders
       if (firebaseOrders.length > 0) {
         const pendingCount = firebaseOrders.filter(o => o.status === 'pending').length;
@@ -230,7 +241,7 @@ async function syncOrdersFromFirebase() {
       showSyncStatus('⚠️ Firebase sync error, using local orders', 'error');
       isFirebaseAvailable = false;
     });
-    
+
   } catch (error) {
     console.error('❌ Error setting up Firebase listener:', error);
     showSyncStatus('⚠️ Could not connect to Firebase', 'error');
@@ -241,10 +252,10 @@ async function syncOrdersFromFirebase() {
 // Auto-sync orders every 10 seconds for real-time updates
 function startAutoSync() {
   console.log('🔄 Starting real-time order sync...');
-  
+
   // Initial sync
   syncOrdersFromFirebase();
-  
+
   // Check connection every 10 seconds
   setInterval(() => {
     if (!isFirebaseAvailable) {
