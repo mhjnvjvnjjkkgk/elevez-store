@@ -4,17 +4,23 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: 17/12/2025, 6:24:35 pm
+// Last update: 17/12/2025, 6:34:43 pm
 export const PRODUCTS: Product[] = [
   {
     "id": 1765149944844,
-    "originalPrice": 1500,
-    "cost": 800,
-    "showInShop": true,
-    "colors": [
-      "Black"
-    ],
+    "qid": "1222",
+    "status": "active",
+    "profitMargin": 5.9,
+    "type": "Hoodie",
+    "showInCollections": true,
     "showInHome": true,
+    "images": [
+      "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
+      "https://i.ibb.co/svktk85k/Gemini-Generated-Image-gpaa7hgpaa7hgpaa.png",
+      "https://i.ibb.co/FbLmZBJg/use-fo-carousal.png",
+      "https://i.ibb.co/gFM8kzCT/Gemini-Generated-Image-k4d9bck4d9bck4d9.png"
+    ],
+    "category": "Men",
     "sizes": [
       "M",
       "S",
@@ -23,194 +29,188 @@ export const PRODUCTS: Product[] = [
       "XL",
       "XXL"
     ],
-    "rating": 4.5,
+    "stock": 100,
     "image": "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
+    "updatedAt": "2025-12-17T13:02:14.884Z",
+    "price": 850,
+    "isBestSeller": true,
+    "profit": 50,
+    "name": "Dont Look back hoodie",
+    "colors": [
+      "Black"
+    ],
+    "originalPrice": 1500,
+    "showInShop": true,
     "tags": [
       "ALL"
     ],
-    "price": 850,
-    "qid": "1222",
-    "isBestSeller": true,
-    "category": "Men",
-    "profit": 50,
-    "showInCollections": true,
-    "type": "Hoodie",
-    "updatedAt": "2025-12-17T12:54:13.751Z",
-    "stock": 100,
-    "profitMargin": 5.9,
-    "name": "Dont Look back hoodie",
-    "status": "active",
-    "images": [
-      "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
-      "https://i.ibb.co/svktk85k/Gemini-Generated-Image-gpaa7hgpaa7hgpaa.png",
-      "https://i.ibb.co/FbLmZBJg/use-fo-carousal.png",
-      "https://i.ibb.co/gFM8kzCT/Gemini-Generated-Image-k4d9bck4d9bck4d9.png"
-    ]
+    "rating": 4.5,
+    "cost": 800
   },
   {
     "id": 1765149958744,
-    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-    "status": "active",
+    "showInShop": true,
     "type": "Hoodie",
-    "images": [
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
-    ],
-    "profit": 75,
-    "qid": "NGH-001",
-    "cost": 10,
+    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+    "isBestSeller": true,
     "showInHome": true,
     "category": "Men",
-    "isBestSeller": true,
-    "isNew": true,
-    "profitMargin": 88.2,
-    "stock": 0,
-    "tags": [
-      "TRENDING",
-      "BESTSELLER",
-      "ALL"
-    ],
-    "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
-    "rating": 4.5,
-    "showInShop": true,
+    "cost": 10,
+    "updatedAt": "2025-12-17T13:02:14.885Z",
     "sizes": [
       "S",
       "M",
       "L",
       "XL"
     ],
-    "originalPrice": 170,
+    "tags": [
+      "TRENDING",
+      "BESTSELLER",
+      "ALL"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+    ],
     "name": "Neon Glitch Hoodie",
-    "showInCollections": true,
-    "colors": [],
+    "stock": 0,
     "price": 85,
-    "updatedAt": "2025-12-17T12:54:13.752Z"
+    "status": "active",
+    "colors": [],
+    "rating": 4.5,
+    "originalPrice": 170,
+    "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+    "isNew": true,
+    "qid": "NGH-001",
+    "profit": 75,
+    "showInCollections": true,
+    "profitMargin": 88.2
   },
   {
     "id": 2,
-    "originalPrice": 90,
-    "colors": [
-      "Pink",
-      "White",
-      "Black"
-    ],
-    "name": "Vintage Crop Top",
-    "updatedAt": "2025-12-17T12:54:13.752Z",
-    "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
+    "qid": "VCT-002",
     "images": [
       "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
     ],
-    "price": 45,
-    "rating": 4.7,
-    "type": "Crop Top",
-    "isNew": true,
-    "qid": "VCT-002",
+    "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
     "sizes": [
       "XS",
       "S",
       "M",
       "L"
     ],
+    "isNew": true,
+    "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+    "price": 45,
+    "updatedAt": "2025-12-17T13:02:14.885Z",
+    "colors": [
+      "Pink",
+      "White",
+      "Black"
+    ],
     "tags": [
       "VINTAGE",
       "TRENDING"
     ],
-    "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+    "originalPrice": 90,
+    "type": "Crop Top",
+    "rating": 4.7,
+    "name": "Vintage Crop Top",
     "category": "Women"
   },
   {
     "id": 3,
+    "colors": [
+      "Black",
+      "White",
+      "Gray"
+    ],
+    "tags": [
+      "ESSENTIAL",
+      "BESTSELLER"
+    ],
+    "category": "Unisex",
+    "description": "Ultra-comfortable oversized t-shirt. Perfect for casual streetwear.",
+    "isBestSeller": true,
+    "name": "Oversized Street Tee",
+    "images": [
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"
+    ],
+    "price": 35,
+    "qid": "OST-003",
+    "originalPrice": 70,
+    "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
     "sizes": [
       "M",
       "L",
       "XL",
       "XXL"
     ],
-    "isBestSeller": true,
-    "category": "Unisex",
-    "name": "Oversized Street Tee",
-    "description": "Ultra-comfortable oversized t-shirt. Perfect for casual streetwear.",
-    "updatedAt": "2025-12-17T12:54:13.752Z",
-    "originalPrice": 70,
-    "tags": [
-      "ESSENTIAL",
-      "BESTSELLER"
-    ],
+    "updatedAt": "2025-12-17T13:02:14.885Z",
     "type": "Oversized T-Shirt",
-    "colors": [
-      "Black",
-      "White",
-      "Gray"
-    ],
-    "images": [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"
-    ],
-    "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
-    "qid": "OST-003",
-    "rating": 4.6,
-    "price": 35
+    "rating": 4.6
   },
   {
     "id": 4,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "category": "Men",
+    "images": [
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
+    ],
+    "tags": [
+      "PREMIUM",
+      "NEW"
+    ],
+    "rating": 4.8,
+    "price": 95,
+    "qid": "PTH-004",
+    "description": "High-tech fabric hoodie with moisture-wicking properties. Perfect for active lifestyle.",
+    "originalPrice": 190,
+    "name": "Premium Tech Hoodie",
+    "updatedAt": "2025-12-17T13:02:14.885Z",
+    "isNew": true,
     "colors": [
       "Black",
       "Navy",
       "Gray"
     ],
-    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-    "description": "High-tech fabric hoodie with moisture-wicking properties. Perfect for active lifestyle.",
-    "updatedAt": "2025-12-17T12:54:13.752Z",
     "type": "Hoodie",
-    "rating": 4.8,
-    "isNew": true,
-    "tags": [
-      "PREMIUM",
-      "NEW"
-    ],
-    "name": "Premium Tech Hoodie",
-    "originalPrice": 190,
-    "price": 95,
-    "qid": "PTH-004",
-    "category": "Men",
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL"
-    ],
-    "images": [
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
-    ]
+    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
   },
   {
     "id": 5,
-    "type": "T-Shirt",
-    "updatedAt": "2025-12-17T12:54:13.752Z",
-    "rating": 4.4,
-    "colors": [
-      "Rainbow",
-      "Yellow",
-      "Orange"
-    ],
-    "category": "Unisex",
-    "qid": "CFT-005",
-    "image": "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500",
     "tags": [
       "COLORFUL",
       "TRENDING"
     ],
     "originalPrice": 80,
-    "images": [
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500"
+    "category": "Unisex",
+    "image": "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500",
+    "updatedAt": "2025-12-17T13:02:14.885Z",
+    "qid": "CFT-005",
+    "colors": [
+      "Rainbow",
+      "Yellow",
+      "Orange"
     ],
+    "type": "T-Shirt",
+    "name": "Colorful Festival Tee",
+    "description": "Vibrant and colorful t-shirt perfect for festivals and summer events.",
     "sizes": [
       "S",
       "M",
       "L",
       "XL"
     ],
-    "name": "Colorful Festival Tee",
-    "description": "Vibrant and colorful t-shirt perfect for festivals and summer events.",
+    "rating": 4.4,
+    "images": [
+      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500"
+    ],
     "price": 40
   },
   {
@@ -225,8 +225,8 @@ export const PRODUCTS: Product[] = [
     "cost": 220,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.8,
-    "reviews": 149,
+    "rating": 4.7,
+    "reviews": 56,
     "description": "Crafted from premium, ultra-soft fabric, this tee promises unparalleled comfort for all-day wear. Whether you're hustling at the office, meeting friends, or just relaxing, you'll feel great in its breathable and lightweight embrace. The eye-catching design features the word \"PAISA\" (money) repeated in a striking purple hue, with \"Earn\" elegantly scripted in a vibrant orange, creating a dynamic visual that's both modern and inspiring. This creative graphic is a conversation starter, showcasing your drive and unique fashion sense. Key Features: Creative & Stylish Design: A unique graphic that blends ambition with modern aesthetics. Supreme Comfort: Made from high-quality, soft-touch fabric for an exceptional feel. Versatile Wear: Perfect for casual outings, business casual, or as a statement piece. Durable Print: Designed to maintain its vibrant colors wash after wash. Wear your aspirations. Earn your style. The \"Earn PAISA\" t-shirt is more than just an item of clothing—it's a lifestyle statement.",
     "descriptionHtml": "<p><span class=\"\">Crafted from premium,</span><span class=\"\"> ultra-soft fabric,</span><span class=\"\"> this tee promises unparalleled comfort for all-day wear.</span><span class=\"\"> Whether you're hustling at the office,</span><span class=\"\"> meeting friends,</span><span class=\"\"> or just relaxing,</span><span class=\"\"> you'll feel great in its breathable and lightweight embrace.</span></p>\n<p><span>The eye-catching design features the word \"PAISA\" (money) repeated in a striking purple hue,</span><span> with \"Earn\" elegantly scripted in a vibrant orange,</span><span> creating a dynamic visual that's both modern and inspiring.</span><span> This creative graphic is a conversation starter,</span><span> showcasing your drive and unique fashion sense.</span></p>\n<p><b>Key Features:</b></p>\n<ul>\n<li>\n<p><b>Creative &amp; Stylish Design:</b><span> A unique graphic that blends ambition with modern aesthetics.</span></p>\n</li>\n<li>\n<p><b>Supreme Comfort:</b><span> Made from high-quality,</span><span> soft-touch fabric for an exceptional feel.</span></p>\n</li>\n<li>\n<p><b>Versatile Wear:</b><span> Perfect for casual outings,</span><span> business casual,</span><span> or as a statement piece.</span></p>\n</li>\n<li>\n<p><b>Durable Print:</b><span> Designed to maintain its vibrant colors wash after wash.</span></p>\n</li>\n</ul>\n<p><span>Wear your aspirations.</span><span> Earn your style.</span><span> The \"Earn PAISA\" t-shirt is more than just an item of clothing—it's a lifestyle statement.</span></p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-round-sunglasses-in-front-o.png?v=1761157561",
@@ -669,8 +669,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.308Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.308Z"
   },
   {
     "id": 8,
@@ -684,8 +684,8 @@ export const PRODUCTS: Product[] = [
     "cost": 200,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.4,
-    "reviews": 62,
+    "rating": 4.2,
+    "reviews": 64,
     "description": "In an ancient lore, it is said that the most profound transformations do not happen in quiet cocoons, but in moments of beautiful, intense rupture. The 'Shattered Wings' butterfly emerged from this belief—a creature born not of gentle unfurling, but of powerful, geometric reshaping. Each fragment in its wings represents a challenge overcome, a doubt shattered, a fear broken apart to reveal strength. This Geometric Butterfly T-shirt is more than just a garment; it's a symbol of your own unfolding journey. The sharp, striking lines of its design reflect the courage it takes to break free from limitations, to embrace change, and to find beauty in the evolving self. Wear it as a testament to your resilience, your ongoing metamorphosis, and the fragmented experiences that make you uniquely whole. Let the 'Metamorphosis Echoes' remind you that true beauty lies in the courage to transform.",
     "descriptionHtml": "<p>In an ancient lore, it is said that the most profound transformations do not happen in quiet cocoons, but in moments of beautiful, intense rupture. The 'Shattered Wings' butterfly emerged from this belief—a creature born not of gentle unfurling, but of powerful, geometric reshaping. Each fragment in its wings represents a challenge overcome, a doubt shattered, a fear broken apart to reveal strength.</p>\n<p>This Geometric Butterfly T-shirt is more than just a garment; it's a symbol of your own unfolding journey. The sharp, striking lines of its design reflect the courage it takes to break free from limitations, to embrace change, and to find beauty in the evolving self. Wear it as a testament to your resilience, your ongoing metamorphosis, and the fragmented experiences that make you uniquely whole. Let the 'Metamorphosis Echoes' remind you that true beauty lies in the courage to transform.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_gonw9sgonw9sgonw.png?v=1760954859",
@@ -884,8 +884,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.308Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.308Z"
   },
   {
     "id": 9,
@@ -899,8 +899,8 @@ export const PRODUCTS: Product[] = [
     "cost": 280,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.8,
-    "reviews": 52,
+    "rating": 4.3,
+    "reviews": 215,
     "description": "This isn't just a t-shirt; it's a wearable testament to the resilience of the human spirit. Born from an old Seoul street artist's meditation on contrasting realities, the \"Peace & Roses\" design captures a moment of tranquil defiance. The oversized, premium cotton serves as a canvas for a modern-day icon: a majestic dove in mid-flight, its wings a white-hot beacon of hope. This dove doesn't just symbolize peace; it embodies the hard-won serenity found only after navigating the noise of the urban world. Flanking the dove are two blood-red roses—symbols of passion, beauty, and the thorny commitment required to protect one's inner peace. The bold, stark white word \"PEACE\" is not a plea, but a powerful declaration.",
     "descriptionHtml": "<p>This isn't just a t-shirt; it's a wearable testament to the resilience of the human spirit.</p>\n<p>Born from an old Seoul street artist's meditation on contrasting realities, the <b>\"Peace &amp; Roses\"</b> design captures a moment of tranquil defiance. The <b>oversized, premium cotton</b> serves as a canvas for a modern-day icon: a majestic <b>dove</b> in mid-flight, its wings a white-hot beacon of hope. This dove doesn't just symbolize peace; it embodies the hard-won serenity found only after navigating the noise of the urban world.</p>\n<p>Flanking the dove are two blood-red <b>roses</b>—symbols of passion, beauty, and the thorny commitment required to protect one's inner peace. The bold, stark white word <b>\"PEACE\"</b> is not a plea, but a powerful declaration.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_7lss1o7lss1o7lss.png?v=1760955431",
@@ -1049,8 +1049,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.308Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.308Z"
   },
   {
     "id": 10,
@@ -1064,8 +1064,8 @@ export const PRODUCTS: Product[] = [
     "cost": 260,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.1,
-    "reviews": 79,
+    "rating": 4.7,
+    "reviews": 150,
     "description": "Unleash your inner legend with our Dragon Blossom Oversized Tee. This statement piece combines ultimate comfort with a striking, narrative-rich design that's sure to turn heads. Crafted from premium, soft-touch fabric, this oversized t-shirt offers a relaxed fit that's perfect for effortless streetwear style. The captivating graphic features a stoic, ethereal figure with a gaze that pierces through realms, adorned with vibrant red blossoms that symbolize passion and resilience. Coiled around her is a magnificent white dragon, its scales rendered with intricate detail, embodying power, wisdom, and transformation. The subtle red accents within the dragon and the figure’s attire create a harmonious balance, suggesting a deep, intertwined destiny. This tee isn't just clothing; it's a wearable piece of art that tells a story.",
     "descriptionHtml": "<p>Unleash your inner legend with our Dragon Blossom Oversized Tee. This statement piece combines ultimate comfort with a striking, narrative-rich design that's sure to turn heads. Crafted from premium, soft-touch fabric, this oversized t-shirt offers a relaxed fit that's perfect for effortless streetwear style.</p>\n<p>The captivating graphic features a stoic, ethereal figure with a gaze that pierces through realms, adorned with vibrant red blossoms that symbolize passion and resilience. Coiled around her is a magnificent white dragon, its scales rendered with intricate detail, embodying power, wisdom, and transformation. The subtle red accents within the dragon and the figure’s attire create a harmonious balance, suggesting a deep, intertwined destiny. This tee isn't just clothing; it's a wearable piece of art that tells a story.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1e3bze1e3bze1e3b.png?v=1761748465",
@@ -1324,8 +1324,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.308Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.308Z"
   },
   {
     "id": 11,
@@ -1340,7 +1340,7 @@ export const PRODUCTS: Product[] = [
     "category": "Topwear",
     "type": "tee",
     "rating": 4.6,
-    "reviews": 136,
+    "reviews": 89,
     "description": "This is more than a piece of fabric; it's a mantra for the motivated soul. The \"Memento Mori, Memento Vivere\" Tee is designed for those who understand that true liberation lies in embracing the duality of existence. The skull, surrounded by delicate life, is a quiet reminder (Memento Mori) of the ultimate certainty. It is not a symbol of fear, but a boundary—a horizon that makes every second before it precious. This awareness, in turn, fuels the vibrant flora and the transforming butterfly, compelling you to seize the present moment (Memento Vivere). Wear this oversized tee as a daily pledge to live boldly, to chase beauty without hesitation, and to make every breath count. It’s an elegant, stark reminder: Because time is finite, life is infinite in its possibility.",
     "descriptionHtml": "<p>This is more than a piece of fabric; it's a <b>mantra for the motivated soul</b>. The <b>\"Memento Mori, Memento Vivere\"</b> Tee is designed for those who understand that true liberation lies in embracing the duality of existence.</p>\n<p>The skull, surrounded by delicate life, is a quiet reminder (<b>Memento Mori</b>) of the ultimate certainty. It is not a symbol of fear, but a boundary—a horizon that makes every second before it precious. This awareness, in turn, fuels the vibrant flora and the transforming butterfly, compelling you to seize the present moment (<b>Memento Vivere</b>).</p>\n<p>Wear this oversized tee as a daily pledge to live boldly, to chase beauty without hesitation, and to make every breath count. It’s an elegant, stark reminder: <b>Because time is finite, life is infinite in its possibility.</b></p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_8zhu4u8zhu4u8zhu.png?v=1761126098",
@@ -1600,8 +1600,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.308Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.308Z"
   },
   {
     "id": 12,
@@ -1615,8 +1615,8 @@ export const PRODUCTS: Product[] = [
     "cost": 180,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4,
-    "reviews": 165,
+    "rating": 4.7,
+    "reviews": 89,
     "description": "The \"Blessed Ascent\" Tee: Crafted from premium, soft-touch cotton, this black tee offers a relaxed fit that drapes beautifully. The striking graphic features an exquisitely detailed, ornate golden cross, symbolizing faith and heritage, from which a majestic white dove takes flight – an emblem of peace, new beginnings, and spiritual uplift. The word \"BLESSED\" is subtly integrated into the background, adding a profound layer of meaning to this powerful visual. Perfect for layering or making a standalone statement, this tee is a versatile addition to any wardrobe, blending spiritual symbolism with cutting-edge streetwear aesthetics.",
     "descriptionHtml": "<p><b class=\"\">The \"Blessed Ascent\"  Tee:</b><span class=\"\"> Crafted from premium,</span><span class=\"\"> soft-touch cotton,</span><span class=\"\"> this black tee offers a relaxed fit that drapes beautifully.</span><span class=\"\"> The striking graphic features an exquisitely detailed,</span><span class=\"\"> ornate golden cross,</span><span class=\"\"> symbolizing faith and heritage,</span><span class=\"\"> from which a majestic white dove takes flight – an emblem of peace,</span><span class=\"\"> new beginnings,</span><span class=\"\"> and spiritual uplift.</span><span class=\"\"> The word \"BLESSED\" is subtly integrated into the background,</span><span class=\"\"> adding a profound layer of meaning to this powerful visual.</span><span class=\"\"> Perfect for layering or making a standalone statement,</span><span class=\"\"> this tee is a versatile addition to any wardrobe,</span><span class=\"\"> blending spiritual symbolism with cutting-edge streetwear aesthetics.</span></p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_zeptcbzeptcbzept.png?v=1761752100",
@@ -1739,8 +1739,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.308Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.308Z"
   },
   {
     "id": 13,
@@ -1754,8 +1754,8 @@ export const PRODUCTS: Product[] = [
     "cost": 240,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.6,
-    "reviews": 59,
+    "rating": 4.8,
+    "reviews": 176,
     "description": "Unleash your inner resilience. The K-Street Samurai tee isn't just a shirt—it's a wearable statement of disciplined strength fused with the raw, vibrant energy of modern Korean street culture. Crafted from heavy-duty, premium 180gsm cotton, this t-shirt is built for comfort, durability, and a clean, structured drape. The centerpiece is the bold, disruptive design on the back: a powerful Kanji symbol rendered in stark white and grey, signifying \"Health\" or \"Vigor\". This classical stroke is violently overlaid and encircled by an aggressive, blood-red graffiti and splatter motif, creating a powerful contrast between ancient focus and contemporary chaos. This shirt is for the one who walks the line—who embraces luxury and quality while navigating the grit of the everyday. Pair it with your best accessories and step out; the K-Street Samurai is your armor for the urban jungle.",
     "descriptionHtml": "<p>Unleash your inner resilience. The <b>K-Street Samurai</b> tee isn't just a shirt—it's a wearable statement of disciplined strength fused with the raw, vibrant energy of modern Korean street culture.</p>\n<p>Crafted from heavy-duty, <b>premium 180gsm cotton</b>, this t-shirt is built for comfort, durability, and a clean, structured drape. The centerpiece is the bold, disruptive design on the back: a powerful <b>Kanji symbol</b> rendered in stark white and grey, signifying <b>\"Health\" or \"Vigor\"</b>. This classical stroke is violently overlaid and encircled by an aggressive, blood-red <b>graffiti and splatter motif</b>, creating a powerful contrast between ancient focus and contemporary chaos.</p>\n<p>This shirt is for the one who walks the line—who embraces luxury and quality while navigating the grit of the everyday. Pair it with your best accessories and step out; the <b>K-Street Samurai</b> is your armor for the urban jungle.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_edywhedywhedywhe.png?v=1761328771",
@@ -1877,8 +1877,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.308Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.308Z"
   },
   {
     "id": 14,
@@ -1892,8 +1892,8 @@ export const PRODUCTS: Product[] = [
     "cost": 240,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.9,
-    "reviews": 87,
+    "rating": 4.4,
+    "reviews": 169,
     "description": "Embrace the power of the Ryūjin, the Dragon God of the sea. This striking design, set against the backdrop of a setting sun over Mount Fuji, tells a story of ancient myth and modern spirit. The great Sovereign Serpent rises from the serene coastal landscape of Tokyo, Japan. Its scales shimmer in deep indigo and royal violet, colors of the deep ocean and imperial nobility. More than just a mythical beast, this dragon is a force of nature—it commands the tides, brings forth the thunder, and symbolizes unyielding strength, wisdom, and good fortune. The cherry blossoms, or sakura, drift in its wake, representing the beauty and transient nature of life, while the towering palms hint at an eternal, tropical peace that the dragon guards. This T-shirt is not just a piece of apparel; it is a wearable piece of Japanese mythology, a tribute to the enduring spirit of its culture, and a bold statement for those who walk their own path. Wear the Sovereign Serpent and carry a legend on your back.",
     "descriptionHtml": "<p><span class=\"citation-1\">Embrace the power of the </span><b><span class=\"citation-1\">Ryūjin</span></b><span class=\"citation-1 citation-end-1\">, the Dragon God of the sea.<sup class=\"superscript\" data-turn-source-index=\"1\"><!----></sup></span> This striking design, set against the backdrop of a setting sun over <b>Mount Fuji</b>, tells a story of ancient myth and modern spirit.<!----><!----><!----><!----></p>\n<p><!----><!----><!----><!----><!----><!----><!----><!----></p>\n<p> </p>\n<p>The great <b>Sovereign Serpent</b> rises from the serene coastal landscape of <b>Tokyo, Japan</b>. Its scales shimmer in deep <b>indigo and royal violet</b>, colors of the deep ocean and imperial nobility. More than just a mythical beast, this dragon is a force of nature—it commands the tides, brings forth the thunder, and symbolizes <b>unyielding strength, wisdom, and good fortune.</b></p>\n<p>The cherry blossoms, or <b>sakura</b>, drift in its wake, representing the beauty and transient nature of life, while the towering palms hint at an eternal, tropical peace that the dragon guards. This T-shirt is not just a piece of apparel; it is a wearable piece of Japanese mythology, a tribute to the enduring spirit of its culture, and a bold statement for those who walk their own path.</p>\n<p>Wear the <b>Sovereign Serpent</b> and carry a legend on your back.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_agh1k8agh1k8agh1.png?v=1761329197",
@@ -2093,8 +2093,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.308Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.308Z"
   },
   {
     "id": 15,
@@ -2108,8 +2108,8 @@ export const PRODUCTS: Product[] = [
     "cost": 140,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.7,
-    "reviews": 98,
+    "rating": 4.5,
+    "reviews": 119,
     "description": "The \"Monarch Shadow\" design is more than just a graphic—it’s a symbol of transformation and bold beauty. This striking grayscale butterfly, centered on our premium, super-soft crop top, represents the captivating duality of nature: delicate wings that carry immense power, and ephemeral beauty that leaves a lasting impression. Legend has it that this specific butterfly, seen only in moments of intense sunlight, guides its wearers toward their most authentic, confident selves. The detailed, high-quality print captures every minute scale of the wings, creating a stunning, realistic effect that pops against the fabric.",
     "descriptionHtml": "<p>The <b>\"Monarch Shadow\"</b> design is more than just a graphic—it’s a symbol of transformation and bold beauty. This striking <b>grayscale butterfly</b>, centered on our premium, <b>super-soft crop top</b>, represents the captivating duality of nature: delicate wings that carry immense power, and ephemeral beauty that leaves a lasting impression.</p>\n<p>Legend has it that this specific butterfly, seen only in moments of intense sunlight, guides its wearers toward their most authentic, confident selves. The <b>detailed, high-quality print</b> captures every minute scale of the wings, creating a stunning, realistic effect that pops against the fabric.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_u9g2euu9g2euu9g2.png?v=1761748319",
@@ -2367,8 +2367,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.308Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.308Z"
   },
   {
     "id": 16,
@@ -2382,8 +2382,8 @@ export const PRODUCTS: Product[] = [
     "cost": 160,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.1,
-    "reviews": 102,
+    "rating": 4.2,
+    "reviews": 146,
     "description": "Embrace the meme, the mystery, and the message with our \"Ami Akta Dhowa Tulsi Pata\" Tshirt Every leaf of Tulsi, or Holy Basil, is considered sacred—a symbol of purity, devotion, and life itself. But what happens when that leaf is taken, gently washed, and held up to the world? It becomes an emblem of absolute, undeniable innocence The \"Ami Akta Dhowa Tulsi Pata\" tee is more than just a piece of clothing; it's a statement born from modern South Asian internet culture and deeply rooted in tradition. The phrase, which literally means \"I am a washed Holy Basil leaf,\" is an ironic declaration of purity. It’s what you say when you want to signal that you’re untouched, untainted, and completely blameless... even if the situation suggests otherwise.",
     "descriptionHtml": "<p>Embrace the meme, the mystery, and the message with our <b>\"Ami Akta Dhowa Tulsi Pata\" Tshirt<br></b></p>\n<p><span class=\"citation-3 citation-end-3\">Every leaf of Tulsi, or Holy Basil, is considered sacred—a symbol of purity, devotion, and life itself.<sup class=\"superscript\" data-turn-source-index=\"1\"><!----></sup></span> But what happens when that leaf is taken, gently washed, and held up to the world? It becomes an emblem of <b>absolute, undeniable innocence</b><!----><!----><!----><!----></p>\n<p><b><!----><!----><!----><!----><!----><!----><!----><!----></b></p>\n<p>The <b>\"Ami Akta Dhowa Tulsi Pata\"</b> tee is more than just a piece of clothing; it's a statement born from modern South Asian internet culture and deeply rooted in tradition. The phrase, which literally means <b>\"I am a washed Holy Basil leaf,\"</b> is an <b>ironic declaration of purity.</b> It’s what you say when you want to signal that you’re untouched, untainted, and completely blameless... <i>even if the situation suggests otherwise.</i></p>\n<p><b><br></b></p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_s8349vs8349vs834.png?v=1761748512",
@@ -2522,8 +2522,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.309Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.309Z"
   },
   {
     "id": 17,
@@ -2537,8 +2537,8 @@ export const PRODUCTS: Product[] = [
     "cost": 160,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.4,
-    "reviews": 21,
+    "rating": 4.5,
+    "reviews": 122,
     "description": "In a village full of gossip and busybodies, there was an old saying passed down through generations of weavers: \"Nijer Chorkae Tel De.\" The \"Chorka\" is the spinning wheel—a device that requires constant care and oiling to turn smoothly and produce fine thread. If a weaver neglects their own wheel to watch and criticize how another's is turning, their thread breaks, and their work stops. This T-shirt is for the Focused Few—the ones who understand that the most productive work is done when you keep your eyes on your own craft. It's a humorous yet powerful mantra for modern life, a reminder to:",
     "descriptionHtml": "<p>In a village full of gossip and busybodies, there was an old saying passed down through generations of weavers: <b>\"Nijer Chorkae Tel De.\"</b></p>\n<p><span class=\"citation-5\">The </span><b><span class=\"citation-5\">\"Chorka\"</span></b><span class=\"citation-5 citation-end-5\"> is the spinning wheel—a device that requires constant care and oiling to turn smoothly and produce fine thread.<sup class=\"superscript\" data-turn-source-index=\"1\"><!----></sup></span> If a weaver neglects their own wheel to watch and criticize how another's is turning, their thread breaks, and their work stops.<!----><!----><!----><!----></p>\n<p><!----><!----><!----><!----><!----><!----><!----><!----></p>\n<p>This T-shirt is for the <b>Focused Few</b>—the ones who understand that the most productive work is done when you keep your eyes on your own craft. It's a humorous yet powerful mantra for modern life, a reminder to:</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fwo9vgfwo9vgfwo9.png?v=1761047723",
@@ -2736,8 +2736,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.309Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.309Z"
   },
   {
     "id": 18,
@@ -2751,8 +2751,8 @@ export const PRODUCTS: Product[] = [
     "cost": 160,
     "category": "Topwear",
     "type": "tee",
-    "rating": 5,
-    "reviews": 192,
+    "rating": 4.5,
+    "reviews": 154,
     "description": "",
     "descriptionHtml": "",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sjay11sjay11sjay.png?v=1761048243",
@@ -2874,8 +2874,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.309Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.309Z"
   },
   {
     "id": 19,
@@ -2889,8 +2889,8 @@ export const PRODUCTS: Product[] = [
     "cost": 160,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.3,
-    "reviews": 25,
+    "rating": 4.1,
+    "reviews": 197,
     "description": "Embrace the essence of enduring style with the Elevéz Heritage Navy Tee. This isn't just a T-shirt; it's a staple of sophisticated simplicity, designed for those who appreciate understated luxury and impeccable quality. Crafted from premium 180 GSM cotton, this tee offers a substantial yet breathable feel, drapes elegantly, and maintains its shape and color wash after wash. The rich navy hue provides a versatile foundation for any discerning wardrobe, while the subtle Elevéz logo, meticulously placed on the left chest, signifies a commitment to quiet confidence and timeless design. This tee speaks volumes without saying a word, embodying the refined taste of classic elegance. Key Features: Timeless Elegance: A rich navy color and minimalist design for enduring style. Premium Comfort & Quality: Made from substantial 180 GSM cotton for a luxurious feel and lasting wear. Subtle Sophistication: Discreet Elevéz logo on the left chest signifies exclusivity and taste. Versatile Wardrobe Essential: Perfect for elevated casual wear or layering under blazers and fine knits. Invest in a piece that transcends trends and becomes a cornerstone of your distinguished style.",
     "descriptionHtml": "<p>Embrace the essence of enduring style with the <b>Elevéz Heritage Navy Tee</b>. This isn't just a T-shirt; it's a staple of sophisticated simplicity, designed for those who appreciate understated luxury and impeccable quality. Crafted from premium <b>180 GSM cotton</b>, this tee offers a substantial yet breathable feel, drapes elegantly, and maintains its shape and color wash after wash.</p>\n<p>The rich navy hue provides a versatile foundation for any discerning wardrobe, while the subtle Elevéz logo, meticulously placed on the left chest, signifies a commitment to quiet confidence and timeless design. This tee speaks volumes without saying a word, embodying the refined taste of classic elegance.</p>\n<p><b>Key Features:</b></p>\n<ul>\n<li>\n<p><b>Timeless Elegance:</b> A rich navy color and minimalist design for enduring style.</p>\n</li>\n<li>\n<p><b>Premium Comfort &amp; Quality:</b> Made from substantial <b>180 GSM cotton</b> for a luxurious feel and lasting wear.</p>\n</li>\n<li>\n<p><b>Subtle Sophistication:</b> Discreet Elevéz logo on the left chest signifies exclusivity and taste.</p>\n</li>\n<li>\n<p><b>Versatile Wardrobe Essential:</b> Perfect for elevated casual wear or layering under blazers and fine knits.</p>\n</li>\n</ul>\n<p>Invest in a piece that transcends trends and becomes a cornerstone of your distinguished style.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_o396y4o396y4o396.png?v=1761049036",
@@ -3087,8 +3087,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.309Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.309Z"
   },
   {
     "id": 20,
@@ -3102,8 +3102,8 @@ export const PRODUCTS: Product[] = [
     "cost": 160,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.2,
-    "reviews": 45,
+    "rating": 4.6,
+    "reviews": 133,
     "description": "Crafted from a substantial 180 GSM cotton blend, this deep heather grey tee provides a premium, comfortable fit that holds its shape through the day. The subdued, masculine grey tone is the perfect counterpoint to bold accessories and dynamic backdrops. The iconic Elevéz logo is subtly placed, a mark of quality and discerning taste that speaks quietly amid the visual noise of the city. Key Features: Elevated Fabric: Premium 180 GSM cotton blend for a durable feel and superior drape. Urban Aesthetic: The cool grey tone pairs perfectly with accessories and layered street-style looks. Discreet Branding: Features the classic Elevéz logo, symbolizing sophistication without shouting. Versatile Fit: A comfortable, structured cut that looks sharp whether worn alone or under a jacket.",
     "descriptionHtml": "<p>Crafted from a substantial <b>180 GSM cotton blend</b>, this deep heather grey tee provides a premium, comfortable fit that holds its shape through the day. The subdued, <b>masculine grey tone</b> is the perfect counterpoint to bold accessories and dynamic backdrops. The iconic <b>Elevéz</b> logo is subtly placed, a mark of quality and discerning taste that speaks quietly amid the visual noise of the city.</p>\n<p><b>Key Features:</b></p>\n<ul>\n<li>\n<p><b>Elevated Fabric:</b> Premium <b>180 GSM cotton blend</b> for a durable feel and superior drape.</p>\n</li>\n<li>\n<p><b>Urban Aesthetic:</b> The cool grey tone pairs perfectly with accessories and layered street-style looks.</p>\n</li>\n<li>\n<p><b>Discreet Branding:</b> Features the classic <b>Elevéz</b> logo, symbolizing sophistication without shouting.</p>\n</li>\n<li>\n<p><b>Versatile Fit:</b> A comfortable, structured cut that looks sharp whether worn alone or under a jacket.</p>\n</li>\n</ul>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_mk1cf9mk1cf9mk1c.png?v=1761054296",
@@ -3226,8 +3226,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.309Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.309Z"
   },
   {
     "id": 21,
@@ -3241,8 +3241,8 @@ export const PRODUCTS: Product[] = [
     "cost": 160,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.3,
-    "reviews": 68,
+    "rating": 4.2,
+    "reviews": 107,
     "description": "The Elevéz Dark Roast Rebel Tee isn't merely clothing; it's the color of late-night ideas, strong foundations, and a quiet, unshakeable confidence. While others chase fleeting trends, this shade of deep brown—the color of rich soil and powerful, concentrated coffee—grounds the wearer in a sense of timeless strength. In the urban sprawl where graffiti marks the territory of expression, this tee is the anchor. The Coffee Brown hue represents the deep, complex history of the streets and the unyielding energy needed to navigate them. It’s the color of authenticity, a stark contrast to the neon chaos around it.",
     "descriptionHtml": "<p>The <b>Elevéz Dark Roast Rebel Tee</b> isn't merely clothing; it's the color of late-night ideas, strong foundations, and a quiet, unshakeable confidence. While others chase fleeting trends, this shade of deep brown—the color of rich soil and powerful, concentrated coffee—grounds the wearer in a sense of timeless strength.</p>\n<p>In the urban sprawl where graffiti marks the territory of expression, this tee is the anchor. The <b>Coffee Brown</b> hue represents the deep, complex history of the streets and the unyielding energy needed to navigate them. It’s the color of authenticity, a stark contrast to the neon chaos around it.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_cas5tgcas5tgcas5.png?v=1761057299",
@@ -3363,8 +3363,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.309Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.309Z"
   },
   {
     "id": 22,
@@ -3378,8 +3378,8 @@ export const PRODUCTS: Product[] = [
     "cost": 180,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.7,
-    "reviews": 61,
+    "rating": 4.6,
+    "reviews": 113,
     "description": "Unleash your inner strength with the Ronin Spirit Graphic Tee. This T-shirt is a striking fusion of timeless Samurai mythology and contemporary streetwear aesthetic. It features a powerful, elongated graphic of a legendary warrior—the Ronin (masterless samurai)—set against a clean white backdrop, symbolizing a blend of discipline and fearless individuality. Crafted from soft, durable 180 GSM cotton, this tee offers a comfortable, substantial fit that holds its structure. The high-quality print is designed to stand out, making a bold, art-driven statement. This shirt isn't just a piece of apparel; it's armor for the modern-day pathfinder who honors tradition while forging their own way.",
     "descriptionHtml": "<p>Unleash your inner strength with the <b>Ronin Spirit Graphic Tee</b>. <span class=\"citation-9\">This T-shirt is a striking fusion of timeless </span><b><span class=\"citation-9\">Samurai mythology</span></b><span class=\"citation-9\"> and contemporary </span><b><span class=\"citation-9\">streetwear aesthetic</span></b><span class=\"citation-9 citation-end-9\">.<sup class=\"superscript\" data-turn-source-index=\"1\"><!----></sup></span> It features a powerful, elongated graphic of a legendary warrior—the <b>Ronin</b> (masterless samurai)—set against a clean white backdrop, symbolizing a blend of discipline and fearless individuality.</p>\n<p>Crafted from soft, durable <b>180 GSM cotton</b>, this tee offers a comfortable, substantial fit that holds its structure. The high-quality print is designed to stand out, making a bold, art-driven statement. This shirt isn't just a piece of apparel; it's armor for the modern-day pathfinder who honors tradition while forging their own way.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_icts81icts81icts.png?v=1761063305",
@@ -3502,8 +3502,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.309Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.309Z"
   },
   {
     "id": 23,
@@ -3517,8 +3517,8 @@ export const PRODUCTS: Product[] = [
     "cost": 220,
     "category": "Topwear",
     "type": "tee",
-    "rating": 5,
-    "reviews": 68,
+    "rating": 4.6,
+    "reviews": 198,
     "description": "This garment tells the tale of the Sentinel of the Split Gate, a warrior whose very essence is a fusion of primal fury and disciplined honor. It represents the internal struggle and the ultimate balance found on the path of the sword. On the left, the fierce crimson half is fueled by the Dragon's Fire—raw, untamed power, and the shadow of destruction. This side is the Ronin, a mercenary of necessity, swift and unforgiving, acting on pure, battle-hardened instinct. On the right, the tranquil white light embodies the Spirit of Bushido—discipline, clarity, and noble purpose. This is the Samurai, guided by a strict code of honor, whose mastery is not just in killing, but in knowing when not to. The dividing line, crossed by the blade, is the balance Kenshin must maintain. To wear this shirt is to carry the knowledge that true strength lies not in choosing one side, but in mastering the duality of both—harnessing the dragon's power without being consumed by its flame. Choose your strength. Master your balance.",
     "descriptionHtml": "<p>This garment tells the tale of the <b>Sentinel of the Split Gate</b>, a warrior whose very essence is a fusion of primal fury and disciplined honor. It represents the internal struggle and the ultimate balance found on the path of the sword.</p>\n<p>On the <b>left</b>, the fierce crimson half is fueled by the <b>Dragon's Fire</b>—raw, untamed power, and the shadow of destruction. This side is the <b>Ronin</b>, a mercenary of necessity, swift and unforgiving, acting on pure, battle-hardened instinct.</p>\n<p>On the <b>right</b>, the tranquil white light embodies the <b>Spirit of Bushido</b>—discipline, clarity, and noble purpose. This is the <b>Samurai</b>, guided by a strict code of honor, whose mastery is not just in killing, but in knowing when <i>not</i> to.</p>\n<p>The dividing line, crossed by the blade, is the <b>balance</b> Kenshin must maintain. To wear this shirt is to carry the knowledge that true strength lies not in choosing one side, but in mastering the duality of both—harnessing the dragon's power without being consumed by its flame.</p>\n<p><b>Choose your strength. Master your balance.</b></p>\n<p> </p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sgt3bosgt3bosgt3.png?v=1761061548",
@@ -3655,8 +3655,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.309Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.309Z"
   },
   {
     "id": 24,
@@ -3670,8 +3670,8 @@ export const PRODUCTS: Product[] = [
     "cost": 440,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.6,
-    "reviews": 181,
+    "rating": 4.4,
+    "reviews": 120,
     "description": "The Serpent's Key is an echo of an ancient power—a sigil whispered to grant passage through the unseen. In a world of concrete and fleeting moments, this design binds the modern spirit to the eternal mystery. The script, coiling and unbroken, is a calligraphy of elevation and unbinding, a hidden map for those who seek to rise above the noise. This hoodie is forged for the urban wanderer, the one who knows that the true path is always found off the beaten track. Wear it as your shield in the harsh light of the city and as your sigil of intent. It is more than just fabric; it is a vow to unlock your own legend.",
     "descriptionHtml": "<p>The <b>Serpent's Key</b> is an echo of an ancient power—a sigil whispered to grant passage through the unseen. In a world of concrete and fleeting moments, this design binds the modern spirit to the eternal mystery. The script, coiling and unbroken, is a calligraphy of <b>elevation</b> and <b>unbinding</b>, a hidden map for those who seek to rise above the noise.</p>\n<p>This hoodie is forged for the urban wanderer, the one who knows that the true path is always found off the beaten track. Wear it as your shield in the harsh light of the city and as your sigil of intent. It is more than just fabric; it is a vow to <b>unlock your own legend</b>.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ihtljwihtljwihtl.png?v=1761125938",
@@ -3805,8 +3805,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.309Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.309Z"
   },
   {
     "id": 25,
@@ -3820,8 +3820,8 @@ export const PRODUCTS: Product[] = [
     "cost": 180,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.6,
-    "reviews": 136,
+    "rating": 4.8,
+    "reviews": 97,
     "description": "Beneath the defiant glow of the Crimson Dawn, a legend is forged in fire and shadow. The Crimson Dawn Samurai embodies the warrior spirit—a solitary figure standing firm, his resolve as unyielding as the mountains, his spirit infused with the primal strength of the Eastern Dragon. This isn't just a battle; it's a testament to resilience, honor, and the unwavering pursuit of one's destiny. This design speaks to those who face their own dragons, who find their strength in adversity, and whose spirit, like the rising sun, always finds a way to break through the darkness. Wear the Crimson Dawn Samurai and carry the power of ancient legends into your modern journey. Let it be a reminder that even in the toughest battles, your inner warrior can rise, vigilant and victorious.",
     "descriptionHtml": "<p>Beneath the defiant glow of the <b>Crimson Dawn</b>, a legend is forged in fire and shadow. The <b>Crimson Dawn Samurai</b> embodies the warrior spirit—a solitary figure standing firm, his resolve as unyielding as the mountains, his spirit infused with the primal strength of the <b>Eastern Dragon</b>. This isn't just a battle; it's a testament to resilience, honor, and the unwavering pursuit of one's destiny.</p>\n<p>This design speaks to those who face their own dragons, who find their strength in adversity, and whose spirit, like the rising sun, always finds a way to break through the darkness. Wear the <b>Crimson Dawn Samurai</b> and carry the power of ancient legends into your modern journey. Let it be a reminder that even in the toughest battles, your inner warrior can rise, vigilant and victorious.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ov1ns9ov1ns9ov1n.png?v=1761064023",
@@ -3929,8 +3929,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.310Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.310Z"
   },
   {
     "id": 26,
@@ -3944,8 +3944,8 @@ export const PRODUCTS: Product[] = [
     "cost": 180,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.3,
-    "reviews": 26,
+    "rating": 4.9,
+    "reviews": 89,
     "description": "True power doesn't roar; it whispers, unseen, into the depths of the mind. The Mind Weaver Tee is more than just apparel; it's a testament to the subtle art of perception and influence. At its core, a mesmerizing, crimson-and-black ocular design pierces through, a symbol of profound insight and the ability to bend reality through sheer will. It's a visual anchor for the chillingly confident declaration above: \"You're Already Under My Genjutsu.\" This isn't just a statement; it's the signature of a master illusionist, a subtle hint that the world around you is merely a canvas for your influence. When you wear the Mind Weaver Tee, you don't just walk into a room; you cast an ambiance. The soft, breathable fabric ensures comfort, allowing you to move with the effortless grace of someone who holds all the strings. The design itself seems to shift and pulse with an inner energy, an optical illusion that catches the eye and holds it, just as a powerful mental technique captures attention.",
     "descriptionHtml": "<p>True power doesn't roar; it whispers, unseen, into the depths of the mind. The <b>Mind Weaver Tee</b> is more than just apparel; it's a testament to the subtle art of perception and influence.</p>\n<p>At its core, a mesmerizing, crimson-and-black ocular design pierces through, a symbol of profound insight and the ability to bend reality through sheer will. It's a visual anchor for the chillingly confident declaration above: \"<b>You're Already Under My Genjutsu.</b>\" This isn't just a statement; it's the signature of a master illusionist, a subtle hint that the world around you is merely a canvas for your influence.</p>\n<p>When you wear the <b>Mind Weaver Tee</b>, you don't just walk into a room; you cast an ambiance. The soft, breathable fabric ensures comfort, allowing you to move with the effortless grace of someone who holds all the strings. The design itself seems to shift and pulse with an inner energy, an optical illusion that catches the eye and holds it, just as a powerful mental technique captures attention.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_1.png?v=1761154062",
@@ -4050,8 +4050,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.310Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.310Z"
   },
   {
     "id": 27,
@@ -4066,7 +4066,7 @@ export const PRODUCTS: Product[] = [
     "category": "Topwear",
     "type": "tee",
     "rating": 4.3,
-    "reviews": 133,
+    "reviews": 219,
     "description": "Remember that feeling of pure, unadulterated joy when a tiny, fluffy creature peeks out to greet you? The Heart-Eared Companion Tee captures that exact moment of innocent wonder and unconditional affection. This tee isn't just about a cute bunny; it's about the universal language of love and surprise. With its oversized, soulful eyes, our charming rabbit friend peeks playfully from the hem, ready to bring a smile to anyone who sees it. Its ears, perfectly forming a little heart, are a gentle reminder that kindness and warmth are always in season. Crafted from the softest, breathable cotton, this shirt feels like a gentle hug against your skin, perfect for days when you want to carry a little extra happiness with you. The vibrant, detailed print of our fluffy companion is durable and cheerful, a constant source of positive energy.",
     "descriptionHtml": "<p>Remember that feeling of pure, unadulterated joy when a tiny, fluffy creature peeks out to greet you? The <b>Heart-Eared Companion Tee</b> captures that exact moment of innocent wonder and unconditional affection.</p>\n<p>This tee isn't just about a cute bunny; it's about the universal language of love and surprise. With its oversized, soulful eyes, our charming rabbit friend peeks playfully from the hem, ready to bring a smile to anyone who sees it. Its ears, perfectly forming a little heart, are a gentle reminder that kindness and warmth are always in season.</p>\n<p>Crafted from the softest, breathable cotton, this shirt feels like a gentle hug against your skin, perfect for days when you want to carry a little extra happiness with you. The vibrant, detailed print of our fluffy companion is durable and cheerful, a constant source of positive energy.</p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_4.png?v=1761748282",
@@ -4189,8 +4189,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.310Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.310Z"
   },
   {
     "id": 28,
@@ -4204,8 +4204,8 @@ export const PRODUCTS: Product[] = [
     "cost": 240,
     "category": "Topwear",
     "type": "tee",
-    "rating": 4.7,
-    "reviews": 96,
+    "rating": 4.1,
+    "reviews": 119,
     "description": "The most potent element is the Ascension Hand. This hand, reaching upward from the center, is a silent command: \"Rise.\" It represents the wearer's personal will, their refusal to be kept down, and their power to pull themselves towards a higher plane of style and self-awareness. Wearing the Hex-Hand Ascension Tee is wearing a secret society's crest. It's a non-verbal code recognized by the bold, the creatives, and the true rebels. It is your manifesto of comfort, style, and absolute freedom.\"Decipher the street. Command your ascent.\"",
     "descriptionHtml": "<p>The most potent element is the <b>Ascension Hand</b>. This hand, reaching upward from the center, is a silent command: <b>\"Rise.\"</b> It represents the wearer's personal will, their refusal to be kept down, and their power to pull themselves towards a higher plane of style and self-awareness.</p>\n<p>Wearing the <b>Hex-Hand Ascension Tee</b> is wearing a secret society's crest. It's a non-verbal code recognized by the bold, the creatives, and the true rebels. It is your manifesto of comfort, style, and absolute freedom.<br>\"Decipher the street. Command your ascent.\"<br></p>",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fvti68fvti68fvti.png?v=1761741294",
@@ -4312,8 +4312,8 @@ export const PRODUCTS: Product[] = [
     "isNew": true,
     "isFeatured": false,
     "source": "shopify",
-    "importedAt": "2025-12-17T12:54:14.072Z",
-    "lastSyncedAt": "2025-12-17T12:54:14.072Z"
+    "importedAt": "2025-12-17T13:04:39.310Z",
+    "lastSyncedAt": "2025-12-17T13:04:39.310Z"
   }
 ];
 

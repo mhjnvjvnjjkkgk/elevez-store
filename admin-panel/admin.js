@@ -488,6 +488,12 @@ async function loadData() {
       showSyncStatus(`📦 Loaded ${state.products.length} products`, 'success');
     }, 500);
   }
+
+  // ✅ CRITICAL: Sync state to window object for sync-deploy.js to access
+  window.products = state.products;
+  window.collections = state.collections;
+  window.orders = state.orders;
+  console.log(`🔄 Synced ${state.products.length} products to window.products for deployment`);
 }
 
 // Save Data

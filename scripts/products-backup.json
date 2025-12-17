@@ -2,13 +2,19 @@
   "products": [
     {
       "id": 1765149944844,
-      "originalPrice": 1500,
-      "cost": 800,
-      "showInShop": true,
-      "colors": [
-        "Black"
-      ],
+      "qid": "1222",
+      "status": "active",
+      "profitMargin": 5.9,
+      "type": "Hoodie",
+      "showInCollections": true,
       "showInHome": true,
+      "images": [
+        "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
+        "https://i.ibb.co/svktk85k/Gemini-Generated-Image-gpaa7hgpaa7hgpaa.png",
+        "https://i.ibb.co/FbLmZBJg/use-fo-carousal.png",
+        "https://i.ibb.co/gFM8kzCT/Gemini-Generated-Image-k4d9bck4d9bck4d9.png"
+      ],
+      "category": "Men",
       "sizes": [
         "M",
         "S",
@@ -17,194 +23,188 @@
         "XL",
         "XXL"
       ],
-      "rating": 4.5,
+      "stock": 100,
       "image": "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
+      "updatedAt": "2025-12-17T13:02:14.884Z",
+      "price": 850,
+      "isBestSeller": true,
+      "profit": 50,
+      "name": "Dont Look back hoodie",
+      "colors": [
+        "Black"
+      ],
+      "originalPrice": 1500,
+      "showInShop": true,
       "tags": [
         "ALL"
       ],
-      "price": 850,
-      "qid": "1222",
-      "isBestSeller": true,
-      "category": "Men",
-      "profit": 50,
-      "showInCollections": true,
-      "type": "Hoodie",
-      "updatedAt": "2025-12-17T12:35:15.294Z",
-      "stock": 100,
-      "profitMargin": 5.9,
-      "name": "Dont Look back hoodie",
-      "status": "active",
-      "images": [
-        "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
-        "https://i.ibb.co/svktk85k/Gemini-Generated-Image-gpaa7hgpaa7hgpaa.png",
-        "https://i.ibb.co/FbLmZBJg/use-fo-carousal.png",
-        "https://i.ibb.co/gFM8kzCT/Gemini-Generated-Image-k4d9bck4d9bck4d9.png"
-      ]
+      "rating": 4.5,
+      "cost": 800
     },
     {
       "id": 1765149958744,
-      "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-      "status": "active",
+      "showInShop": true,
       "type": "Hoodie",
-      "images": [
-        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-        "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
-      ],
-      "profit": 75,
-      "qid": "NGH-001",
-      "cost": 10,
+      "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+      "isBestSeller": true,
       "showInHome": true,
       "category": "Men",
-      "isBestSeller": true,
-      "isNew": true,
-      "profitMargin": 88.2,
-      "stock": 0,
-      "tags": [
-        "TRENDING",
-        "BESTSELLER",
-        "ALL"
-      ],
-      "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
-      "rating": 4.5,
-      "showInShop": true,
+      "cost": 10,
+      "updatedAt": "2025-12-17T13:02:14.885Z",
       "sizes": [
         "S",
         "M",
         "L",
         "XL"
       ],
-      "originalPrice": 170,
+      "tags": [
+        "TRENDING",
+        "BESTSELLER",
+        "ALL"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+        "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+      ],
       "name": "Neon Glitch Hoodie",
-      "showInCollections": true,
-      "colors": [],
+      "stock": 0,
       "price": 85,
-      "updatedAt": "2025-12-17T12:35:15.294Z"
+      "status": "active",
+      "colors": [],
+      "rating": 4.5,
+      "originalPrice": 170,
+      "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+      "isNew": true,
+      "qid": "NGH-001",
+      "profit": 75,
+      "showInCollections": true,
+      "profitMargin": 88.2
     },
     {
       "id": 2,
-      "originalPrice": 90,
-      "colors": [
-        "Pink",
-        "White",
-        "Black"
-      ],
-      "name": "Vintage Crop Top",
-      "updatedAt": "2025-12-17T12:35:15.295Z",
-      "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
+      "qid": "VCT-002",
       "images": [
         "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
       ],
-      "price": 45,
-      "rating": 4.7,
-      "type": "Crop Top",
-      "isNew": true,
-      "qid": "VCT-002",
+      "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
       "sizes": [
         "XS",
         "S",
         "M",
         "L"
       ],
+      "isNew": true,
+      "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+      "price": 45,
+      "updatedAt": "2025-12-17T13:02:14.885Z",
+      "colors": [
+        "Pink",
+        "White",
+        "Black"
+      ],
       "tags": [
         "VINTAGE",
         "TRENDING"
       ],
-      "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+      "originalPrice": 90,
+      "type": "Crop Top",
+      "rating": 4.7,
+      "name": "Vintage Crop Top",
       "category": "Women"
     },
     {
       "id": 3,
+      "colors": [
+        "Black",
+        "White",
+        "Gray"
+      ],
+      "tags": [
+        "ESSENTIAL",
+        "BESTSELLER"
+      ],
+      "category": "Unisex",
+      "description": "Ultra-comfortable oversized t-shirt. Perfect for casual streetwear.",
+      "isBestSeller": true,
+      "name": "Oversized Street Tee",
+      "images": [
+        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"
+      ],
+      "price": 35,
+      "qid": "OST-003",
+      "originalPrice": 70,
+      "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
       "sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "isBestSeller": true,
-      "category": "Unisex",
-      "name": "Oversized Street Tee",
-      "description": "Ultra-comfortable oversized t-shirt. Perfect for casual streetwear.",
-      "updatedAt": "2025-12-17T12:35:15.295Z",
-      "originalPrice": 70,
-      "tags": [
-        "ESSENTIAL",
-        "BESTSELLER"
-      ],
+      "updatedAt": "2025-12-17T13:02:14.885Z",
       "type": "Oversized T-Shirt",
-      "colors": [
-        "Black",
-        "White",
-        "Gray"
-      ],
-      "images": [
-        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"
-      ],
-      "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
-      "qid": "OST-003",
-      "rating": 4.6,
-      "price": 35
+      "rating": 4.6
     },
     {
       "id": 4,
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "category": "Men",
+      "images": [
+        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
+      ],
+      "tags": [
+        "PREMIUM",
+        "NEW"
+      ],
+      "rating": 4.8,
+      "price": 95,
+      "qid": "PTH-004",
+      "description": "High-tech fabric hoodie with moisture-wicking properties. Perfect for active lifestyle.",
+      "originalPrice": 190,
+      "name": "Premium Tech Hoodie",
+      "updatedAt": "2025-12-17T13:02:14.885Z",
+      "isNew": true,
       "colors": [
         "Black",
         "Navy",
         "Gray"
       ],
-      "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-      "description": "High-tech fabric hoodie with moisture-wicking properties. Perfect for active lifestyle.",
-      "updatedAt": "2025-12-17T12:35:15.295Z",
       "type": "Hoodie",
-      "rating": 4.8,
-      "isNew": true,
-      "tags": [
-        "PREMIUM",
-        "NEW"
-      ],
-      "name": "Premium Tech Hoodie",
-      "originalPrice": 190,
-      "price": 95,
-      "qid": "PTH-004",
-      "category": "Men",
-      "sizes": [
-        "S",
-        "M",
-        "L",
-        "XL"
-      ],
-      "images": [
-        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
-      ]
+      "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
     },
     {
       "id": 5,
-      "type": "T-Shirt",
-      "updatedAt": "2025-12-17T12:35:15.295Z",
-      "rating": 4.4,
-      "colors": [
-        "Rainbow",
-        "Yellow",
-        "Orange"
-      ],
-      "category": "Unisex",
-      "qid": "CFT-005",
-      "image": "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500",
       "tags": [
         "COLORFUL",
         "TRENDING"
       ],
       "originalPrice": 80,
-      "images": [
-        "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500"
+      "category": "Unisex",
+      "image": "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500",
+      "updatedAt": "2025-12-17T13:02:14.885Z",
+      "qid": "CFT-005",
+      "colors": [
+        "Rainbow",
+        "Yellow",
+        "Orange"
       ],
+      "type": "T-Shirt",
+      "name": "Colorful Festival Tee",
+      "description": "Vibrant and colorful t-shirt perfect for festivals and summer events.",
       "sizes": [
         "S",
         "M",
         "L",
         "XL"
       ],
-      "name": "Colorful Festival Tee",
-      "description": "Vibrant and colorful t-shirt perfect for festivals and summer events.",
+      "rating": 4.4,
+      "images": [
+        "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500"
+      ],
       "price": 40
     }
   ],
@@ -213,30 +213,24 @@
     {
       "id": "2S4PVagw7A2ab4iQLhQA",
       "orderId": "ORD-1765144878816",
-      "paymentMethod": "upi",
       "state": "West Bengal",
-      "orderDate": {
-        "seconds": 1765144878,
-        "nanoseconds": 816000000
-      },
       "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
-      "pincode": "700055",
       "totalAmount": 85,
-      "email": "shayakdas6.5.0@gmail.com",
-      "phone": "80001812381",
-      "createdAt": {
-        "seconds": 1765144878,
-        "nanoseconds": 816000000
-      },
       "address": "sdasdada",
+      "paymentMethod": "upi",
+      "city": "koltakata",
+      "status": "pending",
+      "pincode": "700055",
+      "phone": "80001812381",
+      "shippingCost": 0,
       "items": [
         {
-          "quantity": 1,
-          "color": "Black",
-          "name": "Neon Glitch Hoodie",
-          "id": 1,
           "size": "M",
+          "name": "Neon Glitch Hoodie",
           "price": 85,
+          "id": 1,
+          "color": "Black",
+          "quantity": 1,
           "qid": "NGH-001",
           "originalPrice": 170,
           "category": "Men",
@@ -247,114 +241,124 @@
           "orderedColor": "Black"
         }
       ],
-      "shippingCost": 0,
-      "city": "koltakata",
-      "subtotal": 85,
-      "status": "pending",
+      "createdAt": {
+        "seconds": 1765144878,
+        "nanoseconds": 816000000
+      },
       "fullName": "Shayak Das",
+      "subtotal": 85,
+      "orderDate": {
+        "seconds": 1765144878,
+        "nanoseconds": 816000000
+      },
+      "email": "shayakdas6.5.0@gmail.com",
       "source": "firebase",
       "pointsEarned": 8,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2025-12-17T12:46:46.501Z"
+      "profitCalculatedAt": "2025-12-17T13:02:48.873Z"
     },
     {
       "id": "SuTQGC4vIytM2WrHUXzg",
       "orderId": "ORD-1764264646243",
+      "email": "shayakdas6.5.0@gmail.com",
+      "shippingCost": 0,
+      "totalAmount": 45,
+      "status": "pending",
+      "createdAt": {
+        "seconds": 1764264646,
+        "nanoseconds": 243000000
+      },
+      "fullName": "Shayak Das",
+      "city": "koltakata",
+      "address": "sdasdada",
+      "orderDate": {
+        "seconds": 1764264646,
+        "nanoseconds": 243000000
+      },
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "pincode": "700055",
+      "phone": "80001812381",
+      "paymentMethod": "upi",
+      "subtotal": 45,
+      "state": "West Bengal",
       "items": [
         {
           "size": "M",
-          "quantity": 1,
           "id": 2,
-          "color": "Pink",
+          "quantity": 1,
           "name": "Vintage Crop Top",
           "price": 45,
-          "originalPrice": 90,
-          "colors": [
-            "Pink",
-            "White",
-            "Black"
-          ],
-          "updatedAt": "2025-12-17T12:35:15.295Z",
-          "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
+          "color": "Pink",
+          "qid": "VCT-002",
           "images": [
             "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
           ],
-          "rating": 4.7,
-          "type": "Crop Top",
-          "isNew": true,
-          "qid": "VCT-002",
+          "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
           "sizes": [
             "XS",
             "S",
             "M",
             "L"
           ],
+          "isNew": true,
+          "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+          "updatedAt": "2025-12-17T13:02:14.885Z",
+          "colors": [
+            "Pink",
+            "White",
+            "Black"
+          ],
           "tags": [
             "VINTAGE",
             "TRENDING"
           ],
-          "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+          "originalPrice": 90,
+          "type": "Crop Top",
+          "rating": 4.7,
           "category": "Women",
           "orderedQuantity": 1,
           "orderedSize": "M",
           "orderedColor": "Pink"
         }
       ],
-      "paymentMethod": "upi",
-      "orderDate": {
-        "seconds": 1764264646,
-        "nanoseconds": 243000000
-      },
-      "email": "shayakdas6.5.0@gmail.com",
-      "pincode": "700055",
-      "createdAt": {
-        "seconds": 1764264646,
-        "nanoseconds": 243000000
-      },
-      "address": "sdasdada",
-      "totalAmount": 45,
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
-      "phone": "80001812381",
-      "status": "pending",
-      "city": "koltakata",
-      "fullName": "Shayak Das",
-      "subtotal": 45,
-      "state": "West Bengal",
-      "shippingCost": 0,
       "source": "firebase",
       "pointsEarned": 4,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2025-12-17T12:46:46.502Z"
+      "profitCalculatedAt": "2025-12-17T13:02:48.873Z"
     },
     {
       "id": "FqpUj0HsXXWIFSy1GH6m",
       "orderId": "ORD-1764031459429",
       "shippingCost": 0,
-      "address": "sdasdada",
-      "state": "West Bengal",
-      "status": "shipped",
-      "city": "koltakata",
-      "subtotal": 85,
-      "fullName": "Shayak Das",
-      "phone": "80001812381",
       "shippedAt": "2025-11-25T15:53:02.252Z",
-      "paymentMethod": "upi",
+      "status": "shipped",
+      "createdAt": {
+        "seconds": 1764031459,
+        "nanoseconds": 429000000
+      },
       "orderDate": {
         "seconds": 1764031459,
         "nanoseconds": 429000000
       },
+      "lastUpdated": "2025-11-25T15:53:02.252Z",
+      "subtotal": 85,
+      "pincode": "700055",
+      "phone": "80001812381",
+      "address": "sdasdada",
+      "totalAmount": 85,
+      "state": "West Bengal",
       "items": [
         {
+          "quantity": 1,
+          "color": "Black",
           "price": 85,
+          "id": 1,
           "size": "M",
           "name": "Neon Glitch Hoodie",
-          "color": "Black",
-          "id": 1,
-          "quantity": 1,
           "qid": "NGH-001",
           "originalPrice": 170,
           "category": "Men",
@@ -365,54 +369,44 @@
           "orderedColor": "Black"
         }
       ],
-      "pincode": "700055",
-      "lastUpdated": "2025-11-25T15:53:02.252Z",
+      "city": "koltakata",
+      "paymentMethod": "upi",
       "email": "shayakdas6.5.0@gmail.com",
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
-      "totalAmount": 85,
-      "createdAt": {
-        "seconds": 1764031459,
-        "nanoseconds": 429000000
-      },
       "trackingLink": "https://tracking.com/12345",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "fullName": "Shayak Das",
       "source": "firebase",
       "pointsEarned": 8,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2025-12-17T12:46:46.502Z"
+      "profitCalculatedAt": "2025-12-17T13:02:48.873Z"
     },
     {
       "id": "mAsVn48LIsf1XLgRVy9r",
       "orderId": "ORD-1763911399446",
-      "state": "West Bengal",
-      "orderDate": {
-        "seconds": 1763911399,
-        "nanoseconds": 446000000
-      },
-      "status": "pending",
-      "subtotal": 85,
-      "shippingCost": 30,
+      "paymentMethod": "cod",
       "fullName": "Mr Oak GAMING",
-      "email": "lolislolpp@gmail.com",
-      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
       "createdAt": {
         "seconds": 1763911399,
         "nanoseconds": 446000000
       },
-      "address": "sdasdada",
+      "email": "lolislolpp@gmail.com",
+      "pincode": "700055",
       "totalAmount": 115,
-      "paymentMethod": "cod",
-      "phone": "80001812381",
+      "state": "West Bengal",
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "shippingCost": 30,
       "city": "koltakata",
+      "subtotal": 85,
       "items": [
         {
+          "price": 85,
           "quantity": 1,
+          "name": "Neon Glitch Hoodie",
+          "color": "Black",
           "size": "M",
           "id": 1,
-          "color": "Black",
-          "name": "Neon Glitch Hoodie",
-          "price": 85,
           "qid": "NGH-001",
           "originalPrice": 170,
           "category": "Men",
@@ -423,84 +417,90 @@
           "orderedColor": "Black"
         }
       ],
-      "pincode": "700055",
+      "status": "pending",
+      "orderDate": {
+        "seconds": 1763911399,
+        "nanoseconds": 446000000
+      },
+      "address": "sdasdada",
+      "phone": "80001812381",
       "source": "firebase",
       "pointsEarned": 11,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2025-12-17T12:46:46.502Z"
+      "profitCalculatedAt": "2025-12-17T13:02:48.873Z"
     },
     {
       "id": "9uhZ0XRhlS8Z4j6X4Rke",
       "orderId": "ORD-1763906412534",
-      "paymentMethod": "upi",
+      "shippingCost": 0,
+      "status": "pending",
+      "phone": "80001812381",
+      "pincode": "700055",
+      "subtotal": 45,
+      "createdAt": {
+        "seconds": 1763906412,
+        "nanoseconds": 534000000
+      },
+      "state": "West Bengal",
+      "address": "sdasdada",
+      "fullName": "Mr Oak GAMING",
       "items": [
         {
-          "size": "M",
+          "price": 45,
           "quantity": 1,
           "name": "Vintage Crop Top",
-          "price": 45,
+          "size": "M",
           "id": 2,
           "color": "Pink",
-          "originalPrice": 90,
-          "colors": [
-            "Pink",
-            "White",
-            "Black"
-          ],
-          "updatedAt": "2025-12-17T12:35:15.295Z",
-          "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
+          "qid": "VCT-002",
           "images": [
             "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
           ],
-          "rating": 4.7,
-          "type": "Crop Top",
-          "isNew": true,
-          "qid": "VCT-002",
+          "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
           "sizes": [
             "XS",
             "S",
             "M",
             "L"
           ],
+          "isNew": true,
+          "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+          "updatedAt": "2025-12-17T13:02:14.885Z",
+          "colors": [
+            "Pink",
+            "White",
+            "Black"
+          ],
           "tags": [
             "VINTAGE",
             "TRENDING"
           ],
-          "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+          "originalPrice": 90,
+          "type": "Crop Top",
+          "rating": 4.7,
           "category": "Women",
           "orderedQuantity": 1,
           "orderedSize": "M",
           "orderedColor": "Pink"
         }
       ],
-      "subtotal": 45,
-      "createdAt": {
-        "seconds": 1763906412,
-        "nanoseconds": 534000000
-      },
-      "city": "koltakata",
-      "email": "lolislolpp@gmail.com",
-      "fullName": "Mr Oak GAMING",
-      "status": "pending",
-      "phone": "80001812381",
-      "shippingCost": 0,
-      "totalAmount": 45,
       "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
-      "address": "sdasdada",
-      "pincode": "700055",
-      "state": "West Bengal",
       "orderDate": {
         "seconds": 1763906412,
         "nanoseconds": 534000000
       },
+      "city": "koltakata",
+      "totalAmount": 45,
+      "paymentMethod": "upi",
+      "email": "lolislolpp@gmail.com",
       "source": "firebase",
       "pointsEarned": 4,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2025-12-17T12:46:46.502Z"
+      "profitCalculatedAt": "2025-12-17T13:02:48.873Z"
     },
     {
       "id": "2S4PVagw7A2ab4iQLhQA",

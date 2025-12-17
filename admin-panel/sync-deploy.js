@@ -42,7 +42,7 @@ class SyncDeployManager {
       if (deployResult.success) {
         this.updateStatus('✅ Successfully deployed to GitHub!', 'success');
         this.updateStatus('Vercel will auto-deploy in 1-2 minutes', 'success');
-        
+
         // Show success notification
         this.showSuccessNotification();
       } else {
@@ -59,9 +59,28 @@ class SyncDeployManager {
 
   // Save products before deploying
   async saveProducts() {
-    const products = window.products || [];
-    const collections = window.collections || [];
-    const orders = window.orders || [];
+    // Get products from window (synced from admin.js state) or fall back to localStorage
+    let products = window.products || [];
+    let collections = window.collections || [];
+    let orders = window.orders || [];
+
+    // If window.products is empty or only has the default 6, use localStorage
+    if (products.length <= 6) {
+      const storedProducts = localStorage.getItem('elevez_products');
+      if (storedProducts) {
+        try {
+          const parsedProducts = JSON.parse(storedProducts);
+          if (parsedProducts.length > products.length) {
+            console.log(`📦 Using localStorage products (${parsedProducts.length}) instead of window.products (${products.length})`);
+            products = parsedProducts;
+          }
+        } catch (e) {
+          console.warn('Could not parse localStorage products:', e);
+        }
+      }
+    }
+
+    console.log(`💾 Saving ${products.length} products for deployment...`);
 
     const response = await fetch('/api/save-products', {
       method: 'POST',
@@ -135,7 +154,7 @@ class SyncDeployManager {
   showErrorNotification(error) {
     const notification = document.createElement('div');
     notification.className = 'deploy-notification error';
-    
+
     // Determine helpful message based on error
     let helpText = 'Make sure the admin server is running and Git is configured.';
     if (error.includes('Cannot connect')) {
@@ -143,7 +162,7 @@ class SyncDeployManager {
     } else if (error.includes('Git')) {
       helpText = 'Check Git configuration: git config user.name and git config user.email';
     }
-    
+
     notification.innerHTML = `
       <div class="notification-content">
         <div class="notification-icon">❌</div>
