@@ -3352,17 +3352,31 @@ function checkDataIntegrity() {
 
   if (duplicates.length > 0) {
     const uniqueDuplicates = [...new Set(duplicates)];
-    const warningMsg = `⚠️ DATA INTEGRITY ISSUE DETECTED!\n\nFound duplicate QIDs in your data:\n${uniqueDuplicates.join(', ')}\n\nThis can cause problems when adding new products.\n\n🔧 RECOMMENDED: Clear all data and start fresh.\n\nClick OK to clear data now.\nClick Cancel to continue (not recommended).`;
+    console.warn('⚠️ Found duplicate QIDs:', uniqueDuplicates);
 
-    if (confirm(warningMsg)) {
-      localStorage.removeItem('elevez_products');
-      localStorage.removeItem('elevez_collections');
-      localStorage.removeItem('elevez_orders');
-      state.products = [];
-      state.collections = [];
-      state.orders = [];
-      renderCurrentView();
-      alert('✅ Data cleared! You can now add products without issues.');
+    // Auto-fix duplicates by keeping only the first occurrence and removing duplicates
+    const seenQids = new Set();
+    const cleanedProducts = [];
+
+    for (const product of state.products) {
+      const qid = product.qid || `QID${product.id}`;
+      if (!seenQids.has(qid)) {
+        seenQids.add(qid);
+        cleanedProducts.push(product);
+      } else {
+        console.log('Removing duplicate product with QID:', qid, product.name);
+      }
+    }
+
+    // Update state with cleaned products
+    const removed = state.products.length - cleanedProducts.length;
+    if (removed > 0) {
+      state.products = cleanedProducts;
+      localStorage.setItem('elevez_products', JSON.stringify(cleanedProducts));
+      console.log(`✅ Auto-fixed ${removed} duplicate products`);
+
+      // Gentle notification instead of blocking alert
+      console.log('Data integrity fixed automatically');
     }
   }
 

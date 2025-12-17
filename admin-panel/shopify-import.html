@@ -975,9 +975,10 @@
 
                 // Convert Shopify products to local format
                 const newProducts = importedProducts.map((product, index) => {
-                    // Generate unique ID
-                    const baseId = existingProducts.length + index + 1;
-                    const qid = `SHOP-${product.handle.toUpperCase().replace(/-/g, '').substring(0, 8)}`;
+                    // Generate unique ID using Shopify ID (guaranteed unique)
+                    const shopifyIdNum = product.shopifyId ? product.shopifyId.split('/').pop() : Date.now() + index;
+                    const baseId = parseInt(shopifyIdNum) || (existingProducts.length + index + 1);
+                    const qid = `SHOP-${shopifyIdNum}`;
 
                     // Extract SKU from variants if available
                     const sku = product.variants?.[0]?.sku || `SKU-${Date.now()}-${index}`;
