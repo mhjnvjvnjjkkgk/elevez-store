@@ -976,6 +976,14 @@ function renderProducts() {
 
 // Collections
 function renderCollections() {
+  // Load from localStorage on every render
+  const stored = localStorage.getItem('elevez_collections');
+  if (stored) {
+    try {
+      state.collections = JSON.parse(stored);
+    } catch (e) { }
+  }
+
   const grid = document.getElementById('collectionsGrid');
 
   if (state.collections.length === 0) {
