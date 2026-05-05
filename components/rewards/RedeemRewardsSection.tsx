@@ -80,280 +80,147 @@ export const RedeemRewardsSection: React.FC = () => {
   };
 
   return (
-    <section className="py-20 px-4 bg-black/20">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Redeem Your Points</h2>
-          <p className="text-xl text-white/70">Convert points into discount codes</p>
-        </motion.div>
+    <section className="py-24 px-6 bg-white border-b-[8px] border-black">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-20">
+          <div className="inline-block bg-black text-[#00ff88] text-sm font-black uppercase tracking-[0.3em] px-6 py-2 border-[3px] border-black shadow-[4px_4px_0px_0px_#000] mb-8">
+            Exchange
+          </div>
+          <h2 className="text-6xl md:text-8xl font-black font-syne text-black uppercase leading-none tracking-tighter">
+            REDEEM <span className="text-[#00ff88]" style={{ WebkitTextStroke: '3px black' }}>POINTS</span>
+          </h2>
+        </div>
 
         {/* Beautiful Animated Success Modal */}
         <AnimatePresence>
           {showModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center px-4"
-              onClick={closeModal}
-            >
-              {/* Backdrop */}
+            <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                className="absolute inset-0 bg-black/90"
+                onClick={closeModal}
               />
 
-              {/* Confetti Container */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {confettiParticles.map((i) => (
-                  <ConfettiParticle key={i} delay={i * 0.02} />
-                ))}
-              </div>
-
-              {/* Modal Content */}
               <motion.div
-                initial={{ scale: 0.5, opacity: 0, y: 50 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.5, opacity: 0, y: 50 }}
-                transition={{ type: "spring", damping: 15, stiffness: 200 }}
-                onClick={(e) => e.stopPropagation()}
-                className="relative bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1a] rounded-3xl p-8 md:p-12 border-2 border-green-500/50 
-                         max-w-lg w-full shadow-2xl shadow-green-500/20 text-center overflow-hidden"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="relative bg-white border-[12px] border-black p-12 md:p-20 shadow-[32px_32px_0px_0px_#00ff88] max-w-2xl w-full text-center"
               >
-                {/* Close Button */}
                 <button
                   onClick={closeModal}
-                  className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors"
+                  className="absolute top-6 right-6 p-2 bg-black text-white hover:bg-[#00ff88] hover:text-black transition-colors border-[3px] border-black"
                 >
-                  <X className="w-6 h-6 text-white/60" />
+                  <X size={32} />
                 </button>
 
-                {/* Animated Success Icon */}
-                <motion.div
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.2, type: "spring", damping: 10 }}
-                  className="relative mx-auto mb-6"
-                >
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 
-                                flex items-center justify-center shadow-2xl shadow-green-500/50">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.4, type: "spring" }}
-                    >
-                      <Check className="w-12 h-12 text-white" strokeWidth={3} />
-                    </motion.div>
-                  </div>
-                  {/* Pulsing ring effect */}
-                  <motion.div
-                    animate={{ scale: [1, 1.5, 1.5], opacity: [0.5, 0, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="absolute inset-0 rounded-full bg-green-500/30"
-                  />
-                </motion.div>
+                <div className="w-32 h-32 bg-[#00ff88] border-[6px] border-black flex items-center justify-center mx-auto mb-10 shadow-[8px_8px_0px_0px_#000]">
+                  <Check size={64} className="text-black font-black" />
+                </div>
 
-                {/* Celebration Icons */}
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="flex items-center justify-center gap-2 mb-4"
-                >
-                  <PartyPopper className="w-6 h-6 text-yellow-400" />
-                  <h3 className="text-3xl md:text-4xl font-bold text-white">Congratulations!</h3>
-                  <PartyPopper className="w-6 h-6 text-yellow-400 scale-x-[-1]" />
-                </motion.div>
+                <h3 className="text-5xl md:text-7xl font-black uppercase font-syne text-black mb-6 leading-none">OPERATION SUCCESS</h3>
+                <p className="text-2xl font-bold text-black uppercase opacity-60 mb-12">
+                  YOU'VE SECURED A <span className="bg-black text-[#00ff88] px-3 py-1">₹{redeemedAmount}</span> DISCOUNT ASSET.
+                </p>
 
-                <motion.p
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-white/70 text-lg mb-8"
-                >
-                  You've successfully redeemed <span className="text-green-400 font-bold">₹{redeemedAmount}</span> discount!
-                </motion.p>
-
-                {/* Discount Code Display */}
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-xl 
-                           rounded-2xl p-6 mb-6 border border-purple-500/30"
-                >
-                  <p className="text-white/60 text-sm mb-2 uppercase tracking-wider">Your Discount Code</p>
-                  <motion.p
-                    initial={{ scale: 0.8 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.6, type: "spring" }}
-                    className="text-4xl md:text-5xl font-bold text-white tracking-widest mb-4"
-                  >
-                    {redeemedCode}
-                  </motion.p>
+                <div className="bg-black text-white p-10 mb-12 border-[4px] border-black shadow-[12px_12px_0px_0px_#00ff88] relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-[#00ff88]/10 rotate-45 translate-x-12 -translate-y-12" />
+                  <p className="text-xs font-black uppercase opacity-40 mb-4 tracking-[0.4em]">Decrypted Access Code</p>
+                  <p className="text-5xl md:text-7xl font-black tracking-widest mb-10 font-syne">{redeemedCode}</p>
+                  
                   <button
                     onClick={copyCode}
-                    className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 
-                              flex items-center gap-2 mx-auto ${copiedCode
-                        ? 'bg-green-500 text-white'
-                        : 'bg-white/10 text-white hover:bg-white/20'
-                      }`}
+                    className={`w-full py-6 font-black uppercase text-2xl border-[3px] border-white transition-all flex items-center justify-center gap-4 ${
+                      copiedCode ? 'bg-[#00ff88] text-black border-[#00ff88]' : 'bg-transparent text-white hover:bg-white hover:text-black'
+                    }`}
                   >
-                    {copiedCode ? (
-                      <>
-                        <Check className="w-5 h-5" />
-                        Copied to Clipboard!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-5 h-5" />
-                        Copy Code
-                      </>
-                    )}
+                    {copiedCode ? <><Check size={28} /> COPIED</> : <><Copy size={28} /> CLONE CODE</>}
                   </button>
-                </motion.div>
+                </div>
 
-                {/* Auto-apply Info */}
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.7 }}
-                  className="bg-emerald-500/10 rounded-xl p-4 mb-6 border border-emerald-500/30"
-                >
-                  <p className="text-emerald-300 text-sm">
-                    ✨ <strong>Auto-Apply:</strong> This code will appear in your checkout page automatically!
-                  </p>
-                </motion.div>
-
-                {/* Action Buttons */}
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.8 }}
-                  className="flex flex-col sm:flex-row gap-3"
-                >
+                <div className="flex flex-col sm:flex-row gap-6">
                   <button
                     onClick={goToShop}
-                    className="flex-1 py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl 
-                             text-white font-bold hover:shadow-lg hover:shadow-purple-500/30 
-                             transition-all duration-300 flex items-center justify-center gap-2"
+                    className="flex-1 bg-black text-[#00ff88] py-6 border-[4px] border-black font-black uppercase text-2xl shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center justify-center gap-4"
                   >
-                    <ShoppingBag className="w-5 h-5" />
-                    Shop Now & Use Code
+                    <ShoppingBag size={28} />
+                    DEPLOY NOW
                   </button>
                   <button
                     onClick={closeModal}
-                    className="flex-1 py-4 bg-white/10 rounded-xl text-white font-semibold 
-                             hover:bg-white/20 transition-all duration-300"
+                    className="flex-1 bg-white text-black py-6 border-[4px] border-black font-black uppercase text-2xl shadow-[8px_8px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
                   >
-                    Redeem More
+                    CONTINUE
                   </button>
-                </motion.div>
+                </div>
               </motion.div>
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
 
         {/* Redemption Options Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {redemptionOptions.map((option, index) => {
             const canAfford = profile && profile.points >= option.points;
-            const savingsPercent = Math.round((option.discount / option.points) * 100);
 
             return (
-              <motion.div
+              <div
                 key={index}
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={canAfford ? { y: -10, scale: 1.02 } : {}}
-                className="relative group"
+                className={`bg-white border-[6px] border-black p-10 transition-all relative group flex flex-col h-full ${
+                  canAfford 
+                    ? 'shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] hover:-translate-y-2' 
+                    : 'shadow-[8px_8px_0px_0px_#000] opacity-50 grayscale'
+                }`}
               >
-                <div className={`bg-white/10 backdrop-blur-xl rounded-2xl p-6 border-2 h-full
-                              transition-all duration-300 ${canAfford
-                    ? 'border-white/20 hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/30'
-                    : 'border-white/10 opacity-60'
-                  }`}>
-
-                  {/* Best Value Badge */}
-                  {index === 2 && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 
-                                  bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full 
-                                  text-xs font-bold text-white shadow-lg flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" />
-                      BEST VALUE
-                    </div>
-                  )}
-
-                  {/* Icon */}
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 
-                                flex items-center justify-center mb-4 mx-auto shadow-lg">
-                    <Gift className="w-8 h-8 text-white" />
+                {/* Badge */}
+                {index === 2 && (
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-black text-[#00ff88] px-4 py-2 border-[4px] border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_#000]">
+                    OPTIMAL VALUE
                   </div>
+                )}
 
-                  {/* Discount Amount */}
-                  <div className="text-center mb-4">
-                    <p className="text-5xl font-bold text-white mb-2">₹{option.discount}</p>
-                    <p className="text-white/70">Discount Code</p>
-                  </div>
-
-                  {/* Points Cost */}
-                  <div className="bg-white/10 rounded-xl p-3 mb-4 text-center">
-                    <p className="text-2xl font-bold text-white">{option.points} Points</p>
-                  </div>
-
-                  {/* Value Indicator */}
-                  <div className="text-center mb-4">
-                    <span className="inline-block px-3 py-1 bg-green-500/20 rounded-full 
-                                   text-green-300 text-sm font-semibold">
-                      {savingsPercent}% value
-                    </span>
-                  </div>
-
-                  {/* Redeem Button */}
-                  <button
-                    onClick={() => handleRedeem(option.points, option.discount)}
-                    disabled={!canAfford || loading}
-                    className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 
-                              flex items-center justify-center gap-2 ${canAfford
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg hover:scale-105'
-                        : 'bg-white/10 text-white/50 cursor-not-allowed'
-                      }`}
-                  >
-                    {loading ? (
-                      <Loader className="w-5 h-5 animate-spin" />
-                    ) : canAfford ? (
-                      'Redeem Now'
-                    ) : (
-                      `Need ${option.points - (profile?.points || 0)} more`
-                    )}
-                  </button>
+                <div className="w-24 h-24 bg-black text-[#00ff88] border-[3px] border-black flex items-center justify-center mb-10 shadow-[8px_8px_0px_0px_#00ff88] group-hover:scale-110 transition-transform mx-auto">
+                  <Gift size={48} />
                 </div>
-              </motion.div>
+
+                <div className="text-center mb-10 flex-grow">
+                  <p className="text-6xl font-black text-black mb-2 font-syne">₹{option.discount}</p>
+                  <p className="text-xs font-black uppercase text-black opacity-40 tracking-widest">Digital Asset</p>
+                </div>
+
+                <div className="bg-black/5 border-[3px] border-black border-dashed p-6 mb-10 text-center">
+                  <p className="text-2xl font-black text-black">{option.points} PTS</p>
+                </div>
+
+                <button
+                  onClick={() => handleRedeem(option.points, option.discount)}
+                  disabled={!canAfford || loading}
+                  className={`w-full py-6 font-black uppercase text-xl border-[4px] border-black shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center justify-center gap-4 ${
+                    canAfford ? 'bg-[#00ff88] text-black' : 'bg-white text-black opacity-30 cursor-not-allowed'
+                  }`}
+                >
+                  {loading ? (
+                    <Loader size={24} className="animate-spin" />
+                  ) : canAfford ? (
+                    'REDEEM'
+                  ) : (
+                    `LACK ${option.points - (profile?.points || 0)} PTS`
+                  )}
+                </button>
+              </div>
             );
           })}
         </div>
 
-        {/* Info Box */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-12 bg-blue-500/10 backdrop-blur-xl rounded-2xl p-6 border border-blue-500/30"
-        >
-          <p className="text-white/90 text-center">
-            💡 <strong>Pro Tip:</strong> Discount codes are valid for 30 days and will auto-appear at checkout.
-            Higher point redemptions offer better value!
+        {/* Tip Box */}
+        <div className="mt-20 bg-black text-white p-10 border-[6px] border-black shadow-[16px_16px_0px_0px_#00ff88] relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#00ff88]/10 rotate-45 translate-x-16 -translate-y-16" />
+          <p className="text-xl font-bold uppercase text-center relative z-10">
+            <span className="text-[#00ff88]">INTEL:</span> ASSETS VALID FOR 30 DAYS. HIGHER EXCHANGE VOLUMES YIELD SUPERIOR VALUE RATIOS.
           </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

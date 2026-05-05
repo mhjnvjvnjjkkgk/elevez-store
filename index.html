@@ -14,7 +14,7 @@
     </script>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800;900&family=Outfit:wght@100;300;400;600;800;900&display=swap" rel="stylesheet">
     <style>
       body {
         font-family: 'Space Grotesk', sans-serif;
@@ -78,5 +78,17 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
+    
+    <!-- SVG Liquid Distortion Filter -->
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
+      <defs>
+        <filter id="liquid-filter">
+          <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise" seed="2" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G">
+            <animate attributeName="scale" values="0;40;0" dur="5s" repeatCount="Infinity" />
+          </feDisplacementMap>
+        </filter>
+      </defs>
+    </svg>
   </body>
 </html>

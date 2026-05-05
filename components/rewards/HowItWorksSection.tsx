@@ -68,125 +68,40 @@ export const HowItWorksSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 px-4 relative">
-      <div className="max-w-6xl mx-auto">
-        {/* Enhanced Section Header */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-block mb-4"
-          >
-            <Zap className="w-12 h-12 text-[#00ff88] mx-auto" />
-          </motion.div>
-          <h2 className="text-5xl md:text-6xl font-black text-white mb-4 font-syne tracking-tight"
-              style={{ textShadow: '0 0 20px rgba(0, 255, 136, 0.3)' }}>
-            HOW IT <span className="text-[#00ff88]">WORKS</span>
-          </h2>
-          <div className="flex items-center justify-center gap-3">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#00ff88]" />
-            <p className="text-[#00ff88]/70 uppercase tracking-widest text-sm">
-              Four Simple Steps
-            </p>
-            <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#00ff88]" />
+    <section className="py-24 px-6 bg-white">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-20">
+          <div className="inline-block bg-black text-[#00ff88] text-sm font-black uppercase tracking-[0.3em] px-6 py-2 border-[3px] border-black shadow-[4px_4px_0px_0px_#000] mb-8">
+            Process
           </div>
-        </motion.div>
+          <h2 className="text-6xl md:text-8xl font-black font-syne text-black uppercase leading-none tracking-tighter">
+            HOW IT <span className="text-[#00ff88]" style={{ WebkitTextStroke: '3px black' }}>WORKS</span>
+          </h2>
+        </div>
 
-        {/* Enhanced Steps Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Steps Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => (
-            <React.Fragment key={index}>
-              <motion.div
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -10, scale: 1.05 }}
-                className="relative group"
-              >
-                {/* Optimized Card Container */}
-                <div className="relative bg-black/80 backdrop-blur-xl rounded-2xl p-6 
-                              border-2 border-white/10 hover:border-[#00ff88]/50 
-                              transition-all duration-300 h-full overflow-hidden
-                              shadow-xl hover:shadow-2xl"
-                     style={{ 
-                       boxShadow: `0 0 0 rgba(0, 255, 136, 0), inset 0 0 20px rgba(0, 0, 0, 0.5)`,
-                       transition: 'all 0.3s'
-                     }}
-                     onMouseEnter={(e) => {
-                       e.currentTarget.style.boxShadow = `0 0 30px ${step.glowColor}, inset 0 0 20px rgba(0, 0, 0, 0.5)`;
-                     }}
-                     onMouseLeave={(e) => {
-                       e.currentTarget.style.boxShadow = `0 0 0 rgba(0, 255, 136, 0), inset 0 0 20px rgba(0, 0, 0, 0.5)`;
-                     }}
-                >
-                  {/* Static Background Grid */}
-                  <div
-                    className="absolute inset-0 opacity-5"
-                    style={{
-                      backgroundImage: `
-                        linear-gradient(rgba(0, 255, 136, 0.1) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0, 255, 136, 0.1) 1px, transparent 1px)
-                      `,
-                      backgroundSize: '20px 20px'
-                    }}
-                  />
-                  
-                  {/* Step Number (Large Background) */}
-                  <div className="absolute top-4 right-4 text-7xl font-black text-[#00ff88]/5 font-syne">
-                    {index + 1}
-                  </div>
+            <div key={index} className="bg-white border-[6px] border-black p-10 shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] transition-all group relative">
+              {/* Step Number */}
+              <div className="absolute -top-6 -right-6 w-16 h-16 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center font-black text-2xl shadow-[4px_4px_0px_0px_#000]">
+                {index + 1}
+              </div>
 
-                  {/* Icon Container */}
-                  <div 
-                    className={`relative w-16 h-16 rounded-xl bg-gradient-to-br ${step.color} 
-                              flex items-center justify-center mb-4 shadow-lg 
-                              group-hover:scale-110 transition-transform duration-300
-                              border-2 border-black`}
-                  >
-                    <step.icon className="w-8 h-8 text-black relative z-10" />
-                  </div>
-                  
-                  {/* Content */}
-                  <div className="relative z-10">
-                    <h3 className="text-xl font-black text-white mb-2 font-syne tracking-tight">
-                      {step.title}
-                    </h3>
-                    <p className="text-white/60 text-sm leading-relaxed">
-                      {step.description}
-                    </p>
-                  </div>
-
-                  {/* Corner Accent */}
-                  <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-[#00ff88]/20 
-                                group-hover:border-[#00ff88]/50 transition-colors" />
-                </div>
-              </motion.div>
-
-              {/* Static Arrow Between Steps (Desktop Only) */}
-              {index < steps.length - 1 && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 + 0.2 }}
-                  className="hidden lg:flex items-center justify-center absolute"
-                  style={{ 
-                    left: `${(index + 1) * 25 - 2}%`,
-                    top: '50%',
-                    transform: 'translateY(-50%)'
-                  }}
-                >
-                  <ArrowRight className="w-6 h-6 text-[#00ff88]/50" />
-                </motion.div>
-              )}
-            </React.Fragment>
+              {/* Icon Container */}
+              <div className="w-20 h-20 bg-black text-white border-[3px] border-black flex items-center justify-center mb-8 shadow-[6px_6px_0px_0px_#00ff88] group-hover:scale-110 transition-transform">
+                <step.icon size={40} className="text-[#00ff88]" />
+              </div>
+              
+              {/* Content */}
+              <h3 className="text-3xl font-black text-black mb-4 uppercase font-syne tracking-tight">
+                {step.title}
+              </h3>
+              <p className="text-black font-bold text-lg uppercase opacity-60 leading-tight">
+                {step.description}
+              </p>
+            </div>
           ))}
         </div>
       </div>

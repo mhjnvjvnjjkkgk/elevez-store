@@ -101,139 +101,83 @@ export const PointsHistorySection: React.FC = () => {
 
   if (loading) {
     return (
-      <section className="py-20 px-4">
+      <section className="py-24 px-6 bg-white">
         <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-            className="w-12 h-12 border-4 border-[#00ff88]/20 border-t-[#00ff88] rounded-full mx-auto"
-          />
+          <div className="w-16 h-16 border-[6px] border-black border-t-[#00ff88] animate-spin mx-auto shadow-[6px_6px_0px_0px_#000]" />
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-20 px-4">
+    <section className="py-24 px-6 bg-white">
       <div className="max-w-4xl mx-auto">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Points History</h2>
-          <p className="text-xl text-white/70">Track all your points activity and orders</p>
-        </motion.div>
+        <div className="mb-20">
+          <div className="inline-block bg-black text-[#00ff88] text-sm font-black uppercase tracking-[0.3em] px-6 py-2 border-[3px] border-black shadow-[4px_4px_0px_0px_#000] mb-8">
+            Ledger
+          </div>
+          <h2 className="text-6xl md:text-8xl font-black font-syne text-black uppercase leading-none tracking-tighter">
+            POINTS <span className="text-[#00ff88]" style={{ WebkitTextStroke: '3px black' }}>HISTORY</span>
+          </h2>
+        </div>
 
         {completeHistory.length === 0 ? (
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-[#00ff88]/10 to-purple-500/10 backdrop-blur-xl 
-                     rounded-3xl p-12 border border-[#00ff88]/20 text-center"
-          >
-            <Clock className="w-16 h-16 text-[#00ff88]/50 mx-auto mb-4" />
-            <p className="text-white/70 text-lg mb-2">No activity yet</p>
-            <p className="text-white/50 text-sm">Start shopping to earn points!</p>
-          </motion.div>
+          <div className="bg-white border-[8px] border-black p-20 text-center shadow-[16px_16px_0px_0px_#000]">
+            <Clock size={64} className="mx-auto mb-8 text-black opacity-10" />
+            <p className="text-3xl font-black text-black uppercase mb-4 italic">NO ACTIVITY RECORDED</p>
+            <p className="text-lg font-bold text-black uppercase opacity-40">COMMENCE OPERATIONS TO ACCUMULATE POINTS.</p>
+          </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-6">
             <AnimatePresence>
               {completeHistory.map((item, index) => (
-                <motion.button
+                <button
                   key={item.id}
-                  initial={{ x: -50, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: 50, opacity: 0 }}
-                  transition={{ delay: index * 0.03 }}
-                  onClick={() => item.source === 'order' && navigate(`/order/${item.id}`)}
+                  onClick={() => item.source === 'order' && navigate(`/account`)}
                   disabled={item.source !== 'order'}
-                  className={`w-full text-left bg-gradient-to-r from-black/80 to-black/60 backdrop-blur-xl 
-                           rounded-2xl p-6 border border-white/10 hover:border-[#00ff88]/30
-                           transition-all duration-300 group relative overflow-hidden
-                           ${item.source === 'order' ? 'cursor-pointer hover:bg-black/70' : 'cursor-default'}`}
+                  className={`w-full text-left bg-white border-[4px] border-black p-8 shadow-[8px_8px_0px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all group relative overflow-hidden ${
+                    item.source === 'order' ? 'cursor-pointer' : 'cursor-default'
+                  }`}
                 >
-                  {/* Glow effect on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#00ff88]/0 via-[#00ff88]/5 to-[#00ff88]/0 
-                                opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="relative z-10">
-                    <div className="flex items-start justify-between gap-4">
-                      {/* Left: Icon and Details */}
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0
-                                      ${item.type === 'earn'
-                            ? 'bg-gradient-to-br from-[#00ff88]/20 to-green-500/20 border border-[#00ff88]/30'
-                            : 'bg-gradient-to-br from-red-500/20 to-pink-500/20 border border-red-500/30'
-                          }`}>
-                          {item.source === 'order' ? (
-                            <ShoppingBag className="w-7 h-7 text-[#00ff88]" />
-                          ) : item.type === 'earn' ? (
-                            <TrendingUp className="w-7 h-7 text-[#00ff88]" />
-                          ) : (
-                            <TrendingDown className="w-7 h-7 text-red-400" />
-                          )}
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white font-bold text-lg mb-1">{item.reason}</p>
-
-                          {/* Order details if available */}
-                          {item.orderDetails && (
-                            <div className="mt-2 space-y-1">
-                              {item.orderDetails.slice(0, 2).map((orderItem: any, idx: number) => (
-                                <p key={idx} className="text-white/50 text-sm">
-                                  {orderItem.quantity}x {orderItem.name}
-                                </p>
-                              ))}
-                              {item.orderDetails.length > 2 && (
-                                <p className="text-white/40 text-xs">
-                                  +{item.orderDetails.length - 2} more items
-                                </p>
-                              )}
-                              <p className="text-[#00ff88]/70 text-sm font-semibold mt-2">
-                                Order Total: ₹{item.orderTotal?.toFixed(2)}
-                              </p>
-                            </div>
-                          )}
-
-                          <p className="text-white/40 text-sm mt-2 flex items-center gap-2">
-                            <Clock className="w-3 h-3" />
-                            {item.timestamp?.toDate?.()?.toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            }) || 'Recent'}
-                          </p>
-                        </div>
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 relative z-10">
+                    <div className="flex items-center gap-6 flex-1">
+                      <div className={`w-16 h-16 border-[3px] border-black flex items-center justify-center shrink-0 shadow-[4px_4px_0px_0px_#000] ${
+                        item.type === 'earn' ? 'bg-[#00ff88] text-black' : 'bg-black text-white'
+                      }`}>
+                        {item.source === 'order' ? <ShoppingBag size={32} /> : item.type === 'earn' ? <TrendingUp size={32} /> : <TrendingDown size={32} />}
                       </div>
 
-                      {/* Right: Points and Action */}
-                      <div className="text-right flex-shrink-0 flex flex-col items-end gap-2">
-                        <p className={`text-4xl font-black font-syne ${item.type === 'earn' ? 'text-[#00ff88]' : 'text-red-400'
-                          }`}
-                          style={{
-                            textShadow: item.type === 'earn'
-                              ? '0 0 20px rgba(0, 255, 136, 0.3)'
-                              : '0 0 20px rgba(239, 68, 68, 0.3)'
-                          }}>
-                          {item.type === 'earn' ? '+' : '-'}{item.points}
+                      <div className="flex-1">
+                        <h4 className="text-2xl font-black uppercase text-black mb-1">{item.reason}</h4>
+                        <p className="text-xs font-black uppercase text-black opacity-40 flex items-center gap-2">
+                          <Clock size={12} />
+                          {item.timestamp?.toDate?.()?.toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          }) || 'RECENT'}
                         </p>
-                        <p className="text-white/50 text-xs uppercase tracking-wider">points</p>
-                        {item.source === 'order' && (
-                          <div className="mt-2 flex items-center gap-1 text-[#00ff88] text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                            View Order
-                            <ChevronRight size={14} />
-                          </div>
-                        )}
                       </div>
                     </div>
+
+                    <div className="text-right flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-0">
+                      <p className={`text-5xl font-black font-syne leading-none mb-1 ${
+                        item.type === 'earn' ? 'text-black' : 'text-red-500'
+                      }`}>
+                        {item.type === 'earn' ? '+' : '-'}{item.points}
+                      </p>
+                      <p className="text-xs font-black uppercase text-black opacity-40">PTS</p>
+                    </div>
                   </div>
-                </motion.button>
+
+                  {item.source === 'order' && (
+                    <div className="absolute top-0 right-0 bg-[#00ff88] text-black px-4 py-1 text-[10px] font-black border-l-[3px] border-b-[3px] border-black opacity-0 group-hover:opacity-100 transition-opacity uppercase">
+                      View Account
+                    </div>
+                  )}
+                </button>
               ))}
             </AnimatePresence>
           </div>

@@ -88,178 +88,83 @@ export const RewardsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-pink-900 
-                    flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-          className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full"
-        />
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-24 h-24 border-[8px] border-black border-t-[#00ff88] animate-spin mx-auto mb-8 shadow-[8px_8px_0px_0px_#000]"></div>
+          <p className="text-2xl font-black text-black uppercase tracking-widest animate-pulse">Syncing Rewards...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
-      
-      {/* Optimized Static Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        {/* Static Grid */}
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(0, 255, 136, 0.3) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 255, 136, 0.3) 1px, transparent 1px)
-            `,
-            backgroundSize: '50px 50px'
-          }}
-        />
-        
-        {/* Static Scan Lines */}
-        <div 
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              0deg,
-              rgba(0, 255, 136, 0.1) 0px,
-              transparent 1px,
-              transparent 2px,
-              rgba(0, 255, 136, 0.1) 3px
-            )`
-          }}
-        />
-        
-        {/* Static Glowing Orbs - No Animation */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#00ff88]/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-      </div>
-
-      {/* Enhanced Hero Header */}
-      <motion.div 
-        style={{ y: headerY, opacity: headerOpacity }}
-        className="relative z-10 pt-32 pb-20 px-4"
-      >
-        <div className="max-w-6xl mx-auto text-center">
-          {/* Simplified Icon Container */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', damping: 15, stiffness: 200 }}
-            className="inline-block mb-8 relative"
-          >
-            {/* Static Hexagon Border */}
-            <div className="absolute inset-0">
-              <Hexagon className="w-32 h-32 text-[#00ff88]/30" strokeWidth={2} />
-            </div>
-            
-            <div className="relative w-32 h-32 flex items-center justify-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-[#00ff88] to-cyan-500 
-                            flex items-center justify-center shadow-2xl shadow-[#00ff88]/50
-                            rounded-xl relative overflow-hidden border-2 border-black">
-                <Crown className="w-10 h-10 text-black relative z-10" />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Interactive Animated Title */}
-          <motion.h1
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-6xl md:text-8xl font-black text-white mb-4 font-syne tracking-tighter"
-          >
-            <InteractiveText text="REWARDS" className="text-white" />
-            <br />
-            <InteractiveText text="PROGRAM" className="text-[#00ff88]" />
-          </motion.h1>
-
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="flex items-center justify-center gap-4 mb-8"
-          >
-            <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#00ff88]" />
-            <p className="text-[#00ff88] uppercase tracking-[0.3em] text-sm font-bold">
-              Earn • Unlock • Dominate
-            </p>
-            <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#00ff88]" />
-          </motion.div>
-
-          {/* Enhanced Status Card */}
+    <div className="min-h-screen bg-white pt-48 pb-20">
+      {/* Hero Header */}
+      <section className="relative px-6 mb-32">
+        <div className="max-w-7xl mx-auto text-center relative z-10">
+          <div className="inline-block bg-black text-[#00ff88] text-sm font-black uppercase tracking-[0.3em] px-8 py-3 border-[4px] border-black shadow-[8px_8px_0px_0px_#000] mb-12">
+            Loyalty Program
+          </div>
+          <h1 className="text-7xl md:text-[12rem] font-black font-syne mb-12 text-black uppercase leading-[0.85] tracking-tighter">
+            ELITE <span className="text-[#00ff88]" style={{ WebkitTextStroke: '4px black' }}>SYNDICATE</span>
+          </h1>
+          
           {profile && (
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="inline-block bg-black/80 backdrop-blur-2xl rounded-3xl p-8 
-                       border-2 border-[#00ff88]/30 shadow-2xl shadow-[#00ff88]/20
-                       relative overflow-hidden"
-            >
-              {/* Static Background Pattern */}
-              <div
-                className="absolute inset-0 opacity-5"
-                style={{
-                  backgroundImage: `radial-gradient(circle, #00ff88 1px, transparent 1px)`,
-                  backgroundSize: '20px 20px'
-                }}
-              />
+            <div className="bg-white border-[8px] border-black p-12 shadow-[24px_24px_0px_0px_#00ff88] max-w-4xl mx-auto mt-20 text-left relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-[#00ff88] -translate-y-20 translate-x-20 rotate-45 group-hover:scale-110 transition-transform" />
               
-              <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
-                {/* Points Display */}
-                <div className="text-center md:text-left">
-                  <p className="text-[#00ff88]/70 text-xs uppercase tracking-widest mb-2 font-bold">
-                    Available Points
-                  </p>
-                  <p 
-                    className="text-7xl font-black text-white font-syne"
-                    style={{
-                      textShadow: '0 0 30px rgba(0, 255, 136, 0.5)'
-                    }}
-                  >
-                    {profile.points}
-                  </p>
-                  <div className="h-1 w-full bg-gradient-to-r from-[#00ff88] to-cyan-500 mt-2 rounded-full" />
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-16 relative z-10">
+                {/* Points */}
+                <div className="flex-1">
+                  <p className="text-sm font-black uppercase text-black opacity-50 mb-2">Available Balance</p>
+                  <div className="flex items-baseline gap-4">
+                    <span className="text-8xl md:text-9xl font-black text-black font-syne leading-none">{profile.points}</span>
+                    <span className="text-2xl font-black text-black uppercase">PTS</span>
+                  </div>
                 </div>
                 
-                {/* Divider */}
-                <div className="hidden md:block w-px h-20 bg-gradient-to-b from-transparent via-[#00ff88]/50 to-transparent" />
+                {/* Tier */}
+                <div className="w-px h-32 bg-black hidden md:block" />
                 
-                {/* Tier Display */}
-                <div className="text-center md:text-left">
-                  <p className="text-[#00ff88]/70 text-xs uppercase tracking-widest mb-2 font-bold">
-                    Current Tier
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <span className="text-5xl">
-                      {tierInfo?.icon}
-                    </span>
-                    <span className="text-4xl font-black text-white font-syne">
-                      {tierInfo?.name}
-                    </span>
+                <div className="flex-1">
+                  <p className="text-sm font-black uppercase text-black opacity-50 mb-4">Current Status</p>
+                  <div className="flex items-center gap-6">
+                    <span className="text-6xl bg-black p-4 text-white border-[3px] border-black shadow-[6px_6px_0px_0px_#00ff88]">{tierInfo?.icon}</span>
+                    <div>
+                      <h2 className="text-4xl font-black uppercase text-black font-syne">{tierInfo?.name}</h2>
+                      {nextTier && (
+                        <p className="text-sm font-bold text-black uppercase mt-2">
+                          <span className="text-[#00ff88] bg-black px-2 py-0.5">{pointsToNextTier}</span> PTS TO {nextTier.name}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  {nextTier && (
-                    <p className="text-white/50 text-sm mt-2">
-                      <span className="text-[#00ff88]">{pointsToNextTier}</span> pts to {nextTier.name}
-                    </p>
-                  )}
                 </div>
               </div>
-              
-              {/* Corner Accents */}
-              <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-[#00ff88]/50" />
-              <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-[#00ff88]/50" />
-            </motion.div>
+
+              {/* Progress Bar */}
+              {nextTier && (
+                <div className="mt-12 h-10 border-[4px] border-black bg-white relative overflow-hidden shadow-[4px_4px_0px_0px_#000]">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${tierProgress}%` }}
+                    className="absolute inset-0 bg-[#00ff88] border-r-[4px] border-black"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center mix-blend-difference">
+                    <span className="text-sm font-black uppercase text-white tracking-widest">{tierProgress.toFixed(0)}% TO NEXT TIER</span>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
-      </motion.div>
+      </section>
 
-      {/* Main Content Sections */}
-      <div className="relative z-10">
+      {/* Main Content sections */}
+      <div className="space-y-32">
         <HowItWorksSection />
-        <TiersBenefitsSection />
-        <ClaimPointsSection />
+        <TiersBenefitsSection thresholds={tierThresholds} />
+        <ClaimPointsSection earningRate={earningRate} />
         <RedeemRewardsSection />
         <PointsHistorySection />
       </div>

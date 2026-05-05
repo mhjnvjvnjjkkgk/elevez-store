@@ -57,6 +57,139 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ============================================
+  // PRODUCT PERSISTENCE API - Backup to JSON file
+  // ============================================
+  const dataDir = path.join(__dirname, '..', 'data');
+  const backupFile = path.join(dataDir, 'backup.json');
+
+  // Ensure data directory exists
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+    console.log('✅ Created data directory:', dataDir);
+  }
+
+  // GET /api/products - Load from backup
+  if (req.method === 'GET' && req.url === '/api/products') {
+    try {
+      if (fs.existsSync(backupFile)) {
+        const data = fs.readFileSync(backupFile, 'utf8');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(data);
+        console.log('📦 Loaded products from backup.json');
+      } else {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ products: [], collections: [], orders: [] }));
+        console.log('ℹ️ No backup.json found, returning empty data');
+      }
+    } catch (error) {
+      console.error('❌ Error loading backup:', error);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Failed to load backup' }));
+    }
+    return;
+  }
+
+  // POST /api/products - Save to backup
+  if (req.method === 'POST' && req.url === '/api/products') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        fs.writeFileSync(backupFile, JSON.stringify(data, null, 2));
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          message: `Saved ${data.products?.length || 0} products, ${data.collections?.length || 0} collections`
+        }));
+        console.log(`💾 Saved backup: ${data.products?.length || 0} products, ${data.collections?.length || 0} collections`);
+      } catch (error) {
+        console.error('❌ Error saving backup:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to save backup' }));
+      }
+    });
+    return;
+  }
+
+  // Collections backup file
+  const collectionsFile = path.join(dataDir, 'collections.json');
+
+  // GET /api/collections - Load collections from dedicated file
+  if (req.method === 'GET' && req.url === '/api/collections') {
+    try {
+      if (fs.existsSync(collectionsFile)) {
+        const data = fs.readFileSync(collectionsFile, 'utf8');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(data);
+        console.log('📂 Loaded collections from collections.json');
+      } else {
+        // Fallback: try to get from backup.json
+        if (fs.existsSync(backupFile)) {
+          const backupData = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
+          const collections = backupData.collections || [];
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ collections }));
+          console.log('📂 Loaded collections from backup.json fallback');
+        } else {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ collections: [] }));
+          console.log('ℹ️ No collections found, returning empty');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error loading collections:', error);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Failed to load collections' }));
+    }
+    return;
+  }
+
+  // POST /api/collections - Save collections to dedicated file
+  if (req.method === 'POST' && req.url === '/api/collections') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        const collections = data.collections || data;
+
+        // Save to dedicated collections file
+        fs.writeFileSync(collectionsFile, JSON.stringify({ collections, lastUpdated: new Date().toISOString() }, null, 2));
+
+        // Also update backup.json to keep it in sync
+        if (fs.existsSync(backupFile)) {
+          try {
+            const backupData = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
+            backupData.collections = collections;
+            fs.writeFileSync(backupFile, JSON.stringify(backupData, null, 2));
+          } catch (e) {
+            console.log('⚠️ Could not sync collections to backup.json');
+          }
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          count: Array.isArray(collections) ? collections.length : 0,
+          message: `Saved ${Array.isArray(collections) ? collections.length : 0} collections`
+        }));
+        console.log(`💾 Saved ${Array.isArray(collections) ? collections.length : 0} collections to collections.json`);
+      } catch (error) {
+        console.error('❌ Error saving collections:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to save collections' }));
+      }
+    });
+    return;
+  }
+
+
   // Proxy to Vite dev server for visual builder
   if (req.method === 'GET' && req.url.startsWith('/vite-proxy')) {
     const targetUrl = req.url.replace('/vite-proxy', '');

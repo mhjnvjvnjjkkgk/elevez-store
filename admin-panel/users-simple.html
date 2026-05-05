@@ -576,7 +576,8 @@
                 // Calculate new points starting from the current MAX between both collections
                 const currentMaxPoints = Math.max(userPointsValue, loyaltyPointsValue);
                 const newPoints = Math.max(0, currentMaxPoints + pointsToAdd);
-                const newTier = newPoints >= 3000 ? 'platinum' : newPoints >= 1500 ? 'gold' : newPoints >= 500 ? 'silver' : 'bronze';
+                // Tier thresholds must match loyaltyRules in Firebase: Bronze=0, Silver=1000, Gold=2500, Platinum=5000
+                const newTier = newPoints >= 5000 ? 'platinum' : newPoints >= 2500 ? 'gold' : newPoints >= 1000 ? 'silver' : 'bronze';
 
                 console.log(`📊 Current: userPoints=${userPointsValue}, loyaltyProfiles=${loyaltyPointsValue}, max=${currentMaxPoints}`);
                 console.log(`📊 Adding ${pointsToAdd} points → New total: ${newPoints}`);
@@ -710,9 +711,10 @@
                         const finalPoints = (hasSignupBonus ? SIGNUP_BONUS : 0) + userData.totalPoints;
                         console.log(`  💰 User ${userId}: Signup=${hasSignupBonus ? 100 : 0} + Orders=${userData.totalPoints} = ${finalPoints} total`);
 
-                        const tier = finalPoints >= 3000 ? 'platinum' :
-                            finalPoints >= 1500 ? 'gold' :
-                                finalPoints >= 500 ? 'silver' : 'bronze';
+                        // Tier thresholds must match loyaltyRules in Firebase: Bronze=0, Silver=1000, Gold=2500, Platinum=5000
+                        const tier = finalPoints >= 5000 ? 'platinum' :
+                            finalPoints >= 2500 ? 'gold' :
+                                finalPoints >= 1000 ? 'silver' : 'bronze';
 
                         // Write to userPoints collection
                         const pointsData = {

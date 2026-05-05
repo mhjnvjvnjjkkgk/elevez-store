@@ -82,129 +82,115 @@ export const ClaimPointsSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 px-4">
-      <div className="max-w-4xl mx-auto">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Earn Bonus Points</h2>
-          <p className="text-xl text-white/70">Complete these simple actions to boost your points</p>
-        </motion.div>
+    <section className="py-24 px-6 bg-white border-b-[8px] border-black">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-20">
+          <div className="inline-block bg-black text-[#00ff88] text-sm font-black uppercase tracking-[0.3em] px-6 py-2 border-[3px] border-black shadow-[4px_4px_0px_0px_#000] mb-8">
+            Objectives
+          </div>
+          <h2 className="text-6xl md:text-8xl font-black font-syne text-black uppercase leading-none tracking-tighter">
+            EARN <span className="text-[#00ff88]" style={{ WebkitTextStroke: '3px black' }}>BONUS</span>
+          </h2>
+        </div>
 
         {/* Message Display */}
-        {message && (
-          <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className={`mb-6 p-4 rounded-xl backdrop-blur-xl border ${
-              message.type === 'success' 
-                ? 'bg-green-500/20 border-green-500/50 text-green-100' 
-                : 'bg-red-500/20 border-red-500/50 text-red-100'
-            }`}
-          >
-            {message.text}
-          </motion.div>
-        )}
+        <AnimatePresence>
+          {message && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className={`mb-12 p-8 border-[6px] border-black shadow-[8px_8px_0px_0px_#000] font-black uppercase text-xl ${
+                message.type === 'success' ? 'bg-[#00ff88] text-black' : 'bg-red-500 text-white'
+              }`}
+            >
+              {message.text}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Social Sharing Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
           {socialActions.map((action, index) => (
-            <motion.div
+            <div
               key={action.id}
-              initial={{ y: 50, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="relative"
+              className={`bg-white border-[6px] border-black p-10 transition-all relative group flex flex-col h-full ${
+                action.claimed 
+                  ? 'opacity-40 grayscale shadow-[8px_8px_0px_0px_#000]' 
+                  : 'shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] hover:-translate-y-2'
+              }`}
             >
-              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 
-                            hover:bg-white/15 transition-all duration-300">
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${action.color} 
-                              flex items-center justify-center mb-4 mx-auto shadow-lg`}>
-                  <action.icon className="w-8 h-8 text-white" />
-                </div>
-
-                <h3 className="text-xl font-bold text-white text-center mb-2">{action.name}</h3>
-                <p className="text-center text-white/70 mb-4">+{action.points} points</p>
-
-                <button
-                  onClick={action.action}
-                  disabled={action.claimed || loading === action.id}
-                  className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 
-                            flex items-center justify-center gap-2 ${
-                              action.claimed
-                                ? 'bg-white/10 text-white/50 cursor-not-allowed'
-                                : `bg-gradient-to-r ${action.color} text-white hover:shadow-lg hover:scale-105`
-                            }`}
-                >
-                  {loading === action.id ? (
-                    <Loader className="w-5 h-5 animate-spin" />
-                  ) : action.claimed ? (
-                    <>
-                      <Check className="w-5 h-5" />
-                      Claimed
-                    </>
-                  ) : (
-                    'Share & Claim'
-                  )}
-                </button>
+              <div className="w-20 h-20 bg-black text-[#00ff88] border-[3px] border-black flex items-center justify-center mb-8 shadow-[6px_6px_0px_0px_#00ff88] group-hover:scale-110 transition-transform mx-auto">
+                <action.icon size={36} />
               </div>
-            </motion.div>
+
+              <h3 className="text-3xl font-black text-black text-center mb-2 uppercase font-syne">{action.name}</h3>
+              <p className="text-center font-black text-black opacity-40 uppercase tracking-tighter mb-10 pb-10 border-b-[3px] border-black border-dashed flex-grow">
+                +{action.points} PTS GAIN
+              </p>
+
+              <button
+                onClick={action.action}
+                disabled={action.claimed || loading === action.id}
+                className={`w-full py-5 font-black uppercase text-xl border-[4px] border-black shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center justify-center gap-4 ${
+                  action.claimed ? 'bg-white text-black opacity-30 cursor-not-allowed' : 'bg-[#00ff88] text-black'
+                }`}
+              >
+                {loading === action.id ? (
+                  <Loader size={24} className="animate-spin" />
+                ) : action.claimed ? (
+                  <><Check size={24} /> SECURED</>
+                ) : (
+                  'INITIALIZE'
+                )}
+              </button>
+            </div>
           ))}
         </div>
 
         {/* Phone Number Card */}
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 border border-white/20"
-        >
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 
-                          flex items-center justify-center shadow-lg">
-              <Phone className="w-8 h-8 text-white" />
+        <div className="bg-white border-[8px] border-black p-12 shadow-[20px_20px_0px_0px_#000] relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 -translate-y-16 translate-x-16 rotate-45" />
+          
+          <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
+            <div className="w-24 h-24 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center shadow-[8px_8px_0px_0px_#00ff88] shrink-0">
+              <Phone size={48} />
             </div>
-            <div>
-              <h3 className="text-2xl font-bold text-white">Add Phone Number</h3>
-              <p className="text-white/70">Earn +{pointsRules.PHONE_NUMBER} points</p>
+            
+            <div className="flex-1">
+              <h3 className="text-4xl font-black uppercase text-black font-syne mb-2 leading-none">COMM LINK SYNC</h3>
+              <p className="text-xl font-bold text-black opacity-50 uppercase">ESTABLISH CONNECTION FOR +{pointsRules.PHONE_NUMBER} PTS</p>
             </div>
-          </div>
 
-          {profile?.phoneNumber ? (
-            <div className="flex items-center gap-2 text-white/70">
-              <Check className="w-5 h-5 text-green-400" />
-              <span>Phone number added: {profile.phoneNumber}</span>
-            </div>
-          ) : (
-            <div className="flex gap-4">
-              <input
-                type="tel"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="Enter your phone number"
-                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl 
-                         text-white placeholder-white/50 focus:outline-none focus:border-white/40"
-              />
-              <button
-                onClick={handlePhoneClaim}
-                disabled={loading === 'phone'}
-                className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl 
-                         text-white font-semibold hover:shadow-lg hover:scale-105 
-                         transition-all duration-300 disabled:opacity-50 flex items-center gap-2"
-              >
-                {loading === 'phone' ? (
-                  <Loader className="w-5 h-5 animate-spin" />
-                ) : (
-                  'Claim Points'
-                )}
-              </button>
-            </div>
-          )}
-        </motion.div>
+            {profile?.phoneNumber ? (
+              <div className="bg-[#00ff88] border-[4px] border-black px-10 py-6 flex items-center gap-6 shadow-[8px_8px_0px_0px_#000]">
+                <Check size={32} className="text-black font-black" />
+                <span className="text-2xl font-black text-black uppercase">SYNCED: {profile.phoneNumber}</span>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-6 w-full md:w-auto">
+                <input
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder="TEL_NUMBER"
+                  className="px-8 py-5 bg-white border-[4px] border-black font-black text-2xl uppercase focus:outline-none focus:shadow-[8px_8px_0px_0px_#00ff88] transition-all min-w-[300px]"
+                />
+                <button
+                  onClick={handlePhoneClaim}
+                  disabled={loading === 'phone'}
+                  className="bg-[#00ff88] text-black px-12 py-5 border-[4px] border-black font-black uppercase text-2xl shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center justify-center gap-4 whitespace-nowrap"
+                >
+                  {loading === 'phone' ? (
+                    <Loader size={28} className="animate-spin" />
+                  ) : (
+                    'LINK'
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );

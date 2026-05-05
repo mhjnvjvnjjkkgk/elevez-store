@@ -64,14 +64,7 @@ export const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
         viewport={{ once: true }}
         className="max-w-6xl mx-auto"
       >
-        <div className="mb-12">
-          <h2 className="text-4xl md:text-5xl font-black font-syne text-white mb-4">
-            You Might Also Like
-          </h2>
-          <p className="text-gray-400 text-lg">
-            Personalized recommendations based on your interests
-          </p>
-        </div>
+        <div className="mb-12" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <AnimatePresence>
@@ -133,7 +126,7 @@ export const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
 
                   {/* Info */}
                   <div className="mt-4">
-                    <h3 className="text-white font-bold line-clamp-2 group-hover:text-[#00ff88] transition-colors">
+                    <h3 className="text-black font-bold line-clamp-2 group-hover:text-[#00ff88] transition-colors">
                       {product.name}
                     </h3>
                     <div className="flex items-center justify-between mt-2">

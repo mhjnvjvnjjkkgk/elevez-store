@@ -25,147 +25,115 @@ export const TiersBenefitsSection: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-20 px-4 bg-black/20">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Membership Tiers</h2>
-          <p className="text-xl text-white/70">Unlock better rewards as you progress</p>
-        </motion.div>
+    <section className="py-24 px-6 bg-white border-y-[8px] border-black">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-20">
+          <div className="inline-block bg-black text-[#00ff88] text-sm font-black uppercase tracking-[0.3em] px-6 py-2 border-[3px] border-black shadow-[4px_4px_0px_0px_#000] mb-8">
+            Hierarchy
+          </div>
+          <h2 className="text-6xl md:text-8xl font-black font-syne text-black uppercase leading-none tracking-tighter">
+            MEMBERSHIP <span className="text-[#00ff88]" style={{ WebkitTextStroke: '3px black' }}>TIERS</span>
+          </h2>
+        </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {tiers.map((tier, index) => {
             const isCurrentTier = tierInfo?.name === tier.name;
-            const isUnlocked = profile && profile.totalPointsEarned >= tier.pointsRequired;
+            const isUnlocked = profile && (profile.totalPointsEarned ?? 0) >= tier.pointsRequired;
 
             return (
-              <motion.div
+              <div
                 key={tier.name}
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="relative"
+                className={`bg-white border-[6px] border-black p-10 transition-all relative group h-full flex flex-col ${
+                  isCurrentTier 
+                    ? 'shadow-[16px_16px_0px_0px_#00ff88] -translate-y-4' 
+                    : isUnlocked
+                      ? 'shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88]'
+                      : 'shadow-[12px_12px_0px_0px_#000] opacity-60 grayscale'
+                }`}
               >
-                <div className={`bg-white/10 backdrop-blur-xl rounded-2xl p-6 border-2 h-full
-                              transition-all duration-300 ${
-                                isCurrentTier 
-                                  ? 'border-yellow-400 shadow-2xl shadow-yellow-400/50 scale-105' 
-                                  : 'border-white/20 hover:border-white/40'
-                              }`}>
-                  
-                  {/* Current Tier Badge */}
-                  {isCurrentTier && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 
-                                  bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full 
-                                  text-xs font-bold text-white shadow-lg">
-                      CURRENT TIER
-                    </div>
-                  )}
-
-                  {/* Lock Badge */}
-                  {!isUnlocked && (
-                    <div className="absolute top-4 right-4">
-                      <Lock className="w-5 h-5 text-white/30" />
-                    </div>
-                  )}
-
-                  {/* Tier Icon */}
-                  <div className="text-6xl mb-4 text-center">{tier.icon}</div>
-
-                  {/* Tier Name */}
-                  <h3 className="text-2xl font-bold text-white text-center mb-2">{tier.name}</h3>
-                  
-                  {/* Min Points */}
-                  <p className="text-center text-white/70 text-sm mb-6">
-                    {tier.pointsRequired === 0 ? 'Starting tier' : `${tier.pointsRequired}+ points`}
-                  </p>
-
-                  {/* Benefits List */}
-                  <div className="space-y-3">
-                    {/* Discount Benefit */}
-                    {tier.benefits.discountPercentage > 0 && (
-                      <div className="flex items-start gap-2">
-                        <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                          isUnlocked ? 'text-green-400' : 'text-white/30'
-                        }`} />
-                        <p className={`text-sm ${isUnlocked ? 'text-white' : 'text-white/50'}`}>
-                          {tier.benefits.discountPercentage}% discount on all orders
-                        </p>
-                      </div>
-                    )}
-                    
-                    {/* Earning Multiplier */}
-                    {tier.benefits.earningMultiplier > 1 && (
-                      <div className="flex items-start gap-2">
-                        <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                          isUnlocked ? 'text-green-400' : 'text-white/30'
-                        }`} />
-                        <p className={`text-sm ${isUnlocked ? 'text-white' : 'text-white/50'}`}>
-                          {tier.benefits.earningMultiplier}x points on purchases
-                        </p>
-                      </div>
-                    )}
-                    
-                    {/* Free Shipping */}
-                    {tier.benefits.freeShippingThreshold > 0 && (
-                      <div className="flex items-start gap-2">
-                        <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                          isUnlocked ? 'text-green-400' : 'text-white/30'
-                        }`} />
-                        <p className={`text-sm ${isUnlocked ? 'text-white' : 'text-white/50'}`}>
-                          Free shipping on orders over ₹{tier.benefits.freeShippingThreshold}
-                        </p>
-                      </div>
-                    )}
-                    
-                    {/* Exclusive Access */}
-                    {tier.benefits.exclusiveAccess && (
-                      <div className="flex items-start gap-2">
-                        <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                          isUnlocked ? 'text-green-400' : 'text-white/30'
-                        }`} />
-                        <p className={`text-sm ${isUnlocked ? 'text-white' : 'text-white/50'}`}>
-                          Exclusive access to new products
-                        </p>
-                      </div>
-                    )}
-                    
-                    {/* Priority Support */}
-                    {tier.benefits.prioritySupport && (
-                      <div className="flex items-start gap-2">
-                        <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                          isUnlocked ? 'text-green-400' : 'text-white/30'
-                        }`} />
-                        <p className={`text-sm ${isUnlocked ? 'text-white' : 'text-white/50'}`}>
-                          Priority customer support
-                        </p>
-                      </div>
-                    )}
+                {/* Status Badge */}
+                {isCurrentTier && (
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-black text-[#00ff88] px-6 py-2 border-[4px] border-black font-black text-xs uppercase shadow-[4px_4px_0px_0px_#000] z-20 whitespace-nowrap">
+                    ACTIVE STATUS
                   </div>
+                )}
 
-                  {/* Progress to this tier */}
-                  {!isUnlocked && profile && tier.pointsRequired > 0 && (
-                    <div className="mt-6 pt-6 border-t border-white/10">
-                      <p className="text-xs text-white/70 mb-2">
-                        {tier.pointsRequired - profile.totalPointsEarned} points to unlock
-                      </p>
-                      <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
-                          style={{ 
-                            width: `${Math.min(100, (profile.totalPointsEarned / tier.pointsRequired) * 100)}%` 
-                          }}
-                        />
+                {/* Lock Icon */}
+                {!isUnlocked && (
+                  <div className="absolute top-4 right-4 bg-black p-2 text-white border-[2px] border-black">
+                    <Lock size={20} />
+                  </div>
+                )}
+
+                {/* Tier Icon */}
+                <div className="text-8xl mb-8 text-center bg-black/5 p-8 border-[3px] border-black border-dashed">
+                  {tier.icon}
+                </div>
+
+                {/* Tier Info */}
+                <h3 className="text-3xl font-black uppercase text-black text-center mb-2 font-syne">{tier.name}</h3>
+                <p className="text-center font-black text-black opacity-40 uppercase tracking-tighter mb-10 pb-10 border-b-[3px] border-black border-dashed">
+                  {tier.pointsRequired === 0 ? 'ENTRY LEVEL' : `${tier.pointsRequired}+ TOTAL PTS`}
+                </p>
+
+                {/* Benefits List */}
+                <div className="space-y-6 flex-grow">
+                  {tier.benefits.discountPercentage > 0 && (
+                    <div className="flex items-center gap-4">
+                      <div className={`w-8 h-8 flex items-center justify-center border-[2px] border-black ${isUnlocked ? 'bg-[#00ff88]' : 'bg-black/10'}`}>
+                        <Check size={16} className="text-black font-black" />
                       </div>
+                      <p className="text-sm font-black uppercase text-black leading-none">{tier.benefits.discountPercentage}% DISCOUNT</p>
+                    </div>
+                  )}
+                  
+                  {tier.benefits.earningMultiplier > 1 && (
+                    <div className="flex items-center gap-4">
+                      <div className={`w-8 h-8 flex items-center justify-center border-[2px] border-black ${isUnlocked ? 'bg-[#00ff88]' : 'bg-black/10'}`}>
+                        <Check size={16} className="text-black font-black" />
+                      </div>
+                      <p className="text-sm font-black uppercase text-black leading-none">{tier.benefits.earningMultiplier}X MULTIPLIER</p>
+                    </div>
+                  )}
+                  
+                  {tier.benefits.freeShippingThreshold > 0 && (
+                    <div className="flex items-center gap-4">
+                      <div className={`w-8 h-8 flex items-center justify-center border-[2px] border-black ${isUnlocked ? 'bg-[#00ff88]' : 'bg-black/10'}`}>
+                        <Check size={16} className="text-black font-black" />
+                      </div>
+                      <p className="text-sm font-black uppercase text-black leading-none">FREE SHIPPING OVER ₹{tier.benefits.freeShippingThreshold}</p>
+                    </div>
+                  )}
+                  
+                  {tier.benefits.exclusiveAccess && (
+                    <div className="flex items-center gap-4">
+                      <div className={`w-8 h-8 flex items-center justify-center border-[2px] border-black ${isUnlocked ? 'bg-[#00ff88]' : 'bg-black/10'}`}>
+                        <Check size={16} className="text-black font-black" />
+                      </div>
+                      <p className="text-sm font-black uppercase text-black leading-none">VIP ACCESS</p>
                     </div>
                   )}
                 </div>
-              </motion.div>
+
+                {/* Progress bar for locked tiers */}
+                {!isUnlocked && profile && tier.pointsRequired > 0 && (
+                  <div className="mt-10 pt-10 border-t-[3px] border-black">
+                    <div className="flex justify-between text-[10px] font-black uppercase mb-3 text-black">
+                      <span>Progress</span>
+                      <span>{tier.pointsRequired - (profile.totalPointsEarned ?? 0)} PTS LEFT</span>
+                    </div>
+                    <div className="h-4 border-[3px] border-black bg-white relative overflow-hidden">
+                      <div 
+                        className="h-full bg-black"
+                        style={{ 
+                          width: `${Math.min(100, ((profile.totalPointsEarned ?? 0) / tier.pointsRequired) * 100)}%` 
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>

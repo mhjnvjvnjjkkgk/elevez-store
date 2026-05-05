@@ -20,25 +20,25 @@ export const SocialProofBadges: React.FC = () => {
           icon: <Users size={24} />,
           label: 'Active Customers',
           value: '10K+',
-          color: 'from-blue-500 to-cyan-500'
+          color: '#00ff88'
         },
         {
           icon: <ShoppingBag size={24} />,
           label: 'Orders Completed',
           value: '50K+',
-          color: 'from-[#00ff88] to-green-500'
+          color: '#ffffff'
         },
         {
           icon: <Star size={24} />,
           label: 'Average Rating',
           value: '4.9★',
-          color: 'from-yellow-500 to-orange-500'
+          color: '#00ff88'
         },
         {
           icon: <TrendingUp size={24} />,
           label: 'Growth This Month',
           value: '+45%',
-          color: 'from-purple-500 to-pink-500'
+          color: '#ffffff'
         }
       ]);
     }, 300);
@@ -47,39 +47,32 @@ export const SocialProofBadges: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-12 px-4 bg-black/50 border-y border-white/10">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <section className="py-16 px-4 bg-white border-y-[6px] border-black">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {badges.map((badge, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className={`bg-gradient-to-br ${badge.color} p-0.5 rounded-xl`}
+              className="bg-white border-[4px] border-black p-8 flex flex-col items-center justify-center text-center shadow-[8px_8px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] transition-all"
             >
-              <div className="bg-black rounded-xl p-4 h-full flex flex-col items-center justify-center text-center">
-                <motion.div
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
-                  className="text-white mb-2 opacity-80"
-                >
+              <div 
+                className="w-16 h-16 border-[3px] border-black flex items-center justify-center mb-6 shadow-[4px_4px_0px_0px_#000]"
+                style={{ backgroundColor: badge.color }}
+              >
+                <div className="text-black">
                   {badge.icon}
-                </motion.div>
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 + 0.2 }}
-                  className="text-2xl font-black font-syne text-white mb-1"
-                >
-                  {badge.value}
-                </motion.p>
-                <p className="text-xs text-gray-400 uppercase tracking-wider">
-                  {badge.label}
-                </p>
+                </div>
               </div>
+              <p className="text-4xl font-black font-syne text-black mb-2 uppercase italic">
+                {badge.value}
+              </p>
+              <p className="text-xs text-black font-black uppercase tracking-[0.2em]">
+                {badge.label}
+              </p>
             </motion.div>
           ))}
         </div>

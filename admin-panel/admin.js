@@ -393,7 +393,7 @@ async function loadData() {
     if (state.products.length === 0) {
       console.log('ℹ️ No products loaded, trying server backup...');
       try {
-        const response = await fetch('http://localhost:3001/load-products');
+        const response = await fetch('http://localhost:3001/api/products');
         if (response.ok) {
           const data = await response.json();
           if (data.products && data.products.length > 0) {
@@ -401,14 +401,20 @@ async function loadData() {
             state.collections = data.collections || [];
             state.orders = data.orders || [];
 
+            // Also restore tags, categories, types, colors
+            if (data.tags) state.availableTags = data.tags;
+            if (data.categories) state.availableCategories = data.categories;
+            if (data.types) state.availableTypes = data.types;
+            if (data.colors) state.availableColors = data.colors;
+
             localStorage.setItem('elevez_products', JSON.stringify(state.products));
             localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
             localStorage.setItem('elevez_orders', JSON.stringify(state.orders));
 
-            console.log(`✅ Restored ${state.products.length} products from server backup`);
+            console.log(`✅ Restored ${state.products.length} products from server backup (data/backup.json)`);
             showSyncStatus(`✅ Restored ${state.products.length} products from backup`, 'success');
           } else {
-            console.log('ℹ️ No server backup, loading trial products...');
+            console.log('ℹ️ No server backup found, loading trial products...');
             loadTrialProducts();
           }
         } else {
@@ -422,50 +428,79 @@ async function loadData() {
     }
   }
 
-  const savedCollections = localStorage.getItem('elevez_collections');
-  if (savedCollections) {
-    state.collections = JSON.parse(savedCollections);
+  // 1. Load Collections - ROBUST STRATEGY (Api -> Backup -> Local)
+  try {
+    let loaded = false;
+
+    // Attempt 1: API (Main)
+    try {
+      const res = await fetch('http://localhost:3001/api/collections');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.collections && Array.isArray(data.collections)) {
+          state.collections = data.collections;
+          loaded = true;
+          console.log('✅ Loaded collections from Main API');
+        }
+      }
+    } catch (e) { console.log('Main API unavailable'); }
+
+    // Attempt 2: Backup API (if Main failed)
+    if (!loaded) {
+      console.log('🔄 Trying Backup API for collections...');
+      const resBackup = await fetch('http://localhost:3001/api/products');
+      if (resBackup.ok) {
+        const dataBackup = await resBackup.json();
+        if (dataBackup.collections && Array.isArray(dataBackup.collections) && dataBackup.collections.length > 0) {
+          state.collections = dataBackup.collections;
+          loaded = true;
+          console.log('✅ Loaded collections from Backup API');
+        }
+      }
+    }
+
+    if (loaded && state.collections.length > 0) {
+      localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
+    }
+  } catch (e) {
+    console.warn('⚠️ Server collection loading failed:', e);
+  }
+
+  // Fallback to localStorage
+  if (!state.collections || state.collections.length === 0) {
+    const savedCollections = localStorage.getItem('elevez_collections');
+    if (savedCollections) {
+      try {
+        state.collections = JSON.parse(savedCollections);
+      } catch (e) { console.error('Error parsing collections:', e); }
+    }
   }
 
   const savedOrders = localStorage.getItem('elevez_orders');
   if (savedOrders) {
-    state.orders = JSON.parse(savedOrders);
+    try { state.orders = JSON.parse(savedOrders); } catch (e) { }
   }
 
-  const savedTags = localStorage.getItem('elevez_tags');
-  if (savedTags) {
-    state.availableTags = JSON.parse(savedTags);
-  }
-
-  const savedCategories = localStorage.getItem('elevez_categories');
-  if (savedCategories) {
-    state.availableCategories = JSON.parse(savedCategories);
-  }
-
-  const savedTypes = localStorage.getItem('elevez_types');
-  if (savedTypes) {
-    state.availableTypes = JSON.parse(savedTypes);
-  }
-
-  const savedColors = localStorage.getItem('elevez_colors');
-  if (savedColors) {
-    state.availableColors = JSON.parse(savedColors);
-  }
+  // Restore available filters
+  ['tags', 'categories', 'types', 'colors'].forEach(key => {
+    const saved = localStorage.getItem(`elevez_${key}`);
+    if (saved) {
+      try {
+        state[`available${key.charAt(0).toUpperCase() + key.slice(1)}`] = JSON.parse(saved);
+      } catch (e) { }
+    }
+  });
 
   // Extract unique tags, categories, and types from existing products
   state.products.forEach(product => {
     if (product.tags) {
       product.tags.forEach(tag => {
-        if (!state.availableTags.includes(tag)) {
-          state.availableTags.push(tag);
-        }
+        if (!state.availableTags.includes(tag)) state.availableTags.push(tag);
       });
     }
-
     if (product.category && !state.availableCategories.includes(product.category)) {
       state.availableCategories.push(product.category);
     }
-
     if (product.type && !state.availableTypes.includes(product.type)) {
       state.availableTypes.push(product.type);
     }
@@ -489,6 +524,32 @@ async function loadData() {
     }, 500);
   }
 
+  // ✅ FIX DUPLICATE PRODUCTS
+  const uniqueProducts = [];
+  const processedIds = new Set();
+  const processedNames = new Set();
+
+  state.products.forEach(p => {
+    // Unique ID check
+    if (p.id && processedIds.has(String(p.id))) return;
+
+    // Unique Name check (if ID is new)
+    const normalizedName = (p.name || '').trim().toLowerCase();
+    if (processedNames.has(normalizedName)) return; // Skip dupes
+
+    // Add to unique lists
+    if (p.id) processedIds.add(String(p.id));
+    if (normalizedName) processedNames.add(normalizedName);
+
+    uniqueProducts.push(p);
+  });
+
+  if (uniqueProducts.length < state.products.length) {
+    console.log(`🔧 Fixed duplicates: ${state.products.length} -> ${uniqueProducts.length}`);
+    state.products = uniqueProducts;
+    localStorage.setItem('elevez_products', JSON.stringify(state.products));
+  }
+
   // ✅ CRITICAL: Sync state to window object for sync-deploy.js to access
   window.products = state.products;
   window.collections = state.collections;
@@ -499,6 +560,22 @@ async function loadData() {
 // Save Data
 async function saveData() {
   try {
+    // ✅ DE-DUPLICATE before saving (prevent duplicates in storage)
+    const productMap = new Map();
+    for (const product of state.products) {
+      const name = (product.name || '').toLowerCase().trim();
+      if (!name) continue;
+      const existing = productMap.get(name);
+      if (!existing || (product.source === 'shopify' && existing.source !== 'shopify')) {
+        productMap.set(name, product);
+      }
+    }
+    const uniqueProducts = Array.from(productMap.values());
+    if (uniqueProducts.length < state.products.length) {
+      console.log(`🔧 saveData: De-duplicated ${state.products.length} -> ${uniqueProducts.length}`);
+      state.products = uniqueProducts;
+    }
+
     const productsData = JSON.stringify(state.products);
     const dataSize = productsData.length / 1024; // KB
 
@@ -517,9 +594,9 @@ async function saveData() {
 
     updateOrdersBadge();
 
-    // Also backup to server
+    // Also backup to server (permanent persistence)
     try {
-      await fetch('http://localhost:3001/save-products', {
+      await fetch('http://localhost:3001/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -532,10 +609,14 @@ async function saveData() {
           colors: state.availableColors
         })
       });
-      console.log('✅ Backed up to server');
+      console.log('✅ Backed up to server (data/backup.json)');
     } catch (e) {
       console.log('ℹ️ Server backup skipped (server not running)');
     }
+
+
+    // ✅ SYNC COLLECTIONS TO SERVER (Collections.json)
+    await saveCollectionsToServer();
 
     // ✅ SYNC TO FIREBASE FOR PERMANENT PERSISTENCE
     try {
@@ -974,43 +1055,7 @@ function renderProducts() {
   };
 }
 
-// Collections
-function renderCollections() {
-  // Load from localStorage on every render
-  const stored = localStorage.getItem('elevez_collections');
-  if (stored) {
-    try {
-      state.collections = JSON.parse(stored);
-    } catch (e) { }
-  }
-
-  const grid = document.getElementById('collectionsGrid');
-
-  if (state.collections.length === 0) {
-    grid.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">🗂️</div>
-        <h3>No collections yet</h3>
-        <p>Click "Create Collection" to organize your products</p>
-      </div>
-    `;
-    return;
-  }
-
-  grid.innerHTML = state.collections.map(collection => `
-    <div class="collection-card">
-      <h3>${collection.name}</h3>
-      <p>${collection.description || 'No description'}</p>
-      <div class="collection-stats">
-        <span>${collection.productCount || 0} products</span>
-      </div>
-      <div class="collection-actions">
-        <button class="btn btn-secondary" onclick="editCollection('${collection.id}')">Edit</button>
-        <button class="btn btn-secondary" onclick="deleteCollection('${collection.id}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
-}
+// NOTE: renderCollections function has been moved to line ~3253 with enhanced Shopify-like UI
 
 // Product Modal
 window.openProductModal = () => {
@@ -2304,9 +2349,399 @@ window.deleteCollection = (id) => {
   if (confirm('Delete this collection?')) {
     state.collections = state.collections.filter(c => c.id !== id);
     saveData();
+    saveCollectionsToServer();
     renderCurrentView();
     showSyncStatus('Collection deleted', 'success');
   }
+};
+
+// Save all collections to server for permanent persistence
+window.saveAllCollections = async () => {
+  try {
+    showSyncStatus('Saving collections...', 'info');
+
+    // Save to localStorage first
+    localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
+
+    // Then save to server
+    const response = await fetch('http://localhost:3001/api/collections', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ collections: state.collections })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      showSyncStatus(`✅ Saved ${result.count} collections to server`, 'success');
+      console.log('💾 Collections saved to server:', result);
+    } else {
+      throw new Error('Server responded with error');
+    }
+  } catch (error) {
+    console.error('❌ Error saving collections to server:', error);
+    showSyncStatus('⚠️ Saved locally only (server offline)', 'warning');
+  }
+};
+
+// Helper function to save collections to server
+async function saveCollectionsToServer() {
+  try {
+    await fetch('http://localhost:3001/api/collections', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ collections: state.collections })
+    });
+    console.log('💾 Collections auto-saved to server');
+  } catch (e) {
+    console.log('ℹ️ Could not auto-save to server');
+  }
+}
+
+// Generate collections from product data (useful when collections weren't imported)
+window.generateCollectionsFromProducts = async () => {
+  if (!confirm('Generate collections from product data? This will add new collections based on the "collections" field in each product.')) {
+    return;
+  }
+
+  // Collect unique collection names from all products
+  const collectionNames = new Set();
+  state.products.forEach(product => {
+    if (product.collections && Array.isArray(product.collections)) {
+      product.collections.forEach(name => collectionNames.add(name));
+    }
+  });
+
+  if (collectionNames.size === 0) {
+    alert('ℹ️ No collection data found in products. Try importing from Shopify first.');
+    return;
+  }
+
+  // Create collection objects
+  const existingHandles = new Set(state.collections.map(c => c.handle));
+  let addedCount = 0;
+
+  collectionNames.forEach(name => {
+    const handle = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+    // Skip if already exists
+    if (existingHandles.has(handle)) return;
+
+    // Find products in this collection
+    const productHandles = state.products
+      .filter(p => p.collections?.includes(name))
+      .map(p => p.shopifyHandle || p.handle);
+
+    const newCollection = {
+      id: Date.now().toString() + '-' + addedCount,
+      handle: handle,
+      name: name,
+      description: `Products in the ${name} collection`,
+      image: '',
+      productHandles: productHandles,
+      productCount: productHandles.length,
+      sectionMapping: null,
+      order: addedCount,
+      isSystem: false,
+      source: 'generated',
+      createdAt: new Date().toISOString()
+    };
+
+    state.collections.push(newCollection);
+    addedCount++;
+  });
+
+  if (addedCount > 0) {
+    saveData();
+    await saveCollectionsToServer(); // Explicit save for safety
+    renderCollections();
+    showSyncStatus(`✅ Generated ${addedCount} collections from products!`, 'success');
+  } else {
+    // Force render anyway to show existing collections
+    renderCollections();
+    showSyncStatus('ℹ️ All collections already exist', 'info');
+  }
+};
+
+// Duplicate a collection
+window.duplicateCollection = (id) => {
+  const collection = state.collections.find(c => c.id === id);
+  if (!collection) return;
+
+  const newCollection = {
+    ...collection,
+    id: Date.now().toString(),
+    name: collection.name + ' (Copy)',
+    handle: collection.handle ? collection.handle + '-copy' : null,
+    isSystem: false,
+    source: 'local',
+    createdAt: new Date().toISOString()
+  };
+
+  state.collections.push(newCollection);
+  saveData();
+  saveCollectionsToServer();
+  renderCollections();
+  showSyncStatus('✅ Collection duplicated!', 'success');
+};
+
+// Open manage products modal for a collection
+window.openManageProductsModal = (collectionId) => {
+  const collection = state.collections.find(c => c.id === collectionId);
+  if (!collection) return;
+
+  // Store the current collection being edited
+  state.editingCollectionProducts = collectionId;
+
+  // Create or show the modal
+  let modal = document.getElementById('manageProductsModal');
+  if (!modal) {
+    modal = createManageProductsModal();
+    document.body.appendChild(modal);
+  }
+
+  modal.classList.add('active');
+  populateManageProductsModal(collection);
+};
+
+// Create the manage products modal HTML
+function createManageProductsModal() {
+  const modal = document.createElement('div');
+  modal.id = 'manageProductsModal';
+  modal.className = 'modal';
+  modal.innerHTML = `
+    <div class="modal-content" style="max-width: 1000px; max-height: 90vh;">
+      <div class="modal-header">
+        <h2 id="manageProductsTitle">Manage Collection Products</h2>
+        <button class="modal-close" onclick="closeManageProductsModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; gap: 20px; height: calc(80vh - 150px);">
+        <!-- Available Products -->
+        <div style="flex: 1; display: flex; flex-direction: column;">
+          <h4 style="margin-bottom: 10px;">📦 Available Products</h4>
+          <input type="text" id="availableProductsSearch" class="search-input" 
+                 placeholder="🔍 Search products..." 
+                 oninput="filterAvailableProducts()" style="margin-bottom: 10px;">
+          <div id="availableProductsList" 
+               style="flex: 1; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: var(--card-bg);">
+          </div>
+        </div>
+        
+        <!-- Action buttons -->
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 10px;">
+          <button class="btn btn-primary" onclick="addSelectedToCollection()" title="Add selected">→</button>
+          <button class="btn btn-secondary" onclick="removeSelectedFromCollection()" title="Remove selected">←</button>
+        </div>
+        
+        <!-- Collection Products -->
+        <div style="flex: 1; display: flex; flex-direction: column;">
+          <h4 style="margin-bottom: 10px;">🗂️ In Collection <span id="collectionProductCount">(0)</span></h4>
+          <input type="text" id="collectionProductsSearch" class="search-input" 
+                 placeholder="🔍 Search in collection..." 
+                 oninput="filterCollectionProducts()" style="margin-bottom: 10px;">
+          <div id="collectionProductsList" 
+               style="flex: 1; overflow-y: auto; border: 1px solid var(--accent); border-radius: 8px; padding: 10px; background: var(--card-bg);">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; padding: 15px 20px; border-top: 1px solid var(--border);">
+        <button class="btn btn-secondary" onclick="selectAllAvailable()">Select All Available</button>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-secondary" onclick="closeManageProductsModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="saveCollectionProducts()">💾 Save Changes</button>
+        </div>
+      </div>
+    </div>
+  `;
+  return modal;
+}
+
+// Populate the manage products modal with data
+function populateManageProductsModal(collection) {
+  document.getElementById('manageProductsTitle').textContent = `Manage Products: ${collection.name}`;
+
+  // Get current collection products
+  const collectionHandles = collection.productHandles || [];
+
+  // Separate products into available and in-collection
+  const collectionProducts = state.products.filter(p =>
+    collectionHandles.includes(p.handle) || collectionHandles.includes(p.shopifyHandle)
+  );
+  const availableProducts = state.products.filter(p =>
+    !collectionHandles.includes(p.handle) && !collectionHandles.includes(p.shopifyHandle)
+  );
+
+  // Store for later use
+  state.manageProductsData = {
+    collection,
+    collectionHandles: [...collectionHandles],
+    selectedAvailable: [],
+    selectedInCollection: []
+  };
+
+  renderAvailableProducts(availableProducts);
+  renderCollectionProductsList(collectionProducts);
+}
+
+// Render available products list
+function renderAvailableProducts(products) {
+  const container = document.getElementById('availableProductsList');
+  if (products.length === 0) {
+    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;">All products are in this collection</p>';
+    return;
+  }
+
+  container.innerHTML = products.map(p => `
+    <div class="product-list-item" data-handle="${p.handle || p.shopifyHandle}" onclick="toggleProductSelection(this, 'available')">
+      <input type="checkbox" class="product-checkbox available" data-handle="${p.handle || p.shopifyHandle}">
+      <img src="${p.image || p.images?.[0] || 'https://via.placeholder.com/40'}" alt="${p.name}" 
+           style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+      <div style="flex: 1; overflow: hidden;">
+        <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+        <div style="font-size: 11px; color: var(--text-muted);">₹${p.price}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Render collection products list
+function renderCollectionProductsList(products) {
+  const container = document.getElementById('collectionProductsList');
+  document.getElementById('collectionProductCount').textContent = `(${products.length})`;
+
+  if (products.length === 0) {
+    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;">No products in this collection</p>';
+    return;
+  }
+
+  container.innerHTML = products.map(p => `
+    <div class="product-list-item" data-handle="${p.handle || p.shopifyHandle}" onclick="toggleProductSelection(this, 'collection')">
+      <input type="checkbox" class="product-checkbox collection" data-handle="${p.handle || p.shopifyHandle}">
+      <img src="${p.image || p.images?.[0] || 'https://via.placeholder.com/40'}" alt="${p.name}" 
+           style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+      <div style="flex: 1; overflow: hidden;">
+        <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+        <div style="font-size: 11px; color: var(--text-muted);">₹${p.price}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Toggle product selection
+window.toggleProductSelection = (element, listType) => {
+  const checkbox = element.querySelector('.product-checkbox');
+  checkbox.checked = !checkbox.checked;
+  element.classList.toggle('selected', checkbox.checked);
+};
+
+// Add selected products to collection
+window.addSelectedToCollection = () => {
+  const checkboxes = document.querySelectorAll('#availableProductsList .product-checkbox:checked');
+  if (checkboxes.length === 0) {
+    alert('Please select products to add');
+    return;
+  }
+
+  checkboxes.forEach(cb => {
+    const handle = cb.dataset.handle;
+    if (!state.manageProductsData.collectionHandles.includes(handle)) {
+      state.manageProductsData.collectionHandles.push(handle);
+    }
+  });
+
+  refreshManageProductsLists();
+};
+
+// Remove selected products from collection
+window.removeSelectedFromCollection = () => {
+  const checkboxes = document.querySelectorAll('#collectionProductsList .product-checkbox:checked');
+  if (checkboxes.length === 0) {
+    alert('Please select products to remove');
+    return;
+  }
+
+  checkboxes.forEach(cb => {
+    const handle = cb.dataset.handle;
+    state.manageProductsData.collectionHandles = state.manageProductsData.collectionHandles.filter(h => h !== handle);
+  });
+
+  refreshManageProductsLists();
+};
+
+// Refresh both lists based on current handles
+function refreshManageProductsLists() {
+  const handles = state.manageProductsData.collectionHandles;
+  const collectionProducts = state.products.filter(p =>
+    handles.includes(p.handle) || handles.includes(p.shopifyHandle)
+  );
+  const availableProducts = state.products.filter(p =>
+    !handles.includes(p.handle) && !handles.includes(p.shopifyHandle)
+  );
+
+  renderAvailableProducts(availableProducts);
+  renderCollectionProductsList(collectionProducts);
+}
+
+// Filter available products by search
+window.filterAvailableProducts = () => {
+  const search = document.getElementById('availableProductsSearch').value.toLowerCase();
+  const items = document.querySelectorAll('#availableProductsList .product-list-item');
+  items.forEach(item => {
+    const name = item.textContent.toLowerCase();
+    item.style.display = name.includes(search) ? 'flex' : 'none';
+  });
+};
+
+// Filter collection products by search
+window.filterCollectionProducts = () => {
+  const search = document.getElementById('collectionProductsSearch').value.toLowerCase();
+  const items = document.querySelectorAll('#collectionProductsList .product-list-item');
+  items.forEach(item => {
+    const name = item.textContent.toLowerCase();
+    item.style.display = name.includes(search) ? 'flex' : 'none';
+  });
+};
+
+// Select all available products
+window.selectAllAvailable = () => {
+  const checkboxes = document.querySelectorAll('#availableProductsList .product-checkbox');
+  checkboxes.forEach(cb => {
+    cb.checked = true;
+    cb.closest('.product-list-item')?.classList.add('selected');
+  });
+};
+
+// Save collection products
+window.saveCollectionProducts = async () => {
+  const collectionId = state.editingCollectionProducts;
+  const collectionIndex = state.collections.findIndex(c => c.id === collectionId);
+
+  if (collectionIndex === -1) {
+    alert('Error: Collection not found');
+    return;
+  }
+
+  // Update the collection
+  state.collections[collectionIndex].productHandles = [...state.manageProductsData.collectionHandles];
+  state.collections[collectionIndex].productCount = state.manageProductsData.collectionHandles.length;
+  state.collections[collectionIndex].updatedAt = new Date().toISOString();
+
+  // Save to localStorage and server
+  saveData();
+  await saveCollectionsToServer();
+
+  closeManageProductsModal();
+  renderCollections();
+  showSyncStatus('✅ Collection products saved!', 'success');
+};
+
+// Close the manage products modal
+window.closeManageProductsModal = () => {
+  const modal = document.getElementById('manageProductsModal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+  state.editingCollectionProducts = null;
+  state.manageProductsData = null;
 };
 
 // Sync & Deploy
@@ -2848,46 +3283,138 @@ window.addCustomTag = () => {
   showSyncStatus(`Tag "${tag}" added`, 'success');
 };
 
-// Collection Management Enhanced
-function renderCollections() {
+// Collection Management Enhanced - Shopify-like UI
+async function renderCollections() {
   const grid = document.getElementById('collectionsGrid');
+
+  // Try to load from server first if state.collections is empty
+  if (state.collections.length === 0) {
+    try {
+      const response = await fetch('http://localhost:3001/api/collections');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.collections && data.collections.length > 0) {
+          state.collections = data.collections;
+          localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
+          console.log('📂 Loaded', state.collections.length, 'collections from server');
+        }
+      }
+    } catch (e) {
+      console.log('ℹ️ Could not load collections from server, using localStorage');
+    }
+
+    // Also try localStorage
+    const stored = localStorage.getItem('elevez_collections');
+    if (stored) {
+      try {
+        state.collections = JSON.parse(stored);
+      } catch (e) { }
+    }
+  }
 
   if (state.collections.length === 0) {
     grid.innerHTML = `
-      <div class="empty-state">
+      <div class="empty-state" style="grid-column: 1 / -1;">
         <div class="empty-state-icon">🗂️</div>
         <h3>No collections yet</h3>
-        <p>Click "Create Collection" to organize your products</p>
+        <p>Import from Shopify or click "Create Collection" to organize your products</p>
+        <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;">
+          <a href="shopify-import.html" class="btn btn-primary" style="text-decoration: none;">🛒 Import from Shopify</a>
+          <button class="btn btn-secondary" onclick="openCollectionModal()">+ Create Collection</button>
+        </div>
       </div>
     `;
     return;
   }
 
-  grid.innerHTML = state.collections.map(collection => {
-    const matchingProducts = getCollectionProducts(collection);
+  // Sort collections by order or name
+  const sortedCollections = [...state.collections].sort((a, b) => {
+    if (a.order !== undefined && b.order !== undefined) return a.order - b.order;
+    return (a.name || '').localeCompare(b.name || '');
+  });
+
+  grid.innerHTML = sortedCollections.map((collection, idx) => {
+    // Get products for this collection
+    let matchingProducts = [];
+
+    // If collection has productHandles (from Shopify), use those
+    if (collection.productHandles && collection.productHandles.length > 0) {
+      matchingProducts = state.products.filter(p =>
+        collection.productHandles.includes(p.handle) ||
+        collection.productHandles.includes(p.shopifyHandle)
+      );
+    } else if (collection.filters) {
+      // Use filter-based matching
+      matchingProducts = getCollectionProducts(collection);
+    } else {
+      // If no filters or handles, try matching by collection name/handle in product tags
+      matchingProducts = state.products.filter(p =>
+        p.tags?.includes(collection.handle) ||
+        p.tags?.includes(collection.name)
+      );
+    }
+
+    // Get first 6 product images for preview
+    const previewProducts = matchingProducts.slice(0, 6);
+    const productPreviewHtml = previewProducts.length > 0
+      ? previewProducts.map(p => `
+          <div class="collection-product-thumb" title="${p.name}">
+            <img src="${p.image || p.images?.[0] || 'https://via.placeholder.com/60x60?text=No+Image'}" 
+                 alt="${p.name}" 
+                 onerror="this.src='https://via.placeholder.com/60x60?text=No+Image'">
+          </div>
+        `).join('')
+      : '<div style="color: var(--text-muted); font-size: 12px; padding: 10px;">No products yet</div>';
+
+    const moreCount = matchingProducts.length - 6;
+
+    // Collection image
+    const collectionImage = collection.image
+      ? `<img src="${collection.image}" alt="${collection.name}" class="collection-cover-image" onerror="this.style.display='none'">`
+      : '';
+
     return `
-      <div class="collection-card">
-        <h3>${collection.name}</h3>
-        <p>${collection.description || 'No description'}</p>
-        
-        <div class="collection-products-count">
-          <strong>${matchingProducts.length}</strong> products in this collection
+      <div class="collection-card enhanced" data-collection-id="${collection.id}" data-order="${idx}">
+        <div class="collection-header">
+          ${collectionImage}
+          <div class="collection-info">
+            <h3 class="collection-title">${collection.name || 'Untitled Collection'}</h3>
+            <p class="collection-description">${collection.description || 'No description'}</p>
+          </div>
+          ${collection.isSystem ? '<span class="collection-badge system">System</span>' : ''}
+          ${collection.source === 'shopify' ? '<span class="collection-badge shopify">Shopify</span>' : ''}
         </div>
         
-        ${collection.filters ? `
-          <div class="collection-filters">
-            ${collection.filters.tags?.map(tag => `<span class="collection-filter-badge">🏷️ ${tag}</span>`).join('') || ''}
-            ${collection.filters.category ? `<span class="collection-filter-badge">👤 ${collection.filters.category}</span>` : ''}
-            ${collection.filters.type ? `<span class="collection-filter-badge">👕 ${collection.filters.type}</span>` : ''}
-            ${collection.filters.minPrice ? `<span class="collection-filter-badge">₹${collection.filters.minPrice}+</span>` : ''}
-            ${collection.filters.maxPrice ? `<span class="collection-filter-badge">Up to ₹${collection.filters.maxPrice}</span>` : ''}
+        <div class="collection-products-preview">
+          <div class="collection-products-grid">
+            ${productPreviewHtml}
+            ${moreCount > 0 ? `<div class="collection-product-more">+${moreCount}</div>` : ''}
           </div>
-        ` : ''}
+        </div>
+        
+        <div class="collection-stats">
+          <span class="stat-item">
+            <span class="stat-icon">📦</span>
+            <strong>${matchingProducts.length}</strong> products
+          </span>
+          ${collection.handle ? `<span class="stat-item"><span class="stat-icon">🔗</span> ${collection.handle}</span>` : ''}
+        </div>
         
         <div class="collection-actions">
-          <button class="btn btn-secondary" onclick="editCollection('${collection.id}')">✏️ Edit</button>
-          <button class="btn btn-secondary" onclick="viewCollectionProducts('${collection.id}')">👁️ View Products</button>
-          <button class="btn btn-secondary" onclick="deleteCollection('${collection.id}')">🗑️ Delete</button>
+          <button class="btn btn-sm btn-primary" onclick="openManageProductsModal('${collection.id}')" title="Manage Products">
+            <span>📦</span> Products
+          </button>
+          <button class="btn btn-sm btn-secondary" onclick="editCollection('${collection.id}')" title="Edit Collection">
+            <span>✏️</span> Edit
+          </button>
+          <button class="btn btn-sm btn-secondary" onclick="duplicateCollection('${collection.id}')" title="Duplicate">
+            <span>📋</span>
+          </button>
+          ${!collection.isSystem ? `
+            <button class="btn btn-sm btn-danger" onclick="deleteCollection('${collection.id}')" title="Delete">
+              <span>🗑️</span>
+            </button>
+          ` : ''}
         </div>
       </div>
     `;

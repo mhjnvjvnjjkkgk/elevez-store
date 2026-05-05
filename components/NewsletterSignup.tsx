@@ -65,36 +65,29 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
 
   if (variant === 'footer') {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="bg-gradient-to-r from-[#00ff88]/10 to-purple-500/10 backdrop-blur-xl rounded-2xl p-6 border border-[#00ff88]/20"
-      >
+      <div className="bg-white border-[4px] border-black p-6 shadow-[8px_8px_0px_0px_#000]">
         <div className="flex items-center gap-3 mb-4">
-          <Mail className="text-[#00ff88]" size={20} />
-          <h3 className="text-lg font-bold text-white">Newsletter</h3>
+          <Mail className="text-black" size={20} />
+          <h3 className="text-lg font-black uppercase text-black">Newsletter</h3>
         </div>
-        <p className="text-sm text-gray-400 mb-4">{subtitle}</p>
+        <p className="text-xs font-bold text-black uppercase mb-4 tracking-wider">{subtitle}</p>
         
-        <form onSubmit={handleSubmit} className="flex gap-2">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
-            className="flex-1 bg-black/50 border border-white/10 px-4 py-2 rounded-lg text-white placeholder-gray-500 focus:border-[#00ff88] outline-none transition-colors text-sm"
+            className="flex-1 bg-white border-[3px] border-black px-4 py-2 text-black placeholder-gray-500 font-bold focus:shadow-[4px_4px_0px_0px_#00ff88] outline-none transition-all text-sm uppercase"
             disabled={status === 'loading'}
           />
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <button
             type="submit"
             disabled={status === 'loading'}
-            className="bg-[#00ff88] text-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-white transition-colors disabled:opacity-50"
+            className="bg-black text-[#00ff88] px-4 py-2 border-[3px] border-black font-black text-sm uppercase tracking-widest hover:bg-[#00ff88] hover:text-black transition-all disabled:opacity-50"
           >
             {status === 'loading' ? '...' : 'Join'}
-          </motion.button>
+          </button>
         </form>
 
         <AnimatePresence>
@@ -103,17 +96,17 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className={`mt-3 text-xs flex items-center gap-2 justify-center ${
-                status === 'success' ? 'text-[#00ff88]' : 'text-red-400'
+              className={`mt-3 text-xs font-black uppercase flex items-center gap-2 justify-center ${
+                status === 'success' ? 'text-[#00ff88] bg-black p-2' : 'text-red-500 border-[2px] border-black p-2'
               }`}
             >
               {status === 'success' ? <Check size={14} /> : <AlertCircle size={14} />}
               {status === 'success' && discountCode ? (
                 <div className="flex items-center gap-2">
-                  <span>Code: <code className="font-bold">{discountCode}</code></span>
+                  <span>Code: <code>{discountCode}</code></span>
                   <button
                     onClick={handleCopyCode}
-                    className="p-1 hover:bg-white/10 rounded transition-colors"
+                    className="p-1 hover:text-white transition-colors"
                   >
                     {copied ? <Check size={12} /> : <Copy size={12} />}
                   </button>
@@ -124,48 +117,38 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+      </div>
     );
   }
 
   if (variant === 'modal') {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-gradient-to-br from-black/90 to-black/80 backdrop-blur-xl rounded-3xl p-12 border border-[#00ff88]/30 max-w-md mx-auto"
-      >
+      <div className="bg-white border-[6px] border-black p-12 shadow-[16px_16px_0px_0px_#000] max-w-md mx-auto">
         <div className="text-center mb-8">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            className="w-16 h-16 bg-gradient-to-br from-[#00ff88] to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6"
-          >
-            <Mail className="text-black" size={32} />
-          </motion.div>
-          <h2 className="text-3xl font-black font-syne text-white mb-3">{title}</h2>
-          <p className="text-gray-400">{subtitle}</p>
+          <div className="w-20 h-20 bg-[#00ff88] border-[4px] border-black flex items-center justify-center mx-auto mb-6 shadow-[6px_6px_0px_0px_#000]">
+            <Mail className="text-black" size={40} />
+          </div>
+          <h2 className="text-4xl font-black font-syne text-black mb-3 uppercase leading-tight">{title}</h2>
+          <p className="text-black font-bold uppercase tracking-wider">{subtitle}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
-            className="w-full bg-black/50 border border-white/10 px-6 py-3 rounded-xl text-white placeholder-gray-500 focus:border-[#00ff88] outline-none transition-colors"
+            placeholder="ENTER YOUR EMAIL"
+            className="w-full bg-white border-[4px] border-black px-6 py-4 text-black placeholder-gray-400 font-black focus:shadow-[6px_6px_0px_0px_#00ff88] outline-none transition-all uppercase"
             disabled={status === 'loading'}
           />
           
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             type="submit"
             disabled={status === 'loading'}
-            className="w-full bg-[#00ff88] text-black px-6 py-3 rounded-xl font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-50 shadow-[0_0_30px_rgba(0,255,136,0.3)]"
+            className="w-full bg-black text-[#00ff88] px-6 py-4 border-[4px] border-black font-black uppercase tracking-[0.2em] hover:bg-[#00ff88] hover:text-black transition-all disabled:opacity-50 shadow-[8px_8px_0px_0px_#000]"
           >
             {status === 'loading' ? 'Subscribing...' : 'Get 10% Off'}
-          </motion.button>
+          </button>
         </form>
 
         <AnimatePresence>
@@ -174,89 +157,86 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className={`mt-4 p-4 rounded-lg text-sm flex flex-col gap-3 ${
+              className={`mt-6 p-4 border-[3px] border-black font-black uppercase text-center text-sm flex flex-col gap-3 ${
                 status === 'success' 
-                  ? 'bg-[#00ff88]/10 text-[#00ff88] border border-[#00ff88]/30' 
-                  : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                  ? 'bg-[#00ff88] text-black' 
+                  : 'bg-red-500 text-white'
               }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center gap-2">
                 {status === 'success' ? <Check size={16} /> : <AlertCircle size={16} />}
-                <span>Welcome to our newsletter!</span>
+                <span>{status === 'success' ? 'Welcome to the club!' : message}</span>
               </div>
               {status === 'success' && discountCode && (
-                <div className="bg-black/30 rounded-lg p-3 flex items-center justify-between gap-2">
+                <div className="bg-white border-[2px] border-black p-3 flex items-center justify-between gap-2">
                   <div>
-                    <p className="text-xs opacity-75 mb-1">Your 10% discount code:</p>
-                    <code className="text-lg font-black tracking-widest">{discountCode}</code>
+                    <p className="text-[10px] opacity-75 mb-1">Your 10% discount code:</p>
+                    <code className="text-xl font-black tracking-widest">{discountCode}</code>
                   </div>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
+                  <button
                     onClick={handleCopyCode}
-                    className="p-2 hover:bg-white/10 rounded transition-colors flex-shrink-0"
+                    className="p-2 hover:bg-black/10 rounded transition-colors"
                   >
                     {copied ? <Check size={16} /> : <Copy size={16} />}
-                  </motion.button>
+                  </button>
                 </div>
               )}
             </motion.div>
           )}
         </AnimatePresence>
 
-        <p className="text-xs text-gray-500 text-center mt-6">
-          We respect your privacy. Unsubscribe at any time.
+        <p className="text-[10px] text-black font-bold uppercase text-center mt-6 tracking-widest">
+          No Spam. Only Fire. Unsubscribe anytime.
         </p>
-      </motion.div>
+      </div>
     );
   }
 
   // Default inline variant
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="max-w-4xl mx-auto px-6 py-20"
-    >
-      <div className="bg-gradient-to-r from-[#00ff88]/20 via-purple-500/20 to-[#00ff88]/20 backdrop-blur-xl rounded-3xl p-12 border border-[#00ff88]/30 relative overflow-hidden">
-        {/* Animated background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#00ff88]/5 via-transparent to-purple-500/5 animate-pulse" />
-        
-        <div className="relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+    <section className="bg-[#00ff88] border-y-[6px] border-black py-24 px-6 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="bg-white border-[6px] border-black p-12 md:p-20 shadow-[20px_20px_0px_0px_#000]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl md:text-5xl font-black font-syne text-white mb-4">{title}</h2>
-              <p className="text-lg text-gray-300 mb-2">{subtitle}</p>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li>✓ 10% off your first order</li>
-                <li>✓ Exclusive deals & early access</li>
-                <li>✓ New collection announcements</li>
+              <h2 className="text-6xl md:text-8xl font-black font-syne text-black mb-6 uppercase leading-[0.9]">{title}</h2>
+              <p className="text-2xl text-black font-black uppercase mb-8 tracking-tight">{subtitle}</p>
+              <ul className="space-y-4 text-black font-bold uppercase tracking-widest">
+                <li className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-black text-[#00ff88] flex items-center justify-center">✓</div>
+                  10% off your first order
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-black text-[#00ff88] flex items-center justify-center">✓</div>
+                  Exclusive deals & early access
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-black text-[#00ff88] flex items-center justify-center">✓</div>
+                  New collection announcements
+                </li>
               </ul>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="w-full bg-black/50 border border-white/10 px-6 py-4 rounded-xl text-white placeholder-gray-500 focus:border-[#00ff88] outline-none transition-colors text-lg"
+                placeholder="ENTER YOUR EMAIL"
+                className="w-full bg-white border-[4px] border-black px-8 py-6 text-black placeholder-gray-400 font-black focus:shadow-[8px_8px_0px_0px_#00ff88] outline-none transition-all text-2xl uppercase"
                 disabled={status === 'loading'}
               />
               
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="w-full bg-[#00ff88] text-black px-6 py-4 rounded-xl font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-50 shadow-[0_0_30px_rgba(0,255,136,0.3)]"
+                className="w-full bg-black text-[#00ff88] px-8 py-6 border-[4px] border-black font-black uppercase tracking-[0.2em] hover:bg-[#00ff88] hover:text-black transition-all disabled:opacity-50 text-2xl shadow-[10px_10px_0px_0px_#000]"
               >
                 {status === 'loading' ? 'Subscribing...' : 'Subscribe Now'}
-              </motion.button>
+              </button>
 
-              <p className="text-xs text-gray-500 text-center">
-                We respect your privacy. Unsubscribe at any time.
+              <p className="text-xs text-black font-black uppercase text-center tracking-widest">
+                We respect your privacy. No spam, ever.
               </p>
             </form>
           </div>
@@ -264,33 +244,31 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
           <AnimatePresence>
             {message && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className={`mt-6 p-4 rounded-lg flex flex-col gap-3 ${
+                exit={{ opacity: 0, y: 20 }}
+                className={`mt-12 p-8 border-[4px] border-black font-black uppercase flex flex-col gap-4 ${
                   status === 'success' 
-                    ? 'bg-[#00ff88]/10 text-[#00ff88] border border-[#00ff88]/30' 
-                    : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                    ? 'bg-[#00ff88] text-black shadow-[8px_8px_0px_0px_#000]' 
+                    : 'bg-red-500 text-white shadow-[8px_8px_0px_0px_#000]'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  {status === 'success' ? <Check size={20} /> : <AlertCircle size={20} />}
-                  <span>Welcome to our newsletter!</span>
+                <div className="flex items-center gap-4 text-2xl">
+                  {status === 'success' ? <Check size={32} /> : <AlertCircle size={32} />}
+                  <span>{status === 'success' ? 'You are on the list!' : message}</span>
                 </div>
                 {status === 'success' && discountCode && (
-                  <div className="bg-black/30 rounded-lg p-4 flex items-center justify-between gap-3 ml-7">
+                  <div className="bg-white border-[3px] border-black p-6 flex items-center justify-between gap-4">
                     <div>
-                      <p className="text-xs opacity-75 mb-2">Your 10% discount code:</p>
-                      <code className="text-2xl font-black tracking-widest">{discountCode}</code>
+                      <p className="text-xs opacity-75 mb-2">Your exclusive discount code:</p>
+                      <code className="text-4xl font-black tracking-[0.2em]">{discountCode}</code>
                     </div>
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
+                    <button
                       onClick={handleCopyCode}
-                      className="p-2 hover:bg-white/10 rounded transition-colors flex-shrink-0"
+                      className="p-4 bg-black text-white hover:bg-[#00ff88] hover:text-black transition-all flex-shrink-0"
                     >
-                      {copied ? <Check size={20} /> : <Copy size={20} />}
-                    </motion.button>
+                      {copied ? <Check size={32} /> : <Copy size={32} />}
+                    </button>
                   </div>
                 )}
               </motion.div>
@@ -298,6 +276,6 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
           </AnimatePresence>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 };
