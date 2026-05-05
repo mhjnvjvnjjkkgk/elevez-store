@@ -1423,8 +1423,9 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             style={{ x: leftModelSpringX, y: leftModelSpringY, rotate: leftModelSpringRotate }}
             className="hidden xl:block absolute left-[-80px] top-[5%] bottom-[5%] w-[260px] xl:w-[320px] z-20 pointer-events-auto"
             whileHover={{ 
-              scale: 1.06,
-              transition: { type: "spring", stiffness: 400, damping: 15 }
+              scale: 1.18,
+              y: -12,
+              transition: { type: "spring", stiffness: 300, damping: 15 }
             }}
           >
             <img 
@@ -1439,8 +1440,9 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             style={{ x: rightModelSpringX, y: rightModelSpringY, rotate: rightModelSpringRotate }}
             className="hidden xl:block absolute right-[-80px] top-[5%] bottom-[5%] w-[260px] xl:w-[320px] z-20 pointer-events-auto"
             whileHover={{ 
-              scale: 1.06,
-              transition: { type: "spring", stiffness: 400, damping: 15 }
+              scale: 1.18,
+              y: -12,
+              transition: { type: "spring", stiffness: 300, damping: 15 }
             }}
           >
             <img 
