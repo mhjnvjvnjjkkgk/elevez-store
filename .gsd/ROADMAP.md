@@ -25,7 +25,7 @@
 **Objective**: Remove glitched sections and disable distracting "wiggle" animations.
 
 ### Phase 5: UI Refinement & Aesthetic Overhaul
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 **Objective**: Scale down oversized components (collections, sections, hero) and add consistent glitch animations to headings for a more precise, high-end Neo-Brutalist look.
 **Depends on**: Phase 4
 
