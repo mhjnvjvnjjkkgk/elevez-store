@@ -1348,6 +1348,23 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const heroMoveX = useTransform(mouseX, [-0.5, 0.5], [20, -20]);
   const heroMoveY = useTransform(mouseY, [-0.5, 0.5], [20, -20]);
 
+  // Mouse Parallax for Hero Models
+  const leftModelX = useTransform(mouseX, [-0.5, 0.5], [-20, 20]);
+  const leftModelY = useTransform(mouseY, [-0.5, 0.5], [-10, 10]);
+  const leftModelRotate = useTransform(mouseX, [-0.5, 0.5], [10, 15]);
+
+  const rightModelX = useTransform(mouseX, [-0.5, 0.5], [20, -20]);
+  const rightModelY = useTransform(mouseY, [-0.5, 0.5], [10, -10]);
+  const rightModelRotate = useTransform(mouseX, [-0.5, 0.5], [-15, -10]);
+
+  const leftModelSpringX = useSpring(leftModelX, { stiffness: 100, damping: 25 });
+  const leftModelSpringY = useSpring(leftModelY, { stiffness: 100, damping: 25 });
+  const leftModelSpringRotate = useSpring(leftModelRotate, { stiffness: 100, damping: 25 });
+
+  const rightModelSpringX = useSpring(rightModelX, { stiffness: 100, damping: 25 });
+  const rightModelSpringY = useSpring(rightModelY, { stiffness: 100, damping: 25 });
+  const rightModelSpringRotate = useSpring(rightModelRotate, { stiffness: 100, damping: 25 });
+
   // Filter products based on collection filter
   const filteredProducts = PRODUCTS.filter(p => {
     // Only show products that are enabled for homepage
@@ -1377,7 +1394,10 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-36 pb-16 px-4 z-10 bg-white">
+      <section 
+        onMouseMove={handleHeroMouseMove}
+        className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-36 pb-16 px-4 z-10 bg-white"
+      >
         
         {/* Large Decorative Text (Neo-Brutalist Style) */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-5 select-none">
@@ -1390,33 +1410,87 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="relative z-10 text-center w-[95%] max-w-[1400px] mx-auto p-10 md:p-12 lg:p-20 bg-white border-[8px] border-black shadow-[24px_24px_0px_0px_#000] hover:shadow-[32px_32px_0px_0px_#00ff88] transition-all duration-500 flex flex-col justify-center min-h-[60vh]"
+          className="relative z-10 text-center w-[95%] max-w-[1400px] mx-auto p-10 md:p-12 lg:p-20 bg-white border-[8px] border-black shadow-[24px_24px_0px_0px_#000] hover:shadow-[32px_32px_0px_0px_#00ff88] transition-all duration-500 flex flex-col justify-center min-h-[60vh] overflow-visible"
         >
+          {/* Left High-Fashion Model */}
+          <motion.div
+            style={{ x: leftModelSpringX, y: leftModelSpringY, rotate: leftModelSpringRotate }}
+            className="hidden xl:block absolute left-[-80px] top-[5%] bottom-[5%] w-[260px] xl:w-[320px] z-20 pointer-events-auto"
+            whileHover={{ 
+              scale: 1.06,
+              transition: { type: "spring", stiffness: 400, damping: 15 }
+            }}
+          >
+            <img 
+              src="/models/model_left.png" 
+              alt="Elevez Left Model" 
+              className="w-full h-full object-contain filter drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] hover:drop-shadow-[0_0_20px_#00ff88] transition-all duration-300"
+            />
+          </motion.div>
+
+          {/* Right High-Fashion Model */}
+          <motion.div
+            style={{ x: rightModelSpringX, y: rightModelSpringY, rotate: rightModelSpringRotate }}
+            className="hidden xl:block absolute right-[-80px] top-[5%] bottom-[5%] w-[260px] xl:w-[320px] z-20 pointer-events-auto"
+            whileHover={{ 
+              scale: 1.06,
+              transition: { type: "spring", stiffness: 400, damping: 15 }
+            }}
+          >
+            <img 
+              src="/models/model_right.png" 
+              alt="Elevez Right Model" 
+              className="w-full h-full object-contain filter drop-shadow-[-6px_6px_0px_rgba(0,0,0,1)] hover:drop-shadow-[0_0_20px_#00ff88] transition-all duration-300"
+            />
+          </motion.div>
+
           <motion.div
             style={{ y: heroTextY, x: heroMoveX }}
             className="flex-1 flex flex-col justify-center"
           >
-            <h1
-              className="text-6xl md:text-[6vw] lg:text-[7vw] font-black leading-none tracking-tighter font-syne mb-12 cursor-default uppercase text-black relative"
-            >
-              {/* Brand Star Sticker */}
-              <motion.img
-                src="/stickers/neon_star.png"
-                alt="Elevez Badge"
-                className="absolute -top-16 -right-12 md:-top-20 md:-right-20 w-20 h-20 md:w-28 md:h-28 pointer-events-auto select-none z-20"
-                initial={{ scale: 0, rotate: -45 }}
-                animate={{ scale: 1, rotate: 15 }}
-                whileHover={{ 
-                  scale: 1.25, 
-                  rotate: 45,
-                  transition: { type: "spring", stiffness: 400, damping: 15 } 
-                }}
-                transition={{ delay: 0.8, type: "spring", stiffness: 200, damping: 15 }}
-              />
+            {/* Symmetrical System Active Header */}
+            <div className="flex items-center justify-center gap-4 mb-8 text-black font-black uppercase text-xs md:text-sm tracking-widest border-b-[3px] border-black pb-3 w-fit mx-auto select-none">
+              <span>SYSTEM ACTIVE // PROTOCOL 01</span>
+              <span className="w-2.5 h-2.5 bg-[#00ff88] border-[2px] border-black rounded-full animate-pulse" />
+              <span>SS26 DROP</span>
+            </div>
 
-              <InteractiveText text="Elevate Your" className="block mb-2" />
-              <InteractiveText text="Style Game" className="block text-[#00ff88]" style={{ WebkitTextStroke: '3px black' }} />
-            </h1>
+            <div className="relative flex items-center justify-center w-full my-6 select-none">
+              {/* Left bracket */}
+              <div className="hidden xl:flex flex-col items-end text-black font-black text-xs uppercase tracking-widest opacity-60 pr-8 border-r-[3px] border-black leading-tight">
+                <span>[ CORE-GRID ]</span>
+                <span>REG. PROTOCOL</span>
+              </div>
+
+              {/* Centered Symmetrical Header */}
+              <h1
+                className="text-6xl md:text-[5.5vw] font-black leading-none tracking-tighter font-syne cursor-default uppercase text-black relative mx-12 flex flex-col items-center justify-center text-center"
+              >
+                {/* Brand Star Sticker */}
+                <motion.img
+                  src="/stickers/neon_star.png"
+                  alt="Elevez Badge"
+                  className="absolute -top-16 -right-12 md:-top-20 md:-right-20 w-20 h-20 md:w-28 md:h-28 pointer-events-auto select-none z-20"
+                  initial={{ scale: 0, rotate: -45 }}
+                  animate={{ scale: 1, rotate: 15 }}
+                  whileHover={{ 
+                    scale: 1.25, 
+                    rotate: 45,
+                    transition: { type: "spring", stiffness: 400, damping: 15 } 
+                  }}
+                  transition={{ delay: 0.8, type: "spring", stiffness: 200, damping: 15 }}
+                />
+
+                <InteractiveText text="Elevate Your" className="block mb-2 text-center justify-center" />
+                <InteractiveText text="Style Game" className="block text-[#00ff88]" style={{ WebkitTextStroke: '3px black' }} />
+              </h1>
+
+              {/* Right bracket */}
+              <div className="hidden xl:flex flex-col items-start text-black font-black text-xs uppercase tracking-widest opacity-60 pl-8 border-l-[3px] border-black leading-tight">
+                <span>[ SS26 // 01 ]</span>
+                <span>MODEL VERIFIED</span>
+              </div>
+            </div>
 
             <motion.p
               initial={{ opacity: 0 }}
