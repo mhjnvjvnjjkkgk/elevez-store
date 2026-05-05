@@ -1493,12 +1493,6 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       {/* Best Sellers Section */}
       <BestSellers />
 
-      {/* Parallax Reveal Section */}
-      <ParallaxReveal 
-        image="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&q=80&w=1600"
-        title="NEO-PROTOCOLS"
-        description="Crafting the future of street aesthetics through digital precision and urban utility."
-      />
 
       {/* Product Recommendations */}
       <section className="py-24 bg-white">
