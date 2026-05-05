@@ -34,3 +34,16 @@
 
 **Verification**:
 - TBD
+
+---
+
+### Phase 6: Hero Refinement & Why Elevez Card Scaling
+**Status**: ⬜ Not Started
+**Objective**: Fix the clipped text letters in the hero headings (caused by layout limits and overflow-hidden inside InteractiveText), insert a transparent png image/sticker inside the hero heading layout, and scale down the oversized benefit cards in the 'Why Elevez' section.
+**Depends on**: Phase 5
+
+**Tasks**:
+- [ ] TBD (run /plan 6 to create)
+
+**Verification**:
+- TBD
