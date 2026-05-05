@@ -1345,6 +1345,11 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     mouseY.set((clientY / innerHeight) - 0.5);
   }
 
+  function handleHeroMouseLeave() {
+    mouseX.set(0);
+    mouseY.set(0);
+  }
+
   const heroMoveX = useTransform(mouseX, [-0.5, 0.5], [20, -20]);
   const heroMoveY = useTransform(mouseY, [-0.5, 0.5], [20, -20]);
 
@@ -1396,6 +1401,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       {/* Hero Section */}
       <section 
         onMouseMove={handleHeroMouseMove}
+        onMouseLeave={handleHeroMouseLeave}
         className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-36 pb-16 px-4 z-10 bg-white"
       >
         
