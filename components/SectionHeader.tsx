@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { InteractiveText } from './InteractiveText';
+import { GlitchText } from './GlitchText';
 
 interface SectionHeaderProps {
   title: string;
@@ -15,6 +16,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   align = 'center',
   className = "" 
 }) => {
+  const [hasGlitched, setHasGlitched] = useState(false);
   const alignmentClass = align === 'left' ? 'text-left' : align === 'right' ? 'text-right' : 'text-center';
   const flexClass = align === 'left' ? 'items-start' : align === 'right' ? 'items-end' : 'items-center';
 
@@ -23,18 +25,28 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
       {/* Small badge above title */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: false }}
+        whileInView={{ 
+          opacity: 1, 
+          scale: 1,
+        }}
+        onViewportEnter={() => setHasGlitched(true)}
+        viewport={{ once: false, margin: "-100px" }}
         className="inline-block bg-black text-[#00ff88] text-xs font-black uppercase tracking-[0.5em] px-4 py-1 border-[2px] border-black mb-6"
       >
         Protocol: {title.replace(/\s+/g, '_').toUpperCase()}
       </motion.div>
 
-      {/* Massive Interactive Title */}
-      <InteractiveText 
-        text={title} 
-        className={`w-full font-syne font-black uppercase text-black leading-[0.85] text-7xl md:text-[10rem] lg:text-[12rem] ${align === 'center' ? 'justify-center' : ''}`} 
-      />
+      {/* Massive Interactive Title with Glitch */}
+      <div className="relative group">
+        <GlitchText 
+          text={title} 
+          forceGlitch={hasGlitched}
+          className={`w-full font-syne font-black uppercase text-black leading-[0.85] text-7xl md:text-[8rem] lg:text-[10rem] ${align === 'center' ? 'justify-center' : ''}`} 
+        />
+        
+        {/* Secondary reveal layer if needed - using InteractiveText for character reveal if requested, 
+            but for now GlitchText is the primary focus. */}
+      </div>
       
       {/* Decorative Line */}
       <motion.div
