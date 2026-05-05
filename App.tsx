@@ -1123,7 +1123,7 @@ const WhyChooseUs = () => {
 
   return (
     <ScrollAnimatedSection>
-      <section className="min-h-screen relative flex items-center justify-center py-24 px-6 bg-white border-t-[6px] border-black">
+      <section className="min-h-[75vh] relative flex items-center justify-center py-24 px-6 bg-white border-t-[6px] border-black">
         <div className="max-w-7xl w-full">
           {/* Header */}
           <SectionHeader 
@@ -1132,20 +1132,20 @@ const WhyChooseUs = () => {
           />
 
           {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
             {features.map((feature, index) => (
               <div
                 key={feature.title}
-                className="group relative bg-white border-[6px] border-black p-12 shadow-[12px_12px_0px_0px_#000] hover:shadow-[16px_16px_0px_0px_#00ff88] transition-all"
+                className="group relative bg-white border-[4px] border-black p-6 md:p-8 shadow-[8px_8px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] transition-all duration-300"
               >
-                <div className="w-20 h-20 bg-[#00ff88] border-[4px] border-black flex items-center justify-center mb-8 shadow-[6px_6px_0px_0px_#000]">
-                  <feature.icon size={40} className="text-black" />
+                <div className="w-14 h-14 bg-[#00ff88] border-[3px] border-black flex items-center justify-center mb-6 shadow-[4px_4px_0px_0px_#000]">
+                  <feature.icon size={28} className="text-black" />
                 </div>
 
-                <h3 className="text-4xl font-black mb-4 uppercase text-black">
+                <h3 className="text-2xl font-black mb-3 uppercase text-black font-syne leading-none">
                   {feature.title}
                 </h3>
-                <p className="text-black font-bold text-xl leading-relaxed uppercase">
+                <p className="text-black font-black text-sm leading-snug uppercase tracking-tight">
                   {feature.description}
                 </p>
               </div>
@@ -1377,7 +1377,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] w-full flex flex-col items-center justify-center overflow-hidden px-4 z-10 bg-white">
+      <section className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-36 pb-16 px-4 z-10 bg-white">
         
         {/* Large Decorative Text (Neo-Brutalist Style) */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-5 select-none">
@@ -1397,8 +1397,23 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             className="flex-1 flex flex-col justify-center"
           >
             <h1
-              className="text-6xl md:text-[6vw] lg:text-[7vw] font-black leading-[0.85] tracking-tighter font-syne mb-12 cursor-default uppercase text-black"
+              className="text-6xl md:text-[6vw] lg:text-[7vw] font-black leading-none tracking-tighter font-syne mb-12 cursor-default uppercase text-black relative"
             >
+              {/* Brand Star Sticker */}
+              <motion.img
+                src="/stickers/neon_star.png"
+                alt="Elevez Badge"
+                className="absolute -top-16 -right-12 md:-top-20 md:-right-20 w-20 h-20 md:w-28 md:h-28 pointer-events-auto select-none z-20"
+                initial={{ scale: 0, rotate: -45 }}
+                animate={{ scale: 1, rotate: 15 }}
+                whileHover={{ 
+                  scale: 1.25, 
+                  rotate: 45,
+                  transition: { type: "spring", stiffness: 400, damping: 15 } 
+                }}
+                transition={{ delay: 0.8, type: "spring", stiffness: 200, damping: 15 }}
+              />
+
               <InteractiveText text="Elevate Your" className="block mb-2" />
               <InteractiveText text="Style Game" className="block text-[#00ff88]" style={{ WebkitTextStroke: '3px black' }} />
             </h1>
