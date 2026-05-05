@@ -29,21 +29,22 @@
 **Objective**: Scale down oversized components (collections, sections, hero) and add consistent glitch animations to headings for a more precise, high-end Neo-Brutalist look.
 **Depends on**: Phase 4
 
-**Tasks**:
-- [ ] TBD (run /plan 5 to create)
-
-**Verification**:
-- TBD
-
 ---
 
 ### Phase 6: Hero Refinement & Why Elevez Card Scaling
-**Status**: ⬜ Not Started
-**Objective**: Fix the clipped text letters in the hero headings (caused by layout limits and overflow-hidden inside InteractiveText), insert a transparent png image/sticker inside the hero heading layout, and scale down the oversized benefit cards in the 'Why Elevez' section.
+**Status**: ✅ Complete
+**Objective**: Fix the clipped text letters in the hero headings, insert a transparent png image/sticker inside the hero heading layout, and scale down the oversized benefit cards in the 'Why Elevez' section.
 **Depends on**: Phase 5
 
+---
+
+### Phase 7: Symmetrical Hero Branding & Interactive Models
+**Status**: ⬜ Not Started
+**Objective**: Transform the Hero section into an iconic premium clothing brand storefront by symmetrizing the typographic layout and adding two transparent PNG high-fashion models flanking the text that dynamically react to cursor movements.
+**Depends on**: Phase 6
+
 **Tasks**:
-- [ ] TBD (run /plan 6 to create)
+- [ ] TBD (run /plan 7 to create)
 
 **Verification**:
 - TBD
