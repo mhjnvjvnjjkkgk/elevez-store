@@ -1462,7 +1462,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             subtitle="Excellence in every detail, innovation in every stitch"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
             {[
               { icon: Truck, title: "3-Day Express", desc: "Lightning-fast shipping straight to your doorstep.", tag: "3 Days" },
               { icon: Shield, title: "180gsm Premium", desc: "Superior quality cotton that breathes and lasts.", tag: "180gsm" },
@@ -1471,24 +1471,21 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             ].map((item, i) => (
               <div
                 key={i}
-                className="bg-white border-[4px] border-black p-8 relative group hover:shadow-[12px_12px_0px_0px_#00ff88] transition-all"
+                className="bg-white border-[4px] border-black p-5 md:p-6 relative group hover:shadow-[10px_10px_0px_0px_#00ff88] transition-all duration-300 shadow-[6px_6px_0px_0px_#000] hover:translate-x-[-2px] hover:translate-y-[-2px]"
               >
-                <div className="absolute -top-5 -right-2 bg-black text-[#00ff88] text-sm font-black px-4 py-1 uppercase tracking-widest border-[3px] border-black">
+                <div className="absolute -top-4 -right-2 bg-black text-[#00ff88] text-[10px] font-black px-3 py-0.5 uppercase tracking-widest border-[2px] border-black shadow-[2px_2px_0px_0px_#000]">
                   {item.tag}
                 </div>
-                <div className="w-16 h-16 bg-[#00ff88] border-[3px] border-black flex items-center justify-center mb-6 shadow-[4px_4px_0px_0px_#000]">
-                  <item.icon className="w-8 h-8 text-black" />
+                <div className="w-12 h-12 bg-[#00ff88] border-[3px] border-black flex items-center justify-center mb-5 shadow-[3px_3px_0px_0px_#000]">
+                  <item.icon className="w-6 h-6 text-black" />
                 </div>
-                <h3 className="text-2xl font-black mb-3 font-syne uppercase text-black">{item.title}</h3>
-                <p className="text-black font-medium leading-relaxed">{item.desc}</p>
+                <h3 className="text-xl md:text-2xl font-black mb-3 font-syne uppercase text-black leading-none">{item.title}</h3>
+                <p className="text-black font-black text-xs md:text-sm leading-snug uppercase tracking-tight">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
-
-      {/* Why Choose Us Section */}
-      <WhyChooseUs />
 
       {/* Social Proof Badges */}
       <SocialProofBadges />
