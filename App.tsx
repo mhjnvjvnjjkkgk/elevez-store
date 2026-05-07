@@ -1376,14 +1376,16 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     // Only show products that are enabled for homepage
     if (p.showInHome === false) return false;
 
+    const lowerType = (p.type || '').toLowerCase();
+    
     if (collectionFilter === 'All') return p.isBestSeller;
-    if (collectionFilter === 'Old Money') return p.tags?.includes('VINTAGE') && p.isBestSeller;
-    if (collectionFilter === 'Bold and Vibrant') return p.tags?.includes('COLORFUL') && p.isBestSeller;
-    if (collectionFilter === 'Premium Streetwear') return p.tags?.includes('PREMIUM') && p.isBestSeller;
-    if (collectionFilter === 'Hoodies') return p.type.includes('Hoodie') && p.isBestSeller;
-    if (collectionFilter === 'Oversized') return p.type.includes('Oversized') && p.isBestSeller;
-    if (collectionFilter === 'Under ₹50') return p.price < 50 && p.isBestSeller;
-    if (collectionFilter === '₹100+') return p.price >= 100 && p.isBestSeller;
+    if (collectionFilter === 'HOODIES') return lowerType.includes('hoodie');
+    if (collectionFilter === 'T-SHIRTS') return lowerType.includes('t-shirt') || lowerType.includes('tee');
+    if (collectionFilter === 'CROP TOPS') return lowerType.includes('crop top');
+    if (collectionFilter === 'OVERSIZED TSHIRTS') return lowerType.includes('oversized');
+    if (collectionFilter === 'UNDER ₹50') return p.price < 50;
+    if (collectionFilter === '₹100+') return p.price >= 100;
+    
     return p.isBestSeller;
   });
 
@@ -1585,108 +1587,111 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       <BestSellers />
 
 
-      {/* Product Recommendations */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-6">
-          <SectionHeader 
-            title="Recommended" 
-            subtitle="Selected specifically for your protocol"
+      {/* The Vault - Dynamic Category Divider & Grid */}
+      <section className="relative border-y-[8px] border-black bg-white overflow-hidden">
+        {/* Massive Marquee Header */}
+        <div className="border-b-[8px] border-black bg-[#00ff88]">
+          <InfiniteMarquee 
+            text="ENTER THE VAULT // CHOOSE YOUR ARSENAL // SELECT CATEGORY // NO COMPROMISE //" 
+            className="py-4 text-black text-2xl font-black" 
           />
-          <ProductRecommendations limit={4} />
+        </div>
+
+        <div className="container mx-auto px-6 py-24">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-16"
+          >
+            <h2 className="text-6xl md:text-8xl font-black text-center font-syne uppercase tracking-tighter" style={{ WebkitTextStroke: '2px black', color: 'transparent' }}>
+              The Vault
+            </h2>
+          </motion.div>
+
+          {/* Category Vise Divider (Massive Buttons) */}
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-24">
+            {['All', 'HOODIES', 'T-SHIRTS', 'CROP TOPS', 'OVERSIZED TSHIRTS', 'UNDER ₹50', '₹100+'].map((filter, i) => (
+              <button
+                key={filter}
+                onClick={() => setCollectionFilter(filter)}
+                onMouseEnter={() => setCursorVariant('hover')}
+                onMouseLeave={() => setCursorVariant('default')}
+                className={`px-6 py-4 md:px-10 md:py-6 border-[4px] border-black text-lg md:text-2xl font-black uppercase tracking-widest transition-all ${collectionFilter === filter ? 'bg-black text-[#00ff88] shadow-[8px_8px_0px_0px_#00ff88] translate-x-1 translate-y-1' : 'bg-white text-black hover:bg-[#00ff88] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-[6px_6px_0px_0px_#000]'}`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+
+          {/* Dynamic Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
+            {filteredProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+              >
+                <ProductCard
+                  product={product}
+                  onHoverStart={() => setCursorVariant('hover')}
+                  onHoverEnd={() => setCursorVariant('default')}
+                />
+              </motion.div>
+            ))}
+          </div>
+          
+          {filteredProducts.length === 0 && (
+            <div className="text-center py-20 border-[4px] border-black border-dashed">
+              <h3 className="text-3xl font-black uppercase">Data Not Found</h3>
+              <p className="mt-4 text-gray-500 font-bold uppercase tracking-widest">No artifacts match this filter.</p>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Featured Collections */}
-      <ScrollAnimatedSection>
-        <section className="py-24 relative">
-          <div className="container mx-auto px-6">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-5xl md:text-7xl font-bold text-center mb-4 font-syne">Our Collections</h2>
-              <p className="text-center text-gray-500 mb-16">Curated styles for every personality</p>
-            </motion.div>
-
-            <div className="flex flex-wrap justify-center gap-6 mb-20">
-              {['All', 'Old Money', 'Bold and Vibrant', 'Premium Streetwear', 'Hoodies', 'Oversized', 'Under ₹50', '₹100+'].map((filter, i) => (
-                <button
-                  key={filter}
-                  onClick={() => setCollectionFilter(filter)}
-                  onMouseEnter={() => setCursorVariant('hover')}
-                  onMouseLeave={() => setCursorVariant('default')}
-                  className={`px-8 py-4 border-[3px] border-black text-sm font-black uppercase tracking-widest transition-all ${collectionFilter === filter ? 'bg-[#00ff88] text-black shadow-[6px_6px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_#000]'}`}
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-              {filteredProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.6, delay: index * 0.2 }}
-                >
-                  <ProductCard
-                    product={product}
-                    onHoverStart={() => setCursorVariant('hover')}
-                    onHoverEnd={() => setCursorVariant('default')}
-                  />
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="text-center mt-24">
-              <button
-                onClick={() => setCollectionFilter('All')}
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-                className="inline-block px-12 py-5 bg-black text-[#00ff88] border-[4px] border-black font-black uppercase tracking-widest shadow-[10px_10px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all text-xl"
-              >
-                ACCESS ENTIRE VAULT
-              </button>
-            </div>
-          </div>
-        </section>
-      </ScrollAnimatedSection>
-
       {/* Video Experience Section - Parallax Effect */}
       <ScrollAnimatedSection>
-        <section className="py-20 bg-black relative">
+        <section className="py-24 bg-black relative border-y-[8px] border-black">
+          {/* Top Marquee for Video */}
+          <div className="absolute top-0 inset-x-0 border-b-[8px] border-black bg-white z-20">
+            <InfiniteMarquee 
+              text="RAW FOOTAGE // BEHIND THE SCENES // ELEVEZ LABS // UNCUT // NO COMPROMISE //" 
+              className="py-3 text-black text-xl font-black" 
+            />
+          </div>
+
           <motion.div
             style={{ y: videoSectionY }}
-            className="container mx-auto px-6 text-center relative z-10"
+            className="container mx-auto px-6 text-center relative z-10 pt-20"
           >
-            <h2 className="text-4xl md:text-6xl font-bold mb-4 relative z-20">The Elevez Experience</h2>
-            <p className="text-gray-400 mb-12">See the passion behind every piece</p>
+            <h2 className="text-5xl md:text-8xl font-black mb-8 relative z-20 font-syne uppercase tracking-tighter" style={{ WebkitTextStroke: '2px #00ff88', color: 'transparent' }}>The Elevez Experience</h2>
 
-            <div className="relative aspect-video w-full max-w-5xl mx-auto rounded-3xl overflow-hidden border-4 border-zinc-800 shadow-2xl group"
+            <div className="relative aspect-video w-full max-w-6xl mx-auto overflow-hidden border-[8px] border-black shadow-[24px_24px_0_0_#00ff88] group bg-black"
               onMouseEnter={() => setCursorVariant('hover')}
               onMouseLeave={() => setCursorVariant('default')}
             >
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors z-10 flex items-center justify-center">
-                <div className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Play className="w-10 h-10 text-white fill-white" />
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors z-10 flex items-center justify-center">
+                <div className="w-32 h-20 bg-[#00ff88] border-[4px] border-black shadow-[8px_8px_0_0_#000] flex items-center justify-center group-hover:scale-110 transition-transform hover:bg-white cursor-pointer">
+                  <Play className="w-10 h-10 text-black fill-black" />
                 </div>
               </div>
               <video
                 src="https://assets.mixkit.co/videos/preview/mixkit-urban-model-posing-in-neon-light-39857-large.mp4"
                 autoPlay muted loop playsInline
-                className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000"
+                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
               />
-              <div className="absolute bottom-10 left-10 z-20 text-left mix-blend-difference">
-                <h3 className="text-5xl md:text-8xl font-black text-white font-syne leading-none">
+              <div className="absolute bottom-8 left-8 z-20 text-left bg-black border-[4px] border-white p-4 shadow-[8px_8px_0_0_#fff]">
+                <h3 className="text-4xl md:text-6xl font-black text-white font-syne leading-none uppercase">
                   FOR<br />BIGGER<br />BLAZES
                 </h3>
               </div>
             </div>
           </motion.div>
         </section>
+      </ScrollAnimatedSection>
 
         {/* Redefining Modern Fashion */}
         <section className="py-24 bg-zinc-950/80 backdrop-blur-sm">
