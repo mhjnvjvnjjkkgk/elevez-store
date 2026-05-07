@@ -548,7 +548,7 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         <div className="flex items-center justify-between mt-1">
           <div className="flex items-center gap-2">
             <span className="font-price text-[#00ff88] font-black text-xl stroke-black" style={{ WebkitTextStroke: '1px black' }}>₹{product.price.toFixed(2)}</span>
-            <span className="font-price text-gray-400 line-through text-sm">₹{product.originalPrice.toFixed(2)}</span>
+            <span className="font-price text-red-500 line-through text-sm">₹{product.originalPrice.toFixed(2)}</span>
           </div>
           <div className="flex gap-1">
             {[...Array(5)].map((_, i) => (
@@ -627,7 +627,7 @@ const QuickViewModal = () => {
               <h2 className="text-4xl font-black font-syne uppercase leading-none mb-4 text-black">{activeProduct.name}</h2>
               <div className="flex items-center gap-4">
                 <span className="font-price text-4xl font-black text-[#00ff88]" style={{ WebkitTextStroke: '1.5px black' }}>₹{activeProduct.price}</span>
-                <span className="font-price text-gray-400 line-through text-xl font-bold">₹{activeProduct.originalPrice}</span>
+                <span className="font-price text-red-500 line-through text-xl font-bold">₹{activeProduct.originalPrice}</span>
               </div>
             </div>
 
@@ -2194,10 +2194,10 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
             </h1>
 
             <div className="flex items-center gap-6 mb-4">
-              <div className="text-5xl font-black text-black font-price">
+              <div className="text-[#00ff88] text-5xl font-black font-price stroke-black" style={{ WebkitTextStroke: '1.5px black' }}>
                 ₹<GlitchText text={product.price.toString()} triggerOnHover={false} />
               </div>
-              <span className="font-price text-2xl text-gray-400 line-through font-bold">₹{product.originalPrice}</span>
+              <span className="font-price text-2xl text-red-500 line-through font-bold">₹{product.originalPrice}</span>
               <div className="bg-[#00ff88] border-[3px] border-black px-3 py-1 font-black text-xs uppercase shadow-[4px_4px_0px_0px_#000]">
                 Save <span className="font-price">₹{(product.originalPrice - product.price).toFixed(0)}</span>
               </div>
