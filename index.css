@@ -137,23 +137,24 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   top: 0;
   left: 0;
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   background-color: var(--accent-green);
   border: 2px solid #000;
-  border-radius: 50%;
+  border-radius: 0; /* Brutalist sharp corners */
   pointer-events: none;
   z-index: 9999;
   mix-blend-mode: difference;
-  transition: width 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s;
+  transition: width 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.15s;
   transform: translate(-50%, -50%);
 }
 
 .custom-cursor.hovering {
-  width: 64px;
-  height: 64px;
-  background-color: #fff;
-  border-color: transparent;
+  width: 48px;
+  height: 48px;
+  background-color: transparent;
+  border: 3px solid #fff;
+  border-radius: 0;
   mix-blend-mode: exclusion;
 }
 

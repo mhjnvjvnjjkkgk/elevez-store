@@ -513,6 +513,11 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
           />
         </button>
 
+        {/* Slanted sticker tag clipped inside bottom-left corner */}
+        <div className="absolute -bottom-2 -left-10 w-32 bg-[#00ff88] text-black text-[9px] font-black text-center py-1 border-[2px] border-black rotate-[25deg] z-20 select-none pointer-events-none shadow-[2px_2px_0px_0px_#000] tracking-widest uppercase">
+          {product.price > 500 ? "PREMIUM" : "LIMITED"}
+        </div>
+
         <img
           src={product.image}
           alt={product.name}
@@ -876,6 +881,7 @@ const ScrollAnimatedSection: React.FC<{
 // --- Best Sellers Section ---
 const BestSellers = () => {
   const navigate = useNavigate();
+  const { setCursorVariant } = useCursor();
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [bestSellers, setBestSellers] = useState<any[]>([]);
 
@@ -904,12 +910,33 @@ const BestSellers = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: false }}
-            className="text-center mb-16"
+            className="text-center mb-16 relative"
           >
-          <SectionHeader 
-            title="Best Sellers" 
-            subtitle="The pieces everyone's talking about. Limited stock available."
-          />
+            {/* Spinning Star Badge */}
+            <div className="absolute -top-16 right-12 md:right-[15%] hidden md:block z-20">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                className="w-24 h-24 bg-[#00ff88] border-[3px] border-black flex items-center justify-center cursor-pointer shadow-[6px_6px_0_0_#000]"
+                style={{ clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }}
+                whileHover={{ scale: 1.15 }}
+                onMouseEnter={() => setCursorVariant('hover')}
+                onMouseLeave={() => setCursorVariant('default')}
+              >
+                <motion.span 
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                  className="text-[10px] font-black text-black select-none uppercase mt-1 leading-none text-center px-1"
+                >
+                  HOT<br />DROP
+                </motion.span>
+              </motion.div>
+            </div>
+
+            <SectionHeader 
+              title="Best Sellers" 
+              subtitle="The pieces everyone's talking about. Limited stock available."
+            />
 
             {/* Neo Stats */}
             <div className="flex flex-wrap justify-center gap-8 mb-16">
@@ -932,8 +959,18 @@ const BestSellers = () => {
             </div>
           </motion.div>
 
+          {/* Background Caution Tape Marquees (Crossed behind the grid) */}
+          <div className="absolute inset-x-0 top-[35%] h-[250px] pointer-events-none z-0 overflow-hidden hidden lg:block opacity-[0.06]">
+            <div className="absolute top-10 inset-x-0 rotate-[-3deg] border-y-[4px] border-black bg-[#00ff88]">
+              <InfiniteMarquee text="HIGH DEMAND // SOLD OUT SOON // BEST SELLERS // SHOP NOW //" className="py-2 text-black text-sm font-black" />
+            </div>
+            <div className="absolute top-28 inset-x-0 rotate-[3deg] border-y-[4px] border-black bg-white">
+              <InfiniteMarquee text="ELEVEZ TOP ARCHIVE // ORIGINAL DESIGN // NO REPRINTS //" className="py-2 text-black text-sm font-black" />
+            </div>
+          </div>
+
           {/* Products Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16 relative z-10">
             {bestSellers.map((product, index) => (
               <ProductCard
                 key={product.id}
@@ -1454,6 +1491,33 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               alt="Elevez Right Model" 
               className="w-full h-full object-contain filter drop-shadow-[-6px_6px_0px_rgba(0,0,0,1)] hover:drop-shadow-[0_0_20px_#00ff88] transition-all duration-300"
             />
+            
+            {/* Cute glitched barcode sticker floating next to model */}
+            <motion.div
+              animate={{ 
+                y: [0, -10, 0],
+                rotate: [4, -4, 4]
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-[20%] -left-16 bg-white border-[3px] border-black p-3 shadow-[6px_6px_0px_0px_#000] rotate-[6deg] z-30 pointer-events-auto select-none hover:scale-110 hover:-rotate-[8deg] transition-all duration-200 cursor-pointer"
+              onMouseEnter={() => setCursorVariant('hover')}
+              onMouseLeave={() => setCursorVariant('default')}
+            >
+              <div className="flex flex-col items-center">
+                <span className="text-[9px] font-black tracking-widest text-black mb-1">SS26 LABS</span>
+                {/* Simulated Barcode */}
+                <div className="flex gap-[2px] h-8 items-end">
+                  {[2,3,1,2,1,4,1,2,3,1,2,1,3,1].map((w, idx) => (
+                    <div key={idx} className="bg-black h-full" style={{ width: `${w}px` }} />
+                  ))}
+                </div>
+                <span className="text-[8px] font-black tracking-widest text-black mt-1">CODE: ELVZ-SS26</span>
+              </div>
+            </motion.div>
           </motion.div>
 
           <motion.div
@@ -1478,6 +1542,21 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               <h1
                 className="text-6xl md:text-[5.5vw] font-black leading-none tracking-tighter font-syne cursor-default uppercase text-black relative mx-12 flex flex-col items-center justify-center text-center"
               >
+                {/* Rotating Target Crosshair background */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 m-auto w-[350px] h-[350px] pointer-events-none opacity-[0.05] z-0 flex items-center justify-center"
+                >
+                  <svg viewBox="0 0 100 100" className="w-full h-full text-black stroke-current stroke-[2] fill-none">
+                    <circle cx="50" cy="50" r="40" />
+                    <circle cx="50" cy="50" r="25" />
+                    <circle cx="50" cy="50" r="10" />
+                    <line x1="50" y1="5" x2="50" y2="95" />
+                    <line x1="5" y1="50" x2="95" y2="50" />
+                  </svg>
+                </motion.div>
+
                 {/* Brand Star Sticker */}
                 <motion.img
                   src="/stickers/neon_star.png"
