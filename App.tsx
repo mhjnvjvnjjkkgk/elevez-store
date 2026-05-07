@@ -1330,8 +1330,8 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const { scrollY } = useScroll();
   const [collectionFilter, setCollectionFilter] = useState<string>('All');
 
-  // Parallax Transforms
-  const heroTextY = useTransform(scrollY, [0, 500], [0, 200]);
+  // Parallax Transforms (Applied to the Main Hero Box for contained card scroll depth)
+  const heroTextY = useTransform(scrollY, [0, 500], [0, 120]);
   const heroImageY = useTransform(scrollY, [0, 500], [0, 100]);
   const videoSectionY = useTransform(scrollY, [0, 1000], [0, -100]);
 
@@ -1412,10 +1412,11 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           </div>
         </div>
 
-        {/* Main Hero Box */}
+        {/* Main Hero Box with Scroll Parallax */}
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
+          style={{ y: heroTextY }}
           className="relative z-10 text-center w-[95%] max-w-[1400px] mx-auto p-10 md:p-12 lg:p-20 bg-white border-[8px] border-black shadow-[24px_24px_0px_0px_#000] hover:shadow-[32px_32px_0px_0px_#00ff88] transition-all duration-500 flex flex-col justify-center min-h-[60vh] overflow-visible"
         >
           {/* Left High-Fashion Model */}
@@ -1453,7 +1454,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           </motion.div>
 
           <motion.div
-            style={{ y: heroTextY, x: heroMoveX }}
+            style={{ x: heroMoveX, y: heroMoveY }}
             className="flex-1 flex flex-col justify-center"
           >
             {/* Symmetrical System Active Header */}
@@ -1531,13 +1532,20 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             </div>
           </motion.div>
         </motion.div>
-
-        {/* Neo-Brutalist Marquee */}
-        <InfiniteMarquee text="NEW DROPS // LIMITED EDITION // PREMIUM STREETWEAR // FREE SHIPPING ON ORDERS OVER ₹999 // JOIN THE REWARDS PROGRAM" className="absolute bottom-0 left-0 w-full" />
       </section>
 
+      {/* Symmetrical X-Shaped Crossing Marquees */}
+      <div className="relative w-full h-80 overflow-hidden z-10 flex items-center justify-center -my-40 pointer-events-none select-none bg-white">
+        <div className="absolute w-[150%] transform -rotate-[4deg] z-10">
+          <InfiniteMarquee text="NEW DROPS // LIMITED EDITION // PREMIUM STREETWEAR // FREE SHIPPING ON ORDERS OVER ₹999 // JOIN THE REWARDS PROGRAM" className="py-4 shadow-[0_8px_0_0_#000]" />
+        </div>
+        <div className="absolute w-[150%] transform rotate-[4deg] z-20">
+          <InfiniteMarquee text="EXCELLENCE IN EVERY DETAIL // CUSTOM STITCHED // SS26 RUNWAY // ELEVEZ LABS" className="py-4 shadow-[0_8px_0_0_#000]" direction="right" />
+        </div>
+      </div>
+
       {/* Why Choose Elevez - Neobrutalist */}
-      <section className="py-24 relative z-10 bg-white border-t-[6px] border-black">
+      <section className="py-24 relative z-30 bg-white border-t-[8px] border-black shadow-[0_-16px_0_0_#000]">
         <div className="container mx-auto px-6">
           <SectionHeader 
             title="Why Elevez" 
