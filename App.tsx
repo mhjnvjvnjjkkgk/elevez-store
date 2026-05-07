@@ -1535,7 +1535,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       </section>
 
       {/* Symmetrical X-Shaped Crossing Marquees */}
-      <div className="relative w-full h-80 overflow-hidden z-10 flex items-center justify-center -my-16 pointer-events-none select-none bg-white">
+      <div className="relative w-[95%] max-w-[1400px] mx-auto h-80 overflow-hidden z-10 flex items-center justify-center -my-16 pointer-events-none select-none bg-white border-x-[8px] border-black">
         <div className="absolute w-[150%] transform -rotate-[4deg] z-10">
           <InfiniteMarquee text="NEW DROPS // LIMITED EDITION // PREMIUM STREETWEAR // FREE SHIPPING ON ORDERS OVER ₹999 // JOIN THE REWARDS PROGRAM" className="py-4 shadow-[0_8px_0_0_#000]" />
         </div>
