@@ -484,7 +484,7 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
     >
       <Link
         to={`/product/${product.id}`}
-        className="relative block overflow-hidden bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] group-hover:shadow-[16px_16px_0px_0px_#00ff88] transition-all duration-300 aspect-[4/5]"
+        className="relative block overflow-hidden bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] group-hover:shadow-[16px_16px_0px_0px_#00ff88] transition-all duration-300 aspect-[4/5] group-hover:scale-[1.02]"
         onMouseEnter={onHoverStart}
       >
         {/* Badges */}
@@ -516,21 +516,21 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         <img
           src={product.image}
           alt={product.name}
-          className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500"
+          className="object-cover w-full h-full transition-all duration-500"
           style={{
-            filter: rotateX !== 0 || rotateY !== 0 ? 'url(#liquid-filter) grayscale(0)' : 'grayscale(100%)',
+            filter: rotateX !== 0 || rotateY !== 0 ? 'url(#liquid-filter)' : 'none',
           }}
           loading="lazy"
         />
 
         {/* Quick View Overlay Button */}
-        <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 bg-white border-t-[3px] border-black flex justify-center items-center pb-6">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 z-30 pointer-events-none">
           <button
             onClick={(e) => {
               e.preventDefault();
               openQuickView(product);
             }}
-            className="bg-[#00ff88] text-black font-black py-2 px-4 border-[3px] border-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_#000]"
+            className="bg-[#00ff88] text-black font-black py-2 px-6 border-[3px] border-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_#000] whitespace-nowrap text-sm pointer-events-auto"
           >
             Quick View
           </button>
