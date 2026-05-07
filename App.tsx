@@ -1691,7 +1691,6 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             </div>
           </motion.div>
         </section>
-      </ScrollAnimatedSection>
 
         {/* Redefining Modern Fashion */}
         <section className="py-24 bg-zinc-950/80 backdrop-blur-sm">
