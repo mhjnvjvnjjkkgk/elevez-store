@@ -1402,7 +1402,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       <section 
         onMouseMove={handleHeroMouseMove}
         onMouseLeave={handleHeroMouseLeave}
-        className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-36 pb-16 px-4 z-10 bg-white"
+        className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-36 pb-16 px-4 z-20 bg-white border-b-[8px] border-black shadow-[0_16px_0_0_#000]"
       >
         
         {/* Large Decorative Text (Neo-Brutalist Style) */}
@@ -1535,7 +1535,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       </section>
 
       {/* Symmetrical X-Shaped Crossing Marquees */}
-      <div className="relative w-full h-80 overflow-hidden z-10 flex items-center justify-center -my-40 pointer-events-none select-none bg-white">
+      <div className="relative w-full h-80 overflow-hidden z-10 flex items-center justify-center -my-16 pointer-events-none select-none bg-white">
         <div className="absolute w-[150%] transform -rotate-[4deg] z-10">
           <InfiniteMarquee text="NEW DROPS // LIMITED EDITION // PREMIUM STREETWEAR // FREE SHIPPING ON ORDERS OVER ₹999 // JOIN THE REWARDS PROGRAM" className="py-4 shadow-[0_8px_0_0_#000]" />
         </div>
