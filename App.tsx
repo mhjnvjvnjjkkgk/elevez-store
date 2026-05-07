@@ -476,19 +476,32 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
 
   return (
     <motion.div 
-      className="group h-full"
+      className="group h-full relative"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       animate={{ rotateX, rotateY }}
       style={{ perspective: 1000 }}
     >
-      <Link
-        to={`/product/${product.id}`}
-        className="relative block overflow-hidden bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] group-hover:shadow-[16px_16px_0px_0px_#00ff88] transition-all duration-300 aspect-[4/5] group-hover:scale-105"
-        onMouseEnter={onHoverStart}
-      >
+      <div className="relative block overflow-hidden bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] group-hover:shadow-[16px_16px_0px_0px_#00ff88] transition-all duration-300 aspect-[4/5] group-hover:scale-105">
+        {/* Clickable Image Link Layer */}
+        <Link
+          to={`/product/${product.id}`}
+          className="absolute inset-0 w-full h-full z-10"
+          onMouseEnter={onHoverStart}
+        >
+          <img
+            src={product.image}
+            alt={product.name}
+            className="object-cover w-full h-full transition-all duration-500"
+            style={{
+              filter: rotateX !== 0 || rotateY !== 0 ? 'url(#liquid-filter)' : 'none',
+            }}
+            loading="lazy"
+          />
+        </Link>
+
         {/* Badges */}
-        <div className="absolute top-3 left-3 z-20 flex flex-col gap-2">
+        <div className="absolute top-3 left-3 z-20 flex flex-col gap-2 pointer-events-none select-none">
           <div className="bg-red-500 text-white text-[10px] font-black px-2 py-1 uppercase tracking-wider border-[2px] border-black shadow-[2px_2px_0px_0px_#000]">
             <GlitchText text="50% OFF" triggerOnHover={false} />
           </div>
@@ -502,7 +515,7 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         {/* Wishlist Heart Button */}
         <button
           onClick={handleWishlistToggle}
-          className="absolute top-3 right-3 z-20 w-10 h-10 bg-white border-[3px] border-black flex items-center justify-center hover:bg-[#00ff88] transition-all shadow-[3px_3px_0px_0px_#000]"
+          className="absolute top-3 right-3 z-30 w-10 h-10 bg-white border-[3px] border-black flex items-center justify-center hover:bg-[#00ff88] transition-all shadow-[3px_3px_0px_0px_#000]"
         >
           <Heart
             size={20}
@@ -518,30 +531,16 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
           {product.price > 500 ? "PREMIUM" : "LIMITED"}
         </div>
 
-        <img
-          src={product.image}
-          alt={product.name}
-          className="object-cover w-full h-full transition-all duration-500"
-          style={{
-            filter: rotateX !== 0 || rotateY !== 0 ? 'url(#liquid-filter)' : 'none',
-          }}
-          loading="lazy"
-        />
-
         {/* Quick View Overlay Button */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 z-30">
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              openQuickView(product);
-            }}
-            className="bg-[#00ff88] text-black font-black py-2 px-6 border-[3px] border-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_#000] whitespace-nowrap text-sm"
+            onClick={() => openQuickView(product)}
+            className="bg-[#00ff88] text-black font-black py-2 px-6 border-[3px] border-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_#000] whitespace-nowrap text-sm cursor-pointer"
           >
             Quick View
           </button>
         </div>
-      </Link>
+      </div>
 
       <div className="mt-6 p-2 bg-white border-[3px] border-black shadow-[4px_4px_0px_0px_#000]">
         <h3 className="text-lg font-black text-black uppercase font-syne line-clamp-1">{product.name}</h3>
