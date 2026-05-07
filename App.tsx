@@ -1602,11 +1602,44 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-16"
+            className="mb-16 relative py-10"
           >
-            <h2 className="text-6xl md:text-8xl font-black text-center font-syne uppercase tracking-tighter" style={{ WebkitTextStroke: '2px black', color: 'transparent' }}>
+            {/* Brutalist accents */}
+            <motion.div 
+              animate={{ rotate: 360 }} 
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              className="absolute left-4 md:left-1/4 top-0 w-16 h-16 bg-[#00ff88] border-[4px] border-black hidden md:block z-0"
+              style={{ clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }}
+            />
+            
+            <motion.div 
+              animate={{ y: [0, -15, 0] }} 
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute right-4 md:right-1/4 bottom-0 w-auto px-4 h-10 bg-black border-[3px] border-black hidden md:flex items-center justify-center shadow-[6px_6px_0_0_#00ff88] z-20 hover:scale-110 transition-transform"
+            >
+              <span className="text-[#00ff88] text-xs font-black tracking-widest uppercase">RESTRICTED ACCESS</span>
+            </motion.div>
+
+            <h2 
+              className="text-7xl md:text-9xl font-black text-center font-syne uppercase tracking-tighter hover:scale-105 transition-transform duration-300 relative z-10" 
+              style={{ 
+                WebkitTextStroke: '4px black', 
+                color: 'white', 
+                textShadow: '10px 10px 0px #00ff88, 20px 20px 0px black' 
+              }}
+              onMouseEnter={() => setCursorVariant('hover')}
+              onMouseLeave={() => setCursorVariant('default')}
+            >
               The Vault
             </h2>
+            
+            <div className="text-center mt-12 relative z-10">
+              <span className="inline-block bg-black text-white px-8 py-3 border-[4px] border-black font-black uppercase tracking-widest text-sm md:text-lg shadow-[6px_6px_0_0_#00ff88] hover:bg-[#00ff88] hover:text-black transition-colors cursor-pointer"
+                    onMouseEnter={() => setCursorVariant('hover')}
+                    onMouseLeave={() => setCursorVariant('default')}>
+                /// INVENTORY UNLOCKED ///
+              </span>
+            </div>
           </motion.div>
 
           {/* Category Vise Divider (Massive Buttons) */}
