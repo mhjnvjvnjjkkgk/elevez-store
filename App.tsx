@@ -1402,7 +1402,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       <section 
         onMouseMove={handleHeroMouseMove}
         onMouseLeave={handleHeroMouseLeave}
-        className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-36 pb-16 px-4 z-20 bg-white border-b-[8px] border-black shadow-[0_16px_0_0_#000]"
+        className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-36 pb-16 px-4 z-20 bg-white"
       >
         
         {/* Large Decorative Text (Neo-Brutalist Style) */}
@@ -1545,7 +1545,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       </div>
 
       {/* Why Choose Elevez - Neobrutalist */}
-      <section className="py-24 relative z-30 bg-white border-t-[8px] border-black shadow-[0_-16px_0_0_#000]">
+      <section className="py-24 relative z-30 bg-white">
         <div className="container mx-auto px-6">
           <SectionHeader 
             title="Why Elevez" 
