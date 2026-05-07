@@ -5,11 +5,12 @@ interface InteractiveTextProps {
   text: string;
   className?: string;
   delay?: number;
+  style?: React.CSSProperties;
 }
 
-export const InteractiveText: React.FC<InteractiveTextProps> = ({ text, className = "", delay = 0 }) => {
+export const InteractiveText: React.FC<InteractiveTextProps> = ({ text, className = "", delay = 0, style }) => {
   return (
-    <div className={`inline-flex flex-wrap gap-x-[0.25em] ${className}`}>
+    <div className={`inline-flex flex-wrap justify-center gap-x-[0.25em] ${className}`} style={style}>
       {text.split(" ").map((word, i) => (
         <span key={i} className="inline-flex whitespace-nowrap overflow-visible">
           {word.split("").map((char, j) => (
