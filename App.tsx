@@ -524,13 +524,14 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         />
 
         {/* Quick View Overlay Button */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 z-30 pointer-events-none">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 z-30">
           <button
             onClick={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               openQuickView(product);
             }}
-            className="bg-[#00ff88] text-black font-black py-2 px-6 border-[3px] border-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_#000] whitespace-nowrap text-sm pointer-events-auto"
+            className="bg-[#00ff88] text-black font-black py-2 px-6 border-[3px] border-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_#000] whitespace-nowrap text-sm"
           >
             Quick View
           </button>
