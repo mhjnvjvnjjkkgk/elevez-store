@@ -1604,10 +1604,10 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
               <Magnetic>
                 <button
-                  onClick={() => navigate('/about')}
+                  onClick={() => navigate('/rewards')}
                   className="px-12 py-6 bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-black font-black text-xl tracking-widest uppercase"
                 >
-                  Explore More
+                  Join Rewards
                 </button>
               </Magnetic>
             </div>
@@ -1802,46 +1802,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             </div>
           </motion.div>
         </section>
-
-        {/* Redefining Modern Fashion */}
-        <section className="py-24 bg-zinc-950/80 backdrop-blur-sm">
-          <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ x: -50, opacity: 0 }}
-              whileInView={{ x: 0, opacity: 1 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-5xl md:text-7xl font-bold leading-tight mb-8 font-syne">
-                Redefining<br />
-                <span className="text-white">Modern Fashion</span>
-              </h2>
-              <p className="text-zinc-400 text-lg leading-relaxed mb-8">
-                At Elevez, we believe clothing is more than fabricΓÇöit's an expression of identity.
-                Each piece is meticulously crafted with sustainable materials and innovative design.
-              </p>
-              <MagneticButton
-                onClick={() => navigate('/about')}
-                className="px-8 py-4 rounded-full border border-[#00ff88]"
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-              >
-                <span className="text-[#00ff88] group-hover:text-black font-bold uppercase tracking-widest">Our Story</span>
-              </MagneticButton>
-            </motion.div>
-
-            <TiltCard className="h-[600px] rounded-3xl overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80&w=800"
-                alt="Studio"
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 hover:scale-110"
-              />
-            </TiltCard>
-          </div>
-        </section>
       </ScrollAnimatedSection>
-
-      {/* Core Protocol Manifesto */}
-      <CoreProtocol />
 
       {/* Newsletter Signup - End of Page */}
       <NewsletterSyndicate />
@@ -3815,7 +3776,7 @@ const Navbar = () => {
           </Link>
 
           <div className="hidden lg:flex items-center gap-8">
-            {['Home', 'Men', 'Women', 'Collections', 'About', 'Rewards', 'Contact'].map((item) => (
+            {['Home', 'Men', 'Women', 'Collections', 'Rewards', 'Contact'].map((item) => (
               <Magnetic key={item}>
                 <Link 
                   to={item === 'Home' ? '/' : item === 'Collections' ? '/shop/all' : item === 'Men' ? '/shop/men' : item === 'Women' ? '/shop/women' : `/${item.toLowerCase()}`}
@@ -3874,7 +3835,7 @@ const Navbar = () => {
             </div>
 
             <nav className="flex flex-col gap-8">
-              {['Home', 'Men', 'Women', 'Collections', 'About', 'Rewards', 'Contact'].map((item, i) => (
+              {['Home', 'Men', 'Women', 'Collections', 'Rewards', 'Contact'].map((item, i) => (
                 <motion.div
                   key={item}
                   initial={{ opacity: 0, x: -50 }}
@@ -3915,23 +3876,6 @@ const Navbar = () => {
 const Footer = () => (
   <footer className="bg-white border-t-[8px] border-black pt-24 pb-12 relative z-10">
     <div className="container mx-auto px-6">
-      {/* Loyalty Program Teaser */}
-      <div className="mb-24 bg-[#00ff88] border-[6px] border-black p-12 shadow-[16px_16px_0px_0px_#000] text-center">
-        <div className="flex items-center justify-center gap-6 mb-6">
-          <Gift className="w-16 h-16 text-black" />
-          <VelocityHeader text="Join Our Rewards" className="!text-5xl md:!text-6xl" />
-        </div>
-        <p className="text-black font-black uppercase text-xl mb-10 max-w-3xl mx-auto tracking-tight">
-          Earn points with every purchase, unlock exclusive tiers, and get amazing discounts. Start earning today!
-        </p>
-        <Link
-          to="/rewards"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="inline-block px-12 py-5 bg-black text-[#00ff88] border-[4px] border-black font-black uppercase text-xl tracking-widest shadow-[8px_8px_0px_0px_#fff] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
-        >
-          Access Rewards Portal
-        </Link>
-      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
         <div className="space-y-8">
@@ -4060,7 +4004,6 @@ const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => vo
         <Route path="/account" element={<PageTransition><Account setCursorVariant={setCursorVariant} /></PageTransition>} />
         <Route path="/rewards" element={<PageTransition><RewardsPage /></PageTransition>} />
         <Route path="/order/:orderId" element={<PageTransition><OrderDetail /></PageTransition>} />
-        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
       </Routes>
     </AnimatePresence>
