@@ -484,7 +484,7 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
     >
       <Link
         to={`/product/${product.id}`}
-        className="relative block overflow-hidden bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] group-hover:shadow-[16px_16px_0px_0px_#00ff88] transition-all duration-300 aspect-[4/5] group-hover:scale-[1.02]"
+        className="relative block overflow-hidden bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] group-hover:shadow-[16px_16px_0px_0px_#00ff88] transition-all duration-300 aspect-[4/5] group-hover:scale-105"
         onMouseEnter={onHoverStart}
       >
         {/* Badges */}
