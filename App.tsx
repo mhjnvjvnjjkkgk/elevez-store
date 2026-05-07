@@ -2128,10 +2128,29 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
           <ArrowLeft size={16} /> Back to Archives
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
           {/* Left Column - Images */}
-          <div className="lg:col-span-7">
-            <div className="relative w-full aspect-[4/5] border-[6px] border-black bg-white shadow-[16px_16px_0px_0px_#000] mb-8 group overflow-hidden">
+          <div className="lg:col-span-6 bg-white border-[8px] border-black p-6 md:p-8 shadow-[16px_16px_0px_0px_#000] relative">
+            {/* Decorative Spinning Stamp */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+              className="absolute -top-10 -left-10 w-24 h-24 bg-[#00ff88] border-[3px] border-black hidden xl:flex items-center justify-center z-20 cursor-pointer shadow-[4px_4px_0_0_#000]"
+              style={{ clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }}
+              whileHover={{ scale: 1.15 }}
+              onMouseEnter={() => setCursorVariant('hover')}
+              onMouseLeave={() => setCursorVariant('default')}
+            >
+              <motion.span 
+                animate={{ rotate: -360 }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                className="text-[9px] font-black text-black select-none uppercase tracking-tighter text-center leading-none mt-1"
+              >
+                DRIP<br />VERIFIED
+              </motion.span>
+            </motion.div>
+
+            <div className="relative w-full aspect-[4/5] border-[4px] border-black bg-white mb-8 group overflow-hidden">
               <img
                 src={activeImage}
                 alt={product.name}
@@ -2147,7 +2166,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                 <button
                   key={idx}
                   onClick={() => setActiveImage(img)}
-                  className={`aspect-square border-[3px] border-black transition-all ${activeImage === img ? 'bg-[#00ff88] shadow-[4px_4px_0px_0px_#000]' : 'bg-white hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_#000]'}`}
+                  className={`aspect-square border-[3px] border-black transition-all ${activeImage === img ? 'bg-[#00ff88] shadow-[4px_4px_0px_0px_#000] scale-105' : 'bg-white hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_#000]'}`}
                 >
                   <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
                 </button>
@@ -2156,15 +2175,25 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
           </div>
 
           {/* Right Column - Details */}
-          <div className="lg:col-span-5 flex flex-col">
-            <div className="flex items-center gap-3 mb-4 font-black uppercase text-sm">
+          <div className="lg:col-span-6 bg-white border-[8px] border-black p-6 md:p-10 shadow-[16px_16px_0px_0px_#000] flex flex-col relative overflow-hidden">
+            {/* Corner Decorative Star Badge */}
+            <motion.div
+              animate={{ rotate: -360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="absolute -top-6 -right-6 w-16 h-16 bg-black border-[3px] border-white flex items-center justify-center opacity-10 pointer-events-none"
+              style={{ clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }}
+            />
+
+            <div className="flex items-center gap-3 mb-4 font-black uppercase text-xs">
               <span className="bg-black text-white px-3 py-1">Premium Collection</span>
               <GlitchText text={product.category} className="text-black" />
             </div>
 
-            <VelocityHeader text={product.name} className="mb-6 !text-left" />
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-black leading-[0.95] mb-6 font-syne uppercase tracking-tighter relative cursor-default select-none pb-4 border-b-[4px] border-black">
+              {product.name}
+            </h1>
 
-            <div className="flex items-center gap-6 mb-8">
+            <div className="flex items-center gap-6 mb-4">
               <div className="text-5xl font-black text-black">
                 ₹<GlitchText text={product.price.toString()} triggerOnHover={false} />
               </div>
@@ -2174,7 +2203,12 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               </div>
             </div>
 
-            <p className="text-black font-bold uppercase text-lg leading-tight mb-10 border-l-[6px] border-black pl-6 italic">
+            {/* Horizontal Warning Tape */}
+            <div className="my-6 -mx-12 border-y-[4px] border-black bg-yellow-300 text-black py-2 overflow-hidden flex-shrink-0 select-none pointer-events-none">
+              <InfiniteMarquee text="⚠️ STREETWEAR PROTOCOL // SS26 DROP // 100% PREMIUM COTTON // HEAVYWEIGHT 240 GSM // NO REPRINTS ⚠️" className="py-1 text-black text-[10px] font-black tracking-widest" />
+            </div>
+
+            <p className="text-black font-bold uppercase text-base leading-tight mb-8 border-l-[6px] border-black pl-6 italic">
               {product.description || 'Premium quality streetwear with personality-driven design. Engineered for durability and style in the urban environment.'}
             </p>
 
@@ -2280,7 +2314,12 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
 
         {/* More Like This */}
         <div className="mt-40">
-          <h2 className="text-4xl font-bold mb-12 border-l-4 border-[#00ff88] pl-6">More Like This</h2>
+          <div className="border-b-[4px] border-black pb-4 mb-12 flex justify-between items-end">
+            <h2 className="text-3xl md:text-4xl font-black font-syne uppercase tracking-tighter text-black">
+              More Like This
+            </h2>
+            <span className="text-xs font-bold uppercase tracking-widest text-black opacity-60">RECOMMENDED PROTOCOL</span>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4).map(p => (
               <ProductCard
