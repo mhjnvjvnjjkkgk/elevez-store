@@ -603,18 +603,18 @@ const QuickViewModal = () => {
           </button>
 
           {/* Image Side */}
-          <div className="md:w-1/2 relative h-64 md:h-full border-r-[4px] border-black">
+          <div className="w-full md:w-1/2 relative h-[300px] md:h-auto min-h-[300px] border-b-[4px] md:border-b-0 md:border-r-[4px] border-black bg-black">
             <img
               src={activeProduct.image}
               alt={activeProduct.name}
-              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+              className="absolute inset-0 w-full h-full object-cover"
               loading="eager"
             />
           </div>
 
           {/* Details Side */}
-          <div className="md:w-1/2 p-10 flex flex-col h-full overflow-y-auto">
-            <div className="mb-10">
+          <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col h-full min-h-0 overflow-y-auto">
+            <div className="mb-10 flex-shrink-0">
               <div className="flex items-center gap-3 mb-4">
                 <span className="bg-[#00ff88] text-black text-[10px] font-black px-3 py-1 border-[2px] border-black uppercase tracking-widest">In Stock</span>
                 {activeProduct.tags?.includes('BESTSELLER') && <span className="bg-black text-white text-[10px] font-black px-3 py-1 border-[2px] border-black uppercase tracking-widest">Best Seller</span>}
@@ -627,7 +627,7 @@ const QuickViewModal = () => {
             </div>
 
             {/* Color Selection */}
-            <div className="mb-8">
+            <div className="mb-8 flex-shrink-0">
               <h3 className="text-xs font-black uppercase text-black opacity-40 mb-4 tracking-widest">Select Color: <span className="text-black opacity-100">{selectedColor}</span></h3>
               <div className="flex flex-wrap gap-4">
                 {activeProduct.colors?.map(color => (
@@ -643,7 +643,7 @@ const QuickViewModal = () => {
             </div>
 
             {/* Size Selection */}
-            <div className="mb-10">
+            <div className="mb-10 flex-shrink-0">
               <h3 className="text-xs font-black uppercase text-black opacity-40 mb-4 tracking-widest">Select Size: <span className="text-black opacity-100">{selectedSize}</span></h3>
               <div className="flex gap-4">
                 {['XS', 'S', 'M', 'L', 'XL'].map(size => (
