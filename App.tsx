@@ -1419,6 +1419,20 @@ const DualPriceSlider = ({
     };
   }, [activeThumb, value, min, max, onChange]);
 
+  useEffect(() => {
+    if (activeThumb !== null) {
+      document.body.style.userSelect = 'none';
+      document.body.style.webkitUserSelect = 'none';
+    } else {
+      document.body.style.userSelect = '';
+      document.body.style.webkitUserSelect = '';
+    }
+    return () => {
+      document.body.style.userSelect = '';
+      document.body.style.webkitUserSelect = '';
+    };
+  }, [activeThumb]);
+
   const minPercent = ((value[0] - min) / (max - min)) * 100;
   const maxPercent = ((value[1] - min) / (max - min)) * 100;
 
@@ -4105,14 +4119,14 @@ const OptimizedCursor = ({ variant }: { variant: CursorVariant }) => {
   const isHover = variant !== 'default';
 
   useEffect(() => {
-    const onMouseMove = (e: MouseEvent) => {
+    const onPointerMove = (e: PointerEvent) => {
       if (cursorRef.current) {
         cursorRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
       }
     };
     // Use capture to ensure we get the event first/consistently
-    window.addEventListener("mousemove", onMouseMove, { passive: true, capture: true });
-    return () => window.removeEventListener("mousemove", onMouseMove, { capture: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true, capture: true });
+    return () => window.removeEventListener("pointermove", onPointerMove, { capture: true });
   }, []);
 
   return (
