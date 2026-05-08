@@ -1362,10 +1362,151 @@ const InteractiveGradientBackground = () => {
 
 // --- Pages ---
 
+const DualPriceSlider = ({ 
+  min, 
+  max, 
+  value, 
+  onChange, 
+  setCursorVariant 
+}: { 
+  min: number; 
+  max: number; 
+  value: [number, number]; 
+  onChange: (val: [number, number]) => void;
+  setCursorVariant: (v: any) => void;
+}) => {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const activeThumbRef = useRef<'min' | 'max' | null>(null);
+
+  const calculateValue = (clientX: number) => {
+    if (!trackRef.current) return 0;
+    const rect = trackRef.current.getBoundingClientRect();
+    const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    return Math.round(min + percentage * (max - min));
+  };
+
+  const handlePointerDown = (thumb: 'min' | 'max', e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    activeThumbRef.current = thumb;
+    if (trackRef.current) {
+      trackRef.current.setPointerCapture(e.pointerId);
+    }
+    setCursorVariant('hover');
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (activeThumbRef.current === null) return;
+    const newVal = calculateValue(e.clientX);
+    
+    // Step size of 50 for quick responsiveness
+    const roundedVal = Math.round(newVal / 50) * 50;
+    const clampedVal = Math.max(min, Math.min(max, roundedVal));
+
+    if (activeThumbRef.current === 'min') {
+      const nextMin = Math.min(clampedVal, value[1] - 50);
+      onChange([nextMin, value[1]]);
+    } else {
+      const nextMax = Math.max(clampedVal, value[0] + 50);
+      onChange([value[0], nextMax]);
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (activeThumbRef.current === null) return;
+    if (trackRef.current) {
+      trackRef.current.releasePointerCapture(e.pointerId);
+    }
+    activeThumbRef.current = null;
+    setCursorVariant('default');
+  };
+
+  const minPercent = ((value[0] - min) / (max - min)) * 100;
+  const maxPercent = ((value[1] - min) / (max - min)) * 100;
+
+  return (
+    <div className="w-full max-w-2xl mx-auto px-6 py-6 bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] mb-16 relative z-10 hover:shadow-[12px_12px_0px_0px_#000] transition-all duration-300">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+        <div className="flex items-center gap-2">
+          <SlidersHorizontal className="w-6 h-6 text-black" />
+          <span className="text-xl font-black uppercase tracking-widest text-black">
+            SELECT PRICE RANGE
+          </span>
+        </div>
+        <div className="flex items-center gap-2 font-price text-lg font-black text-black">
+          <span className="bg-[#00ff88] text-black px-4 py-1.5 border-[3px] border-black shadow-[4px_4px_0px_0px_#000] uppercase tracking-wider">
+            ₹{value[0]}
+          </span>
+          <span className="font-black text-2xl px-1 text-black">-</span>
+          <span className="bg-[#00ff88] text-black px-4 py-1.5 border-[3px] border-black shadow-[4px_4px_0px_0px_#000] uppercase tracking-wider">
+            ₹{value[1]}
+          </span>
+        </div>
+      </div>
+
+      <div className="relative py-4 select-none">
+        <div 
+          ref={trackRef} 
+          className="relative h-5 bg-gray-100 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] cursor-pointer touch-none"
+          onPointerDown={(e) => {
+            const newVal = calculateValue(e.clientX);
+            const roundedVal = Math.round(newVal / 50) * 50;
+            const clampedVal = Math.max(min, Math.min(max, roundedVal));
+            
+            if (Math.abs(clampedVal - value[0]) < Math.abs(clampedVal - value[1])) {
+              onChange([Math.min(clampedVal, value[1] - 50), value[1]]);
+            } else {
+              onChange([value[0], Math.max(clampedVal, value[0] + 50)]);
+            }
+          }}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+        >
+          <div 
+            className="absolute h-full bg-[#00ff88] border-r-[4px] border-l-[4px] border-black transition-all duration-75" 
+            style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }}
+          />
+          
+          <div 
+            className="absolute top-1/2 -translate-y-1/2 -ml-4 w-8 h-10 bg-white border-[4px] border-black shadow-[3px_3px_0px_0px_#000] cursor-grab active:cursor-grabbing hover:bg-[#00ff88] hover:scale-105 active:scale-95 transition-all duration-75 select-none"
+            style={{ left: `${minPercent}%` }}
+            onPointerDown={(e) => handlePointerDown('min', e)}
+          >
+            <div className="flex justify-center items-center gap-[2px] h-full">
+              <div className="w-[3px] h-4 bg-black" />
+              <div className="w-[3px] h-4 bg-black" />
+              <div className="w-[3px] h-4 bg-black" />
+            </div>
+          </div>
+
+          <div 
+            className="absolute top-1/2 -translate-y-1/2 -ml-4 w-8 h-10 bg-white border-[4px] border-black shadow-[3px_3px_0px_0px_#000] cursor-grab active:cursor-grabbing hover:bg-[#00ff88] hover:scale-105 active:scale-95 transition-all duration-75 select-none"
+            style={{ left: `${maxPercent}%` }}
+            onPointerDown={(e) => handlePointerDown('max', e)}
+          >
+            <div className="flex justify-center items-center gap-[2px] h-full">
+              <div className="w-[3px] h-4 bg-black" />
+              <div className="w-[3px] h-4 bg-black" />
+              <div className="w-[3px] h-4 bg-black" />
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex justify-between items-center mt-2 text-xs font-black uppercase text-gray-500 tracking-wider">
+        <span>MIN: ₹{min}</span>
+        <span className="text-[10px] tracking-widest text-[#00ff88] animate-pulse">● ADJUST RANGE DRAG POINTS</span>
+        <span>MAX: ₹{max}</span>
+      </div>
+    </div>
+  );
+};
+
 const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const navigate = useNavigate();
   const { scrollY } = useScroll();
   const [collectionFilter, setCollectionFilter] = useState<string>('All');
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
 
   // Parallax Transforms (Applied to the Main Hero Box for contained card scroll depth)
   const heroTextY = useTransform(scrollY, [0, 500], [0, 120]);
@@ -1407,10 +1548,13 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const rightModelSpringY = useSpring(rightModelY, { stiffness: 100, damping: 25 });
   const rightModelSpringRotate = useSpring(rightModelRotate, { stiffness: 100, damping: 25 });
 
-  // Filter products based on collection filter
+  // Filter products based on collection filter and price range slider (cumulative)
   const filteredProducts = PRODUCTS.filter(p => {
     // Only show products that are enabled for homepage
     if (p.showInHome === false) return false;
+
+    // Apply dual-thumb price filter (Flipkart / Amazon style)
+    if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
 
     const lowerType = (p.type || '').toLowerCase();
     
@@ -1419,8 +1563,6 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     if (collectionFilter === 'T-SHIRTS') return lowerType.includes('t-shirt') || lowerType.includes('tee');
     if (collectionFilter === 'CROP TOPS') return lowerType.includes('crop top');
     if (collectionFilter === 'OVERSIZED TSHIRTS') return lowerType.includes('oversized');
-    if (collectionFilter === 'UNDER ₹50') return p.price < 50;
-    if (collectionFilter === '₹100+') return p.price >= 100;
     
     return p.isBestSeller;
   });
@@ -1727,8 +1869,8 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           </motion.div>
 
           {/* Category Vise Divider (Massive Buttons) */}
-          <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-24">
-            {['All', 'HOODIES', 'T-SHIRTS', 'CROP TOPS', 'OVERSIZED TSHIRTS', 'UNDER ₹50', '₹100+'].map((filter, i) => (
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-12">
+            {['All', 'HOODIES', 'T-SHIRTS', 'CROP TOPS', 'OVERSIZED TSHIRTS'].map((filter, i) => (
               <button
                 key={filter}
                 onClick={() => setCollectionFilter(filter)}
@@ -1740,6 +1882,15 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               </button>
             ))}
           </div>
+
+          {/* Premium Dual-Thumb Price Slider */}
+          <DualPriceSlider
+            min={0}
+            max={5000}
+            value={priceRange}
+            onChange={(val) => setPriceRange(val)}
+            setCursorVariant={setCursorVariant}
+          />
 
           {/* Dynamic Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
