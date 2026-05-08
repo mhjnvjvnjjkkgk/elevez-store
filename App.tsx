@@ -954,7 +954,7 @@ const BestSellers = () => {
 
   return (
     <ScrollAnimatedSection>
-      <section className="min-h-screen relative flex items-center justify-center py-24 px-6 bg-white border-t-[6px] border-black">
+      <section className="min-h-screen relative flex items-center justify-center py-24 px-6 bg-white">
         <div className="max-w-7xl w-full relative z-10">
           {/* Header */}
           <motion.div
@@ -1679,37 +1679,43 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       </div>
 
       {/* Why Choose Elevez - Neobrutalist */}
-      <section className="py-24 relative z-30 bg-white">
-        <div className="container mx-auto px-6">
-          <SectionHeader 
-            title="Why Elevez" 
-            subtitle="Excellence in every detail, innovation in every stitch"
-          />
+      <ScrollAnimatedSection>
+        <section className="py-24 relative z-30 bg-white">
+          <div className="container mx-auto px-6">
+            <SectionHeader 
+              title="Why Elevez" 
+              subtitle="Excellence in every detail, innovation in every stitch"
+            />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
-            {[
-              { icon: Truck, title: "3-Day Express", desc: "Lightning-fast shipping straight to your doorstep.", tag: "3 Days" },
-              { icon: Shield, title: "180gsm Premium", desc: "Superior quality cotton that breathes and lasts.", tag: "180gsm" },
-              { icon: Award, title: "Excellent Designs", desc: "Award-winning patterns that stand out.", tag: "Winner" },
-              { icon: Star, title: "Personality-Driven", desc: "Each piece tells your unique story.", tag: "Style" }
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-white border-[4px] border-black p-5 md:p-6 relative group hover:shadow-[10px_10px_0px_0px_#00ff88] transition-all duration-300 shadow-[6px_6px_0px_0px_#000] hover:translate-x-[-2px] hover:translate-y-[-2px]"
-              >
-                <div className="absolute -top-4 -right-2 bg-black text-[#00ff88] text-[10px] font-black px-3 py-0.5 uppercase tracking-widest border-[2px] border-black shadow-[2px_2px_0px_0px_#000]">
-                  {item.tag}
-                </div>
-                <div className="w-12 h-12 bg-[#00ff88] border-[3px] border-black flex items-center justify-center mb-5 shadow-[3px_3px_0px_0px_#000]">
-                  <item.icon className="w-6 h-6 text-black" />
-                </div>
-                <h3 className="text-xl md:text-2xl font-black mb-3 font-syne uppercase text-black leading-none">{item.title}</h3>
-                <p className="text-black font-black text-xs md:text-sm leading-snug uppercase tracking-tight">{item.desc}</p>
-              </div>
-            ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
+              {[
+                { icon: Truck, title: "3-Day Express", desc: "Lightning-fast shipping straight to your doorstep.", tag: "3 Days" },
+                { icon: Shield, title: "180gsm Premium", desc: "Superior quality cotton that breathes and lasts.", tag: "180gsm" },
+                { icon: Award, title: "Excellent Designs", desc: "Award-winning patterns that stand out.", tag: "Winner" },
+                { icon: Star, title: "Personality-Driven", desc: "Each piece tells your unique story.", tag: "Style" }
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  className="bg-white border-[4px] border-black p-5 md:p-6 relative group hover:shadow-[10px_10px_0px_0px_#00ff88] transition-all duration-300 shadow-[6px_6px_0px_0px_#000] hover:translate-x-[-2px] hover:translate-y-[-2px]"
+                >
+                  <div className="absolute -top-4 -right-2 bg-black text-[#00ff88] text-[10px] font-black px-3 py-0.5 uppercase tracking-widest border-[2px] border-black shadow-[2px_2px_0px_0px_#000]">
+                    {item.tag}
+                  </div>
+                  <div className="w-12 h-12 bg-[#00ff88] border-[3px] border-black flex items-center justify-center mb-5 shadow-[3px_3px_0px_0px_#000]">
+                    <item.icon className="w-6 h-6 text-black" />
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-black mb-3 font-syne uppercase text-black leading-none">{item.title}</h3>
+                  <p className="text-black font-black text-xs md:text-sm leading-snug uppercase tracking-tight">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </ScrollAnimatedSection>
 
       {/* Social Proof Badges */}
       <SocialProofBadges />
