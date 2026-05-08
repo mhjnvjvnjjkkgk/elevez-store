@@ -39,7 +39,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Custom price font style mapping to dynamic CSS custom property */
 .font-price {
-  font-family: var(--price-font, 'Space Mono', monospace) !important;
+  font-family: var(--price-font) !important;
   font-weight: 700 !important;
 }
 
