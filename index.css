@@ -38,8 +38,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Custom price font style mapping to dynamic CSS custom property */
 .font-price {
-  font-family: 'Outfit', sans-serif !important;
-  font-weight: 800 !important;
+  font-family: 'Syne', sans-serif !important;
+  font-weight: 900 !important;
   letter-spacing: -0.02em !important;
 }
 
