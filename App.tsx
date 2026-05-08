@@ -2206,13 +2206,18 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
 const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const { id } = useParams();
-  const { addToCart } = useCart();
+  const { addToCart, setIsCartOpen } = useCart();
   const navigate = useNavigate();
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState('');
   const [product, setProduct] = useState<any>(null);
+
+  // Fix: Scroll to top when product page loads
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [id]);
 
   useEffect(() => {
     const storedProducts = localStorage.getItem('elevez_products');
@@ -2313,8 +2318,8 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
             </div>
           </div>
 
-          {/* Right Column - Details */}
-          <div className="lg:col-span-6 bg-white border-[8px] border-black p-6 md:p-10 shadow-[16px_16px_0px_0px_#000] flex flex-col relative overflow-hidden">
+          {/* Right Column - Details (sticky so CTA stays visible) */}
+          <div className="lg:col-span-6"><div className="lg:sticky lg:top-28 bg-white border-[8px] border-black p-6 md:p-10 shadow-[16px_16px_0px_0px_#000] flex flex-col relative overflow-hidden">
             {/* Corner Decorative Star Badge */}
             <motion.div
               animate={{ rotate: -360 }}
@@ -2412,6 +2417,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                 <button
                   onClick={() => {
                     addToCart(product, selectedSize, selectedColor || 'Standard', quantity);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
                   className="w-full py-8 bg-black text-[#00ff88] border-[4px] border-black font-black text-3xl uppercase tracking-widest shadow-[10px_10px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all flex items-center justify-center gap-6"
                 >
@@ -2448,7 +2454,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                 </div>
               ))}
             </div>
-          </div>
+          </div></div>
         </div>
 
         {/* More Like This */}
