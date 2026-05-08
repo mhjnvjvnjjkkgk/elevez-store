@@ -547,7 +547,7 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         <div className="flex items-center justify-between mt-1">
           <div className="flex items-center gap-2">
             <span className="font-price text-[#00ff88] font-black text-xl stroke-black" style={{ WebkitTextStroke: '1px black' }}>₹{product.price.toFixed(2)}</span>
-            <span className="font-price text-red-500 line-through text-sm">₹{product.originalPrice.toFixed(2)}</span>
+            <span className="font-price text-red-400 line-through text-sm">₹{product.originalPrice.toFixed(2)}</span>
           </div>
           <div className="flex gap-1">
             {[...Array(5)].map((_, i) => (
@@ -557,59 +557,6 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         </div>
       </div>
     </motion.div>
-  );
-};
-
-
-// Price Font Customizer Component (Dynamic Live preview tool for user)
-const PriceFontCustomizer = () => {
-  const [selectedFont, setSelectedFont] = useState(() => {
-    return localStorage.getItem('elevez_price_font') || "'Space Mono', monospace";
-  });
-  const [isOpen, setIsOpen] = useState(false);
-
-  const fonts = [
-    { name: "Space Mono", value: "'Space Mono', monospace" },
-    { name: "Syne / Anton", value: "'Anton', sans-serif" },
-    { name: "Outfit", value: "'Outfit', sans-serif" },
-    { name: "Space Grotesk", value: "'Space Grotesk', sans-serif" },
-    { name: "Plus Jakarta", value: "'Plus Jakarta Sans', sans-serif" },
-    { name: "Bricolage", value: "'Bricolage Grotesque', sans-serif" },
-  ];
-
-  useEffect(() => {
-    document.documentElement.style.setProperty('--price-font', selectedFont);
-    localStorage.setItem('elevez_price_font', selectedFont);
-  }, [selectedFont]);
-
-  return (
-    <div className="fixed bottom-24 left-6 z-[95] pointer-events-auto">
-      <div className={`bg-white border-[4px] border-black p-4 shadow-[8px_8px_0px_0px_#000] transition-all duration-300 flex flex-col gap-3 ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none absolute'}`}>
-        <div className="text-sm font-black text-black uppercase border-b-[3px] border-black pb-2 mb-1 flex justify-between items-center gap-10">
-          <span className="text-black">Price Font Selector</span>
-          <button onClick={() => setIsOpen(false)} className="text-red-500 font-black hover:scale-110">✕</button>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          {fonts.map((f) => (
-            <button
-              key={f.name}
-              onClick={() => setSelectedFont(f.value)}
-              className={`px-3 py-1.5 border-[2px] border-black text-xs font-black uppercase transition-all ${selectedFont === f.value ? 'bg-[#00ff88] text-black shadow-[2px_2px_0px_0px_#000]' : 'bg-white text-black hover:bg-gray-100'}`}
-            >
-              {f.name}
-            </button>
-          ))}
-        </div>
-      </div>
-      {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="bg-black text-[#00ff88] border-[3px] border-black font-black uppercase text-xs px-4 py-2.5 shadow-[4px_4px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center gap-2"
-        >
-          <span>🎯 PRICE FONT</span>
-        </button>
-      )}
-    </div>
   );
 };
 
@@ -679,7 +626,7 @@ const QuickViewModal = () => {
               <h2 className="text-4xl font-black font-syne uppercase leading-none mb-4 text-black">{activeProduct.name}</h2>
               <div className="flex items-center gap-4">
                 <span className="font-price text-4xl font-black text-[#00ff88]" style={{ WebkitTextStroke: '1.5px black' }}>₹{activeProduct.price}</span>
-                <span className="font-price text-red-500 line-through text-xl font-bold">₹{activeProduct.originalPrice}</span>
+                <span className="font-price text-red-400 line-through text-xl font-bold">₹{activeProduct.originalPrice}</span>
               </div>
             </div>
 
@@ -2216,7 +2163,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               <div className="text-[#00ff88] text-5xl font-black font-price stroke-black" style={{ WebkitTextStroke: '1.5px black' }}>
                 ₹<GlitchText text={product.price.toString()} triggerOnHover={false} />
               </div>
-              <span className="font-price text-2xl text-red-500 line-through font-bold">₹{product.originalPrice}</span>
+              <span className="font-price text-2xl text-red-400 line-through font-bold">₹{product.originalPrice}</span>
               <div className="bg-[#00ff88] border-[3px] border-black px-3 py-1 font-black text-xs uppercase shadow-[4px_4px_0px_0px_#000]">
                 Save <span className="font-price">₹{(product.originalPrice - product.price).toFixed(0)}</span>
               </div>
@@ -4160,7 +4107,6 @@ function App() {
               <Navbar />
               <CartSidebar />
               <QuickViewModal />
-              <PriceFontCustomizer />
               <ScrollToTop />
               <main className="relative z-10">
                 <AnimatedRoutes 
