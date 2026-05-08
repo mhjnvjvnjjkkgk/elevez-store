@@ -42,3 +42,20 @@
 **Status**: ✅ Complete
 **Objective**: Transform the Hero section into an iconic premium clothing brand storefront by symmetrizing the typographic layout and adding two transparent PNG high-fashion models flanking the text that dynamically react to cursor movements.
 **Depends on**: Phase 6
+
+### Phase 8: Product Card Visual Refinement
+**Status**: ⬜ Not Started
+**Objective**: Remove grayscale filters from product images for full-color display. Convert hover interactions from massive white overlays to subtle 3D card zooming with a minimal Quick View button.
+**Depends on**: Phase 7
+
+### Phase 9: Neo-Brutalist Redesign of Lower Sections
+**Status**: ⬜ Not Started
+**Objective**: Redesign all sections below 'Best Sellers' (Recommendations, Collections, Video Experience) to match the high-energy, animated neo-brutalist aesthetic. Implement a highly interactive category-wise divider for HOODIES, Tshirt, CROP TOPS, OVERSIZED TSHIRTS, and price points.
+**Depends on**: Phase 8
+
+---
+
+### Phase 10: Vault Dual-Thumb Price Slider Filter
+**Status**: ⬜ Not Started
+**Objective**: Replace the rigid "UNDER ₹50" and "₹100+" text filter buttons in the Vault section with a dual-thumb premium neobrutalist price range slider (0 to 5000). Show active price range dynamically, filter inventory instantly, and format with high-fidelity Amazon/Flipkart styling matching our custom theme.
+**Depends on**: Phase 9
