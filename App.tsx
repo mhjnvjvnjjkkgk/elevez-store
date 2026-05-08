@@ -1680,14 +1680,14 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
       {/* Why Choose Elevez - Neobrutalist */}
       <ScrollAnimatedSection>
-        <section className="py-24 relative z-30 bg-white">
+        <section className="pt-24 pb-12 relative z-30 bg-white">
           <div className="container mx-auto px-6">
             <SectionHeader 
               title="Why Elevez" 
               subtitle="Excellence in every detail, innovation in every stitch"
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
               {[
                 { icon: Truck, title: "3-Day Express", desc: "Lightning-fast shipping straight to your doorstep.", tag: "3 Days" },
                 { icon: Shield, title: "180gsm Premium", desc: "Superior quality cotton that breathes and lasts.", tag: "180gsm" },

@@ -47,7 +47,7 @@ export const SocialProofBadges: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="pb-24 pt-0 px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {badges.map((badge, index) => (
