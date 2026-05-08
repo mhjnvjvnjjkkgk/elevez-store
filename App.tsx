@@ -583,7 +583,7 @@ const PriceFontCustomizer = () => {
   }, [selectedFont]);
 
   return (
-    <div className="fixed bottom-6 left-6 z-[95] pointer-events-auto">
+    <div className="fixed bottom-24 left-6 z-[95] pointer-events-auto">
       <div className={`bg-white border-[4px] border-black p-4 shadow-[8px_8px_0px_0px_#000] transition-all duration-300 flex flex-col gap-3 ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none absolute'}`}>
         <div className="text-sm font-black text-black uppercase border-b-[3px] border-black pb-2 mb-1 flex justify-between items-center gap-10">
           <span className="text-black">Price Font Selector</span>
