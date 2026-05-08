@@ -2273,9 +2273,9 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-          {/* Left Column - Images (sticky so it stays visible while right panel scrolls) */}
+          {/* Left Column - sticky, full image with borders always in view */}
           <div className="lg:col-span-6 lg:sticky lg:top-28">
-          <div className="bg-white border-[8px] border-black p-6 md:p-8 shadow-[16px_16px_0px_0px_#000] relative">
+          <div className="bg-white border-[8px] border-black p-6 md:p-8 shadow-[16px_16px_0px_0px_#000] relative flex flex-col" style={{ maxHeight: 'calc(100vh - 9rem)' }}>
             {/* Decorative Spinning Stamp */}
             <motion.div
               animate={{ rotate: 360 }}
@@ -2295,7 +2295,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               </motion.span>
             </motion.div>
 
-            <div className="relative w-full aspect-[4/5] border-[4px] border-black bg-white mb-8 group overflow-hidden">
+            <div className="relative flex-1 min-h-0 border-[4px] border-black bg-white mb-4 group overflow-hidden">
               <img
                 src={activeImage}
                 alt={product.name}
