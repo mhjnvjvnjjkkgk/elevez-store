@@ -1376,7 +1376,7 @@ const DualPriceSlider = ({
   setCursorVariant: (v: any) => void;
 }) => {
   const trackRef = useRef<HTMLDivElement>(null);
-  const activeThumbRef = useRef<'min' | 'max' | null>(null);
+  const [activeThumb, setActiveThumb] = useState<'min' | 'max' | null>(null);
 
   const calculateValue = (clientX: number) => {
     if (!trackRef.current) return 0;
@@ -1385,41 +1385,39 @@ const DualPriceSlider = ({
     return Math.round(min + percentage * (max - min));
   };
 
-  const handlePointerDown = (thumb: 'min' | 'max', e: React.PointerEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    activeThumbRef.current = thumb;
-    if (trackRef.current) {
-      trackRef.current.setPointerCapture(e.pointerId);
-    }
-    setCursorVariant('hover');
-  };
+  useEffect(() => {
+    const handlePointerMove = (e: PointerEvent) => {
+      if (activeThumb === null) return;
+      const newVal = calculateValue(e.clientX);
+      
+      // Step size of 50 for quick responsiveness
+      const roundedVal = Math.round(newVal / 50) * 50;
+      const clampedVal = Math.max(min, Math.min(max, roundedVal));
 
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (activeThumbRef.current === null) return;
-    const newVal = calculateValue(e.clientX);
-    
-    // Step size of 50 for quick responsiveness
-    const roundedVal = Math.round(newVal / 50) * 50;
-    const clampedVal = Math.max(min, Math.min(max, roundedVal));
+      if (activeThumb === 'min') {
+        const nextMin = Math.min(clampedVal, value[1] - 50);
+        onChange([nextMin, value[1]]);
+      } else {
+        const nextMax = Math.max(clampedVal, value[0] + 50);
+        onChange([value[0], nextMax]);
+      }
+    };
 
-    if (activeThumbRef.current === 'min') {
-      const nextMin = Math.min(clampedVal, value[1] - 50);
-      onChange([nextMin, value[1]]);
-    } else {
-      const nextMax = Math.max(clampedVal, value[0] + 50);
-      onChange([value[0], nextMax]);
-    }
-  };
+    const handlePointerUp = () => {
+      setActiveThumb(null);
+      setCursorVariant('default');
+    };
 
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (activeThumbRef.current === null) return;
-    if (trackRef.current) {
-      trackRef.current.releasePointerCapture(e.pointerId);
+    if (activeThumb !== null) {
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerup', handlePointerUp);
     }
-    activeThumbRef.current = null;
-    setCursorVariant('default');
-  };
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+  }, [activeThumb, value, min, max, onChange]);
 
   const minPercent = ((value[0] - min) / (max - min)) * 100;
   const maxPercent = ((value[1] - min) / (max - min)) * 100;
@@ -1455,12 +1453,12 @@ const DualPriceSlider = ({
             
             if (Math.abs(clampedVal - value[0]) < Math.abs(clampedVal - value[1])) {
               onChange([Math.min(clampedVal, value[1] - 50), value[1]]);
+              setActiveThumb('min');
             } else {
               onChange([value[0], Math.max(clampedVal, value[0] + 50)]);
+              setActiveThumb('max');
             }
           }}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
         >
           <div 
             className="absolute h-full bg-[#00ff88] border-r-[4px] border-l-[4px] border-black transition-all duration-75" 
@@ -1470,7 +1468,12 @@ const DualPriceSlider = ({
           <div 
             className="absolute top-1/2 -translate-y-1/2 -ml-4 w-8 h-10 bg-white border-[4px] border-black shadow-[3px_3px_0px_0px_#000] cursor-grab active:cursor-grabbing hover:bg-[#00ff88] hover:scale-105 active:scale-95 transition-all duration-75 select-none"
             style={{ left: `${minPercent}%` }}
-            onPointerDown={(e) => handlePointerDown('min', e)}
+            onPointerDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setActiveThumb('min');
+              setCursorVariant('hover');
+            }}
           >
             <div className="flex justify-center items-center gap-[2px] h-full">
               <div className="w-[3px] h-4 bg-black" />
@@ -1482,7 +1485,12 @@ const DualPriceSlider = ({
           <div 
             className="absolute top-1/2 -translate-y-1/2 -ml-4 w-8 h-10 bg-white border-[4px] border-black shadow-[3px_3px_0px_0px_#000] cursor-grab active:cursor-grabbing hover:bg-[#00ff88] hover:scale-105 active:scale-95 transition-all duration-75 select-none"
             style={{ left: `${maxPercent}%` }}
-            onPointerDown={(e) => handlePointerDown('max', e)}
+            onPointerDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setActiveThumb('max');
+              setCursorVariant('hover');
+            }}
           >
             <div className="flex justify-center items-center gap-[2px] h-full">
               <div className="w-[3px] h-4 bg-black" />
