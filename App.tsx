@@ -171,8 +171,8 @@ const TiltCard: React.FC<{ children: React.ReactNode; className?: string }> = ({
   // Cache bounds to avoid layout thrashing
   const boundsRef = useRef<{ left: number, top: number, width: number, height: number } | null>(null);
 
-  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["15deg", "-15deg"]);
-  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-15deg", "15deg"]);
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["7deg", "-7deg"]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-7deg", "7deg"]);
   const brightness = useTransform(mouseY, [-0.5, 0.5], [1.2, 0.8]);
 
   const handleMouseEnter = (e: React.MouseEvent) => {
