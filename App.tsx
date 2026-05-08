@@ -2273,8 +2273,9 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-          {/* Left Column - Images */}
-          <div className="lg:col-span-6 bg-white border-[8px] border-black p-6 md:p-8 shadow-[16px_16px_0px_0px_#000] relative">
+          {/* Left Column - Images (sticky so it stays visible while right panel scrolls) */}
+          <div className="lg:col-span-6 lg:sticky lg:top-28">
+          <div className="bg-white border-[8px] border-black p-6 md:p-8 shadow-[16px_16px_0px_0px_#000] relative">
             {/* Decorative Spinning Stamp */}
             <motion.div
               animate={{ rotate: 360 }}
@@ -2316,10 +2317,10 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                 </button>
               ))}
             </div>
-          </div>
+          </div></div>
 
-          {/* Right Column - Details (sticky so CTA stays visible) */}
-          <div className="lg:col-span-6"><div className="lg:sticky lg:top-28 bg-white border-[8px] border-black p-6 md:p-10 shadow-[16px_16px_0px_0px_#000] flex flex-col relative overflow-hidden">
+          {/* Right Column - Details */}
+          <div className="lg:col-span-6"><div className="bg-white border-[8px] border-black p-6 md:p-10 shadow-[16px_16px_0px_0px_#000] flex flex-col relative overflow-hidden">
             {/* Corner Decorative Star Badge */}
             <motion.div
               animate={{ rotate: -360 }}
