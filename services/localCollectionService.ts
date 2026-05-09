@@ -1,6 +1,9 @@
 // Local Collection Service - localStorage-based for offline support
 // Stores and retrieves collections from localStorage
 
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+
 export interface LocalCollection {
     id: string;
     shopifyId?: string;
@@ -59,6 +62,7 @@ class LocalCollectionService {
         if (isFetching) return;
         isFetching = true;
 
+        let serverFetchSuccess = false;
         try {
             console.log('📂 Loading collections from admin server...');
 
@@ -81,12 +85,56 @@ class LocalCollectionService {
                 if (data.collections?.length > 0 || data.products?.length > 0) {
                     window.location.reload();
                 }
+                serverFetchSuccess = true;
             }
         } catch (error) {
-            console.warn('Could not load from admin server:', error);
-        } finally {
-            isFetching = false;
+            console.warn('Could not load from admin server, falling back to Firestore database...', error);
         }
+
+        // If local admin server is offline/unreachable, pull live catalog from Firestore directly!
+        if (!serverFetchSuccess) {
+            try {
+                console.log('☁️ Sourcing product and collection catalog directly from Firestore...');
+                
+                const productsSnapshot = await getDocs(collection(db, 'products'));
+                const collectionsSnapshot = await getDocs(collection(db, 'collections'));
+
+                const productsList: any[] = [];
+                productsSnapshot.forEach(docSnap => {
+                    productsList.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                const collectionsList: any[] = [];
+                collectionsSnapshot.forEach(docSnap => {
+                    collectionsList.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                if (productsList.length > 0 || collectionsList.length > 0) {
+                    // Normalize document IDs back to numeric format if they are numeric
+                    const formattedProducts = productsList.map(p => ({
+                        ...p,
+                        id: isNaN(Number(p.id)) ? p.id : Number(p.id)
+                    }));
+
+                    const formattedCollections = collectionsList.map(c => ({
+                        ...c,
+                        id: isNaN(Number(c.id)) ? c.id : Number(c.id)
+                    }));
+
+                    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(formattedProducts));
+                    localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(formattedCollections));
+
+                    console.log(`✅ Fully synchronized storefront with Firestore: loaded ${formattedProducts.length} products & ${formattedCollections.length} collections.`);
+                    
+                    // Trigger page reload to show new data
+                    window.location.reload();
+                }
+            } catch (firestoreError) {
+                console.error('❌ Failed to pull catalog from Firestore cloud database:', firestoreError);
+            }
+        }
+
+        isFetching = false;
     }
 
     /**

@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elevez Command Center - Unified Admin</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-glow: rgba(0, 255, 136, 0.25);
+            --bg-dark: #070708;
+            --bg-card: #111113;
+            --border-gray: #242427;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .font-syne {
+            font-family: 'Syne', sans-serif;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f0f11;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2b2b30;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Glassmorphism & Brutalism Effects */
+        .neo-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-gray);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px #000000;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .neo-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000000;
+            border-color: var(--primary);
+        }
+
+        .neo-btn {
+            background: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            font-weight: 700;
+            box-shadow: 3px 3px 0px #000000;
+            transition: all 0.2s ease;
+        }
+
+        .neo-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px #000000;
+            background: var(--primary);
+        }
+
+        .neo-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #000000;
+        }
+
+        .neo-btn-primary {
+            background: var(--primary);
+            color: #000000;
+            border: 2px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+        }
+
+        .neo-btn-primary:hover {
+            background: #00dd77;
+            box-shadow: 6px 6px 0px #000000;
+            transform: translate(-2px, -2px);
+        }
+
+        /* Sidebar active style */
+        .sidebar-active {
+            background: var(--primary) !important;
+            color: #000000 !important;
+            border-color: #000000 !important;
+            box-shadow: 3px 3px 0px #000000;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Glow effects */
+        .glow-green {
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex h-screen overflow-hidden">
+        <!-- Persistent Sidebar -->
+        <aside class="w-80 bg-[#0c0c0e] border-r-2 border-r-[#1c1c1f] flex flex-col justify-between p-6 overflow-y-auto">
+            <div class="space-y-8">
+                <!-- Branding Header -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-[#00ff88] text-black w-12 h-12 rounded-lg flex items-center justify-center font-bold text-2xl font-syne border-2 border-black shadow-[3px_3px_0px_#000000]">
+                        E
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold font-syne tracking-wider text-white">ELEVEZ</h1>
+                        <p class="text-xs text-gray-500 uppercase tracking-widest font-semibold">Command Center</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="space-y-3" id="sidebar-nav">
+                    <button onclick="switchPanel('overview')" id="nav-overview" class="sidebar-active w-full flex items-center gap-4 px-4 py-3 rounded-lg border-2 border-transparent hover:border-white transition text-left text-gray-400 font-bold">
+                        <span class="text-xl">📊</span>
+                        <span>Overview & Metrics</span>
+                    </button>
+                    <button onclick="switchPanel('products')" id="nav-products" class="w-full flex items-center gap-4 px-4 py-3 rounded-lg border-2 border-transparent hover:border-white transition text-left text-gray-400 font-bold">
+                        <span class="text-xl">📦</span>
+                        <span>Product Manager</span>
+                    </button>
+                    <button onclick="switchPanel('users')" id="nav-users" class="w-full flex items-center gap-4 px-4 py-3 rounded-lg border-2 border-transparent hover:border-white transition text-left text-gray-400 font-bold">
+                        <span class="text-xl">👥</span>
+                        <span>Users & Points</span>
+                    </button>
+                    <button onclick="switchPanel('loyalty')" id="nav-loyalty" class="w-full flex items-center gap-4 px-4 py-3 rounded-lg border-2 border-transparent hover:border-white transition text-left text-gray-400 font-bold">
+                        <span class="text-xl">👑</span>
+                        <span>Loyalty Config</span>
+                    </button>
+                    <button onclick="switchPanel('discounts')" id="nav-discounts" class="w-full flex items-center gap-4 px-4 py-3 rounded-lg border-2 border-transparent hover:border-white transition text-left text-gray-400 font-bold">
+                        <span class="text-xl">🎟️</span>
+                        <span>Discount Codes</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Footer Meta -->
+            <div class="pt-6 border-t border-[#1c1c1f]">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 bg-[#00ff88] rounded-full animate-pulse glow-green"></div>
+                    <span class="text-sm font-semibold text-gray-400">Database Sync: Connected</span>
+                </div>
+                <p class="text-xs text-gray-600 mt-2">Elevez Store Administration v1.2</p>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="flex-1 overflow-y-auto bg-[#070708] p-8 flex flex-col space-y-8" id="main-viewport">
+
+            <!-- PANEL 1: OVERVIEW & METRICS -->
+            <section id="panel-overview" class="fade-in space-y-8">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#1c1c1f] pb-6">
+                    <div>
+                        <h2 class="text-4xl font-extrabold font-syne text-[#00ff88]">📊 SYSTEM OVERVIEW</h2>
+                        <p class="text-gray-400 mt-1">Consolidated analytics and performance indices</p>
+                    </div>
+                    <button onclick="refreshOverviewData()" class="neo-btn px-6 py-2 rounded-lg">
+                        🔄 Sync Overview
+                    </button>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="neo-card p-6 flex flex-col justify-between h-36">
+                        <span class="text-xs text-gray-500 font-bold tracking-widest uppercase">Total Registered Users</span>
+                        <div class="flex items-baseline justify-between mt-2">
+                            <span class="text-4xl font-extrabold font-syne text-[#00ff88]" id="overview-total-users">0</span>
+                            <span class="text-xs text-[#00ff88] font-semibold bg-[#00ff88]/10 px-2 py-0.5 rounded">Active</span>
+                        </div>
+                    </div>
+                    <div class="neo-card p-6 flex flex-col justify-between h-36">
+                        <span class="text-xs text-gray-500 font-bold tracking-widest uppercase">Loyalty Points Circulated</span>
+                        <div class="flex items-baseline justify-between mt-2">
+                            <span class="text-4xl font-extrabold font-syne text-purple-400" id="overview-total-points">0</span>
+                            <span class="text-xs text-purple-400 font-semibold bg-purple-500/10 px-2 py-0.5 rounded">Coins</span>
+                        </div>
+                    </div>
+                    <div class="neo-card p-6 flex flex-col justify-between h-36">
+                        <span class="text-xs text-gray-500 font-bold tracking-widest uppercase">Total Orders Logged</span>
+                        <div class="flex items-baseline justify-between mt-2">
+                            <span class="text-4xl font-extrabold font-syne text-blue-400" id="overview-total-orders">0</span>
+                            <span class="text-xs text-blue-400 font-semibold bg-blue-500/10 px-2 py-0.5 rounded">Orders</span>
+                        </div>
+                    </div>
+                    <div class="neo-card p-6 flex flex-col justify-between h-36">
+                        <span class="text-xs text-gray-500 font-bold tracking-widest uppercase">Active Promos & Coupons</span>
+                        <div class="flex items-baseline justify-between mt-2">
+                            <span class="text-4xl font-extrabold font-syne text-orange-400" id="overview-total-discounts">0</span>
+                            <span class="text-xs text-orange-400 font-semibold bg-orange-500/10 px-2 py-0.5 rounded">Promos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Server Performance Trends -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="neo-card p-6 lg:col-span-2 space-y-6">
+                        <h3 class="text-lg font-bold text-white uppercase tracking-wider">⚡ Database & Server Latency</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="p-4 bg-[#141417] border border-[#242427] rounded-lg text-center">
+                                <span class="text-xs text-gray-500 font-semibold uppercase">Firestore Sync</span>
+                                <p class="text-xl font-bold text-[#00ff88] mt-1" id="health-firestore">Active</p>
+                            </div>
+                            <div class="p-4 bg-[#141417] border border-[#242427] rounded-lg text-center">
+                                <span class="text-xs text-gray-500 font-semibold uppercase">Node Port 3001</span>
+                                <p class="text-xl font-bold text-blue-400 mt-1" id="health-node">Online</p>
+                            </div>
+                            <div class="p-4 bg-[#141417] border border-[#242427] rounded-lg text-center">
+                                <span class="text-xs text-gray-500 font-semibold uppercase">Hot-Reload</span>
+                                <p class="text-xl font-bold text-yellow-400 mt-1" id="health-hotreload">Active</p>
+                            </div>
+                            <div class="p-4 bg-[#141417] border border-[#242427] rounded-lg text-center">
+                                <span class="text-xs text-gray-500 font-semibold uppercase">Vercel Deployment</span>
+                                <p class="text-xl font-bold text-purple-400 mt-1">Prod Live</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h4 class="text-xs text-gray-500 font-bold uppercase tracking-wider">System Resource Allocations</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-semibold text-gray-400">
+                                    <span>Cloud Database Throughput</span>
+                                    <span>92% SLA</span>
+                                </div>
+                                <div class="w-full bg-[#1e1e24] h-2 rounded-full overflow-hidden">
+                                    <div class="bg-[#00ff88] h-full" style="width: 92%;"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-semibold text-gray-400">
+                                    <span>Local API Server Core Threads</span>
+                                    <span>45% Active</span>
+                                </div>
+                                <div class="w-full bg-[#1e1e24] h-2 rounded-full overflow-hidden">
+                                    <div class="bg-blue-400 h-full" style="width: 45%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Database Quick Actions -->
+                    <div class="neo-card p-6 flex flex-col justify-between space-y-6">
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-bold text-white uppercase tracking-wider">🛠️ SYSTEM CONTROLS</h3>
+                            <p class="text-xs text-gray-500">Manual triggers to enforce global synchronization across databases</p>
+                        </div>
+                        <div class="space-y-3 flex-1 flex flex-col justify-center">
+                            <button onclick="syncAllPoints()" class="neo-btn w-full py-2.5 rounded-lg text-sm bg-purple-500/10 hover:bg-purple-500 text-purple-400 hover:text-black border-purple-500">
+                                ⭐ Re-Sync All Loyalty Points
+                            </button>
+                            <button onclick="triggerVercelDeploy()" class="neo-btn w-full py-2.5 rounded-lg text-sm bg-blue-500/10 hover:bg-blue-500 text-blue-400 hover:text-black border-blue-500">
+                                🚀 Trigger Production Deployment
+                            </button>
+                        </div>
+                        <div class="p-3 bg-[#1e1e24]/50 border border-[#242427] rounded-lg flex items-center gap-3">
+                            <span class="text-lg">🔥</span>
+                            <div class="text-left">
+                                <p class="text-xs font-bold text-white">Firestore Real-time</p>
+                                <p class="text-[10px] text-gray-500">Bidirectional points sync actively enabled</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANEL 2: PRODUCT MANAGER -->
+            <section id="panel-products" class="fade-in space-y-8 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#1c1c1f] pb-6">
+                    <div>
+                        <h2 class="text-4xl font-extrabold font-syne text-[#00ff88]">📦 PRODUCT MANAGER</h2>
+                        <p class="text-gray-400 mt-1">Manage local and cloud-synced catalog products</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="undo-btn" onclick="triggerUndoAction()" class="neo-btn px-6 py-2.5 rounded-lg font-bold text-sm opacity-40 cursor-not-allowed transition flex items-center gap-2" disabled>
+                            ↩️ Undo Action
+                        </button>
+                        <button onclick="openProductModal()" class="neo-btn-primary px-6 py-2.5 rounded-lg font-bold text-sm">
+                            ➕ Create Product
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="neo-card overflow-hidden">
+                    <div class="p-4 border-b border-[#1c1c1f] bg-[#0c0c0e] flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="product-search" placeholder="Search product catalog..." class="bg-[#141417] border border-[#242427] px-4 py-2 rounded-lg text-sm text-white focus:outline-none focus:border-[#00ff88] flex-1" oninput="filterProductsTable()">
+                        <select id="product-filter-category" class="bg-[#141417] border border-[#242427] px-4 py-2 rounded-lg text-sm text-white focus:outline-none focus:border-[#00ff88]" onchange="filterProductsTable()">
+                            <option value="">All Categories</option>
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                            <option value="Unisex">Unisex</option>
+                        </select>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-black/30 border-b border-[#1c1c1f]">
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Image</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Product Details</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Category</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Price</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Tags</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body">
+                                <!-- Dynamic entries -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANEL 3: USERS & POINTS -->
+            <section id="panel-users" class="fade-in space-y-8 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#1c1c1f] pb-6">
+                    <div>
+                        <h2 class="text-4xl font-extrabold font-syne text-[#00ff88]">👥 USERS & POINTS</h2>
+                        <p class="text-gray-400 mt-1">Manually adjust point balances and audit customer loyalty metrics</p>
+                    </div>
+                    <button onclick="loadUsersTable()" class="neo-btn px-6 py-2 rounded-lg">
+                        🔄 Refresh List
+                    </button>
+                </div>
+
+                <!-- Controls & Search -->
+                <div class="neo-card p-4 flex flex-col sm:flex-row gap-4 bg-[#0c0c0e]">
+                    <input type="text" id="users-search" placeholder="Search by name or email..." class="bg-[#141417] border border-[#242427] px-4 py-2 rounded-lg text-sm text-white focus:outline-none focus:border-[#00ff88] flex-1" oninput="filterUsersTable()">
+                    <button onclick="syncAllPoints()" class="neo-btn px-6 py-2 rounded-lg text-sm whitespace-nowrap bg-purple-500 text-black font-extrabold">
+                        🔄 Sync All Points from Orders
+                    </button>
+                </div>
+
+                <!-- Users Table -->
+                <div class="neo-card overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-black/30 border-b border-[#1c1c1f]">
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Name</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Email</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Point Balance</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Membership Tier</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Total Orders</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <tr>
+                                    <td colspan="6" class="p-12 text-center text-gray-500 font-semibold">
+                                        <div class="w-8 h-8 border-4 border-[#00ff88] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                        Fetching loyalty profiles from cloud DB...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANEL 4: LOYALTY RULES CONFIG -->
+            <section id="panel-loyalty" class="fade-in space-y-8 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#1c1c1f] pb-6">
+                    <div>
+                        <h2 class="text-4xl font-extrabold font-syne text-[#00ff88]">👑 LOYALTY CONFIG</h2>
+                        <p class="text-gray-400 mt-1">Configure conversion multipliers and tier boundaries</p>
+                    </div>
+                    <button onclick="saveLoyaltyRules()" class="neo-btn-primary px-6 py-2.5 rounded-lg text-sm font-bold">
+                        💾 Save Dynamic Rules
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Conversion Formula -->
+                    <div class="neo-card p-6 space-y-6">
+                        <h3 class="text-xl font-bold border-b border-[#1c1c1f] pb-3 text-[#00ff88]">💰 Conversion Parameters</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-400 mb-2">Points Earned Per Dollar Spent (Ratio)</label>
+                                <input type="number" step="0.01" id="loyalty-rate" class="w-full bg-[#141417] border border-[#242427] px-4 py-2.5 rounded-lg text-sm text-white focus:outline-none focus:border-[#00ff88]">
+                                <p class="text-xs text-gray-500 mt-1.5">For example: 0.10 means a customer earns 10 loyalty points for every $100 spent.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-400 mb-2">Initial New Signup Welcome Bonus (Points)</label>
+                                <input type="number" id="loyalty-signup-bonus" class="w-full bg-[#141417] border border-[#242427] px-4 py-2.5 rounded-lg text-sm text-white focus:outline-none focus:border-[#00ff88]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tiers Thresholds -->
+                    <div class="neo-card p-6 space-y-6">
+                        <h3 class="text-xl font-bold border-b border-[#1c1c1f] pb-3 text-purple-400">🏆 Tiers Point Thresholds</h3>
+                        <div class="space-y-4" id="tier-threshold-container">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-400 mb-2">🥈 Silver Membership Points Requirement</label>
+                                <input type="number" id="tier-silver" class="w-full bg-[#141417] border border-[#242427] px-4 py-2.5 rounded-lg text-sm text-white focus:outline-none focus:border-[#00ff88]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-400 mb-2">🥇 Gold Membership Points Requirement</label>
+                                <input type="number" id="tier-gold" class="w-full bg-[#141417] border border-[#242427] px-4 py-2.5 rounded-lg text-sm text-white focus:outline-none focus:border-[#00ff88]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-400 mb-2">💎 Platinum Membership Points Requirement</label>
+                                <input type="number" id="tier-platinum" class="w-full bg-[#141417] border border-[#242427] px-4 py-2.5 rounded-lg text-sm text-white focus:outline-none focus:border-[#00ff88]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANEL 5: DISCOUNT CODES -->
+            <section id="panel-discounts" class="fade-in space-y-8 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#1c1c1f] pb-6">
+                    <div>
+                        <h2 class="text-4xl font-extrabold font-syne text-[#00ff88]">🎟️ DISCOUNT CODES</h2>
+                        <p class="text-gray-400 mt-1">Manage static and dynamic store discount coupons</p>
+                    </div>
+                    <button onclick="openDiscountModal()" class="neo-btn-primary px-6 py-2.5 rounded-lg font-bold text-sm">
+                        ➕ New Promo Code
+                    </button>
+                </div>
+
+                <!-- Promo list -->
+                <div class="neo-card overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-black/30 border-b border-[#1c1c1f]">
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Coupon Code</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Promo Details</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Type / Value</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Start / End Dates</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Requirements</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Status</th>
+                                    <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="discounts-table-body">
+                                <tr>
+                                    <td colspan="7" class="p-12 text-center text-gray-500 font-semibold">
+                                        <div class="w-8 h-8 border-4 border-[#00ff88] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                        Fetching active promo coupons...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL: MANUAL POINTS ADJUSTMENT -->
+    <div id="points-modal" class="hidden fixed inset-0 bg-black/85 flex items-center justify-center z-50 fade-in">
+        <div class="neo-card w-full max-w-md mx-4 p-8 bg-[#111113]">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-[#00ff88] font-syne">⭐ EDIT USER POINTS</h3>
+                <button onclick="closePointsModal()" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+            <div id="points-modal-message"></div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">User Target</label>
+                    <input type="text" id="modal-user-display" readonly class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white font-medium">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Current Point Balance</label>
+                    <input type="number" id="modal-user-current-points" readonly class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white font-medium">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Points Offset Amount (Use minus for subtraction)</label>
+                    <input type="number" id="modal-user-offset" placeholder="e.g. 500 or -250" class="w-full bg-[#1e1e24] border border-[#242427] rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-[#00ff88]">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Reason for Adjustment</label>
+                    <textarea id="modal-user-reason" placeholder="e.g. Support adjustment or bonus points" rows="3" class="w-full bg-[#1e1e24] border border-[#242427] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#00ff88]"></textarea>
+                </div>
+                <button onclick="submitUserPointsChange()" class="neo-btn-primary w-full py-3 rounded-lg text-sm font-bold uppercase tracking-wider">
+                    Update Balance
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PRODUCT CREATE / EDIT -->
+    <div id="product-modal" class="hidden fixed inset-0 bg-black/85 flex items-center justify-center z-50 overflow-y-auto py-8">
+        <div class="neo-card w-full max-w-lg mx-4 p-8 bg-[#111113] overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center mb-6 border-b border-[#242427] pb-4">
+                <h3 class="text-2xl font-bold text-[#00ff88] font-syne" id="product-modal-title">📦 CREATE PRODUCT</h3>
+                <button onclick="closeProductModal()" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+            <form id="product-form" onsubmit="submitProductForm(event)" class="space-y-4 text-left">
+                <input type="hidden" id="product-form-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Product Name</label>
+                        <input type="text" id="product-form-name" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">QID Code</label>
+                        <input type="text" id="product-form-qid" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Category</label>
+                        <select id="product-form-category" class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                            <option value="Unisex">Unisex</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Type</label>
+                        <select id="product-form-type" class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                            <option value="Hoodie">Hoodie</option>
+                            <option value="T-Shirt">T-Shirt</option>
+                            <option value="Crop Top">Crop Top</option>
+                            <option value="Oversized T-Shirt">Oversized T-Shirt</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Price ($)</label>
+                        <input type="number" id="product-form-price" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Original Price ($)</label>
+                        <input type="number" id="product-form-origprice" class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Main Image URL</label>
+                    <input type="text" id="product-form-image" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Description</label>
+                    <textarea id="product-form-desc" rows="3" class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Tags (Comma separated)</label>
+                    <input type="text" id="product-form-tags" placeholder="TRENDING, NEW, BESTSELLER" class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                </div>
+                <button type="submit" class="neo-btn-primary w-full py-3 rounded-lg text-sm font-bold uppercase tracking-wider">
+                    Save Catalog Product
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: COUPON CREATE / EDIT -->
+    <div id="discount-modal" class="hidden fixed inset-0 bg-black/85 flex items-center justify-center z-50">
+        <div class="neo-card w-full max-w-md mx-4 p-8 bg-[#111113]">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-[#00ff88] font-syne">🎟️ NEW DISCOUNT CODE</h3>
+                <button onclick="closeDiscountModal()" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+            <form id="discount-form" onsubmit="submitDiscountForm(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Promo Code</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="discount-form-code" placeholder="e.g. EXTRA20" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white font-bold tracking-widest focus:outline-none focus:border-[#00ff88]">
+                        <button type="button" onclick="generateRandomPromoCode()" class="neo-btn px-4 py-2 rounded-lg text-xs font-bold uppercase">Generate</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Promo Title</label>
+                    <input type="text" id="discount-form-name" placeholder="e.g. 20% Off Loyalty Special" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Discount Type</label>
+                        <select id="discount-form-type" class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                            <option value="percentage">Percentage (%)</option>
+                            <option value="fixed">Fixed Amount ($)</option>
+                            <option value="free_shipping">Free Shipping</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Value</label>
+                        <input type="number" id="discount-form-value" placeholder="20" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Start Date</label>
+                        <input type="date" id="discount-form-start" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">End Date</label>
+                        <input type="date" id="discount-form-end" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Usage Limit</label>
+                        <input type="number" id="discount-form-limit" placeholder="100" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Min Purchase ($)</label>
+                        <input type="number" id="discount-form-minpurchase" value="0" class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                    </div>
+                </div>
+                <button type="submit" class="neo-btn-primary w-full py-3 rounded-lg text-sm font-bold uppercase tracking-wider">
+                    Create Discount Coupon
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- UI Notification system -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm"></div>
+
+    <!-- Firebase Scripts Module initialization -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            getDocs,
+            doc,
+            getDoc,
+            setDoc,
+            addDoc,
+            updateDoc,
+            deleteDoc,
+            serverTimestamp,
+            query,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Global Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+            authDomain: "elevez-ed97f.firebaseapp.com",
+            projectId: "elevez-ed97f",
+            storageBucket: "elevez-ed97f.firebasestorage.app",
+            messagingSenderId: "440636781018",
+            appId: "1:440636781018:web:24d9b6d31d5aee537850e3",
+            measurementId: "G-1H0YRD521H"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Share db globally
+        window.db = db;
+        window.firebaseCollections = { collection, getDocs, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, where };
+
+        console.log("🔥 Firebase initialized on Unified Admin Dashboard");
+
+        // Initial Data Loads
+        await loadAllServices();
+    </script>
+
+    <!-- General Application Script -->
+    <script>
+        // State variables
+        const state = {
+            products: [],
+            users: [],
+            discounts: [],
+            rules: null,
+            ordersCount: 0,
+            undoStack: []
+        };
+
+        const API_BASE = "http://localhost:3001/api";
+
+        // Panel Navigation Toggler
+        window.switchPanel = function (panelId) {
+            console.log("Panel switch requested:", panelId);
+            // Toggle active classes in Sidebar Nav
+            document.querySelectorAll("#sidebar-nav button").forEach(btn => {
+                btn.classList.remove("sidebar-active");
+                btn.classList.add("text-gray-400");
+            });
+            document.getElementById(`nav-${panelId}`).classList.add("sidebar-active");
+            document.getElementById(`nav-${panelId}`).classList.remove("text-gray-400");
+
+            // Toggle Panel Screens
+            document.querySelectorAll("main > section").forEach(section => {
+                section.classList.add("hidden");
+            });
+            document.getElementById(`panel-${panelId}`).classList.remove("hidden");
+
+            // Perform panel specific renders
+            if (panelId === 'products') renderProductsTable();
+            if (panelId === 'users') loadUsersTable();
+            if (panelId === 'discounts') loadDiscountsTable();
+            if (panelId === 'loyalty') loadLoyaltyRulesPanel();
+        };
+
+        // Notification Toasts
+        window.showToast = function (message, isSuccess = true) {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+            toast.className = `p-4 rounded-lg shadow-lg font-semibold border-2 border-black flex items-center gap-3 transform transition-all translate-y-12 opacity-0 duration-300 ${
+                isSuccess ? "bg-[#00ff88] text-black" : "bg-red-500 text-white"
+            }`;
+            toast.innerHTML = `
+                <span class="text-lg">${isSuccess ? '✓' : '✗'}</span>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove("translate-y-12", "opacity-0");
+            }, 50);
+
+            setTimeout(() => {
+                toast.classList.add("translate-y-12", "opacity-0");
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        // Load All Services
+        async function loadAllServices() {
+            try {
+                await Promise.all([
+                    loadLocalProducts(),
+                    refreshOverviewData()
+                ]);
+            } catch (err) {
+                console.error("Initialization failed:", err);
+            }
+        }
+
+        // ==========================================
+        // MODULE 1: OVERVIEW METRICS DATA LOAD
+        // ==========================================
+        window.refreshOverviewData = async function () {
+            console.log("Refreshing metrics index...");
+            try {
+                // Fetch stats from Firestore collections directly
+                const db = window.db;
+                const { collection, getDocs } = window.firebaseCollections;
+
+                // 1. Fetch Users Count
+                const usersSnapshot = await getDocs(collection(db, 'loyaltyProfiles'));
+                state.users = [];
+                usersSnapshot.forEach(doc => {
+                    state.users.push({ id: doc.id, ...doc.data() });
+                });
+                document.getElementById("overview-total-users").textContent = state.users.length;
+
+                // Calculate cumulative loyalty coins
+                const totalPointsCirculated = state.users.reduce((acc, user) => acc + (user.totalPoints || user.points || 0), 0);
+                document.getElementById("overview-total-points").textContent = totalPointsCirculated.toLocaleString();
+
+                // 2. Fetch Orders Count
+                const ordersSnapshot = await getDocs(collection(db, 'orders'));
+                state.ordersCount = ordersSnapshot.size;
+                document.getElementById("overview-total-orders").textContent = state.ordersCount;
+
+                // 3. Fetch Coupons Count
+                const discountsSnapshot = await getDocs(collection(db, 'discounts'));
+                state.discounts = [];
+                discountsSnapshot.forEach(doc => {
+                    state.discounts.push({ id: doc.id, ...doc.data() });
+                });
+                document.getElementById("overview-total-discounts").textContent = state.discounts.length;
+
+                // 4. Update local node server status metrics
+                try {
+                    const healthRes = await fetch(`${API_BASE}/products`);
+                    if (healthRes.ok) {
+                        document.getElementById("health-node").textContent = "Online";
+                        document.getElementById("health-node").className = "text-xl font-bold text-[#00ff88]";
+                    }
+                } catch (e) {
+                    document.getElementById("health-node").textContent = "Offline";
+                    document.getElementById("health-node").className = "text-xl font-bold text-red-500";
+                }
+
+                console.log("Overview metrics synced successfully.");
+            } catch (error) {
+                console.warn("Could not retrieve cloud indicators:", error);
+            }
+        };
+
+        // ==========================================
+        // MODULE 2: PRODUCT MANAGER CATALOG
+        // ==========================================
+        async function loadLocalProducts() {
+            try {
+                // Fetch products catalog from local backend Node API if available
+                const res = await fetch(`${API_BASE}/products`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.products && data.products.length > 0) {
+                        state.products = data.products || [];
+                        console.log(`Loaded ${state.products.length} products from backend api`);
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn("Backend API not available, trying Firestore cloud database...");
+            }
+
+            // Fallback to Firestore 'products' collection of production project
+            try {
+                const db = window.db;
+                const { collection, getDocs } = window.firebaseCollections;
+                const productsSnap = await getDocs(collection(db, 'products'));
+                
+                if (!productsSnap.empty) {
+                    const cloudProducts = [];
+                    productsSnap.forEach(doc => {
+                        cloudProducts.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    // Convert back string-based IDs or numeric IDs if necessary
+                    state.products = cloudProducts.map(p => ({
+                        ...p,
+                        id: isNaN(Number(p.id)) ? p.id : Number(p.id)
+                    }));
+                    
+                    console.log(`Loaded ${state.products.length} products from Firestore 'products' collection`);
+                    // Cache to localStorage for offline robustness
+                    localStorage.setItem("elevez_products", JSON.stringify(state.products));
+                    return;
+                }
+            } catch (firestoreErr) {
+                console.error("Firestore 'products' load failed, trying localStorage fallback:", firestoreErr);
+            }
+
+            // Fallback local storage
+            console.warn("Firestore not available or empty, trying localStorage...");
+            const local = localStorage.getItem("elevez_products");
+            if (local) {
+                state.products = JSON.parse(local);
+                console.log(`Loaded ${state.products.length} products from local storage fallback`);
+            }
+        }
+
+        async function saveProductsList() {
+            // Save to local storage first
+            localStorage.setItem("elevez_products", JSON.stringify(state.products));
+
+            // Try local backend Node API if available
+            let syncedToBackend = false;
+            try {
+                const saveRes = await fetch(`${API_BASE}/products`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ products: state.products })
+                });
+                if (saveRes.ok) {
+                    syncedToBackend = true;
+                }
+            } catch (e) {
+                console.warn("Backend API offline, skipping local file catalog save.");
+            }
+
+            // Sync with Firestore collection 'products'
+            try {
+                const db = window.db;
+                const { doc, setDoc, deleteDoc, getDocs, collection } = window.firebaseCollections;
+                
+                // Write each product in state.products to Firestore Doc-by-Doc
+                console.log('☁️ Saving product catalog changes to Firestore...');
+                for (const p of state.products) {
+                    await setDoc(doc(db, 'products', String(p.id)), p);
+                }
+                
+                // Fetch existing products in Firestore to find deleted ones and prune them
+                const snap = await getDocs(collection(db, 'products'));
+                const currentIds = new Set(state.products.map(p => String(p.id)));
+                for (const d of snap.docs) {
+                    if (!currentIds.has(d.id)) {
+                        await deleteDoc(doc(db, 'products', d.id));
+                    }
+                }
+                
+                showToast("Product catalog saved & synchronized live!");
+            } catch (err) {
+                console.error("Firestore sync failed:", err);
+                if (!syncedToBackend) {
+                    showToast("Saved locally to browser", false);
+                }
+            }
+        }
+
+        window.deleteProduct = async function (productId) {
+            const product = state.products.find(p => p.id === productId);
+            if (!product) return;
+            if (!confirm(`Are you sure you want to delete "${product.name}"?`)) return;
+
+            // Push to undo stack
+            state.undoStack.push({
+                type: 'delete',
+                productId: productId,
+                previousData: JSON.parse(JSON.stringify(product))
+            });
+            updateUndoButtonUI();
+
+            // Filter out of local state
+            state.products = state.products.filter(p => p.id !== productId);
+
+            // Save and render
+            await saveProductsList();
+            renderProductsTable();
+        };
+
+        window.triggerUndoAction = async function () {
+            if (state.undoStack.length === 0) return;
+
+            const action = state.undoStack.pop();
+            updateUndoButtonUI();
+
+            showToast("Undoing last catalog change...");
+
+            if (action.type === 'edit') {
+                // Restore previous data
+                const index = state.products.findIndex(p => p.id === action.productId);
+                if (index !== -1) {
+                    state.products[index] = action.previousData;
+                } else {
+                    state.products.push(action.previousData);
+                }
+            } else if (action.type === 'add') {
+                // Delete the added product
+                state.products = state.products.filter(p => p.id !== action.productId);
+            } else if (action.type === 'delete') {
+                // Restore the deleted product
+                state.products.push(action.previousData);
+            }
+
+            // Save and re-render
+            await saveProductsList();
+            renderProductsTable();
+            showToast("Reverted change successfully!");
+        };
+
+        function updateUndoButtonUI() {
+            const btn = document.getElementById("undo-btn");
+            if (!btn) return;
+            if (state.undoStack.length > 0) {
+                btn.classList.remove("opacity-40", "cursor-not-allowed");
+                btn.classList.add("hover:bg-[#00ff88]/20", "text-[#00ff88]", "border-[#00ff88]");
+                btn.disabled = false;
+            } else {
+                btn.classList.add("opacity-40", "cursor-not-allowed");
+                btn.classList.remove("hover:bg-[#00ff88]/20", "text-[#00ff88]", "border-[#00ff88]");
+                btn.disabled = true;
+            }
+        }
+
+        function renderProductsTable(productsToRender = state.products) {
+            const tbody = document.getElementById("products-table-body");
+            if (productsToRender.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500">No products match.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = productsToRender.map(product => `
+                <tr class="border-b border-[#1c1c1f] hover:bg-[#111113]/50 transition">
+                    <td class="p-4">
+                        <img src="${product.image}" class="w-12 h-12 object-cover rounded border border-[#242427]" onerror="this.src='https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=100'">
+                    </td>
+                    <td class="p-4">
+                        <div class="font-bold text-white text-sm">${product.name}</div>
+                        <div class="text-xs text-gray-500 mt-0.5">QID: ${product.qid || product.id} | Type: ${product.type || 'Standard'}</div>
+                    </td>
+                    <td class="p-4 text-sm font-semibold text-gray-400">${product.category}</td>
+                    <td class="p-4 text-sm font-bold text-white">$${product.price} <span class="text-xs text-gray-500 line-through font-normal">${product.originalPrice ? '$' + product.originalPrice : ''}</span></td>
+                    <td class="p-4">
+                        <div class="flex flex-wrap gap-1">
+                            ${(product.tags || []).map(t => `<span class="bg-[#141417] text-xs text-[#00ff88] px-2 py-0.5 rounded border border-[#00ff88]/20">${t}</span>`).join('')}
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-2">
+                            <button onclick="editProduct(${product.id})" class="neo-btn px-3 py-1 text-xs rounded bg-white hover:bg-[#00ff88] text-black border-white hover:border-[#00ff88] font-bold">Edit</button>
+                            <button onclick="deleteProduct(${product.id})" class="neo-btn px-3 py-1 text-xs rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-black border-red-500 hover:border-red-500 font-bold">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.filterProductsTable = function () {
+            const search = document.getElementById("product-search").value.toLowerCase();
+            const category = document.getElementById("product-filter-category").value;
+
+            const filtered = state.products.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(search) || (p.qid && p.qid.toLowerCase().includes(search));
+                const matchesCategory = category === "" || p.category === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            renderProductsTable(filtered);
+        };
+
+        // Create / Edit Product Modals
+        window.openProductModal = function (product = null) {
+            const form = document.getElementById("product-form");
+            const modalTitle = document.getElementById("product-modal-title");
+            form.reset();
+
+            if (product) {
+                modalTitle.textContent = "📦 EDIT CATALOG PRODUCT";
+                document.getElementById("product-form-id").value = product.id;
+                document.getElementById("product-form-name").value = product.name;
+                document.getElementById("product-form-qid").value = product.qid || "";
+                document.getElementById("product-form-category").value = product.category;
+                document.getElementById("product-form-type").value = product.type || "Hoodie";
+                document.getElementById("product-form-price").value = product.price;
+                document.getElementById("product-form-origprice").value = product.originalPrice || "";
+                document.getElementById("product-form-image").value = product.image;
+                document.getElementById("product-form-desc").value = product.description || "";
+                document.getElementById("product-form-tags").value = (product.tags || []).join(', ');
+            } else {
+                modalTitle.textContent = "📦 CREATE PRODUCT ENTRY";
+                document.getElementById("product-form-id").value = "";
+            }
+
+            document.getElementById("product-modal").classList.remove("hidden");
+        };
+
+        window.closeProductModal = function () {
+            document.getElementById("product-modal").classList.add("hidden");
+        };
+
+        window.editProduct = function (productId) {
+            const product = state.products.find(p => p.id === productId);
+            if (product) openProductModal(product);
+        };
+
+        window.submitProductForm = async function (event) {
+            event.preventDefault();
+            const id = document.getElementById("product-form-id").value;
+            const name = document.getElementById("product-form-name").value;
+            const qid = document.getElementById("product-form-qid").value;
+            const category = document.getElementById("product-form-category").value;
+            const type = document.getElementById("product-form-type").value;
+            const price = parseFloat(document.getElementById("product-form-price").value);
+            const origPrice = parseFloat(document.getElementById("product-form-origprice").value) || null;
+            const image = document.getElementById("product-form-image").value;
+            const description = document.getElementById("product-form-desc").value;
+            const tags = document.getElementById("product-form-tags").value.split(',').map(t => t.trim()).filter(t => t !== '');
+
+            const productObj = {
+                id: id ? parseInt(id) : Date.now(),
+                name, qid, category, type, price, originalPrice: origPrice, image, description, tags,
+                showInHome: true,
+                showInShop: true,
+                showInCollections: true,
+                stock: 100,
+                status: 'active'
+            };
+
+            if (id) {
+                const existing = state.products.find(p => p.id === parseInt(id));
+                if (existing) {
+                    state.undoStack.push({
+                        type: 'edit',
+                        productId: existing.id,
+                        previousData: JSON.parse(JSON.stringify(existing))
+                    });
+                    Object.assign(existing, productObj);
+                }
+            } else {
+                state.undoStack.push({
+                    type: 'add',
+                    productId: productObj.id,
+                    previousData: null
+                });
+                state.products.push(productObj);
+            }
+            updateUndoButtonUI();
+
+            closeProductModal();
+            await saveProductsList();
+            renderProductsTable();
+        };
+
+        // ==========================================
+        // MODULE 3: USERS & POINTS LIST
+        // ==========================================
+        let selectedUserForPoints = null;
+
+        window.loadUsersTable = async function () {
+            console.log("Loading users list...");
+            const tbody = document.getElementById("users-table-body");
+            tbody.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-gray-500"><div class="w-8 h-8 border-4 border-[#00ff88] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>Loading Profiles...</td></tr>`;
+
+            try {
+                const db = window.db;
+                const { collection, getDocs, query, where } = window.firebaseCollections;
+
+                // Sync counts and profiles
+                const profilesSnapshot = await getDocs(collection(db, 'loyaltyProfiles'));
+                state.users = [];
+
+                for (const pDoc of profilesSnapshot.docs) {
+                    const profileData = pDoc.data();
+                    const userId = pDoc.id;
+
+                    // Load matching orders size
+                    const orderQuery = query(collection(db, 'orders'), where('userId', '==', userId));
+                    const orderSnapshot = await getDocs(orderQuery);
+
+                    state.users.push({
+                        id: userId,
+                        name: profileData.displayName || profileData.email?.split('@')[0] || "Loyalty Member",
+                        email: profileData.email || "N/A",
+                        points: profileData.totalPoints ?? profileData.points ?? 0,
+                        tier: profileData.tier || "bronze",
+                        ordersCount: orderSnapshot.size
+                    });
+                }
+
+                // Render profiles
+                displayUsersRows();
+            } catch (err) {
+                console.error("Error loading profiles list:", err);
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-400 font-semibold">Error: ${err.message}</td></tr>`;
+            }
+        };
+
+        function displayUsersRows(usersToRender = state.users) {
+            const tbody = document.getElementById("users-table-body");
+            if (usersToRender.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500">No users found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = usersToRender.map(user => `
+                <tr class="border-b border-[#1c1c1f] hover:bg-[#111113]/50 transition">
+                    <td class="p-4 font-bold text-white text-sm">${user.name}</td>
+                    <td class="p-4 text-sm text-gray-400">${user.email}</td>
+                    <td class="p-4 text-sm font-bold text-[#00ff88]">${user.points}</td>
+                    <td class="p-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                            user.tier === 'platinum' ? 'bg-purple-900 text-purple-200 border border-purple-500/20' :
+                            user.tier === 'gold' ? 'bg-yellow-950 text-yellow-200 border border-yellow-500/20' :
+                            user.tier === 'silver' ? 'bg-gray-800 text-gray-200 border border-gray-600/20' :
+                            'bg-amber-950 text-amber-200 border border-amber-800/20'
+                        }">
+                            ${user.tier}
+                        </span>
+                    </td>
+                    <td class="p-4 text-sm font-semibold text-gray-400">${user.ordersCount}</td>
+                    <td class="p-4">
+                        <button onclick="openPointsModal('${user.id}')" class="neo-btn px-3 py-1 text-xs rounded text-black bg-white hover:bg-[#00ff88]">Adjust Points</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.filterUsersTable = function () {
+            const search = document.getElementById("users-search").value.toLowerCase();
+            const filtered = state.users.filter(u =>
+                u.name.toLowerCase().includes(search) ||
+                u.email.toLowerCase().includes(search)
+            );
+            displayUsersRows(filtered);
+        };
+
+        window.openPointsModal = function (userId) {
+            selectedUserForPoints = state.users.find(u => u.id === userId);
+            if (!selectedUserForPoints) return;
+
+            document.getElementById("modal-user-display").value = `${selectedUserForPoints.name} (${selectedUserForPoints.email})`;
+            document.getElementById("modal-user-current-points").value = selectedUserForPoints.points;
+            document.getElementById("modal-user-offset").value = "";
+            document.getElementById("modal-user-reason").value = "";
+            document.getElementById("points-modal-message").innerHTML = "";
+
+            document.getElementById("points-modal").classList.remove("hidden");
+        };
+
+        window.closePointsModal = function () {
+            document.getElementById("points-modal").classList.add("hidden");
+            selectedUserForPoints = null;
+        };
+
+        window.submitUserPointsChange = async function () {
+            const offset = parseInt(document.getElementById("modal-user-offset").value);
+            const reason = document.getElementById("modal-user-reason").value || "Admin Adjustment";
+
+            if (isNaN(offset) || offset === 0) {
+                showToast("Please enter a valid points offset", false);
+                return;
+            }
+
+            try {
+                const db = window.db;
+                const { doc, getDoc, updateDoc, setDoc, addDoc, serverTimestamp } = window.firebaseCollections;
+
+                const newPoints = Math.max(0, selectedUserForPoints.points + offset);
+
+                // Calculate tier from local rates/thresholds
+                const rateDoc = await getDoc(doc(db, 'loyaltyRules', 'current'));
+                let silverReq = 500, goldReq = 1500, platReq = 3000;
+                if (rateDoc.exists()) {
+                    const rules = rateDoc.data();
+                    silverReq = rules.tiers?.silver || 500;
+                    goldReq = rules.tiers?.gold || 1500;
+                    platReq = rules.tiers?.platinum || 3000;
+                }
+
+                const newTier = newPoints >= platReq ? 'platinum' :
+                    newPoints >= goldReq ? 'gold' :
+                        newPoints >= silverReq ? 'silver' : 'bronze';
+
+                // Save to Firestore collections
+                const loyaltyRef = doc(db, 'loyaltyProfiles', selectedUserForPoints.id);
+                await updateDoc(loyaltyRef, {
+                    totalPoints: newPoints,
+                    points: newPoints,
+                    tier: newTier,
+                    updatedAt: serverTimestamp()
+                });
+
+                // User Points secondary database fallback
+                const userPointsRef = doc(db, 'userPoints', selectedUserForPoints.id);
+                const pointsDoc = await getDoc(userPointsRef);
+                if (pointsDoc.exists()) {
+                    await updateDoc(userPointsRef, {
+                        totalPoints: newPoints,
+                        tier: newTier,
+                        updatedAt: serverTimestamp()
+                    });
+                } else {
+                    await setDoc(userPointsRef, {
+                        userId: selectedUserForPoints.id,
+                        totalPoints: newPoints,
+                        tier: newTier,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                }
+
+                // Append custom Transaction doc
+                await addDoc(collection(db, 'pointsTransactions'), {
+                    userId: selectedUserForPoints.id,
+                    type: 'admin-adjustment',
+                    points: offset,
+                    reason: reason,
+                    timestamp: serverTimestamp()
+                });
+
+                showToast("Customer point balance updated dynamically!");
+                closePointsModal();
+                loadUsersTable();
+                refreshOverviewData();
+            } catch (err) {
+                console.error("Adjustment failed:", err);
+                showToast(`Adjustment failed: ${err.message}`, false);
+            }
+        };
+
+        // Sync points from orders bulk
+        window.syncAllPoints = async function () {
+            if (!confirm("This will overwrite/recalculate all point balances using physical checkout orders amounts. Proceed?")) return;
+
+            try {
+                const db = window.db;
+                const { collection, getDocs, doc, setDoc, serverTimestamp } = window.firebaseCollections;
+
+                showToast("Commencing global sync...");
+
+                const ordersSnapshot = await getDocs(collection(db, 'orders'));
+                const userSpentMap = new Map();
+
+                ordersSnapshot.forEach(doc => {
+                    const order = doc.data();
+                    const uId = order.userId;
+                    if (!uId) return;
+
+                    const spent = userSpentMap.get(uId) || { total: 0, email: order.shippingAddress?.email || order.email || "N/A" };
+                    spent.total += (order.total || 0);
+                    userSpentMap.set(uId, spent);
+                });
+
+                // Load rules to check conversion rate
+                const rulesDoc = await getDocs(collection(db, 'loyaltyRules'));
+                let ptsPerDollar = 0.10;
+                if (!rulesDoc.empty) {
+                    rulesDoc.forEach(d => {
+                        const r = d.data();
+                        if (r.pointsEarning?.pointsPerDollar) ptsPerDollar = r.pointsEarning.pointsPerDollar;
+                    });
+                }
+
+                for (const [uId, spentData] of userSpentMap.entries()) {
+                    const calculatedPts = Math.floor(spentData.total * ptsPerDollar);
+                    const tier = calculatedPts >= 3000 ? 'platinum' :
+                        calculatedPts >= 1500 ? 'gold' :
+                            calculatedPts >= 500 ? 'silver' : 'bronze';
+
+                    // Save to user loyalty profile
+                    const pRef = doc(db, 'loyaltyProfiles', uId);
+                    await setDoc(pRef, {
+                        totalPoints: calculatedPts,
+                        points: calculatedPts,
+                        tier: tier,
+                        email: spentData.email,
+                        updatedAt: serverTimestamp()
+                    }, { merge: true });
+
+                    // Sync userPoints collection too
+                    const uRef = doc(db, 'userPoints', uId);
+                    await setDoc(uRef, {
+                        userId: uId,
+                        totalPoints: calculatedPts,
+                        tier: tier,
+                        email: spentData.email,
+                        updatedAt: serverTimestamp()
+                    }, { merge: true });
+                }
+
+                showToast("All customer points synchronized successfully!");
+                loadUsersTable();
+                refreshOverviewData();
+            } catch (err) {
+                console.error("Bulk sync error:", err);
+                showToast(`Sync failed: ${err.message}`, false);
+            }
+        };
+
+        // ==========================================
+        // MODULE 4: LOYALTY RULES CONFIG
+        // ==========================================
+        window.loadLoyaltyRulesPanel = async function () {
+            console.log("Loading rules config panel...");
+            try {
+                const db = window.db;
+                const { doc, getDoc } = window.firebaseCollections;
+
+                const docRef = doc(db, 'loyaltyRules', 'current');
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const rules = docSnap.data();
+                    state.rules = rules;
+
+                    document.getElementById("loyalty-rate").value = rules.pointsEarning?.pointsPerDollar || 0.10;
+                    document.getElementById("loyalty-signup-bonus").value = rules.pointsEarning?.signupBonus || 100;
+
+                    document.getElementById("tier-silver").value = rules.tiers?.silver || 500;
+                    document.getElementById("tier-gold").value = rules.tiers?.gold || 1500;
+                    document.getElementById("tier-platinum").value = rules.tiers?.platinum || 3000;
+                } else {
+                    console.warn("No rules config doc exists. Initializing defaults...");
+                    document.getElementById("loyalty-rate").value = 0.10;
+                    document.getElementById("loyalty-signup-bonus").value = 100;
+                    document.getElementById("tier-silver").value = 500;
+                    document.getElementById("tier-gold").value = 1500;
+                    document.getElementById("tier-platinum").value = 3000;
+                }
+            } catch (err) {
+                console.error("Rules loading failed:", err);
+            }
+        };
+
+        window.saveLoyaltyRules = async function () {
+            const rate = parseFloat(document.getElementById("loyalty-rate").value);
+            const signup = parseInt(document.getElementById("loyalty-signup-bonus").value);
+            const silver = parseInt(document.getElementById("tier-silver").value);
+            const gold = parseInt(document.getElementById("tier-gold").value);
+            const platinum = parseInt(document.getElementById("tier-platinum").value);
+
+            try {
+                const db = window.db;
+                const { doc, setDoc, serverTimestamp } = window.firebaseCollections;
+
+                const rulesRef = doc(db, 'loyaltyRules', 'current');
+                await setDoc(rulesRef, {
+                    pointsEarning: {
+                        pointsPerDollar: rate,
+                        signupBonus: signup
+                    },
+                    tiers: { silver, gold, platinum },
+                    updatedAt: serverTimestamp()
+                });
+
+                showToast("Dynamic loyalty parameters saved!");
+                loadLoyaltyRulesPanel();
+            } catch (err) {
+                console.error("Error saving rules configuration:", err);
+                showToast(`Save failed: ${err.message}`, false);
+            }
+        };
+
+        // ==========================================
+        // MODULE 5: DISCOUNT CODES MANAGER
+        // ==========================================
+        window.loadDiscountsTable = async function () {
+            console.log("Loading promo coupon codes...");
+            const tbody = document.getElementById("discounts-table-body");
+            tbody.innerHTML = `<tr><td colspan="7" class="p-12 text-center text-gray-500"><div class="w-8 h-8 border-4 border-[#00ff88] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>Loading promo registries...</td></tr>`;
+
+            try {
+                const db = window.db;
+                const { collection, getDocs } = window.firebaseCollections;
+
+                const dSnap = await getDocs(collection(db, 'discounts'));
+                state.discounts = [];
+                dSnap.forEach(doc => {
+                    state.discounts.push({ id: doc.id, ...doc.data() });
+                });
+
+                displayDiscountsRows();
+            } catch (err) {
+                console.error("Discounts retrieval failed:", err);
+                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-red-400 font-semibold">Error: ${err.message}</td></tr>`;
+            }
+        };
+
+        function displayDiscountsRows() {
+            const tbody = document.getElementById("discounts-table-body");
+            if (state.discounts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-gray-500">No discount codes currently set.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = state.discounts.map(disc => {
+                const isExpired = new Date(disc.endDate) < new Date();
+                const isActive = disc.active !== false && !isExpired;
+
+                return `
+                    <tr class="border-b border-[#1c1c1f] hover:bg-[#111113]/50 transition">
+                        <td class="p-4">
+                            <span class="bg-[#00ff88] text-black px-2.5 py-1 rounded font-extrabold tracking-wider text-xs border border-black shadow-[2px_2px_0px_#000000]">
+                                ${disc.code}
+                            </span>
+                        </td>
+                        <td class="p-4">
+                            <div class="font-bold text-white text-sm">${disc.name || 'Promo Coupon'}</div>
+                            <div class="text-xs text-gray-500 mt-0.5">${disc.description || 'Global Campaign discount'}</div>
+                        </td>
+                        <td class="p-4 text-sm font-semibold text-gray-300">
+                            ${disc.type === 'percentage' ? disc.value + '%' : '$' + disc.value} Off
+                        </td>
+                        <td class="p-4 text-xs text-gray-400 font-medium">
+                            <div>Start: ${disc.startDate}</div>
+                            <div class="mt-0.5">End: ${disc.endDate}</div>
+                        </td>
+                        <td class="p-4 text-xs text-gray-400 font-semibold">
+                            Min Buy: $${disc.minPurchase || 0}
+                        </td>
+                        <td class="p-4">
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase ${
+                                isActive ? 'bg-[#00ff88]/10 text-[#00ff88] border border-[#00ff88]/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                            }">
+                                ${isActive ? 'Active' : isExpired ? 'Expired' : 'Disabled'}
+                            </span>
+                        </td>
+                        <td class="p-4">
+                            <button onclick="deleteDiscountCode('${disc.id}')" class="neo-btn px-2.5 py-1 text-xs rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-black border-red-500">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.openDiscountModal = function () {
+            document.getElementById("discount-form").reset();
+            // Set default date bounds
+            const now = new Date();
+            const yearLater = new Date();
+            yearLater.setFullYear(now.getFullYear() + 1);
+
+            document.getElementById("discount-form-start").value = now.toISOString().split('T')[0];
+            document.getElementById("discount-form-end").value = yearLater.toISOString().split('T')[0];
+
+            document.getElementById("discount-modal").classList.remove("hidden");
+        };
+
+        window.closeDiscountModal = function () {
+            document.getElementById("discount-modal").classList.add("hidden");
+        };
+
+        window.generateRandomPromoCode = function () {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = 'E';
+            for (let i = 0; i < 6; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            document.getElementById("discount-form-code").value = result;
+        };
+
+        window.submitDiscountForm = async function (event) {
+            event.preventDefault();
+            const code = document.getElementById("discount-form-code").value.toUpperCase().trim();
+            const name = document.getElementById("discount-form-name").value;
+            const type = document.getElementById("discount-form-type").value;
+            const value = parseFloat(document.getElementById("discount-form-value").value);
+            const startDate = document.getElementById("discount-form-start").value;
+            const endDate = document.getElementById("discount-form-end").value;
+            const usageLimit = parseInt(document.getElementById("discount-form-limit").value) || 100;
+            const minPurchase = parseFloat(document.getElementById("discount-form-minpurchase").value) || 0;
+
+            try {
+                const db = window.db;
+                const { collection, doc, setDoc, serverTimestamp } = window.firebaseCollections;
+
+                // Push coupon payload to Firestore
+                const newRef = doc(collection(db, 'discounts'));
+                await setDoc(newRef, {
+                    id: newRef.id,
+                    code, name, type, value, startDate, endDate, usageLimit, minPurchase,
+                    active: true,
+                    createdAt: serverTimestamp()
+                });
+
+                showToast("Promo discount code registered live!");
+                closeDiscountModal();
+                loadDiscountsTable();
+                refreshOverviewData();
+            } catch (err) {
+                console.error("Failed adding coupon code:", err);
+                showToast(`Registration failed: ${err.message}`, false);
+            }
+        };
+
+        window.deleteDiscountCode = async function (id) {
+            if (!confirm("Are you sure you want to deactivate and remove this coupon?")) return;
+
+            try {
+                const db = window.db;
+                const { doc, deleteDoc } = window.firebaseCollections;
+
+                await deleteDoc(doc(db, 'discounts', id));
+                showToast("Promo coupon code removed!");
+                loadDiscountsTable();
+                refreshOverviewData();
+            } catch (err) {
+                console.error("Deletion failed:", err);
+                showToast(`Deletion failed: ${err.message}`, false);
+            }
+        };
+
+        // ==========================================
+        // EXTRA ACTION: SYNC VERCEL TRIGGER
+        // ==========================================
+        window.triggerVercelDeploy = async function () {
+            if (!confirm("This will trigger a live git-commit deployment pipeline to Vercel. Proceed?")) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/sync-deploy`, {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    showToast("Deployment pipeline initiated!");
+                } else {
+                    showToast("Deployment endpoint unresponsive.", false);
+                }
+            } catch (err) {
+                console.warn("Deploy service unavailable:", err);
+                showToast("Deploy service require local node admin server active", false);
+            }
+        };
+    </script>
+</body>
+
+</html>
