@@ -1953,13 +1953,12 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             />
           </div>
 
-          <motion.div
-            style={{ y: videoSectionY }}
-            className="container mx-auto px-6 text-center relative z-10 pt-20"
-          >
+          <div className="container mx-auto px-6 text-center relative z-10 pt-20">
             <h2 className="text-5xl md:text-8xl font-black mb-8 relative z-20 font-syne uppercase tracking-tighter" style={{ WebkitTextStroke: '2px #00ff88', color: 'transparent' }}>The Elevez Experience</h2>
 
-            <div className="relative aspect-video w-full max-w-6xl mx-auto overflow-hidden border-[8px] border-[#00ff88] shadow-[24px_24px_0_0_#00ff88] group bg-black"
+            <motion.div
+              style={{ y: videoSectionY }}
+              className="relative aspect-video w-full max-w-6xl mx-auto overflow-hidden border-[8px] border-[#00ff88] shadow-[24px_24px_0_0_#00ff88] group bg-black"
               onMouseEnter={() => setCursorVariant('hover')}
               onMouseLeave={() => setCursorVariant('default')}
             >
@@ -1985,8 +1984,8 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                   FOR<br />BIGGER<br />BLAZES
                 </h3>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </section>
       </ScrollAnimatedSection>
 
