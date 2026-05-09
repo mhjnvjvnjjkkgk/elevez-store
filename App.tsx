@@ -17,6 +17,7 @@ import { auth } from './firebaseConfig';
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
 import { BuilderComponent, useBuilderContent } from './BuilderComponent';
 import { RewardsPage } from './components/RewardsPage';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { OrderDetail } from './components/OrderDetail';
 import { FloatingRewardsButton, RewardsModal } from './components/RewardsModal';
 import { NewsletterSignup } from './components/NewsletterSignup';
@@ -4196,7 +4197,7 @@ const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => vo
         <Route path="/product/:id" element={<PageTransition><ProductDetail setCursorVariant={setCursorVariant} /></PageTransition>} />
         <Route path="/checkout" element={<PageTransition><Checkout /></PageTransition>} />
         <Route path="/account" element={<PageTransition><Account setCursorVariant={setCursorVariant} /></PageTransition>} />
-        <Route path="/rewards" element={<PageTransition><RewardsPage /></PageTransition>} />
+        <Route path="/rewards" element={<PageTransition><ErrorBoundary><RewardsPage /></ErrorBoundary></PageTransition>} />
         <Route path="/order/:orderId" element={<PageTransition><OrderDetail /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
       </Routes>
