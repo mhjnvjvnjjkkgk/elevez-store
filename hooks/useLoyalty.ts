@@ -273,9 +273,9 @@ export function useLoyalty() {
     }
   }, [profile]);
 
-  const pointsToNextTier = profile && nextTier ? Math.max(0, (nextTier.pointsRequired || 0) - (profile.totalPointsEarned ?? 0)) : 0;
-  const rawProgress = nextTier && tierInfo && (nextTier.pointsRequired - tierInfo.pointsRequired) !== 0
-    ? (((profile?.totalPointsEarned ?? 0) - (tierInfo.pointsRequired || 0)) / ((nextTier.pointsRequired || 0) - (tierInfo.pointsRequired || 0))) * 100
+  const pointsToNextTier = profile && nextTier ? Math.max(0, (nextTier.minPoints || 0) - (profile.totalPointsEarned ?? 0)) : 0;
+  const rawProgress = nextTier && tierInfo && (nextTier.minPoints - tierInfo.minPoints) !== 0
+    ? (((profile?.totalPointsEarned ?? 0) - (tierInfo.minPoints || 0)) / ((nextTier.minPoints || 0) - (tierInfo.minPoints || 0))) * 100
     : 100;
   const tierProgress = isNaN(rawProgress) ? 0 : Math.min(100, Math.max(0, rawProgress));
 

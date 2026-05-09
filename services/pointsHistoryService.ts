@@ -197,28 +197,83 @@ class PointsHistoryManager {
       );
 
       const snapshot = await getDocs(q);
-      const transactions: PointsTransaction[] = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        timestamp: doc.data().timestamp?.toDate() || new Date()
-      })) as PointsTransaction[];
+      
+      const parseDate = (val: any): Date => {
+        if (!val) return new Date();
+        if (typeof val.toDate === 'function') return val.toDate();
+        if (val instanceof Date) return val;
+        const parsed = new Date(val);
+        return isNaN(parsed.getTime()) ? new Date() : parsed;
+      };
 
-      // Get user info
+      // Parse transactions to support both schemas (legacy points/amount, description/reason, types)
+      const rawTransactions = snapshot.docs.map(doc => {
+        const data = doc.data();
+        const amount = typeof data.amount === 'number' ? data.amount : (typeof data.points === 'number' ? data.points : 0);
+        const description = data.description || data.reason || 'Points adjustment';
+        
+        let type = data.type || 'bonus';
+        if (type === 'earn') type = 'purchase';
+        if (type === 'redeem') type = 'redemption';
+
+        return {
+          id: doc.id,
+          userId: data.userId || userId,
+          orderId: data.orderId || data.metadata?.orderId || '',
+          amount,
+          type: type as 'purchase' | 'redemption' | 'admin_adjustment' | 'bonus',
+          description,
+          timestamp: parseDate(data.timestamp),
+          metadata: data.metadata || {}
+        };
+      });
+
+      // Sort oldest first to calculate running balance correctly
+      const sortedTransactions = [...rawTransactions].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      let runningBalance = 0;
+
+      const reconstructedTransactions = sortedTransactions.map(tx => {
+        const isDeduction = tx.type === 'redemption' || (tx.type === 'admin_adjustment' && tx.amount < 0);
+        const amount = Math.abs(tx.amount);
+        
+        const balanceBefore = runningBalance;
+        const balanceAfter = isDeduction ? Math.max(0, runningBalance - amount) : (runningBalance + amount);
+        runningBalance = balanceAfter;
+
+        return {
+          ...tx,
+          amount: isDeduction ? -amount : amount,
+          balanceBefore,
+          balanceAfter
+        };
+      });
+
+      // Sort back to newest first (recent to old) for UI
+      reconstructedTransactions.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
+      // Get user info from legacy users
       const userDoc = await getDocs(
         query(collection(db, 'users'), where('uid', '==', userId))
       );
-
       const userData = userDoc.docs[0]?.data() || {};
-      const currentBalance = transactions.length > 0 ? transactions[0].balanceAfter : 0;
+
+      // Get accurate profile from loyaltyProfiles
+      const profileDoc = await getDocs(
+        query(collection(db, 'loyaltyProfiles'), where('userId', '==', userId))
+      );
+      const profileData = profileDoc.docs[0]?.data() || {};
+
+      const currentBalance = reconstructedTransactions.length > 0 ? reconstructedTransactions[0].balanceAfter : (profileData.points || 0);
+      const tier = profileData.tier || userData.tier || 'Bronze';
 
       // Calculate totals
-      const totalEarned = transactions
-        .filter(t => t.type === 'purchase' || t.type === 'bonus')
+      const totalEarned = reconstructedTransactions
+        .filter(t => t.amount > 0)
         .reduce((sum, t) => sum + t.amount, 0);
 
-      const totalRedeemed = transactions
-        .filter(t => t.type === 'redemption')
-        .reduce((sum, t) => sum + t.amount, 0);
+      const totalRedeemed = reconstructedTransactions
+        .filter(t => t.amount < 0)
+        .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
       return {
         userId,
@@ -227,8 +282,8 @@ class PointsHistoryManager {
         currentBalance,
         totalEarned,
         totalRedeemed,
-        tier: userData.tier || 'Bronze',
-        transactions,
+        tier,
+        transactions: reconstructedTransactions,
         lastUpdated: new Date()
       };
     } catch (error) {

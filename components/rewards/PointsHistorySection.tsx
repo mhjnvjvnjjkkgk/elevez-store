@@ -54,6 +54,14 @@ export const PointsHistorySection: React.FC = () => {
   const getCompleteHistory = () => {
     const history: any[] = [];
 
+    const parseDate = (val: any): Date => {
+      if (!val) return new Date(0);
+      if (typeof val.toDate === 'function') return val.toDate();
+      if (val instanceof Date) return val;
+      const parsed = new Date(val);
+      return isNaN(parsed.getTime()) ? new Date(0) : parsed;
+    };
+
     // Add transactions
     transactions.forEach(transaction => {
       // Determine if this is a positive (earning) transaction
@@ -91,8 +99,8 @@ export const PointsHistorySection: React.FC = () => {
 
     // Sort by timestamp (newest first)
     return history.sort((a, b) => {
-      const timeA = a.timestamp?.toDate?.() || new Date(0);
-      const timeB = b.timestamp?.toDate?.() || new Date(0);
+      const timeA = parseDate(a.timestamp).getTime();
+      const timeB = parseDate(b.timestamp).getTime();
       return timeB - timeA;
     });
   };
