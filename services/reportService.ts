@@ -123,7 +123,7 @@ class ReportService {
       const dailyMap = new Map<string, number>();
 
       for (const order of orders) {
-        const amount = order.total || 0;
+        const amount = order.totalAmount || order.total || 0;
         summary.totalRevenue += amount;
 
         if (order.discountCode) {

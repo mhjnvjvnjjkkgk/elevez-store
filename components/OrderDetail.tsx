@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { auth } from '../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
+import { PRODUCTS } from '../constants';
 
 interface OrderItem {
   id: string;
@@ -197,27 +198,29 @@ export const OrderDetail: React.FC = () => {
               </h3>
 
               <div className="space-y-4">
-                {order.items.map((item, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ x: -50, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 + index * 0.1 }}
-                    className="bg-black/40 rounded-2xl p-6 border border-white/10 hover:border-[#00ff88]/30 
-                             transition-all duration-300 group"
-                  >
-                    <div className="flex gap-6">
-                      {/* Product Image */}
-                      {item.image && (
-                        <div className="w-32 h-40 flex-shrink-0 rounded-xl overflow-hidden bg-zinc-900 border border-white/10">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            style={{ imageRendering: 'high-quality' }}
-                          />
-                        </div>
-                      )}
+                {order.items.map((item, index) => {
+                  const fallbackImage = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ x: -50, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 + index * 0.1 }}
+                      className="bg-black/40 rounded-2xl p-6 border border-white/10 hover:border-[#00ff88]/30 
+                               transition-all duration-300 group"
+                    >
+                      <div className="flex gap-6">
+                        {/* Product Image */}
+                        {fallbackImage && (
+                          <div className="w-32 h-40 flex-shrink-0 rounded-xl overflow-hidden bg-zinc-900 border border-white/10">
+                            <img
+                              src={fallbackImage}
+                              alt={item.name}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                              style={{ imageRendering: 'high-quality' }}
+                            />
+                          </div>
+                        )}
 
                       {/* Product Details */}
                       <div className="flex-1">
@@ -254,7 +257,8 @@ export const OrderDetail: React.FC = () => {
                       </div>
                     </div>
                   </motion.div>
-                ))}
+                );
+              })}
               </div>
             </motion.div>
 
@@ -293,22 +297,24 @@ export const OrderDetail: React.FC = () => {
             >
               <h3 className="text-xl font-bold text-white mb-6">Product Mockups</h3>
               <div className="space-y-4">
-                {order.items.map((item, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.15 + index * 0.1 }}
-                    className="bg-black/40 rounded-2xl p-4 border border-white/10 hover:border-[#00ff88]/30 transition-all"
-                  >
-                    {item.image && (
-                      <div className="relative mb-3 overflow-hidden rounded-xl bg-gradient-to-br from-[#00ff88]/10 to-purple-500/10 p-4">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-full h-48 object-contain"
-                          style={{ imageRendering: 'high-quality' }}
-                        />
+                {order.items.map((item, index) => {
+                  const fallbackImage = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.15 + index * 0.1 }}
+                      className="bg-black/40 rounded-2xl p-4 border border-white/10 hover:border-[#00ff88]/30 transition-all"
+                    >
+                      {fallbackImage && (
+                        <div className="relative mb-3 overflow-hidden rounded-xl bg-gradient-to-br from-[#00ff88]/10 to-purple-500/10 p-4">
+                          <img
+                            src={fallbackImage}
+                            alt={item.name}
+                            className="w-full h-48 object-contain"
+                            style={{ imageRendering: 'high-quality' }}
+                          />
                         <div className="absolute top-2 right-2 bg-[#00ff88]/20 backdrop-blur-sm rounded-lg px-3 py-1 border border-[#00ff88]/30">
                           <p className="text-[#00ff88] text-xs font-bold">Qty: {item.quantity}</p>
                         </div>
@@ -317,7 +323,8 @@ export const OrderDetail: React.FC = () => {
                     <p className="text-white font-bold text-sm line-clamp-2">{item.name}</p>
                     <p className="text-[#00ff88] font-bold text-sm mt-2">₹{item.price.toFixed(2)}</p>
                   </motion.div>
-                ))}
+                );
+              })}
               </div>
             </motion.div>
 

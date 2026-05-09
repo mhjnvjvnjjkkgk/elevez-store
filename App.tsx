@@ -51,6 +51,7 @@ interface CartContextType {
   items: CartItem[];
   addToCart: (product: Product, size: string, color: string, quantity: number) => void;
   removeFromCart: (cartId: string) => void;
+  clearCart: () => void;
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
   cartTotal: number;
@@ -97,10 +98,14 @@ const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     setItems(prev => prev.filter(item => item.cartId !== cartId));
   };
 
+  const clearCart = () => {
+    setItems([]);
+  };
+
   const cartTotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   return (
-    <CartContext.Provider value={{ items, addToCart, removeFromCart, isCartOpen, setIsCartOpen, cartTotal }}>
+    <CartContext.Provider value={{ items, addToCart, removeFromCart, clearCart, isCartOpen, setIsCartOpen, cartTotal }}>
       {children}
     </CartContext.Provider>
   );
@@ -2830,7 +2835,7 @@ const About = () => {
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { items, cartTotal } = useCart();
+  const { items, cartTotal, clearCart } = useCart();
   const [user, setUser] = useState<any>(null);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -3008,6 +3013,7 @@ const Checkout = () => {
         items: items.map(item => ({
           id: item.id,
           name: item.name,
+          image: item.image || '',
           price: item.price,
           quantity: item.quantity,
           size: item.size,
@@ -3050,15 +3056,18 @@ const Checkout = () => {
           }
         }
 
+        clearCart();
         setOrderPlaced(true);
       } else {
         console.error('Error saving order:', result.error);
         // Still show success page even if save fails for demo purposes
+        clearCart();
         setOrderPlaced(true);
       }
     } catch (error) {
       console.error('Error during order submission:', error);
       // Still show success page even if save fails for demo purposes
+      clearCart();
       setOrderPlaced(true);
     } finally {
       setIsSubmitting(false);
@@ -3793,14 +3802,17 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                           </div>
 
                           <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
-                            {(order.items || []).slice(0, 4).map((item: any, i: number) => (
-                              <div key={i} className="w-20 h-24 border-[2px] border-black shrink-0 relative group">
-                                <img src={item.image} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" />
-                                <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[10px] text-white font-black uppercase text-center p-1">
-                                  {item.quantity}x {item.size}
+                            {(order.items || []).slice(0, 4).map((item: any, i: number) => {
+                              const fallbackImage = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
+                              return (
+                                <div key={i} className="w-20 h-24 border-[2px] border-black shrink-0 relative group">
+                                  <img src={fallbackImage} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" />
+                                  <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[10px] text-white font-black uppercase text-center p-1">
+                                    {item.quantity}x {item.size}
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
 
                           <button 
@@ -3814,7 +3826,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                                 items: (order.items || []).map((item: any) => ({
                                   id: item.id || item.name,
                                   name: item.name,
-                                  image: item.image || '',
+                                  image: item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '',
                                   price: item.price,
                                   quantity: item.quantity,
                                   size: item.size,

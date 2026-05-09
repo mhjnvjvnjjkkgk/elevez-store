@@ -46,7 +46,7 @@ class UserDataLoaderService {
         orders,
         wishlist,
         tier: updatedPoints?.tier || 'bronze',
-        totalSpent: orders.reduce((sum, order) => sum + (order.total || 0), 0),
+        totalSpent: orders.reduce((sum, order) => sum + (order.totalAmount || order.total || 0), 0),
         orderCount: orders.length,
         lastUpdated: new Date()
       };

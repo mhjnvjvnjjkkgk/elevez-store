@@ -26,7 +26,8 @@ export async function calculateTotalPointsFromOrders(userId: string): Promise<nu
     
     snapshot.forEach((doc) => {
       const order = doc.data();
-      const pointsEarned = order.pointsEarned || Math.floor(order.total / 10);
+      const orderVal = order.totalAmount ?? order.total ?? 0;
+      const pointsEarned = order.pointsEarned || Math.floor(orderVal / 10);
       totalPoints += pointsEarned;
       orderCount++;
     });
@@ -62,9 +63,10 @@ export async function syncUserPointsFromOrders(userId: string): Promise<{
     
     snapshot.forEach((doc) => {
       const order = doc.data();
-      const pointsEarned = order.pointsEarned || Math.floor(order.total / 10);
+      const orderVal = order.totalAmount ?? order.total ?? 0;
+      const pointsEarned = order.pointsEarned || Math.floor(orderVal / 10);
       totalPoints += pointsEarned;
-      totalSpent += order.total || 0;
+      totalSpent += orderVal;
       orderCount++;
     });
     
@@ -149,9 +151,10 @@ export async function getUserOrderStats(userId: string): Promise<{
     
     snapshot.forEach((doc) => {
       const order = doc.data();
-      const pointsEarned = order.pointsEarned || Math.floor(order.total / 10);
+      const orderVal = order.totalAmount ?? order.total ?? 0;
+      const pointsEarned = order.pointsEarned || Math.floor(orderVal / 10);
       totalPoints += pointsEarned;
-      totalSpent += order.total || 0;
+      totalSpent += orderVal;
       orderCount++;
     });
     

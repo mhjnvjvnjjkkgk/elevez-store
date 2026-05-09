@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Package, Truck, CheckCircle, Clock, MapPin, CreditCard, Download, Printer, Mail } from 'lucide-react';
+import { PRODUCTS } from '../constants';
 
 interface OrderItem {
   id: string;
@@ -189,43 +190,46 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ isOpen, onCl
                   <div className="bg-white/5 rounded-xl p-6 border border-white/10">
                     <h3 className="text-xl font-bold mb-4">Order Items</h3>
                     <div className="space-y-4">
-                      {order.items.map((item) => (
-                        <div key={item.id} className="flex gap-4 pb-4 border-b border-white/10 last:border-0">
-                          <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-white/5 border border-white/10">
-                            {item.image ? (
-                              <img
-                                src={item.image}
-                                alt={item.name}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none';
-                                  e.currentTarget.parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-500 text-xs">No Image</div>';
-                                }}
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
-                                No Image
+                      {order.items.map((item) => {
+                        const fallbackImage = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
+                        return (
+                          <div key={item.id} className="flex gap-4 pb-4 border-b border-white/10 last:border-0">
+                            <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-white/5 border border-white/10">
+                              {fallbackImage ? (
+                                <img
+                                  src={fallbackImage}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    e.currentTarget.parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-500 text-xs">No Image</div>';
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
+                                  No Image
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-bold">{item.name}</h4>
+                              <div className="flex gap-4 text-sm text-gray-400 mt-1">
+                                {item.size && <span>Size: {item.size}</span>}
+                                {item.color && <span>Color: {item.color}</span>}
+                                <span>Qty: {item.quantity}</span>
                               </div>
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-bold">{item.name}</h4>
-                            <div className="flex gap-4 text-sm text-gray-400 mt-1">
-                              {item.size && <span>Size: {item.size}</span>}
-                              {item.color && <span>Color: {item.color}</span>}
-                              <span>Qty: {item.quantity}</span>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold">${item.price.toFixed(2)}</p>
+                              {item.quantity > 1 && (
+                                <p className="text-sm text-gray-400">
+                                  ${(item.price * item.quantity).toFixed(2)} total
+                                </p>
+                              )}
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="font-bold">${item.price.toFixed(2)}</p>
-                            {item.quantity > 1 && (
-                              <p className="text-sm text-gray-400">
-                                ${(item.price * item.quantity).toFixed(2)} total
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
 
