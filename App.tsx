@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, createContext, useContext, useLayoutEffect } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, useInView } from 'framer-motion';
-import { Terminal, Package, Shield, Truck, Zap, Star, X, ShoppingBag, Menu, Camera, Sparkles, Filter, ChevronDown, ChevronUp, Share2, Heart, Maximize2, Gift, User, Mail, MapPin, Instagram, Twitter, ArrowRight, ArrowLeft, Award, ShieldCheck, Timer, Play, SlidersHorizontal, Search, Check, Minus, Plus, RefreshCw, CreditCard, Banknote, LogOut, Eye, Trash2, ChevronRight, Lock, Home, Compass } from 'lucide-react';
+import { Terminal, Package, Shield, Truck, Zap, Star, X, ShoppingBag, Menu, Camera, Sparkles, Filter, ChevronDown, ChevronUp, Share2, Heart, Maximize2, Gift, User, Mail, MapPin, Instagram, Twitter, ArrowRight, ArrowLeft, Award, ShieldCheck, Timer, Play, SlidersHorizontal, Search, Check, Minus, Plus, RefreshCw, CreditCard, Banknote, LogOut, Eye, Trash2, ChevronRight, Lock, Home as HomeIcon, Compass } from 'lucide-react';
 import ScrollReveal from './components/ScrollReveal';
 import ClickSpark from './components/ClickSpark';
 import gsap from 'gsap';
@@ -4121,7 +4121,7 @@ const Navbar = () => {
   }, [addToCart]);
 
   const mobileNavItems = [
-    { id: 'home', label: 'Home', path: '/', icon: Home, isActive: currentPath === '/' },
+    { id: 'home', label: 'Home', path: '/', icon: HomeIcon, isActive: currentPath === '/' },
     { id: 'collections', label: 'Collections', path: '/shop/all', icon: Compass, isActive: currentPath.startsWith('/shop') },
     { id: 'rewards', label: 'Rewards', path: '/rewards', icon: Gift, isActive: currentPath === '/rewards' },
     { id: 'contact', label: 'Contact', path: '/contact', icon: Mail, isActive: currentPath === '/contact' }
