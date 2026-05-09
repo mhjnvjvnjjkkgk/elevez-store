@@ -3702,7 +3702,12 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
               <div className="bg-white border-[6px] border-black p-10 shadow-[16px_16px_0px_0px_#000]">
                 <div className="relative inline-block mb-10">
                   {user.photoURL ? (
-                    <img src={user.photoURL} alt={user.displayName} className="w-32 h-32 border-[6px] border-black shadow-[8px_8px_0px_0px_#00ff88]" />
+                    <img 
+                      src={user.photoURL} 
+                      alt={user.displayName} 
+                      referrerPolicy="no-referrer"
+                      className="w-32 h-32 object-cover border-[6px] border-black shadow-[8px_8px_0px_0px_#00ff88]" 
+                    />
                   ) : (
                     <div className="w-32 h-32 bg-black text-[#00ff88] border-[6px] border-black flex items-center justify-center shadow-[8px_8px_0px_0px_#00ff88]">
                       <User size={64} />

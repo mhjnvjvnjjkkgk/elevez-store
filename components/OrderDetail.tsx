@@ -74,7 +74,7 @@ export const OrderDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-32 pb-20 bg-black flex items-center justify-center">
+      <div className="min-h-screen pt-48 pb-20 bg-black flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
@@ -86,7 +86,7 @@ export const OrderDetail: React.FC = () => {
 
   if (!order) {
     return (
-      <div className="min-h-screen pt-32 pb-20 bg-black">
+      <div className="min-h-screen pt-48 pb-20 bg-black">
         <div className="max-w-4xl mx-auto px-6">
           <button
             onClick={() => navigate(-1)}
@@ -110,7 +110,7 @@ export const OrderDetail: React.FC = () => {
   const pointsEarned = Math.floor(order.totalAmount / 10);
 
   return (
-    <div className="min-h-screen pt-32 pb-20 bg-black">
+    <div className="min-h-screen pt-48 pb-20 bg-black">
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <motion.div
