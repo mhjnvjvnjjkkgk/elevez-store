@@ -3135,9 +3135,9 @@ const Checkout = () => {
             <h1 className="text-6xl md:text-8xl font-black font-syne uppercase text-black leading-none">Checkout</h1>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {/* Checkout Form */}
-            <div className="lg:col-span-2 space-y-12">
+            <div className="lg:col-span-7 space-y-12">
               {!user ? (
                 <div className="bg-white border-[6px] border-black p-12 shadow-[16px_16px_0px_0px_#000]">
                   <div className="flex items-center gap-6 mb-8">
@@ -3358,7 +3358,7 @@ const Checkout = () => {
             </div>
 
             {/* Order Summary */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-5">
               <div className="bg-white border-[6px] border-black p-8 shadow-[12px_12px_0px_0px_#000] sticky top-40">
                 <div className="flex items-center gap-4 mb-8 border-b-[4px] border-black pb-4">
                   <div className="w-12 h-12 bg-black text-[#00ff88] border-[3px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000]">
