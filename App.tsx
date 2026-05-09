@@ -1954,10 +1954,10 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           </div>
 
           <div className="container mx-auto px-6 text-center relative z-10 pt-20">
-            <h2 className="text-5xl md:text-8xl font-black mb-8 relative z-20 font-syne uppercase tracking-tighter" style={{ WebkitTextStroke: '2px #00ff88', color: 'transparent' }}>The Elevez Experience</h2>
+            <h2 className="text-5xl md:text-8xl font-black mb-12 relative z-20 font-syne uppercase tracking-tighter" style={{ WebkitTextStroke: '2px #00ff88', color: 'transparent' }}>The Elevez Experience</h2>
 
-            <motion.div
-              style={{ y: videoSectionY }}
+            {/* Frame is STATIC — parallax applied only to content inside */}
+            <div
               className="relative aspect-video w-full max-w-6xl mx-auto overflow-hidden border-[8px] border-[#00ff88] shadow-[24px_24px_0_0_#00ff88] group bg-black"
               onMouseEnter={() => setCursorVariant('hover')}
               onMouseLeave={() => setCursorVariant('default')}
@@ -1973,10 +1973,12 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                   <Play className="w-10 h-10 text-black fill-black" />
                 </div>
               </div>
-              <video
+              {/* Parallax only on the video element itself, not the frame */}
+              <motion.video
+                style={{ y: videoSectionY, scale: 1.15 }}
                 src="https://assets.mixkit.co/videos/preview/mixkit-urban-model-posing-in-neon-light-39857-large.mp4"
                 autoPlay muted loop playsInline
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 relative z-[5]"
+                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 absolute inset-0 z-[5]"
                 onError={(e) => { (e.target as HTMLVideoElement).style.display = 'none'; }}
               />
               <div className="absolute bottom-8 left-8 z-20 text-left bg-black border-[4px] border-white p-4 shadow-[8px_8px_0_0_#fff]">
@@ -1984,7 +1986,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                   FOR<br />BIGGER<br />BLAZES
                 </h3>
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
       </ScrollAnimatedSection>
