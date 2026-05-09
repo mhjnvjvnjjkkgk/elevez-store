@@ -2221,6 +2221,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState('');
   const [product, setProduct] = useState<any>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   // Fix: Scroll to top when product page loads
   useEffect(() => {
@@ -2283,7 +2284,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
           {/* Left Column - sticky, full image with borders always in view */}
           <div className="lg:col-span-6 lg:sticky lg:top-28">
-          <div className="bg-white border-[8px] border-black p-6 md:p-8 shadow-[16px_16px_0px_0px_#000] relative flex flex-col" style={{ maxHeight: 'calc(100vh - 9rem)' }}>
+          <div className="bg-white border-[8px] border-black p-6 md:p-8 shadow-[16px_16px_0px_0px_#000] relative flex flex-col h-auto md:h-[600px] lg:h-[calc(100vh-9rem)] lg:min-h-[550px] lg:max-h-[750px]">
             {/* Decorative Spinning Stamp */}
             <motion.div
               animate={{ rotate: 360 }}
@@ -2303,7 +2304,12 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               </motion.span>
             </motion.div>
 
-            <div className="relative flex-1 min-h-0 border-[4px] border-black bg-white mb-4 group overflow-hidden">
+            <div 
+              onClick={() => setIsLightboxOpen(true)}
+              className="relative flex-1 min-h-0 border-[4px] border-black bg-white mb-4 group overflow-hidden cursor-zoom-in"
+              onMouseEnter={() => setCursorVariant('hover')}
+              onMouseLeave={() => setCursorVariant('default')}
+            >
               <img
                 src={activeImage}
                 alt={product.name}
@@ -2311,6 +2317,14 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               />
               <div className="absolute top-6 left-6 bg-black text-[#00ff88] px-4 py-1 border-[3px] border-black font-black uppercase text-xs shadow-[4px_4px_0px_0px_#000]">
                 {product.type}
+              </div>
+
+              {/* cyber-neobrutalist decrypt image trigger */}
+              <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                <div className="bg-black text-[#00ff88] px-5 py-3 border-[3px] border-[#00ff88] font-black uppercase tracking-wider text-xs flex items-center gap-2 shadow-[4px_4px_0px_0px_#000] pointer-events-auto">
+                  <Maximize2 size={16} />
+                  DECRYPT IMAGE
+                </div>
               </div>
             </div>
 
@@ -2486,6 +2500,47 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
           </div>
         </div>
       </div>
+
+      {/* cyber-neobrutalist decrypt image (lightbox) overlay */}
+      <AnimatePresence>
+        {isLightboxOpen && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/95 backdrop-blur-sm"
+              onClick={() => setIsLightboxOpen(false)}
+            />
+
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative max-w-5xl w-full flex flex-col items-center justify-center z-10"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setIsLightboxOpen(false)}
+                onMouseEnter={() => setCursorVariant('hover')}
+                onMouseLeave={() => setCursorVariant('default')}
+                className="absolute -top-16 right-0 bg-[#00ff88] text-black px-6 py-3 border-[3px] border-black font-black uppercase text-sm shadow-[4px_4px_0px_0px_#000] hover:bg-white transition-all flex items-center gap-2"
+              >
+                <X size={16} /> CLOSE_VIEW
+              </button>
+
+              <div className="bg-white border-[8px] border-black p-4 shadow-[24px_24px_0px_0px_#00ff88] max-h-[80vh] flex items-center justify-center overflow-hidden relative">
+                <img
+                  src={activeImage}
+                  alt={product.name}
+                  className="max-w-full max-h-[75vh] object-contain select-none"
+                />
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
