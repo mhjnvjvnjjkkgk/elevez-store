@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, createContext, useContext, useLayoutEffect } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, useInView } from 'framer-motion';
-import { Terminal, Package, Shield, Truck, Zap, Star, X, ShoppingBag, Menu, Camera, Sparkles, Filter, ChevronDown, ChevronUp, Share2, Heart, Maximize2, Gift, User, Mail, MapPin, Instagram, Twitter, ArrowRight, ArrowLeft, Award, ShieldCheck, Timer, Play, SlidersHorizontal, Search, Check, Minus, Plus, RefreshCw, CreditCard, Banknote, LogOut, Eye, Trash2, ChevronRight, Lock } from 'lucide-react';
+import { Terminal, Package, Shield, Truck, Zap, Star, X, ShoppingBag, Menu, Camera, Sparkles, Filter, ChevronDown, ChevronUp, Share2, Heart, Maximize2, Gift, User, Mail, MapPin, Instagram, Twitter, ArrowRight, ArrowLeft, Award, ShieldCheck, Timer, Play, SlidersHorizontal, Search, Check, Minus, Plus, RefreshCw, CreditCard, Banknote, LogOut, Eye, Trash2, ChevronRight, Lock, Home, Compass } from 'lucide-react';
 import ScrollReveal from './components/ScrollReveal';
 import ClickSpark from './components/ClickSpark';
 import gsap from 'gsap';
@@ -4095,6 +4095,8 @@ const Navbar = () => {
   const { items, setIsCartOpen } = useCart();
   const { setCursorVariant } = useCursor();
   const [scrollProgress, setScrollProgress] = useState(0);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -4117,6 +4119,13 @@ const Navbar = () => {
     window.addEventListener('quickAddToCart', handleQuickAdd);
     return () => window.removeEventListener('quickAddToCart', handleQuickAdd);
   }, [addToCart]);
+
+  const mobileNavItems = [
+    { id: 'home', label: 'Home', path: '/', icon: Home, isActive: currentPath === '/' },
+    { id: 'collections', label: 'Collections', path: '/shop/all', icon: Compass, isActive: currentPath.startsWith('/shop') },
+    { id: 'rewards', label: 'Rewards', path: '/rewards', icon: Gift, isActive: currentPath === '/rewards' },
+    { id: 'contact', label: 'Contact', path: '/contact', icon: Mail, isActive: currentPath === '/contact' }
+  ];
 
   return (
     <>
@@ -4223,6 +4232,34 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Neo-Brutalist Mobile Bottom Navigation Bar */}
+      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] w-[92%] max-w-[420px]">
+        <div className="bg-white border-[3px] border-black shadow-[6px_6px_0px_0px_#000] rounded-2xl flex items-center justify-around py-2 px-3 h-18 relative">
+          {mobileNavItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.id}
+                to={item.path}
+                className="relative flex flex-col items-center justify-center w-14 h-14 transition-all duration-200"
+              >
+                {item.isActive && (
+                  <motion.div
+                    layoutId="mobileActiveTab"
+                    className="absolute inset-0 bg-[#00ff88] border-[2px] border-black shadow-[2px_2px_0px_0px_#000] rounded-xl"
+                    transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                  />
+                )}
+                <div className={`relative z-10 flex flex-col items-center justify-center transition-colors duration-200 ${item.isActive ? 'text-black' : 'text-black/60 hover:text-black'}`}>
+                  <Icon size={20} strokeWidth={item.isActive ? 2.5 : 2} />
+                  <span className="text-[9px] font-black uppercase tracking-wider mt-0.5">{item.label}</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
     </>
   );
 };
