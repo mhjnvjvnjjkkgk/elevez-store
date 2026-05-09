@@ -3756,8 +3756,19 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                   </div>
                 ) : (
                   <div className="space-y-8">
-                    {orders.map((order) => {
-                      if (!order || !order.id) return null;
+                    {[...orders]
+                      .sort((a, b) => {
+                        const getDate = (orderObj: any) => {
+                          const dateValue = orderObj?.orderDate || orderObj?.createdAt;
+                          if (!dateValue) return 0;
+                          if (typeof dateValue === 'string') return new Date(dateValue).getTime();
+                          if (dateValue.seconds) return dateValue.seconds * 1000;
+                          return new Date(dateValue).getTime();
+                        };
+                        return getDate(b) - getDate(a);
+                      })
+                      .map((order) => {
+                        if (!order || !order.id) return null;
                       
                       let orderDateStr = 'N/A';
                       try {
@@ -3806,7 +3817,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                               const fallbackImage = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
                               return (
                                 <div key={i} className="w-20 h-24 border-[2px] border-black shrink-0 relative group">
-                                  <img src={fallbackImage} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" />
+                                  <img src={fallbackImage} className="w-full h-full object-cover transition-all" />
                                   <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[10px] text-white font-black uppercase text-center p-1">
                                     {item.quantity}x {item.size}
                                   </div>
@@ -3895,7 +3906,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
                           />
                           <button
                             onClick={() => toggleWishlist(product.id)}
