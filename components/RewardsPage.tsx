@@ -69,8 +69,8 @@ export const RewardsPage: React.FC = () => {
       try {
         const rules = await loyaltyRulesService.getRules();
         setDynamicRules(rules);
-        setEarningRate(rules.pointsEarning.pointsPerDollar);
-        setTierThresholds(rules.tiers);
+        setEarningRate(rules?.pointsEarning?.pointsPerDollar ?? 0.1);
+        setTierThresholds(rules?.tiers || []);
         console.log('✅ Loaded dynamic loyalty rules:', rules);
       } catch (error) {
         console.error('❌ Error loading loyalty rules:', error);
@@ -83,8 +83,8 @@ export const RewardsPage: React.FC = () => {
     const unsubscribe = loyaltyRulesService.onRulesChange((rules) => {
       console.log('🔄 Loyalty rules updated in real-time');
       setDynamicRules(rules);
-      setEarningRate(rules.pointsEarning.pointsPerDollar);
-      setTierThresholds(rules.tiers);
+      setEarningRate(rules?.pointsEarning?.pointsPerDollar ?? 0.1);
+      setTierThresholds(rules?.tiers || []);
     });
 
     return () => unsubscribe();
