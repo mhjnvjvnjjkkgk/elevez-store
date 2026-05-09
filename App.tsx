@@ -39,7 +39,6 @@ import { ParallaxReveal } from './components/ParallaxReveal';
 import { ImageReveal } from './components/ImageReveal';
 import { GlitchText } from './components/GlitchText';
 import { NewsletterSyndicate } from './components/NewsletterSyndicate';
-import { AnimatedGrid } from './components/AnimatedGrid';
 import { PageLoader } from './components/PageLoader';
 import { DynamicAccordion } from './components/DynamicAccordion';
 import { PageTransition } from './components/PageTransition';
@@ -4289,7 +4288,6 @@ function App() {
                 transform: 'translateZ(0)',
                 backfaceVisibility: 'hidden',
               }}>
-              <AnimatedGrid />
               <FloatingElements />
               <div className="noise-overlay" />
               <ScrollProgressBar />
