@@ -28,6 +28,7 @@ import { ProductQuickPreview } from './components/ProductQuickPreview';
 import { WishlistButton } from './components/WishlistButton';
 import { ExitIntentPopup } from './components/ExitIntentPopup';
 import { OrderDetailModal } from './components/OrderDetailModal';
+import { useLoyalty } from './hooks/useLoyalty';
 import { LoyaltyRulesNotificationBanner } from './components/LoyaltyRulesNotificationBanner';
 import { VelocityHeader } from './components/VelocityHeader';
 import { InfiniteMarquee } from './components/InfiniteMarquee';
@@ -3479,6 +3480,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const { addToCart } = useCart();
+  const { profile: loyaltyProfile, tierInfo: loyaltyTierInfo } = useLoyalty();
 
   // Check authentication
   useEffect(() => {
@@ -3724,10 +3726,18 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
 
               {/* Loyalty Teaser in Side */}
               <div className="bg-[#00ff88] border-[6px] border-black p-10 shadow-[16px_16px_0px_0px_#000]">
-                <h3 className="text-3xl font-black uppercase text-black mb-6 leading-none">Loyalty Status</h3>
-                <div className="bg-white border-[4px] border-black p-6 mb-8 text-center">
-                  <p className="text-4xl font-black text-black font-syne">1,240</p>
-                  <p className="text-xs font-black uppercase text-black opacity-50">Available Points</p>
+                <h3 className="text-3xl font-black uppercase text-black mb-6 leading-none font-syne">Loyalty Status</h3>
+                <div className="bg-white border-[4px] border-black p-6 mb-8 text-center relative overflow-hidden">
+                  <p className="text-5xl font-black text-black font-syne mb-1">
+                    {loyaltyProfile ? loyaltyProfile.points.toLocaleString() : '0'}
+                  </p>
+                  <p className="text-xs font-black uppercase text-black opacity-60">Available Points</p>
+                  {loyaltyTierInfo && (
+                    <div className="mt-4 pt-4 border-t-2 border-black/10 flex items-center justify-center gap-2">
+                      <span className="text-2xl">{loyaltyTierInfo.icon}</span>
+                      <span className="text-sm font-black uppercase text-black">{loyaltyTierInfo.name} Member</span>
+                    </div>
+                  )}
                 </div>
                 <Link to="/rewards" className="block w-full bg-black text-[#00ff88] py-4 text-center border-[3px] border-black font-black uppercase shadow-[6px_6px_0px_0px_#fff] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
                   Portal Access

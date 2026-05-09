@@ -147,15 +147,40 @@ export const REDEMPTION_OPTIONS = [
 
 export async function createLoyaltyProfile(userId: string, email: string): Promise<LoyaltyProfile> {
   const profileRef = doc(db, 'loyaltyProfiles', userId);
+  const pointsRef = doc(db, 'userPoints', userId);
+
+  let existingPoints = 0;
+  let existingTotalEarned = 0;
+  let existingTier = 'Bronze';
+  let existingOrderCount = 0;
+
+  try {
+    const pointsSnap = await getDoc(pointsRef);
+    if (pointsSnap.exists()) {
+      const pointsData = pointsSnap.data();
+      existingPoints = pointsData.totalPoints || pointsData.points || 0;
+      existingTotalEarned = pointsData.totalPointsEarned || pointsData.totalPoints || pointsData.points || 0;
+      existingTier = pointsData.tier || 'bronze';
+      existingOrderCount = pointsData.orderCount || pointsData.totalOrders || 0;
+      console.log(`ℹ️ Found existing points in userPoints for ${userId}: ${existingPoints} pts`);
+    }
+  } catch (err) {
+    console.error('Error fetching userPoints in createLoyaltyProfile:', err);
+  }
+
+  const signupBonus = POINTS_RULES.SIGNUP;
+  const finalPoints = existingPoints + signupBonus;
+  const finalTotalEarned = existingTotalEarned + signupBonus;
+  const tierCapitalized = (existingTier.charAt(0).toUpperCase() + existingTier.slice(1)) as TierLevel;
 
   const profile: LoyaltyProfile = {
     userId,
-    points: POINTS_RULES.SIGNUP,
-    totalPointsEarned: POINTS_RULES.SIGNUP,
-    tier: 'Bronze',
+    points: finalPoints,
+    totalPointsEarned: finalTotalEarned,
+    tier: tierCapitalized,
     joinedAt: serverTimestamp(),
     lastUpdated: serverTimestamp(),
-    orderCount: 0, // Initialize order count
+    orderCount: existingOrderCount,
     socialShares: {
       instagram: false,
       whatsapp: false,
@@ -165,11 +190,27 @@ export async function createLoyaltyProfile(userId: string, email: string): Promi
 
   await setDoc(profileRef, profile);
 
+  // Sync to userPoints as well to keep them perfectly aligned
+  try {
+    await setDoc(pointsRef, {
+      userId,
+      email: email,
+      displayName: email.split('@')[0] || 'User',
+      totalPoints: finalPoints,
+      totalPointsEarned: finalTotalEarned,
+      tier: existingTier.toLowerCase() as 'bronze' | 'silver' | 'gold' | 'platinum',
+      orderCount: existingOrderCount,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+  } catch (syncErr) {
+    console.error('Error syncing merged points back to userPoints:', syncErr);
+  }
+
   // Log signup bonus
   await logPointsTransaction({
     userId,
     type: 'earn',
-    points: POINTS_RULES.SIGNUP,
+    points: signupBonus,
     reason: 'Sign-up bonus',
     timestamp: serverTimestamp()
   });
@@ -303,6 +344,35 @@ export async function awardPoints(
     lastUpdated: serverTimestamp()
   });
 
+  // Also update userPoints collection to keep them perfectly in sync
+  try {
+    const pointsRef = doc(db, 'userPoints', userId);
+    const pointsSnap = await getDoc(pointsRef);
+    const currentTxs = pointsSnap.exists() ? (pointsSnap.data().pointsHistory || []) : [];
+    
+    const newTx = {
+      id: `earn_${Date.now()}_${Math.random().toString(36).substring(2, 5)}`,
+      type: 'bonus',
+      amount: points,
+      description: reason,
+      timestamp: new Date().toISOString(),
+      balanceBefore: pointsSnap.exists() ? (pointsSnap.data().totalPoints || 0) : 0,
+      balanceAfter: (pointsSnap.exists() ? (pointsSnap.data().totalPoints || 0) : 0) + points
+    };
+
+    await setDoc(pointsRef, {
+      userId,
+      totalPoints: newPoints,
+      totalPointsEarned: newTotalPoints,
+      tier: newTier.toLowerCase() as 'bronze' | 'silver' | 'gold' | 'platinum',
+      pointsHistory: [...currentTxs, newTx],
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    console.log(`📊 Also synced awardPoints (${points} pts) to userPoints`);
+  } catch (syncErr) {
+    console.warn('Could not sync awardPoints to userPoints collection:', syncErr);
+  }
+
   await logPointsTransaction({
     userId,
     type: 'earn',
@@ -423,6 +493,37 @@ export async function redeemPointsForDiscount(
     points: newPoints, // Also update legacy field for compatibility
     lastUpdated: serverTimestamp()
   });
+
+  // Also deduct points from userPoints collection to keep them perfectly in sync
+  try {
+    const pointsRef = doc(db, 'userPoints', userId);
+    const pointsSnap = await getDoc(pointsRef);
+    if (pointsSnap.exists()) {
+      const pointsData = pointsSnap.data();
+      const currentTxs = pointsData.pointsHistory || [];
+      const newTx = {
+        id: `redeem_${Date.now()}_${Math.random().toString(36).substring(2, 5)}`,
+        type: 'redemption',
+        amount: pointsCost,
+        description: `Redeemed for ₹${discountAmount} discount`,
+        timestamp: new Date().toISOString(),
+        balanceBefore: pointsData.totalPoints || 0,
+        balanceAfter: Math.max(0, (pointsData.totalPoints || 0) - pointsCost)
+      };
+      
+      const dynamicTier = await calculateTier(newPoints);
+
+      await updateDoc(pointsRef, {
+        totalPoints: newPoints,
+        tier: dynamicTier.toLowerCase() as 'bronze' | 'silver' | 'gold' | 'platinum',
+        pointsHistory: [...currentTxs, newTx],
+        updatedAt: new Date().toISOString()
+      });
+      console.log(`📊 Also synced redemption deduction of ${pointsCost} to userPoints`);
+    }
+  } catch (syncErr) {
+    console.warn('Could not sync redemption deduction to userPoints collection:', syncErr);
+  }
 
   // Generate discount code
   const code = await generateDiscountCode(userId);

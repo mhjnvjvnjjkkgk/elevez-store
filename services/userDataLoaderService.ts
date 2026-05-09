@@ -116,9 +116,21 @@ class UserDataLoaderService {
       });
       
       return orders.sort((a, b) => {
-        const dateA = a.createdAt?.toDate?.() || new Date(a.createdAt);
-        const dateB = b.createdAt?.toDate?.() || new Date(b.createdAt);
-        return dateB.getTime() - dateA.getTime();
+        const getTimestampMs = (obj: any) => {
+          if (!obj) return 0;
+          if (typeof obj.toDate === 'function') {
+            return obj.toDate().getTime();
+          }
+          if (obj.seconds) {
+            return obj.seconds * 1000;
+          }
+          const parsed = Date.parse(obj);
+          return isNaN(parsed) ? 0 : parsed;
+        };
+
+        const timeA = getTimestampMs(a.createdAt || a.orderDate);
+        const timeB = getTimestampMs(b.createdAt || b.orderDate);
+        return timeB - timeA;
       });
     } catch (error) {
       console.error('Error loading user orders:', error);

@@ -139,17 +139,39 @@ class UserPointsService {
       try {
         const loyaltyRef = doc(this.db, 'loyaltyProfiles', userId);
         const loyaltySnap = await getDoc(loyaltyRef);
+        const tierCapitalized = (newTier.id.charAt(0).toUpperCase() + newTier.id.slice(1)) as any;
 
         if (loyaltySnap.exists()) {
-          const tierCapitalized = newTier.id.charAt(0).toUpperCase() + newTier.id.slice(1);
+          const currentLoyalty = loyaltySnap.data();
+          const currentPoints = currentLoyalty.points || 0;
+          const currentTotalEarned = currentLoyalty.totalPointsEarned || 0;
+
           await updateDoc(loyaltyRef, {
-            points: balanceAfter,
-            totalPointsEarned: balanceAfter,
-            tier: tierCapitalized as 'Bronze' | 'Silver' | 'Gold' | 'Platinum',
-            orderCount: increment(1),
+            points: currentPoints + pointsToAdd,
+            totalPointsEarned: currentTotalEarned + pointsToAdd,
+            tier: tierCapitalized,
+            orderCount: (currentLoyalty.orderCount || 0) + 1,
             lastUpdated: serverTimestamp()
           });
-          console.log(`📊 Also synced points to loyaltyProfiles: ${balanceAfter} points`);
+          console.log(`📊 Also synced points to loyaltyProfiles: ${currentPoints + pointsToAdd} points`);
+        } else {
+          // Auto-create loyaltyProfile during checkout points award
+          const newProfile = {
+            userId,
+            points: balanceAfter,
+            totalPointsEarned: balanceAfter,
+            tier: tierCapitalized,
+            joinedAt: serverTimestamp(),
+            lastUpdated: serverTimestamp(),
+            orderCount: 1,
+            socialShares: {
+              instagram: false,
+              whatsapp: false,
+              facebook: false
+            }
+          };
+          await setDoc(loyaltyRef, newProfile);
+          console.log(`📊 Created missing loyaltyProfiles document during checkout: ${balanceAfter} points`);
         }
       } catch (loyaltySyncError) {
         console.warn('Could not sync to loyaltyProfiles:', loyaltySyncError);
@@ -203,6 +225,25 @@ class UserPointsService {
         updatedAt: new Date().toISOString(),
       });
 
+      // ALSO sync to loyaltyProfiles collection for consistency
+      try {
+        const loyaltyRef = doc(this.db, 'loyaltyProfiles', userId);
+        const loyaltySnap = await getDoc(loyaltyRef);
+        const tierCapitalized = newTier.id.charAt(0).toUpperCase() + newTier.id.slice(1);
+        if (loyaltySnap.exists()) {
+          const currentLoyalty = loyaltySnap.data();
+          await updateDoc(loyaltyRef, {
+            points: balanceAfter,
+            totalPointsEarned: balanceAfter,
+            tier: tierCapitalized,
+            lastUpdated: serverTimestamp()
+          });
+          console.log(`📊 Admin points synced to loyaltyProfiles`);
+        }
+      } catch (syncErr) {
+        console.warn('Could not sync adminAddPoints to loyaltyProfiles:', syncErr);
+      }
+
       console.log(`✅ Admin added ${pointsToAdd} points to user ${userId}. New tier: ${newTier.id}`);
       return true;
     } catch (error) {
@@ -255,6 +296,24 @@ class UserPointsService {
         updatedAt: new Date().toISOString(),
       });
 
+      // ALSO sync to loyaltyProfiles collection for consistency
+      try {
+        const loyaltyRef = doc(this.db, 'loyaltyProfiles', userId);
+        const loyaltySnap = await getDoc(loyaltyRef);
+        const tierCapitalized = newTier.id.charAt(0).toUpperCase() + newTier.id.slice(1);
+        if (loyaltySnap.exists()) {
+          const currentLoyalty = loyaltySnap.data();
+          await updateDoc(loyaltyRef, {
+            points: balanceAfter,
+            tier: tierCapitalized,
+            lastUpdated: serverTimestamp()
+          });
+          console.log(`📊 Admin deduct synced to loyaltyProfiles`);
+        }
+      } catch (syncErr) {
+        console.warn('Could not sync adminDeductPoints to loyaltyProfiles:', syncErr);
+      }
+
       console.log(`✅ Admin deducted ${pointsToDeduct} points from user ${userId}. New tier: ${newTier.id}`);
       return true;
     } catch (error) {
@@ -304,6 +363,24 @@ class UserPointsService {
         tier: newTier.id as 'bronze' | 'silver' | 'gold' | 'platinum',
         updatedAt: new Date().toISOString(),
       });
+
+      // ALSO sync to loyaltyProfiles collection for consistency
+      try {
+        const loyaltyRef = doc(this.db, 'loyaltyProfiles', userId);
+        const loyaltySnap = await getDoc(loyaltyRef);
+        const tierCapitalized = newTier.id.charAt(0).toUpperCase() + newTier.id.slice(1);
+        if (loyaltySnap.exists()) {
+          const currentLoyalty = loyaltySnap.data();
+          await updateDoc(loyaltyRef, {
+            points: balanceAfter,
+            tier: tierCapitalized,
+            lastUpdated: serverTimestamp()
+          });
+          console.log(`📊 Redemption points synced to loyaltyProfiles`);
+        }
+      } catch (syncErr) {
+        console.warn('Could not sync redeemPoints to loyaltyProfiles:', syncErr);
+      }
 
       console.log(`✅ User ${userId} redeemed ${pointsToRedeem} points. New tier: ${newTier.id}`);
       return true;
