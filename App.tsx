@@ -2882,9 +2882,12 @@ const Checkout = () => {
       setUser(result.user);
 
       // Create or update user profile
-      const { createUserProfile } = await import('./services/userService');
-      const profileResult = await createUserProfile(result.user);
-      console.log('User profile created:', profileResult);
+      const { ensureUserExists } = await import('./services/userService');
+      const profileResult = await ensureUserExists(result.user.email || '', result.user.uid, {
+        name: result.user.displayName || '',
+        source: 'signup'
+      });
+      console.log('User profile created/loaded:', profileResult);
 
       // Pre-fill form with user data
       setFormData(prev => ({
@@ -3562,9 +3565,12 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
       console.log('Sign-in successful!', result.user);
       setUser(result.user);
 
-      const { createUserProfile } = await import('./services/userService');
-      const profileResult = await createUserProfile(result.user);
-      console.log('User profile created:', profileResult);
+      const { ensureUserExists } = await import('./services/userService');
+      const profileResult = await ensureUserExists(result.user.email || '', result.user.uid, {
+        name: result.user.displayName || '',
+        source: 'signup'
+      });
+      console.log('User profile created/loaded:', profileResult);
       await loadUserData(result.user.uid);
     } catch (error: any) {
       console.error('Error signing in:', error);
