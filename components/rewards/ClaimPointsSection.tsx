@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLoyalty } from '../../hooks/useLoyalty';
 import { Instagram, MessageCircle, Facebook, Phone, Check, Loader } from 'lucide-react';
 
@@ -112,12 +112,17 @@ export const ClaimPointsSection: React.FC = () => {
         {/* Social Sharing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
           {socialActions.map((action, index) => (
-            <div
+            <motion.div
               key={action.id}
+              initial={{ opacity: 0, scale: 0.95, y: 40 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: action.claimed ? 0 : -8 }}
               className={`bg-white border-[6px] border-black p-10 transition-all relative group flex flex-col h-full ${
                 action.claimed 
                   ? 'opacity-40 grayscale shadow-[8px_8px_0px_0px_#000]' 
-                  : 'shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] hover:-translate-y-2'
+                  : 'shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88]'
               }`}
             >
               <div className="w-20 h-20 bg-black text-[#00ff88] border-[3px] border-black flex items-center justify-center mb-8 shadow-[6px_6px_0px_0px_#00ff88] group-hover:scale-110 transition-transform mx-auto">
@@ -144,12 +149,18 @@ export const ClaimPointsSection: React.FC = () => {
                   'INITIALIZE'
                 )}
               </button>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* Phone Number Card */}
-        <div className="bg-white border-[8px] border-black p-12 shadow-[20px_20px_0px_0px_#000] relative overflow-hidden group">
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="bg-white border-[8px] border-black p-12 shadow-[20px_20px_0px_0px_#000] relative overflow-hidden group"
+        >
           <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 -translate-y-16 translate-x-16 rotate-45" />
           
           <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
@@ -190,7 +201,7 @@ export const ClaimPointsSection: React.FC = () => {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

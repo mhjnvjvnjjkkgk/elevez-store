@@ -166,11 +166,16 @@ export const RedeemRewardsSection: React.FC = () => {
             const canAfford = profile && profile.points >= option.points;
 
             return (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, scale: 0.95, y: 40 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: canAfford ? -8 : 0 }}
                 className={`bg-white border-[6px] border-black p-10 transition-all relative group flex flex-col h-full ${
                   canAfford 
-                    ? 'shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] hover:-translate-y-2' 
+                    ? 'shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88]' 
                     : 'shadow-[8px_8px_0px_0px_#000] opacity-50 grayscale'
                 }`}
               >
@@ -209,7 +214,7 @@ export const RedeemRewardsSection: React.FC = () => {
                     `LACK ${option.points - (profile?.points || 0)} PTS`
                   )}
                 </button>
-              </div>
+              </motion.div>
             );
           })}
         </div>

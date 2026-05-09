@@ -83,7 +83,15 @@ export const HowItWorksSection: React.FC = () => {
         {/* Steps Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => (
-            <div key={index} className="bg-white border-[6px] border-black p-10 shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] transition-all group relative">
+            <motion.div 
+              key={index}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: index * 0.15 }}
+              whileHover={{ y: -8 }}
+              className="bg-white border-[6px] border-black p-10 shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] transition-all group relative"
+            >
               {/* Step Number */}
               <div className="absolute -top-6 -right-6 w-16 h-16 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center font-black text-2xl shadow-[4px_4px_0px_0px_#000]">
                 {index + 1}
@@ -101,7 +109,7 @@ export const HowItWorksSection: React.FC = () => {
               <p className="text-black font-bold text-lg uppercase opacity-60 leading-tight">
                 {step.description}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

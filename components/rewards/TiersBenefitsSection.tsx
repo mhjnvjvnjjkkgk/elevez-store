@@ -43,8 +43,13 @@ export const TiersBenefitsSection: React.FC = () => {
             const isUnlocked = profile && (profile.totalPointsEarned ?? 0) >= (tier.pointsRequired || 0);
 
             return (
-              <div
+              <motion.div
                 key={tier.name || index}
+                initial={{ opacity: 0, scale: 0.95, y: 40 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: isCurrentTier ? -16 : -8 }}
                 className={`bg-white border-[6px] border-black p-10 transition-all relative group h-full flex flex-col ${
                   isCurrentTier 
                     ? 'shadow-[16px_16px_0px_0px_#00ff88] -translate-y-4' 
@@ -134,7 +139,7 @@ export const TiersBenefitsSection: React.FC = () => {
                     </div>
                   </div>
                 )}
-              </div>
+              </motion.div>
             );
           })}
         </div>
