@@ -944,22 +944,83 @@ const BestSellers = () => {
             />
 
             {/* Neo Stats */}
-            <div className="flex flex-wrap justify-center gap-8 mb-16">
+            <div className="flex flex-wrap justify-center gap-8 mb-16 relative z-10">
               {[
-                { value: "1000+", label: "Happy Customers", icon: "👥" },
-                { value: "50+", label: "Sold Today", icon: "🔥" },
-                { value: "4.9", label: "Average Rating", icon: "⭐" }
+                { 
+                  value: "1000+", 
+                  label: "Happy Customers", 
+                  borderColor: "hover:border-[#a855f7]",
+                  shadowColor: "shadow-[8px_8px_0px_0px_#a855f7]",
+                  hoverShadow: "hover:shadow-[12px_12px_0px_0px_#000]",
+                  tagColor: "bg-[#a855f7] text-white",
+                  bgColor: "bg-white",
+                  icon: (
+                    <svg className="w-6 h-6 text-black group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  )
+                },
+                { 
+                  value: "50+", 
+                  label: "Sold Today", 
+                  borderColor: "hover:border-[#ff7e40]",
+                  shadowColor: "shadow-[8px_8px_0px_0px_#ff7e40]",
+                  hoverShadow: "hover:shadow-[12px_12px_0px_0px_#000]",
+                  tagColor: "bg-[#ff7e40] text-black",
+                  bgColor: "bg-white",
+                  icon: (
+                    <svg className="w-6 h-6 text-black group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+                    </svg>
+                  )
+                },
+                { 
+                  value: "4.9", 
+                  label: "Average Rating", 
+                  borderColor: "hover:border-[#00ff88]",
+                  shadowColor: "shadow-[8px_8px_0px_0px_#00ff88]",
+                  hoverShadow: "hover:shadow-[12px_12px_0px_0px_#000]",
+                  tagColor: "bg-[#00ff88] text-black",
+                  bgColor: "bg-white",
+                  icon: (
+                    <svg className="w-6 h-6 text-black group-hover:rotate-12 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  )
+                }
               ].map((stat, i) => (
-                <div
+                <motion.div
                   key={i}
-                  className="flex items-center gap-4 bg-white border-[4px] border-black px-8 py-4 shadow-[6px_6px_0px_0px_#000]"
+                  whileHover={{ y: -8, scale: 1.03, rotate: i % 2 === 0 ? 0.5 : -0.5 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className={`flex flex-col justify-between w-72 h-40 ${stat.bgColor} border-[4px] border-black p-6 relative overflow-hidden transition-all duration-300 ${stat.borderColor} ${stat.shadowColor} ${stat.hoverShadow} group`}
                 >
-                  <span className="text-3xl">{stat.icon}</span>
-                  <div className="text-left">
-                    <div className="text-black font-black text-2xl leading-none">{stat.value}</div>
-                    <div className="text-black font-bold text-xs uppercase tracking-tighter">{stat.label}</div>
+                  {/* Subtle Background Pattern */}
+                  <div className="absolute inset-0 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.03] pointer-events-none" />
+
+                  {/* Top Header Row */}
+                  <div className="flex justify-between items-start w-full relative z-10">
+                    <div className="flex flex-col text-left">
+                      <span className="text-black font-black text-4xl font-syne leading-none tracking-tight">{stat.value}</span>
+                      <span className="text-black font-bold text-[10px] uppercase tracking-wider mt-1.5 opacity-80">{stat.label}</span>
+                    </div>
+                    {/* Icon circular sub-badge */}
+                    <div className="w-12 h-12 bg-white border-[3px] border-black flex items-center justify-center rounded-xl shadow-[3px_3px_0px_0px_#000] group-hover:shadow-[5px_5px_0px_0px_#000] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300">
+                      {stat.icon}
+                    </div>
                   </div>
-                </div>
+
+                  {/* Bottom Footer Row with Tech Label */}
+                  <div className="flex justify-between items-center w-full border-t-2 border-black/10 pt-4 relative z-10">
+                    <span className="text-[9px] font-black tracking-[0.2em] opacity-40 uppercase">LIVE_SEC_FEED</span>
+                    <span className={`text-[9px] font-black px-2 py-1 uppercase tracking-widest border-2 border-black shadow-[2px_2px_0px_0px_#000] ${stat.tagColor}`}>
+                      {i === 0 ? "GLOBAL" : i === 1 ? "HIGH_DEMAND" : "VERIFIED"}
+                    </span>
+                  </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
