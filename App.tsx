@@ -2307,7 +2307,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               <img
                 src={activeImage}
                 alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-contain bg-[#fcfcfc] transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute top-6 left-6 bg-black text-[#00ff88] px-4 py-1 border-[3px] border-black font-black uppercase text-xs shadow-[4px_4px_0px_0px_#000]">
                 {product.type}
