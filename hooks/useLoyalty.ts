@@ -20,6 +20,7 @@ import {
   getTierConfig,
   getNextTier,
   getPointsToNextTier,
+  calculateTier,
   POINTS_RULES
 } from '../services/loyaltyService';
 import { loyaltyRulesService, RedemptionRule } from '../services/loyaltyRulesService';
@@ -67,6 +68,11 @@ export function useLoyalty() {
       if (!userProfile) {
         console.log('Creating new loyalty profile...');
         userProfile = await createLoyaltyProfile(user.uid, user.email || '');
+      }
+
+      if (userProfile) {
+        const correctTier = await calculateTier(userProfile.totalPointsEarned ?? userProfile.points ?? 0);
+        userProfile.tier = correctTier;
       }
 
       setProfile(userProfile);
@@ -129,18 +135,41 @@ export function useLoyalty() {
       // ✅ CRITICAL: Listen to loyaltyProfiles (central source of truth)
       const profileRef = doc(db, 'loyaltyProfiles', user.uid);
 
-      const unsubscribe = onSnapshot(profileRef, (snapshot) => {
+      const unsubscribe = onSnapshot(profileRef, async (snapshot) => {
         if (snapshot.exists()) {
           const profileData = snapshot.data();
           console.log('🔄 Real-time points update from loyaltyProfiles:', profileData.totalPoints || profileData.points);
 
-          // Update profile with new points
-          setProfile(prev => prev ? {
-            ...prev,
-            points: profileData.totalPoints || profileData.points || 0,
-            tier: profileData.tier || prev.tier,
-            totalPointsEarned: profileData.totalPoints || profileData.points || prev.totalPointsEarned
-          } : null);
+          const totalPointsEarned = profileData.totalPointsEarned || profileData.totalPoints || profileData.points || 0;
+          const correctTier = await calculateTier(totalPointsEarned);
+
+          // Self-healing: Update database asynchronously if tier is incorrect or mismatched
+          if (profileData.tier !== correctTier) {
+            console.log(`⚠️ Tier mismatch detected in Firestore! Database has: ${profileData.tier}, should be: ${correctTier}. Correcting...`);
+            const { updateDoc } = await import('firebase/firestore');
+            updateDoc(profileRef, { tier: correctTier }).catch(err => {
+              console.error('Error auto-correcting tier in Firestore:', err);
+            });
+            // Also sync it to userPoints to keep both databases perfectly in sync!
+            const { doc: firestoreDoc, updateDoc: firestoreUpdateDoc } = await import('firebase/firestore');
+            const pointsRef = firestoreDoc(db, 'userPoints', user.uid);
+            firestoreUpdateDoc(pointsRef, { tier: correctTier.toLowerCase() }).catch(err => {
+              console.warn('Could not sync corrected tier to userPoints collection:', err);
+            });
+          }
+
+          const updatedProfile: LoyaltyProfile = {
+            userId: profileData.userId || user.uid,
+            points: profileData.points || profileData.totalPoints || 0,
+            totalPointsEarned: totalPointsEarned,
+            tier: correctTier,
+            joinedAt: profileData.joinedAt,
+            lastUpdated: profileData.lastUpdated,
+            orderCount: profileData.orderCount || 0,
+            socialShares: profileData.socialShares || { instagram: false, whatsapp: false, facebook: false }
+          };
+
+          setProfile(updatedProfile);
         }
       });
 
