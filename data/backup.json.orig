@@ -1,0 +1,1064 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "qid": "NGH-001",
+      "name": "Neon Glitch Hoodie",
+      "price": 85,
+      "originalPrice": 170,
+      "category": "Men",
+      "type": "Hoodie",
+      "rating": 4.5,
+      "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+      "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+        "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "Black",
+        "White",
+        "Neon Green"
+      ],
+      "tags": [
+        "TRENDING",
+        "BESTSELLER"
+      ],
+      "isBestSeller": true,
+      "isNew": true
+    },
+    {
+      "id": 2,
+      "qid": "VCT-002",
+      "name": "Vintage Crop Top",
+      "price": 45,
+      "originalPrice": 90,
+      "category": "Women",
+      "type": "Crop Top",
+      "rating": 4.7,
+      "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
+      "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "Pink",
+        "White",
+        "Black"
+      ],
+      "tags": [
+        "VINTAGE",
+        "TRENDING"
+      ],
+      "isNew": true
+    },
+    {
+      "id": 3,
+      "qid": "OST-003",
+      "name": "Oversized Street Tee",
+      "price": 35,
+      "originalPrice": 70,
+      "category": "Unisex",
+      "type": "Oversized T-Shirt",
+      "rating": 4.6,
+      "description": "Ultra-comfortable oversized t-shirt. Perfect for casual streetwear.",
+      "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "colors": [
+        "Black",
+        "White",
+        "Gray"
+      ],
+      "tags": [
+        "ESSENTIAL",
+        "BESTSELLER"
+      ],
+      "isBestSeller": true
+    },
+    {
+      "id": 4,
+      "qid": "PTH-004",
+      "name": "Premium Tech Hoodie",
+      "price": 95,
+      "originalPrice": 190,
+      "category": "Men",
+      "type": "Hoodie",
+      "rating": 4.8,
+      "description": "High-tech fabric hoodie with moisture-wicking properties. Perfect for active lifestyle.",
+      "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "Black",
+        "Navy",
+        "Gray"
+      ],
+      "tags": [
+        "PREMIUM",
+        "NEW"
+      ],
+      "isNew": true
+    },
+    {
+      "id": 5,
+      "qid": "CFT-005",
+      "name": "Colorful Festival Tee",
+      "price": 40,
+      "originalPrice": 80,
+      "category": "Unisex",
+      "type": "T-Shirt",
+      "rating": 4.4,
+      "description": "Vibrant and colorful t-shirt perfect for festivals and summer events.",
+      "image": "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500",
+      "images": [
+        "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "Rainbow",
+        "Yellow",
+        "Orange"
+      ],
+      "tags": [
+        "COLORFUL",
+        "TRENDING"
+      ]
+    }
+  ],
+  "collections": [
+    {
+      "id": "shopify-frontpage",
+      "shopifyId": "gid://shopify/Collection/306335416459",
+      "handle": "frontpage",
+      "name": "Home page",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "paisa-design-stylish-genz-tshirt"
+      ],
+      "productCount": 1,
+      "sectionMapping": null,
+      "order": 0,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-all",
+      "shopifyId": "gid://shopify/Collection/307465158795",
+      "handle": "all",
+      "name": "All products!",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "paisa-design-stylish-genz-tshirt",
+        "stylish-buttefly-tshirt",
+        "oversized-unisex-peace-simple-bird-tshirt",
+        "oversized-cute-simple-bunny-tshirt",
+        "oversized-illuminaty-skull-triangle-design",
+        "cute-blessed-tshirt-for-girls",
+        "japaneese-text-tshirt-cool-front-elevez",
+        "back-dragon-print-epic-design-front-elevez",
+        "cute-butterfly-croptop-for-women",
+        "ami-akta-dhowa-tulsi-pata-tshirt",
+        "ami-akta-dhowa-tulsi-pata-funky",
+        "kal-ana-tshirt",
+        "navy-blue-premium-tshirt",
+        "grey-melange-tshirt",
+        "coffee-brown-premium-tshirt",
+        "dragon-samurai-main-epic-imp",
+        "guy-sitting-between-sun-and-moon-circuler-tshirt",
+        "grey-hoodie-trident-design",
+        "samurai-dragon-2nd-tshirt",
+        "youre-aldready-under-my-genjutsu",
+        "oversized-cute-bunny-tshirt-for-women",
+        "skull-triangle-oversized-tshirt"
+      ],
+      "productCount": 28,
+      "sectionMapping": null,
+      "order": 1,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-best-sellers",
+      "shopifyId": "gid://shopify/Collection/307502022795",
+      "handle": "best-sellers",
+      "name": "Best Sellers",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "samurai-dragon-2nd-tshirt",
+        "dragon-samurai-main-epic-imp",
+        "back-dragon-print-epic-design-front-elevez",
+        "oversized-cute-simple-bunny-tshirt"
+      ],
+      "productCount": 4,
+      "sectionMapping": "bestSellers",
+      "order": 2,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-women",
+      "shopifyId": "gid://shopify/Collection/307502973067",
+      "handle": "women",
+      "name": "Women",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "oversized-cute-bunny-tshirt-for-women",
+        "cute-butterfly-croptop-for-women",
+        "cute-blessed-tshirt-for-girls",
+        "oversized-unisex-peace-simple-bird-tshirt"
+      ],
+      "productCount": 4,
+      "sectionMapping": null,
+      "order": 3,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-under-500",
+      "shopifyId": "gid://shopify/Collection/307639484555",
+      "handle": "under-500",
+      "name": "Under 500",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "dragon-samurai-main-epic-imp",
+        "samurai-dragon-2nd-tshirt",
+        "cute-blessed-tshirt-for-girls",
+        "stylish-buttefly-tshirt",
+        "youre-aldready-under-my-genjutsu"
+      ],
+      "productCount": 5,
+      "sectionMapping": null,
+      "order": 4,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-below-600",
+      "shopifyId": "gid://shopify/Collection/307639615627",
+      "handle": "below-600",
+      "name": "Under 600",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "skull-triangle-oversized-tshirt",
+        "guy-sitting-between-sun-and-moon-circuler-tshirt",
+        "back-dragon-print-epic-design-front-elevez",
+        "japaneese-text-tshirt-cool-front-elevez",
+        "paisa-design-stylish-genz-tshirt"
+      ],
+      "productCount": 5,
+      "sectionMapping": null,
+      "order": 5,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-below-799",
+      "shopifyId": "gid://shopify/Collection/307639681163",
+      "handle": "below-799",
+      "name": "Below 699",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "oversized-illuminaty-skull-triangle-design",
+        "oversized-cute-simple-bunny-tshirt",
+        "oversized-unisex-peace-simple-bird-tshirt"
+      ],
+      "productCount": 3,
+      "sectionMapping": null,
+      "order": 6,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-below-400",
+      "shopifyId": "gid://shopify/Collection/307639713931",
+      "handle": "below-400",
+      "name": "Below 400",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "coffee-brown-premium-tshirt",
+        "grey-melange-tshirt",
+        "navy-blue-premium-tshirt",
+        "kal-ana-tshirt",
+        "ami-akta-dhowa-tulsi-pata-funky",
+        "ami-akta-dhowa-tulsi-pata-tshirt",
+        "cute-butterfly-croptop-for-women"
+      ],
+      "productCount": 7,
+      "sectionMapping": null,
+      "order": 7,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-oversized",
+      "shopifyId": "gid://shopify/Collection/307662028939",
+      "handle": "oversized",
+      "name": "oversized",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "oversized-cute-simple-bunny-tshirt",
+        "skull-triangle-oversized-tshirt",
+        "oversized-cute-bunny-tshirt-for-women",
+        "oversized-illuminaty-skull-triangle-design",
+        "oversized-unisex-peace-simple-bird-tshirt"
+      ],
+      "productCount": 5,
+      "sectionMapping": null,
+      "order": 8,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-old-money",
+      "shopifyId": "gid://shopify/Collection/307744080011",
+      "handle": "old-money",
+      "name": "old money",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "coffee-brown-premium-tshirt",
+        "grey-melange-tshirt",
+        "navy-blue-premium-tshirt"
+      ],
+      "productCount": 3,
+      "sectionMapping": null,
+      "order": 9,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-bold-and-vibrant",
+      "shopifyId": "gid://shopify/Collection/307744112779",
+      "handle": "bold-and-vibrant",
+      "name": "Bold and vibrant",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "kal-ana-tshirt",
+        "ami-akta-dhowa-tulsi-pata-funky",
+        "ami-akta-dhowa-tulsi-pata-tshirt"
+      ],
+      "productCount": 3,
+      "sectionMapping": null,
+      "order": 10,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-tshirt",
+      "shopifyId": "gid://shopify/Collection/307999441035",
+      "handle": "tshirt",
+      "name": "Tshirt",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "youre-aldready-under-my-genjutsu",
+        "samurai-dragon-2nd-tshirt",
+        "guy-sitting-between-sun-and-moon-circuler-tshirt",
+        "dragon-samurai-main-epic-imp",
+        "coffee-brown-premium-tshirt",
+        "grey-melange-tshirt",
+        "navy-blue-premium-tshirt",
+        "kal-ana-tshirt",
+        "ami-akta-dhowa-tulsi-pata-funky",
+        "ami-akta-dhowa-tulsi-pata-tshirt",
+        "back-dragon-print-epic-design-front-elevez",
+        "japaneese-text-tshirt-cool-front-elevez",
+        "cute-blessed-tshirt-for-girls",
+        "stylish-buttefly-tshirt",
+        "paisa-design-stylish-genz-tshirt"
+      ],
+      "productCount": 15,
+      "sectionMapping": null,
+      "order": 11,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "shopify-oversized-tshirt",
+      "shopifyId": "gid://shopify/Collection/307999473803",
+      "handle": "oversized-tshirt",
+      "name": "Oversized Tshirt",
+      "description": "",
+      "image": "",
+      "productHandles": [
+        "skull-triangle-oversized-tshirt",
+        "oversized-cute-bunny-tshirt-for-women",
+        "oversized-illuminaty-skull-triangle-design",
+        "oversized-cute-simple-bunny-tshirt",
+        "oversized-unisex-peace-simple-bird-tshirt"
+      ],
+      "productCount": 5,
+      "sectionMapping": null,
+      "order": 12,
+      "isSystem": false,
+      "source": "shopify",
+      "importedAt": "2025-12-28T18:56:29.286Z"
+    },
+    {
+      "id": "1766960993446-0",
+      "handle": "all-products",
+      "name": "All products!",
+      "description": "Products in the All products! collection",
+      "image": "",
+      "productHandles": [
+        "oversized-cute-simple-bunny-tshirt",
+        "cute-blessed-tshirt-for-girls",
+        "japaneese-text-tshirt-cool-front-elevez",
+        "back-dragon-print-epic-design-front-elevez",
+        "cute-butterfly-croptop-for-women",
+        "ami-akta-dhowa-tulsi-pata-tshirt",
+        "kal-ana-tshirt",
+        "navy-blue-premium-tshirt",
+        "grey-melange-tshirt",
+        "coffee-brown-premium-tshirt",
+        "dragon-samurai-main-epic-imp",
+        "guy-sitting-between-sun-and-moon-circuler-tshirt",
+        "grey-hoodie-trident-design",
+        "samurai-dragon-2nd-tshirt",
+        "youre-aldready-under-my-genjutsu",
+        "skull-triangle-oversized-tshirt",
+        "paisa-design-stylish-genz-tshirt",
+        "stylish-buttefly-tshirt",
+        "oversized-unisex-peace-simple-bird-tshirt",
+        "oversized-illuminaty-skull-triangle-design",
+        "ami-akta-dhowa-tulsi-pata-funky",
+        "oversized-cute-bunny-tshirt-for-women"
+      ],
+      "productCount": 22,
+      "sectionMapping": null,
+      "order": 0,
+      "isSystem": false,
+      "source": "generated",
+      "createdAt": "2025-12-28T22:29:53.446Z"
+    },
+    {
+      "id": "1766960993446-1",
+      "handle": "below-699",
+      "name": "Below 699",
+      "description": "Products in the Below 699 collection",
+      "image": "",
+      "productHandles": [
+        "oversized-cute-simple-bunny-tshirt",
+        "oversized-unisex-peace-simple-bird-tshirt",
+        "oversized-illuminaty-skull-triangle-design"
+      ],
+      "productCount": 3,
+      "sectionMapping": null,
+      "order": 1,
+      "isSystem": false,
+      "source": "generated",
+      "createdAt": "2025-12-28T22:29:53.446Z"
+    },
+    {
+      "id": "1766960993446-2",
+      "handle": "under-600",
+      "name": "Under 600",
+      "description": "Products in the Under 600 collection",
+      "image": "",
+      "productHandles": [
+        "japaneese-text-tshirt-cool-front-elevez",
+        "back-dragon-print-epic-design-front-elevez",
+        "guy-sitting-between-sun-and-moon-circuler-tshirt",
+        "skull-triangle-oversized-tshirt",
+        "paisa-design-stylish-genz-tshirt"
+      ],
+      "productCount": 5,
+      "sectionMapping": null,
+      "order": 2,
+      "isSystem": false,
+      "source": "generated",
+      "createdAt": "2025-12-28T22:29:53.446Z"
+    },
+    {
+      "id": "1766960993446-3",
+      "handle": "home-page",
+      "name": "Home page",
+      "description": "Products in the Home page collection",
+      "image": "",
+      "productHandles": [
+        "paisa-design-stylish-genz-tshirt"
+      ],
+      "productCount": 1,
+      "sectionMapping": null,
+      "order": 3,
+      "isSystem": false,
+      "source": "generated",
+      "createdAt": "2025-12-28T22:29:53.446Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "APSEaxACueCCCX1Yguhd",
+      "orderId": "ORD-1778350798392",
+      "state": "westbengal",
+      "subtotal": 449,
+      "shippingCost": 30,
+      "pincode": "700050",
+      "city": "kolkata",
+      "paymentMethod": "cod",
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "email": "lolislolpp@gmail.com",
+      "fullName": "Mr Oak GAMING",
+      "createdAt": {
+        "seconds": 1778350798,
+        "nanoseconds": 392000000
+      },
+      "phone": "8017561073",
+      "items": [
+        {
+          "price": 0,
+          "size": "M",
+          "quantity": 1,
+          "color": "Standard",
+          "id": 7916022530187,
+          "name": "Unknown Product",
+          "qid": "UNKNOWN-7916022530187",
+          "image": "https://via.placeholder.com/200x250?text=No+Image",
+          "orderedQuantity": 1,
+          "orderedSize": "M",
+          "orderedColor": "Standard"
+        }
+      ],
+      "orderDate": {
+        "seconds": 1778350798,
+        "nanoseconds": 392000000
+      },
+      "totalAmount": 479,
+      "address": "shayk ",
+      "status": "pending",
+      "source": "firebase",
+      "pointsEarned": 47,
+      "orderCost": 0,
+      "orderProfit": 0,
+      "orderProfitMargin": 0,
+      "profitCalculatedAt": "2026-05-09T21:24:19.880Z"
+    },
+    {
+      "id": "7FcrTn2xRBbBhIPUZZQp",
+      "orderId": "ORD-1766948811513",
+      "items": [
+        {
+          "size": "M",
+          "quantity": 1,
+          "id": 7915854102667,
+          "name": "Unknown Product",
+          "color": "Black",
+          "price": 0,
+          "qid": "UNKNOWN-7915854102667",
+          "image": "https://via.placeholder.com/200x250?text=No+Image",
+          "orderedQuantity": 1,
+          "orderedSize": "M",
+          "orderedColor": "Black"
+        }
+      ],
+      "phone": "80001812381",
+      "createdAt": {
+        "seconds": 1766948811,
+        "nanoseconds": 513000000
+      },
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "email": "shayakdas6.5.0@gmail.com",
+      "fullName": "Shayak Das",
+      "address": "sdasdada",
+      "status": "pending",
+      "totalAmount": 568.02,
+      "orderDate": {
+        "seconds": 1766948811,
+        "nanoseconds": 513000000
+      },
+      "city": "koltakata",
+      "shippingCost": 30,
+      "pincode": "700055",
+      "state": "West Bengal",
+      "subtotal": 549,
+      "paymentMethod": "cod",
+      "source": "firebase",
+      "pointsEarned": 56,
+      "orderCost": 0,
+      "orderProfit": 0,
+      "orderProfitMargin": 0,
+      "profitCalculatedAt": "2026-05-09T21:24:19.880Z"
+    },
+    {
+      "id": "2S4PVagw7A2ab4iQLhQA",
+      "orderId": "ORD-1765144878816",
+      "phone": "80001812381",
+      "items": [
+        {
+          "price": 85,
+          "size": "M",
+          "quantity": 1,
+          "color": "Black",
+          "id": 1,
+          "name": "Neon Glitch Hoodie",
+          "qid": "NGH-001",
+          "originalPrice": 170,
+          "category": "Men",
+          "type": "Hoodie",
+          "rating": 4.5,
+          "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+          "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+          "images": [
+            "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+            "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+          ],
+          "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "colors": [
+            "Black",
+            "White",
+            "Neon Green"
+          ],
+          "tags": [
+            "TRENDING",
+            "BESTSELLER"
+          ],
+          "isBestSeller": true,
+          "isNew": true,
+          "orderedQuantity": 1,
+          "orderedSize": "M",
+          "orderedColor": "Black"
+        }
+      ],
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "fullName": "Shayak Das",
+      "email": "shayakdas6.5.0@gmail.com",
+      "createdAt": {
+        "seconds": 1765144878,
+        "nanoseconds": 816000000
+      },
+      "totalAmount": 85,
+      "address": "sdasdada",
+      "status": "pending",
+      "orderDate": {
+        "seconds": 1765144878,
+        "nanoseconds": 816000000
+      },
+      "city": "koltakata",
+      "subtotal": 85,
+      "state": "West Bengal",
+      "shippingCost": 0,
+      "pincode": "700055",
+      "paymentMethod": "upi",
+      "source": "firebase",
+      "pointsEarned": 8,
+      "orderCost": 0,
+      "orderProfit": 0,
+      "orderProfitMargin": 0,
+      "profitCalculatedAt": "2026-05-09T21:24:19.880Z"
+    },
+    {
+      "id": "SuTQGC4vIytM2WrHUXzg",
+      "orderId": "ORD-1764264646243",
+      "status": "pending",
+      "address": "sdasdada",
+      "totalAmount": 45,
+      "orderDate": {
+        "seconds": 1764264646,
+        "nanoseconds": 243000000
+      },
+      "items": [
+        {
+          "quantity": 1,
+          "name": "Vintage Crop Top",
+          "color": "Pink",
+          "id": 2,
+          "size": "M",
+          "price": 45,
+          "qid": "VCT-002",
+          "originalPrice": 90,
+          "category": "Women",
+          "type": "Crop Top",
+          "rating": 4.7,
+          "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
+          "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+          "images": [
+            "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
+          ],
+          "sizes": [
+            "XS",
+            "S",
+            "M",
+            "L"
+          ],
+          "colors": [
+            "Pink",
+            "White",
+            "Black"
+          ],
+          "tags": [
+            "VINTAGE",
+            "TRENDING"
+          ],
+          "isNew": true,
+          "orderedQuantity": 1,
+          "orderedSize": "M",
+          "orderedColor": "Pink"
+        }
+      ],
+      "phone": "80001812381",
+      "createdAt": {
+        "seconds": 1764264646,
+        "nanoseconds": 243000000
+      },
+      "fullName": "Shayak Das",
+      "email": "shayakdas6.5.0@gmail.com",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "paymentMethod": "upi",
+      "city": "koltakata",
+      "pincode": "700055",
+      "shippingCost": 0,
+      "state": "West Bengal",
+      "subtotal": 45,
+      "source": "firebase",
+      "pointsEarned": 4,
+      "orderCost": 0,
+      "orderProfit": 0,
+      "orderProfitMargin": 0,
+      "profitCalculatedAt": "2026-05-09T21:24:19.880Z"
+    },
+    {
+      "id": "FqpUj0HsXXWIFSy1GH6m",
+      "orderId": "ORD-1764031459429",
+      "items": [
+        {
+          "color": "Black",
+          "quantity": 1,
+          "name": "Neon Glitch Hoodie",
+          "id": 1,
+          "size": "M",
+          "price": 85,
+          "qid": "NGH-001",
+          "originalPrice": 170,
+          "category": "Men",
+          "type": "Hoodie",
+          "rating": 4.5,
+          "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+          "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+          "images": [
+            "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+            "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+          ],
+          "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "colors": [
+            "Black",
+            "White",
+            "Neon Green"
+          ],
+          "tags": [
+            "TRENDING",
+            "BESTSELLER"
+          ],
+          "isBestSeller": true,
+          "isNew": true,
+          "orderedQuantity": 1,
+          "orderedSize": "M",
+          "orderedColor": "Black"
+        }
+      ],
+      "phone": "80001812381",
+      "createdAt": {
+        "seconds": 1764031459,
+        "nanoseconds": 429000000
+      },
+      "trackingLink": "https://tracking.com/12345",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "fullName": "Shayak Das",
+      "email": "shayakdas6.5.0@gmail.com",
+      "address": "sdasdada",
+      "status": "shipped",
+      "totalAmount": 85,
+      "orderDate": {
+        "seconds": 1764031459,
+        "nanoseconds": 429000000
+      },
+      "city": "koltakata",
+      "shippingCost": 0,
+      "pincode": "700055",
+      "shippedAt": "2025-11-25T15:53:02.252Z",
+      "state": "West Bengal",
+      "subtotal": 85,
+      "lastUpdated": "2025-11-25T15:53:02.252Z",
+      "paymentMethod": "upi",
+      "source": "firebase",
+      "pointsEarned": 8,
+      "orderCost": 0,
+      "orderProfit": 0,
+      "orderProfitMargin": 0,
+      "profitCalculatedAt": "2026-05-09T21:24:19.880Z"
+    },
+    {
+      "id": "mAsVn48LIsf1XLgRVy9r",
+      "orderId": "ORD-1763911399446",
+      "paymentMethod": "cod",
+      "city": "koltakata",
+      "subtotal": 85,
+      "state": "West Bengal",
+      "shippingCost": 30,
+      "pincode": "700055",
+      "totalAmount": 115,
+      "address": "sdasdada",
+      "status": "pending",
+      "orderDate": {
+        "seconds": 1763911399,
+        "nanoseconds": 446000000
+      },
+      "phone": "80001812381",
+      "items": [
+        {
+          "price": 85,
+          "quantity": 1,
+          "id": 1,
+          "name": "Neon Glitch Hoodie",
+          "color": "Black",
+          "size": "M",
+          "qid": "NGH-001",
+          "originalPrice": 170,
+          "category": "Men",
+          "type": "Hoodie",
+          "rating": 4.5,
+          "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+          "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+          "images": [
+            "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+            "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+          ],
+          "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "colors": [
+            "Black",
+            "White",
+            "Neon Green"
+          ],
+          "tags": [
+            "TRENDING",
+            "BESTSELLER"
+          ],
+          "isBestSeller": true,
+          "isNew": true,
+          "orderedQuantity": 1,
+          "orderedSize": "M",
+          "orderedColor": "Black"
+        }
+      ],
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "email": "lolislolpp@gmail.com",
+      "fullName": "Mr Oak GAMING",
+      "createdAt": {
+        "seconds": 1763911399,
+        "nanoseconds": 446000000
+      },
+      "source": "firebase",
+      "pointsEarned": 11,
+      "orderCost": 0,
+      "orderProfit": 0,
+      "orderProfitMargin": 0,
+      "profitCalculatedAt": "2026-05-09T21:24:19.880Z"
+    },
+    {
+      "id": "9uhZ0XRhlS8Z4j6X4Rke",
+      "orderId": "ORD-1763906412534",
+      "city": "koltakata",
+      "shippingCost": 0,
+      "pincode": "700055",
+      "state": "West Bengal",
+      "subtotal": 45,
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "name": "Vintage Crop Top",
+          "quantity": 1,
+          "id": 2,
+          "color": "Pink",
+          "size": "M",
+          "price": 45,
+          "qid": "VCT-002",
+          "originalPrice": 90,
+          "category": "Women",
+          "type": "Crop Top",
+          "rating": 4.7,
+          "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
+          "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500",
+          "images": [
+            "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500"
+          ],
+          "sizes": [
+            "XS",
+            "S",
+            "M",
+            "L"
+          ],
+          "colors": [
+            "Pink",
+            "White",
+            "Black"
+          ],
+          "tags": [
+            "VINTAGE",
+            "TRENDING"
+          ],
+          "isNew": true,
+          "orderedQuantity": 1,
+          "orderedSize": "M",
+          "orderedColor": "Pink"
+        }
+      ],
+      "phone": "80001812381",
+      "createdAt": {
+        "seconds": 1763906412,
+        "nanoseconds": 534000000
+      },
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "email": "lolislolpp@gmail.com",
+      "fullName": "Mr Oak GAMING",
+      "address": "sdasdada",
+      "status": "pending",
+      "totalAmount": 45,
+      "orderDate": {
+        "seconds": 1763906412,
+        "nanoseconds": 534000000
+      },
+      "source": "firebase",
+      "pointsEarned": 4,
+      "orderCost": 0,
+      "orderProfit": 0,
+      "orderProfitMargin": 0,
+      "profitCalculatedAt": "2026-05-09T21:24:19.880Z"
+    }
+  ],
+  "tags": [
+    "ESSENTIAL",
+    "TRENDING",
+    "PREMIUM",
+    "NEW",
+    "BESTSELLER",
+    "VINTAGE",
+    "COLORFUL"
+  ],
+  "categories": [
+    "Men",
+    "Women",
+    "Unisex"
+  ],
+  "types": [
+    "Hoodie",
+    "T-Shirt",
+    "Crop Top",
+    "Oversized T-Shirt"
+  ],
+  "colors": [
+    {
+      "name": "Black",
+      "code": "#000000"
+    },
+    {
+      "name": "White",
+      "code": "#FFFFFF"
+    },
+    {
+      "name": "Red",
+      "code": "#FF0000"
+    },
+    {
+      "name": "Blue",
+      "code": "#0000FF"
+    },
+    {
+      "name": "Green",
+      "code": "#00FF00"
+    },
+    {
+      "name": "Yellow",
+      "code": "#FFFF00"
+    },
+    {
+      "name": "Pink",
+      "code": "#FF69B4"
+    },
+    {
+      "name": "Purple",
+      "code": "#800080"
+    },
+    {
+      "name": "Orange",
+      "code": "#FFA500"
+    },
+    {
+      "name": "Gray",
+      "code": "#808080"
+    }
+  ]
+}

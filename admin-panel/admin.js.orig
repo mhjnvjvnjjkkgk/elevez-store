@@ -95,6 +95,8 @@ const state = {
   imageHistory: [],
   historyIndex: -1,
   selectedImages: new Set()
+};
+
 // Auto-sync from constants.ts ONLY if localStorage is completely empty
 async function autoSyncFromConstants(force = false) {
   try {
@@ -122,49 +124,15 @@ async function autoSyncFromConstants(force = false) {
       }
     }
 
-    console.log('🔄 Syncing from constants.ts...');
+    console.log('🔄 No products in localStorage, syncing from constants.ts...');
 
-    // Try server sync API first (highly robust, parses constants.ts on Node server)
-    try {
-      const response = await fetch('/api/sync-from-constants');
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success && result.products && result.products.length > 0) {
-          localStorage.setItem('elevez_products', JSON.stringify(result.products));
-          localStorage.setItem('elevez_last_save', new Date().toISOString());
-          state.products = result.products;
-          
-          if (result.collections && result.collections.length > 0) {
-            localStorage.setItem('elevez_collections', JSON.stringify(result.collections));
-            state.collections = result.collections;
-          }
-          if (result.tags) state.availableTags = result.tags;
-          if (result.categories) state.availableCategories = result.categories;
-          if (result.types) state.availableTypes = result.types;
-          if (result.colors) state.availableColors = result.colors;
-
-          console.log(`✅ Synced ${result.products.length} products from constants.ts via server API`);
-          showSyncStatus(`✅ Loaded ${result.products.length} products from website`, 'success');
-          return true;
-        }
-      }
-    } catch (apiError) {
-      console.log('ℹ️ Server sync API not available, falling back to dynamic module import:', apiError.message);
-    }
-
-    // Fallback: Try to import from constants module in case it is compiled (mostly for static deployments)
+    // Try to import from constants module
     const module = await import('../constants.js');
     if (module.PRODUCTS && module.PRODUCTS.length > 0) {
       localStorage.setItem('elevez_products', JSON.stringify(module.PRODUCTS));
       localStorage.setItem('elevez_last_save', new Date().toISOString());
       state.products = module.PRODUCTS;
-      
-      if (module.COLLECTIONS) {
-        localStorage.setItem('elevez_collections', JSON.stringify(module.COLLECTIONS));
-        state.collections = module.COLLECTIONS;
-      }
-      
-      console.log(`✅ Synced ${module.PRODUCTS.length} products from constants.js fallback`);
+      console.log(`✅ Synced ${module.PRODUCTS.length} products from constants.ts`);
       showSyncStatus(`✅ Loaded ${module.PRODUCTS.length} products from website`, 'success');
       return true;
     }
@@ -174,6 +142,7 @@ async function autoSyncFromConstants(force = false) {
   return false;
 }
 
+// Force sync from constants - for refresh button
 window.forceSyncFromConstants = async function () {
   console.log('🔄 Force syncing from constants.ts...');
   const synced = await autoSyncFromConstants(true);

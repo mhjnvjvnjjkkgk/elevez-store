@@ -114,54 +114,15 @@
     <div id="preview"></div>
   </div>
 
-  <script>
-    // Fetch products from our new server API on load
-    document.addEventListener('DOMContentLoaded', async () => {
-      const status = document.getElementById('status');
-      status.innerHTML = '<p class="warning">⏳ Loading products from constants.ts...</p>';
-      
-      try {
-        const response = await fetch('/api/sync-from-constants');
-        if (response.ok) {
-          const result = await response.json();
-          if (result.success && result.products) {
-            window.WEBSITE_PRODUCTS = result.products;
-            window.WEBSITE_COLLECTIONS = result.collections;
-            window.WEBSITE_TAGS = result.tags;
-            window.WEBSITE_CATEGORIES = result.categories;
-            window.WEBSITE_TYPES = result.types;
-            window.WEBSITE_COLORS = result.colors;
-            
-            console.log('✅ Loaded products from constants:', result.products.length);
-            
-            status.innerHTML = '<p class="success">✅ Loaded products from constants.ts. Ready to sync!</p>';
-            displayProducts(result.products);
-            return;
-          }
-        }
-        throw new Error('Server API returned unsuccessful status');
-      } catch (error) {
-        console.error('API load failed, trying ESM fallback...', error);
-        
-        // Dynamic ESM fallback
-        try {
-          const module = await import('../constants.js');
-          if (module.PRODUCTS) {
-            window.WEBSITE_PRODUCTS = module.PRODUCTS;
-            if (module.COLLECTIONS) window.WEBSITE_COLLECTIONS = module.COLLECTIONS;
-            
-            console.log('✅ Loaded products via ESM fallback:', module.PRODUCTS.length);
-            status.innerHTML = '<p class="success">✅ Loaded products via fallback. Ready to sync!</p>';
-            displayProducts(module.PRODUCTS);
-            return;
-          }
-        } catch (esmError) {
-          console.error('Fallback also failed:', esmError);
-        }
-        
-        status.innerHTML = '<p class="error">❌ Error: Could not load products from constants.ts. Make sure your Admin Server is running on port 3001!</p>';
-      }
-    });
+  <script type="module">
+    // Import products from constants
+    import { PRODUCTS } from '../constants.js';
+    
+    window.WEBSITE_PRODUCTS = PRODUCTS;
+    console.log('✅ Loaded products from constants:', PRODUCTS.length);
+    
+    // Auto-display on load
+    displayProducts(PRODUCTS);
   </script>
 
   <script>
@@ -206,22 +167,18 @@
         localStorage.setItem('elevez_products', JSON.stringify(products));
         localStorage.setItem('elevez_last_save', new Date().toISOString());
         
-        if (window.WEBSITE_COLLECTIONS) {
-          localStorage.setItem('elevez_collections', JSON.stringify(window.WEBSITE_COLLECTIONS));
-        }
-        
         // Also try to backup to server
         fetch('http://localhost:3001/save-products', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             products: products,
-            collections: window.WEBSITE_COLLECTIONS || [],
+            collections: [],
             orders: JSON.parse(localStorage.getItem('elevez_orders') || '[]'),
-            tags: window.WEBSITE_TAGS || [],
-            categories: window.WEBSITE_CATEGORIES || [],
-            types: window.WEBSITE_TYPES || [],
-            colors: window.WEBSITE_COLORS || []
+            tags: [],
+            categories: [],
+            types: [],
+            colors: []
           })
         }).catch(() => {
           console.log('Server backup skipped (server not running)');

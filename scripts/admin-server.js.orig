@@ -69,162 +69,18 @@ const server = http.createServer((req, res) => {
     console.log('✅ Created data directory:', dataDir);
   }
 
-  // GET /api/sync-from-constants - Parse and sync from constants.ts
-  if (req.method === 'GET' && req.url === '/api/sync-from-constants') {
-    try {
-      const constantsPath = path.join(__dirname, '..', 'constants.ts');
-      if (!fs.existsSync(constantsPath)) {
-        res.writeHead(404, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: false, error: 'constants.ts not found' }));
-        return;
-      }
-
-      const content = fs.readFileSync(constantsPath, 'utf8');
-
-      const parseArray = (varName) => {
-        const regex = new RegExp(`export\\s+const\\s+${varName}(?:\\s*:\\s*[^=]+)?\\s*=\\s*\\[`);
-        const match = content.match(regex);
-        if (!match) return null;
-        
-        const startIndex = match.index + match[0].length - 1; // index of '['
-        
-        let openBrackets = 0;
-        let endIndex = -1;
-        for (let i = startIndex; i < content.length; i++) {
-          if (content[i] === '[') openBrackets++;
-          else if (content[i] === ']') {
-            openBrackets--;
-            if (openBrackets === 0) {
-              endIndex = i;
-              break;
-            }
-          }
-        }
-        
-        if (endIndex === -1) return null;
-        
-        const arrayStr = content.substring(startIndex, endIndex + 1);
-        try {
-          return eval(arrayStr);
-        } catch (e) {
-          console.error(`Error evaluating ${varName}:`, e.message);
-          return null;
-        }
-      };
-
-      const products = parseArray('PRODUCTS') || [];
-      const collections = parseArray('COLLECTIONS') || [];
-      const tags = parseArray('AVAILABLE_TAGS') || [];
-      const categories = parseArray('AVAILABLE_CATEGORIES') || [];
-      const types = parseArray('AVAILABLE_TYPES') || [];
-      const colors = parseArray('AVAILABLE_COLORS') || [];
-
-      // Save synced data to backup.json to ensure server state is also updated
-      const backupData = {
-        products: products,
-        collections: collections,
-        orders: []
-      };
-
-      // If backup.json already exists, preserve orders
-      if (fs.existsSync(backupFile)) {
-        try {
-          const existingData = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
-          if (existingData && existingData.orders) {
-            backupData.orders = existingData.orders;
-          }
-        } catch (e) {
-          console.warn('Could not read existing orders from backup.json:', e.message);
-        }
-      }
-
-      fs.writeFileSync(backupFile, JSON.stringify(backupData, null, 2), 'utf8');
-      console.log(`✅ Synced ${products.length} products to backup.json via /api/sync-from-constants`);
-
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({
-        success: true,
-        products,
-        collections,
-        tags,
-        categories,
-        types,
-        colors
-      }));
-    } catch (error) {
-      console.error('❌ Error syncing constants:', error);
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ success: false, error: error.message }));
-    }
-    return;
-  }
-
-  // GET /api/products - Load from backup (with auto-sync from constants.ts if backup is empty or has only trial products)
+  // GET /api/products - Load from backup
   if (req.method === 'GET' && req.url === '/api/products') {
     try {
-      let serveBackup = false;
-      let dataObj = null;
-
       if (fs.existsSync(backupFile)) {
-        try {
-          dataObj = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
-          if (dataObj && dataObj.products && dataObj.products.length > 6) {
-            serveBackup = true;
-          }
-        } catch (e) {
-          console.warn('Could not parse backupFile:', e.message);
-        }
-      }
-
-      if (serveBackup && dataObj) {
+        const data = fs.readFileSync(backupFile, 'utf8');
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(dataObj));
-        console.log(`📦 Loaded ${dataObj.products.length} products from backup.json`);
+        res.end(data);
+        console.log('📦 Loaded products from backup.json');
       } else {
-        console.log('🔄 Backup is empty or has only trial products, auto-syncing from constants.ts...');
-        const constantsPath = path.join(__dirname, '..', 'constants.ts');
-        if (fs.existsSync(constantsPath)) {
-          const content = fs.readFileSync(constantsPath, 'utf8');
-          const parseArray = (varName) => {
-            const regex = new RegExp(`export\\s+const\\s+${varName}(?:\\s*:\\s*[^=]+)?\\s*=\\s*\\[`);
-            const match = content.match(regex);
-            if (!match) return null;
-            const startIndex = match.index + match[0].length - 1;
-            let openBrackets = 0;
-            let endIndex = -1;
-            for (let i = startIndex; i < content.length; i++) {
-              if (content[i] === '[') openBrackets++;
-              else if (content[i] === ']') {
-                openBrackets--;
-                if (openBrackets === 0) {
-                  endIndex = i;
-                  break;
-                }
-              }
-            }
-            if (endIndex === -1) return null;
-            const arrayStr = content.substring(startIndex, endIndex + 1);
-            try { return eval(arrayStr); } catch (e) { return null; }
-          };
-
-          const products = parseArray('PRODUCTS') || [];
-          const collections = parseArray('COLLECTIONS') || [];
-          
-          const backupData = {
-            products: products,
-            collections: collections,
-            orders: dataObj?.orders || []
-          };
-
-          fs.writeFileSync(backupFile, JSON.stringify(backupData, null, 2), 'utf8');
-          console.log(`✅ Auto-synced ${products.length} products to backup.json on load`);
-          
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify(backupData));
-        } else {
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify(dataObj || { products: [], collections: [], orders: [] }));
-        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ products: [], collections: [], orders: [] }));
+        console.log('ℹ️ No backup.json found, returning empty data');
       }
     } catch (error) {
       console.error('❌ Error loading backup:', error);
