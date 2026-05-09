@@ -156,10 +156,14 @@ class UserPointsService {
           console.log(`📊 Also synced points to loyaltyProfiles: ${currentPoints + pointsToAdd} points`);
         } else {
           // Auto-create loyaltyProfile during checkout points award
+          // We also include the 100 points signup bonus so they don't lose out!
+          const signupBonus = 100;
+          const finalPoints = balanceAfter + signupBonus;
+          
           const newProfile = {
             userId,
-            points: balanceAfter,
-            totalPointsEarned: balanceAfter,
+            points: finalPoints,
+            totalPointsEarned: finalPoints,
             tier: tierCapitalized,
             joinedAt: serverTimestamp(),
             lastUpdated: serverTimestamp(),
@@ -171,7 +175,29 @@ class UserPointsService {
             }
           };
           await setDoc(loyaltyRef, newProfile);
-          console.log(`📊 Created missing loyaltyProfiles document during checkout: ${balanceAfter} points`);
+          console.log(`📊 Created missing loyaltyProfiles document during checkout: ${finalPoints} points (including signup bonus)`);
+
+          // Sync back the signup bonus to userPoints to keep them perfectly in sync
+          try {
+            const pointsRef = doc(this.db, this.pointsCollection, userId);
+            const signupTx = {
+              id: `signup_bonus_${userId}_${Date.now()}`,
+              type: 'bonus',
+              amount: signupBonus,
+              description: 'Sign-up bonus (Auto-credited)',
+              timestamp: new Date().toISOString(),
+              balanceBefore: balanceAfter,
+              balanceAfter: finalPoints
+            };
+            await updateDoc(pointsRef, {
+              totalPoints: finalPoints,
+              totalPointsEarned: finalPoints,
+              pointsHistory: [...userPoints.pointsHistory, transaction, signupTx]
+            });
+            console.log(`📊 Credited signup bonus to userPoints for consistency`);
+          } catch (syncErr) {
+            console.warn('Could not sync checkout signup bonus back to userPoints:', syncErr);
+          }
         }
       } catch (loyaltySyncError) {
         console.warn('Could not sync to loyaltyProfiles:', loyaltySyncError);
