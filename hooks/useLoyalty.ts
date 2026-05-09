@@ -296,10 +296,10 @@ export function useLoyalty() {
     nextTier,
     pointsToNextTier,
     tierProgress,
-    redemptionOptions: redemptionOptions.map(opt => ({
-      points: opt.pointsRequired,
-      discount: opt.dollarValue,
-      label: opt.name
+    redemptionOptions: (redemptionOptions || []).map(opt => ({
+      points: opt?.pointsRequired || 0,
+      discount: opt?.dollarValue || 0,
+      label: opt?.name || ''
     })),
     pointsRules: POINTS_RULES,
     claimSocialPoints,

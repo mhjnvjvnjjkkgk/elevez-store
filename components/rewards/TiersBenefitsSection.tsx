@@ -37,13 +37,14 @@ export const TiersBenefitsSection: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {tiers.map((tier, index) => {
+          {(tiers || []).map((tier, index) => {
+            if (!tier) return null;
             const isCurrentTier = tierInfo?.name === tier.name;
-            const isUnlocked = profile && (profile.totalPointsEarned ?? 0) >= tier.pointsRequired;
+            const isUnlocked = profile && (profile.totalPointsEarned ?? 0) >= (tier.pointsRequired || 0);
 
             return (
               <div
-                key={tier.name}
+                key={tier.name || index}
                 className={`bg-white border-[6px] border-black p-10 transition-all relative group h-full flex flex-col ${
                   isCurrentTier 
                     ? 'shadow-[16px_16px_0px_0px_#00ff88] -translate-y-4' 
@@ -68,18 +69,18 @@ export const TiersBenefitsSection: React.FC = () => {
 
                 {/* Tier Icon */}
                 <div className="text-8xl mb-8 text-center bg-black/5 p-8 border-[3px] border-black border-dashed">
-                  {tier.icon}
+                  {tier.icon || '💎'}
                 </div>
 
                 {/* Tier Info */}
-                <h3 className="text-3xl font-black uppercase text-black text-center mb-2 font-syne">{tier.name}</h3>
+                <h3 className="text-3xl font-black uppercase text-black text-center mb-2 font-syne">{tier.name || 'Tier'}</h3>
                 <p className="text-center font-black text-black opacity-40 uppercase tracking-tighter mb-10 pb-10 border-b-[3px] border-black border-dashed">
-                  {tier.pointsRequired === 0 ? 'ENTRY LEVEL' : `${tier.pointsRequired}+ TOTAL PTS`}
+                  {(tier.pointsRequired || 0) === 0 ? 'ENTRY LEVEL' : `${tier.pointsRequired || 0}+ TOTAL PTS`}
                 </p>
 
                 {/* Benefits List */}
                 <div className="space-y-6 flex-grow">
-                  {tier.benefits.discountPercentage > 0 && (
+                  {tier.benefits?.discountPercentage > 0 && (
                     <div className="flex items-center gap-4">
                       <div className={`w-8 h-8 flex items-center justify-center border-[2px] border-black ${isUnlocked ? 'bg-[#00ff88]' : 'bg-black/10'}`}>
                         <Check size={16} className="text-black font-black" />
@@ -88,7 +89,7 @@ export const TiersBenefitsSection: React.FC = () => {
                     </div>
                   )}
                   
-                  {tier.benefits.earningMultiplier > 1 && (
+                  {tier.benefits?.earningMultiplier > 1 && (
                     <div className="flex items-center gap-4">
                       <div className={`w-8 h-8 flex items-center justify-center border-[2px] border-black ${isUnlocked ? 'bg-[#00ff88]' : 'bg-black/10'}`}>
                         <Check size={16} className="text-black font-black" />
@@ -97,7 +98,7 @@ export const TiersBenefitsSection: React.FC = () => {
                     </div>
                   )}
                   
-                  {tier.benefits.freeShippingThreshold > 0 && (
+                  {tier.benefits?.freeShippingThreshold > 0 && (
                     <div className="flex items-center gap-4">
                       <div className={`w-8 h-8 flex items-center justify-center border-[2px] border-black ${isUnlocked ? 'bg-[#00ff88]' : 'bg-black/10'}`}>
                         <Check size={16} className="text-black font-black" />
@@ -106,7 +107,7 @@ export const TiersBenefitsSection: React.FC = () => {
                     </div>
                   )}
                   
-                  {tier.benefits.exclusiveAccess && (
+                  {tier.benefits?.exclusiveAccess && (
                     <div className="flex items-center gap-4">
                       <div className={`w-8 h-8 flex items-center justify-center border-[2px] border-black ${isUnlocked ? 'bg-[#00ff88]' : 'bg-black/10'}`}>
                         <Check size={16} className="text-black font-black" />

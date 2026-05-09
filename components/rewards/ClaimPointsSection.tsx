@@ -56,27 +56,27 @@ export const ClaimPointsSection: React.FC = () => {
       id: 'instagram',
       icon: Instagram,
       name: 'Instagram',
-      points: pointsRules.INSTAGRAM_SHARE,
+      points: pointsRules?.INSTAGRAM_SHARE || 50,
       color: 'from-purple-500 to-pink-500',
-      claimed: profile?.socialShares.instagram,
+      claimed: profile?.socialShares?.instagram || false,
       action: () => handleSocialClaim('instagram')
     },
     {
       id: 'whatsapp',
       icon: MessageCircle,
       name: 'WhatsApp',
-      points: pointsRules.WHATSAPP_SHARE,
+      points: pointsRules?.WHATSAPP_SHARE || 50,
       color: 'from-green-500 to-emerald-500',
-      claimed: profile?.socialShares.whatsapp,
+      claimed: profile?.socialShares?.whatsapp || false,
       action: () => handleSocialClaim('whatsapp')
     },
     {
       id: 'facebook',
       icon: Facebook,
       name: 'Facebook',
-      points: pointsRules.FACEBOOK_SHARE,
+      points: pointsRules?.FACEBOOK_SHARE || 50,
       color: 'from-blue-500 to-cyan-500',
-      claimed: profile?.socialShares.facebook,
+      claimed: profile?.socialShares?.facebook || false,
       action: () => handleSocialClaim('facebook')
     }
   ];
