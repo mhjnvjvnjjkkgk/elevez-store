@@ -51,6 +51,13 @@ export const RewardsPage: React.FC = () => {
     loading
   } = useLoyalty();
 
+  // Safety timeout: never let the spinner show more than 4 seconds
+  const [forceReady, setForceReady] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setForceReady(true), 4000);
+    return () => clearTimeout(t);
+  }, []);
+
   // Dynamic rules state
   const [dynamicRules, setDynamicRules] = useState<any>(null);
   const [earningRate, setEarningRate] = useState<number>(0.1);
@@ -86,7 +93,7 @@ export const RewardsPage: React.FC = () => {
   const headerY = useTransform(scrollYProgress, [0, 0.2], [0, -50]);
   const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
-  if (loading) {
+  if (loading && !forceReady) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">

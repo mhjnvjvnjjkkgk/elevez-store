@@ -1942,9 +1942,9 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         </div>
       </section>
 
-      {/* Video Experience Section - Parallax Effect */}
+      {/* Video Experience Section */}
       <ScrollAnimatedSection>
-        <section className="py-24 bg-black relative border-y-[8px] border-black">
+        <section className="py-24 bg-black relative border-y-[8px] border-black overflow-hidden">
           {/* Top Marquee for Video */}
           <div className="absolute top-0 inset-x-0 border-b-[8px] border-black bg-white z-20">
             <InfiniteMarquee 
@@ -1959,11 +1959,17 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           >
             <h2 className="text-5xl md:text-8xl font-black mb-8 relative z-20 font-syne uppercase tracking-tighter" style={{ WebkitTextStroke: '2px #00ff88', color: 'transparent' }}>The Elevez Experience</h2>
 
-            <div className="relative aspect-video w-full max-w-6xl mx-auto overflow-hidden border-[8px] border-black shadow-[24px_24px_0_0_#00ff88] group bg-black"
+            <div className="relative aspect-video w-full max-w-6xl mx-auto overflow-hidden border-[8px] border-[#00ff88] shadow-[24px_24px_0_0_#00ff88] group bg-black"
               onMouseEnter={() => setCursorVariant('hover')}
               onMouseLeave={() => setCursorVariant('default')}
             >
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors z-10 flex items-center justify-center">
+              {/* Static Neo-Brutalist Placeholder behind the video */}
+              <div className="absolute inset-0 bg-black flex items-center justify-center z-0">
+                <div className="text-center">
+                  <p className="text-[#00ff88] text-xl font-black uppercase tracking-widest opacity-30">ELEVEZ // SS26 // LOADING...</p>
+                </div>
+              </div>
+              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors z-10 flex items-center justify-center">
                 <div className="w-32 h-20 bg-[#00ff88] border-[4px] border-black shadow-[8px_8px_0_0_#000] flex items-center justify-center group-hover:scale-110 transition-transform hover:bg-white cursor-pointer">
                   <Play className="w-10 h-10 text-black fill-black" />
                 </div>
@@ -1971,7 +1977,8 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               <video
                 src="https://assets.mixkit.co/videos/preview/mixkit-urban-model-posing-in-neon-light-39857-large.mp4"
                 autoPlay muted loop playsInline
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 relative z-[5]"
+                onError={(e) => { (e.target as HTMLVideoElement).style.display = 'none'; }}
               />
               <div className="absolute bottom-8 left-8 z-20 text-left bg-black border-[4px] border-white p-4 shadow-[8px_8px_0_0_#fff]">
                 <h3 className="text-4xl md:text-6xl font-black text-white font-syne leading-none uppercase">
