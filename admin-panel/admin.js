@@ -1098,7 +1098,7 @@ function renderProducts() {
 
   grid.innerHTML = summary + state.products.map(product => {
     const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
-    const imageUrl = product.image || product.images?.[0] || 'https://via.placeholder.com/400x500/1a1a1a/00ff88?text=No+Image';
+    const imageUrl = product.image || product.images?.[0] || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='500' viewBox='0 0 400 500' style='background:%23111;'><rect width='100%25' height='100%25' fill='%23111'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23333' font-family='sans-serif' font-size='20' font-weight='bold'>No Image</text></svg>";
 
     // Calculate profit if cost is available
     const cost = product.cost || 0;
@@ -1112,7 +1112,7 @@ function renderProducts() {
 
     return `
       <div class="product-card">
-        <img src="${imageUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x500/1a1a1a/00ff88?text=No+Image'; this.style.opacity='0.5';">
+        <img src="${imageUrl}" alt="${product.name}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'500\' viewBox=\'0 0 400 500\' style=\'background:%23111;\'><rect width=\'100%25\' height=\'100%25\' fill=\'%23111\'/><text x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23333\' font-family=\'sans-serif\' font-size=\'20\' font-weight=\'bold\'>No Image</text></svg>'; this.style.opacity='0.5';">
         <div class="product-info">
           <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
             <h3 style="margin: 0; flex: 1;">${product.name}</h3>
@@ -2697,7 +2697,7 @@ function renderAvailableProducts(products) {
   container.innerHTML = products.map(p => `
     <div class="product-list-item" data-handle="${p.handle || p.shopifyHandle}" onclick="toggleProductSelection(this, 'available')">
       <input type="checkbox" class="product-checkbox available" data-handle="${p.handle || p.shopifyHandle}">
-      <img src="${p.image || p.images?.[0] || 'https://via.placeholder.com/40'}" alt="${p.name}" 
+      <img src="${p.image || p.images?.[0] || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40' style='background:%23111;'><rect width='100%25' height='100%25' fill='%23111'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23333' font-family='sans-serif' font-size='8' font-weight='bold'>No Image</text></svg>"}" alt="${p.name}" 
            style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
       <div style="flex: 1; overflow: hidden;">
         <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
@@ -2720,7 +2720,7 @@ function renderCollectionProductsList(products) {
   container.innerHTML = products.map(p => `
     <div class="product-list-item" data-handle="${p.handle || p.shopifyHandle}" onclick="toggleProductSelection(this, 'collection')">
       <input type="checkbox" class="product-checkbox collection" data-handle="${p.handle || p.shopifyHandle}">
-      <img src="${p.image || p.images?.[0] || 'https://via.placeholder.com/40'}" alt="${p.name}" 
+      <img src="${p.image || p.images?.[0] || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40' style='background:%23111;'><rect width='100%25' height='100%25' fill='%23111'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23333' font-family='sans-serif' font-size='8' font-weight='bold'>No Image</text></svg>"}" alt="${p.name}" 
            style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
       <div style="flex: 1; overflow: hidden;">
         <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
@@ -3079,7 +3079,7 @@ function renderOrders() {
             return `
             <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin-bottom: 12px; display: flex; gap: 12px;">
               <div style="flex-shrink: 0;">
-                <img src="${item.image || 'https://via.placeholder.com/100x120?text=No+Image'}" alt="${escapedName}" style="width: 100px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(0,255,136,0.2);" onerror="this.onerror=null; this.src='https://via.placeholder.com/100x120?text=No+Image'">
+                <img src="${item.image || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='120' viewBox='0 0 100 120' style='background:%23111;'><rect width='100%25' height='100%25' fill='%23111'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23333' font-family='sans-serif' font-size='10' font-weight='bold'>No Image</text></svg>"}" alt="${escapedName}" style="width: 100px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(0,255,136,0.2);" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'120\' viewBox=\'0 0 100 120\' style=\'background:%23111;\'><rect width=\'100%25\' height=\'100%25\' fill=\'%23111\'/><text x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23333\' font-family=\'sans-serif\' font-size=\'10\' font-weight=\'bold\'>No Image</text></svg>';">
               </div>
               <div style="flex: 1;">
                 <p style="margin: 0 0 5px 0;"><strong>${item.name}</strong></p>
@@ -3468,9 +3468,9 @@ async function renderCollections() {
     const productPreviewHtml = previewProducts.length > 0
       ? previewProducts.map(p => `
           <div class="collection-product-thumb" title="${p.name}">
-            <img src="${p.image || p.images?.[0] || 'https://via.placeholder.com/60x60?text=No+Image'}" 
+            <img src="${p.image || p.images?.[0] || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60' style='background:%23111;'><rect width='100%25' height='100%25' fill='%23111'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23333' font-family='sans-serif' font-size='8' font-weight='bold'>No Image</text></svg>"}" 
                  alt="${p.name}" 
-                 onerror="this.src='https://via.placeholder.com/60x60?text=No+Image'">
+                 onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' style=\'background:%23111;\'><rect width=\'100%25\' height=\'100%25\' fill=\'%23111\'/><text x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23333\' font-family=\'sans-serif\' font-size=\'8\' font-weight=\'bold\'>No Image</text></svg>';'">
           </div>
         `).join('')
       : '<div style="color: var(--text-muted); font-size: 12px; padding: 10px;">No products yet</div>';

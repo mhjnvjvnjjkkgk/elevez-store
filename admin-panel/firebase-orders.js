@@ -154,7 +154,7 @@ function getProductDetails(productId, productName) {
     qid: productId ? `UNKNOWN-${productId}` : "UNKNOWN",
     name: productName || "Unknown Product",
     price: 0,
-    image: "https://via.placeholder.com/200x250?text=No+Image"
+    image: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='250' viewBox='0 0 200 250' style='background:%23111;'><rect width='100%25' height='100%25' fill='%23111'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23555' font-family='sans-serif' font-size='14' font-weight='bold'>No Image</text></svg>"
   };
 }
 
