@@ -1,6 +1,9 @@
 // Firebase Order Sync for Admin Panel
 // This script fetches orders from Firebase and displays them in the admin panel with full product details
 
+// Access the global state shared across admin scripts
+const state = window.state || {};
+
 // Firebase configuration - using your actual credentials
 const firebaseConfig = {
   apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
@@ -66,11 +69,41 @@ async function initFirebase() {
 
 
 // Get product details by ID (including trial products)
-function getProductDetails(productId) {
-  // Check in current products
-  let product = state.products.find(p => p.id === productId);
+// Get product details by ID or Name (including trial products)
+function getProductDetails(productId, productName) {
+  let product = null;
 
-  // If not found, check if it's a trial product
+  if (state.products && state.products.length > 0) {
+    // 1. Strict/Loose ID match
+    if (productId !== undefined && productId !== null) {
+      product = state.products.find(p => String(p.id) === String(productId));
+    }
+
+    // 2. QID or Shopify ID match
+    if (!product && productId) {
+      const idStr = String(productId);
+      product = state.products.find(p => p.qid === idStr || (p.shopifyId && p.shopifyId.includes(idStr)));
+    }
+
+    // 3. Prefix/Partial ID match (e.g. 791602253018 matching 7916022530187)
+    if (!product && productId) {
+      const queryIdStr = String(productId).trim();
+      if (queryIdStr.length >= 6) { // Avoid false matches with very short IDs
+        product = state.products.find(p => {
+          const pidStr = String(p.id).trim();
+          return pidStr.startsWith(queryIdStr) || queryIdStr.startsWith(pidStr);
+        });
+      }
+    }
+
+    // 4. Case-insensitive, trimmed Name match
+    if (!product && productName) {
+      const normSearchName = String(productName).trim().toLowerCase();
+      product = state.products.find(p => (p.name || '').trim().toLowerCase() === normSearchName);
+    }
+  }
+
+  // If not found in main catalog, check trial products
   if (!product) {
     const trialProducts = [
       {
@@ -104,13 +137,22 @@ function getProductDetails(productId) {
         image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"
       }
     ];
-    product = trialProducts.find(p => p.id === productId);
+
+    // Try ID match on trials
+    if (productId !== undefined && productId !== null) {
+      product = trialProducts.find(p => String(p.id) === String(productId));
+    }
+    // Try Name match on trials
+    if (!product && productName) {
+      const normSearchName = String(productName).trim().toLowerCase();
+      product = trialProducts.find(p => (p.name || '').trim().toLowerCase() === normSearchName);
+    }
   }
 
   return product || {
     id: productId,
-    qid: `UNKNOWN-${productId}`,
-    name: "Unknown Product",
+    qid: productId ? `UNKNOWN-${productId}` : "UNKNOWN",
+    name: productName || "Unknown Product",
     price: 0,
     image: "https://via.placeholder.com/200x250?text=No+Image"
   };
@@ -152,7 +194,9 @@ async function syncOrdersFromFirebase() {
 
         // Enrich order with full product details
         const enrichedItems = orderData.items?.map(item => {
-          const productDetails = getProductDetails(item.id);
+          const productId = item.productId || item.id;
+          const productName = item.productName || item.name;
+          const productDetails = getProductDetails(productId, productName);
           return {
             ...item,
             ...productDetails,

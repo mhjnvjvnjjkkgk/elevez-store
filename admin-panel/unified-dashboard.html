@@ -818,6 +818,7 @@
         // MODULE 2: PRODUCT MANAGER CATALOG
         // ==========================================
         async function loadLocalProducts() {
+            let loaded = false;
             try {
                 // Fetch products catalog from local backend Node API if available
                 const res = await fetch(`${API_BASE}/products`);
@@ -826,46 +827,74 @@
                     if (data && data.products && data.products.length > 0) {
                         state.products = data.products || [];
                         console.log(`Loaded ${state.products.length} products from backend api`);
-                        return;
+                        loaded = true;
                     }
                 }
             } catch (err) {
                 console.warn("Backend API not available, trying Firestore cloud database...");
             }
 
-            // Fallback to Firestore 'products' collection of production project
-            try {
-                const db = window.db;
-                const { collection, getDocs } = window.firebaseCollections;
-                const productsSnap = await getDocs(collection(db, 'products'));
-                
-                if (!productsSnap.empty) {
-                    const cloudProducts = [];
-                    productsSnap.forEach(doc => {
-                        cloudProducts.push({ id: doc.id, ...doc.data() });
-                    });
+            if (!loaded) {
+                // Fallback to Firestore 'products' collection of production project
+                try {
+                    const db = window.db;
+                    const { collection, getDocs } = window.firebaseCollections;
+                    const productsSnap = await getDocs(collection(db, 'products'));
                     
-                    // Convert back string-based IDs or numeric IDs if necessary
-                    state.products = cloudProducts.map(p => ({
-                        ...p,
-                        id: isNaN(Number(p.id)) ? p.id : Number(p.id)
-                    }));
-                    
-                    console.log(`Loaded ${state.products.length} products from Firestore 'products' collection`);
-                    // Cache to localStorage for offline robustness
-                    localStorage.setItem("elevez_products", JSON.stringify(state.products));
-                    return;
+                    if (!productsSnap.empty) {
+                        const cloudProducts = [];
+                        productsSnap.forEach(doc => {
+                            cloudProducts.push({ id: doc.id, ...doc.data() });
+                        });
+                        
+                        // Convert back string-based IDs or numeric IDs if necessary
+                        state.products = cloudProducts.map(p => ({
+                            ...p,
+                            id: isNaN(Number(p.id)) ? p.id : Number(p.id)
+                        }));
+                        
+                        console.log(`Loaded ${state.products.length} products from Firestore 'products' collection`);
+                        loaded = true;
+                    }
+                } catch (firestoreErr) {
+                    console.error("Firestore 'products' load failed, trying localStorage fallback:", firestoreErr);
                 }
-            } catch (firestoreErr) {
-                console.error("Firestore 'products' load failed, trying localStorage fallback:", firestoreErr);
             }
 
-            // Fallback local storage
-            console.warn("Firestore not available or empty, trying localStorage...");
-            const local = localStorage.getItem("elevez_products");
-            if (local) {
-                state.products = JSON.parse(local);
-                console.log(`Loaded ${state.products.length} products from local storage fallback`);
+            if (!loaded) {
+                // Fallback local storage
+                console.warn("Firestore not available or empty, trying localStorage...");
+                const local = localStorage.getItem("elevez_products");
+                if (local) {
+                    state.products = JSON.parse(local);
+                    console.log(`Loaded ${state.products.length} products from local storage fallback`);
+                    loaded = true;
+                }
+            }
+
+            // Always de-duplicate loaded products to prevent mismatches
+            if (state.products && state.products.length > 0) {
+                const uniqueProducts = [];
+                const processedIds = new Set();
+                const processedNames = new Set();
+
+                state.products.forEach(p => {
+                    if (p.id && processedIds.has(String(p.id))) return;
+                    const normalizedName = (p.name || '').trim().toLowerCase();
+                    if (processedNames.has(normalizedName)) return;
+
+                    if (p.id) processedIds.add(String(p.id));
+                    if (normalizedName) processedNames.add(normalizedName);
+                    uniqueProducts.push(p);
+                });
+
+                if (uniqueProducts.length < state.products.length) {
+                    console.log(`🔧 Unified Dashboard: Fixed duplicate products: ${state.products.length} -> ${uniqueProducts.length}`);
+                    state.products = uniqueProducts;
+                }
+                
+                // Cache the clean set to local storage
+                localStorage.setItem("elevez_products", JSON.stringify(state.products));
             }
         }
 

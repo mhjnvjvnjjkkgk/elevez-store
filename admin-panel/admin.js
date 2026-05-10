@@ -95,6 +95,11 @@ const state = {
   imageHistory: [],
   historyIndex: -1,
   selectedImages: new Set()
+};
+
+// Expose state globally so that deferred module scripts can access it reliably
+window.state = state;
+
 // Auto-sync from constants.ts ONLY if localStorage is completely empty
 async function autoSyncFromConstants(force = false) {
   try {
@@ -360,103 +365,148 @@ const TRIAL_PRODUCTS = [
 ];
 
 async function loadData() {
-  console.log('📂 Loading data...');
+  console.log('📂 Loading data (robust sync enabled)...');
 
-  // ✅ ALWAYS TRY LOCALSTORAGE FIRST - THIS IS THE PRIMARY SOURCE
-  let localProducts = [];
-  const saved = localStorage.getItem('elevez_products');
-  if (saved) {
-    try {
-      localProducts = JSON.parse(saved);
-      console.log(`📦 Found ${localProducts.length} products in localStorage`);
+  let loadedProducts = [];
+  let loadedFromLive = false;
 
-      const shopifyCount = localProducts.filter(p => p.source === 'shopify').length;
-      if (shopifyCount > 0) {
-        console.log(`   🛍️ Including ${shopifyCount} Shopify products`);
+  // 1. TRY FIREBASE AS THE ABSOLUTE PRIMARY GROUND TRUTH FOR LIVE DATA
+  try {
+    // Check if Firebase is available or try to initialize it
+    if (window.firebaseOrdersManager) {
+      if (!window.firebaseOrdersManager.db) {
+        await window.firebaseOrdersManager.initFirebase?.();
       }
-    } catch (e) {
-      console.error('❌ Error parsing localStorage:', e);
-      localProducts = [];
-    }
-  }
-
-  // If localStorage has products, use them (priority)
-  if (localProducts.length > 0) {
-    state.products = localProducts.map(p => {
-      if (!p.qid) p.qid = `QID${p.id}`;
-      return p;
-    });
-    console.log(`✅ Loaded ${state.products.length} products from localStorage`);
-  } else {
-    // No products in localStorage, try Firebase as fallback
-    let loadedFromFirebase = false;
-    try {
-      if (window.firebaseOrdersManager && window.firebaseOrdersManager.isFirebaseAvailable) {
+      
+      const db = window.firebaseOrdersManager.db;
+      if (db) {
         const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-        const db = window.firebaseOrdersManager.db;
-
-        console.log('🔥 Loading products from Firebase (localStorage was empty)...');
+        console.log('🔥 Loading products from Firestore (Primary source)...');
         const productsSnapshot = await getDocs(collection(db, 'products'));
 
         if (!productsSnapshot.empty) {
-          const firebaseProducts = [];
           productsSnapshot.forEach(doc => {
-            firebaseProducts.push({ id: doc.id, ...doc.data() });
+            loadedProducts.push({ id: doc.id, ...doc.data() });
           });
-
-          state.products = firebaseProducts.map(p => {
-            if (!p.qid) p.qid = `QID${p.id}`;
-            return p;
-          });
-
-          localStorage.setItem('elevez_products', JSON.stringify(state.products));
-          console.log(`✅ Loaded ${state.products.length} products from Firebase`);
-          loadedFromFirebase = true;
-        } else {
-          console.log('ℹ️ No products in Firebase...');
+          loadedFromLive = true;
+          console.log(`✅ Loaded ${loadedProducts.length} products from Firestore`);
         }
       }
-    } catch (firebaseError) {
-      console.warn('⚠️ Firebase load failed:', firebaseError.message);
+    }
+  } catch (firebaseError) {
+    console.warn('⚠️ Firestore product load failed, trying backup API...', firebaseError.message);
+  }
+
+  // 1.5 SELF-HEALING: If Firestore loaded less than the full 28 catalog products, load from local public products JSON
+  if (loadedProducts.length < 28) {
+    console.log(`🩹 Firestore returned only ${loadedProducts.length} products. Fetching full catalog to self-heal...`);
+    let staticProducts = null;
+    
+    // Try primary static path
+    try {
+      const response = await fetch('/data/products.json');
+      if (response.ok) {
+        staticProducts = await response.json();
+        console.log('✅ Successfully fetched catalog from /data/products.json');
+      }
+    } catch (e) {
+      console.log('ℹ️ /data/products.json failed, trying fallback path...');
     }
 
-    // If no products loaded yet, try server backup or load trial products
-    if (state.products.length === 0) {
-      console.log('ℹ️ No products loaded, trying server backup...');
+    // Try secondary static path fallback
+    if (!staticProducts) {
       try {
-        const response = await fetch('http://localhost:3001/api/products');
+        const response = await fetch('/public/data/products.json');
         if (response.ok) {
-          const data = await response.json();
-          if (data.products && data.products.length > 0) {
-            state.products = data.products;
-            state.collections = data.collections || [];
-            state.orders = data.orders || [];
-
-            // Also restore tags, categories, types, colors
-            if (data.tags) state.availableTags = data.tags;
-            if (data.categories) state.availableCategories = data.categories;
-            if (data.types) state.availableTypes = data.types;
-            if (data.colors) state.availableColors = data.colors;
-
-            localStorage.setItem('elevez_products', JSON.stringify(state.products));
-            localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
-            localStorage.setItem('elevez_orders', JSON.stringify(state.orders));
-
-            console.log(`✅ Restored ${state.products.length} products from server backup (data/backup.json)`);
-            showSyncStatus(`✅ Restored ${state.products.length} products from backup`, 'success');
-          } else {
-            console.log('ℹ️ No server backup found, loading trial products...');
-            loadTrialProducts();
-          }
-        } else {
-          console.log('ℹ️ Server not available, loading trial products...');
-          loadTrialProducts();
+          staticProducts = await response.json();
+          console.log('✅ Successfully fetched catalog from /public/data/products.json');
         }
       } catch (e) {
-        console.log('ℹ️ Server backup not available, loading trial products...');
-        loadTrialProducts();
+        console.warn('⚠️ Both static catalog paths failed:', e.message);
       }
     }
+
+    // If we successfully fetched the full 28+ products catalog, use it and heal Firestore!
+    if (staticProducts && Array.isArray(staticProducts) && staticProducts.length >= 28) {
+      loadedProducts = staticProducts;
+      loadedFromLive = true;
+      console.log(`🩹 Healed state with ${loadedProducts.length} products from static JSON!`);
+
+      // Silently sync healed products back to Firestore
+      setTimeout(async () => {
+        try {
+          if (window.firebaseOrdersManager && window.firebaseOrdersManager.db) {
+            const { collection, doc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+            const db = window.firebaseOrdersManager.db;
+            const batch = writeBatch(db);
+            
+            console.log(`🔥 Background Healing: Uploading all ${loadedProducts.length} products to Firestore...`);
+            for (const p of loadedProducts) {
+              const productRef = doc(db, 'products', String(p.id));
+              batch.set(productRef, {
+                ...p,
+                updatedAt: new Date().toISOString()
+              });
+            }
+            await batch.commit();
+            console.log('🎉 Firestore products collection is now fully healed and up-to-date with 28 products!');
+          }
+        } catch (healError) {
+          console.warn('⚠️ Background Firestore healing sync failed:', healError.message);
+        }
+      }, 2000);
+    }
+  }
+
+  // 2. TRY SERVER BACKUP API AS SECONDARY TRUTH
+  if (!loadedFromLive) {
+    try {
+      console.log('🔄 Trying Server Backup API for products (Secondary source)...');
+      const response = await fetch('http://localhost:3001/api/products');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.products && Array.isArray(data.products) && data.products.length > 0) {
+          loadedProducts = data.products;
+          loadedFromLive = true;
+          console.log(`✅ Loaded ${loadedProducts.length} products from Server Backup API`);
+        }
+      }
+    } catch (e) {
+      console.log('⚠️ Server Backup API unavailable:', e.message);
+    }
+  }
+
+  // 3. FALLBACK TO LOCALSTORAGE ONLY IF BOTH LIVE SOURCES ARE OFFLINE/EMPTY
+  if (!loadedFromLive || loadedProducts.length === 0) {
+    console.log('💾 Live sources unavailable, loading from localStorage fallback...');
+    const saved = localStorage.getItem('elevez_products');
+    if (saved) {
+      try {
+        loadedProducts = JSON.parse(saved);
+        console.log(`📦 Loaded ${loadedProducts.length} products from localStorage`);
+      } catch (e) {
+        console.error('❌ Error parsing localStorage fallback:', e);
+      }
+    }
+  }
+
+  // Set the state
+  if (loadedProducts.length > 0) {
+    state.products = loadedProducts.map(p => {
+      if (!p.qid) p.qid = `QID${p.id}`;
+      // Ensure numeric IDs are matched if they can be converted
+      const numId = Number(p.id);
+      if (!isNaN(numId) && p.id !== numId) {
+        p.id = numId;
+      }
+      return p;
+    });
+    // Update local storage so cache remains fresh
+    localStorage.setItem('elevez_products', JSON.stringify(state.products));
+  } else {
+    // If absolutely nothing was loaded, load trial products
+    console.log('ℹ️ No products available anywhere, loading trial products...');
+    loadTrialProducts();
   }
 
   // 1. Load Collections - ROBUST STRATEGY (Api -> Backup -> Local)
@@ -652,14 +702,31 @@ async function saveData() {
     // ✅ SYNC TO FIREBASE FOR PERMANENT PERSISTENCE
     try {
       if (window.firebaseOrdersManager && window.firebaseOrdersManager.isFirebaseAvailable) {
-        const { collection, doc, setDoc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const { collection, doc, setDoc, getDocs, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
         const db = window.firebaseOrdersManager.db;
 
         console.log(`🔥 Syncing ${state.products.length} products to Firebase...`);
 
+        // Get all existing products in Firestore to find orphaned/stale documents
+        const existingSnapshot = await getDocs(collection(db, 'products'));
+        const activeIds = new Set(state.products.map(p => String(p.id)));
+        const orphanedDocs = [];
+
+        existingSnapshot.forEach(docSnap => {
+          const docId = String(docSnap.id);
+          if (!activeIds.has(docId)) {
+            orphanedDocs.push(docId);
+          }
+        });
+
+        if (orphanedDocs.length > 0) {
+          console.log(`🔧 Found ${orphanedDocs.length} orphaned/duplicate documents in Firestore:`, orphanedDocs);
+        }
+
         // Use batch writes for efficiency
         const batch = writeBatch(db);
 
+        // 1. Set/Update active products
         for (const product of state.products) {
           const productRef = doc(db, 'products', String(product.id));
           batch.set(productRef, {
@@ -668,8 +735,14 @@ async function saveData() {
           });
         }
 
+        // 2. Delete orphaned/duplicate products from Firestore
+        for (const docId of orphanedDocs) {
+          const productRef = doc(db, 'products', docId);
+          batch.delete(productRef);
+        }
+
         await batch.commit();
-        console.log(`✅ Synced ${state.products.length} products to Firebase`);
+        console.log(`✅ Synced ${state.products.length} products to Firebase (Updated: ${state.products.length}, Deleted: ${orphanedDocs.length})`);
       }
     } catch (firebaseError) {
       console.warn('⚠️ Firebase sync failed:', firebaseError.message);
@@ -2977,7 +3050,8 @@ function renderOrders() {
         let orderProfit = 0;
         if (order.items) {
           order.items.forEach(item => {
-            const product = state.products.find(p => p.id === item.id);
+            const itemId = item.id || item.productId;
+            const product = state.products.find(p => String(p.id) === String(itemId));
             if (product && product.cost) {
               const qty = item.orderedQuantity || item.quantity || 1;
               orderCost += product.cost * qty;
@@ -3002,7 +3076,7 @@ function renderOrders() {
           ${order.items?.map(item => `
             <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin-bottom: 12px; display: flex; gap: 12px;">
               <div style="flex-shrink: 0;">
-                <img src="${item.image || 'https://via.placeholder.com/100x120?text=No+Image'}" alt="${item.name}" style="width: 100px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(0,255,136,0.2);" onerror="this.src='https://via.placeholder.com/100x120?text=No+Image'">
+                <img src="${item.image || 'https://via.placeholder.com/100x120?text=No+Image'}" alt="${item.name}" style="width: 100px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(0,255,136,0.2);" onerror="this.onerror=null; this.src='https://via.placeholder.com/100x120?text=No+Image'">
               </div>
               <div style="flex: 1;">
                 <p style="margin: 0 0 5px 0;"><strong>${item.name}</strong></p>

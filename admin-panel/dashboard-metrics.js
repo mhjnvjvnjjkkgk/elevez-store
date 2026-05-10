@@ -30,10 +30,29 @@ class DashboardMetrics {
         
         console.log(`✅ Loaded ${products.length} products from Firebase`);
         
-        // Save to localStorage as backup
-        localStorage.setItem('elevez_products', JSON.stringify(products));
+        // ✅ DE-DUPLICATE products before returning or saving to localStorage
+        const uniqueProducts = [];
+        const processedIds = new Set();
+        const processedNames = new Set();
         
-        return products;
+        products.forEach(p => {
+          if (p.id && processedIds.has(String(p.id))) return;
+          const normalizedName = (p.name || '').trim().toLowerCase();
+          if (processedNames.has(normalizedName)) return;
+          
+          if (p.id) processedIds.add(String(p.id));
+          if (normalizedName) processedNames.add(normalizedName);
+          uniqueProducts.push(p);
+        });
+        
+        if (uniqueProducts.length < products.length) {
+          console.log(`🔧 dashboard-metrics: De-duplicated ${products.length} -> ${uniqueProducts.length} products`);
+        }
+        
+        // Save to localStorage as backup
+        localStorage.setItem('elevez_products', JSON.stringify(uniqueProducts));
+        
+        return uniqueProducts;
       }
     } catch (error) {
       console.warn('⚠️ Firebase products load failed:', error.message);
@@ -42,8 +61,24 @@ class DashboardMetrics {
     // Fall back to localStorage
     console.log('📦 Loading products from localStorage...');
     const products = JSON.parse(localStorage.getItem('elevez_products') || '[]');
-    console.log(`✅ Loaded ${products.length} products from localStorage`);
-    return products;
+    
+    // ✅ Apply de-duplication to local storage values as well just to be safe
+    const uniqueProducts = [];
+    const processedIds = new Set();
+    const processedNames = new Set();
+    
+    products.forEach(p => {
+      if (p.id && processedIds.has(String(p.id))) return;
+      const normalizedName = (p.name || '').trim().toLowerCase();
+      if (processedNames.has(normalizedName)) return;
+      
+      if (p.id) processedIds.add(String(p.id));
+      if (normalizedName) processedNames.add(normalizedName);
+      uniqueProducts.push(p);
+    });
+    
+    console.log(`✅ Loaded ${uniqueProducts.length} unique products from localStorage`);
+    return uniqueProducts;
   }
 
   // Load orders from Firebase or localStorage
