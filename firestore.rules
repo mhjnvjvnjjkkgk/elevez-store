@@ -15,6 +15,11 @@ service cloud.firestore {
     match /orders/{orderId} {
       allow read, write: if true;
     }
+
+    // Allow full access to collections (for admin panel)
+    match /collections/{collectionId} {
+      allow read, write: if true;
+    }
     
     // Allow full access to loyalty rules (for admin panel)
     match /loyaltyRules/{ruleId} {

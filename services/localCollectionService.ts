@@ -33,18 +33,17 @@ class LocalCollectionService {
      */
     getAllCollections(): LocalCollection[] {
         try {
+            // Background revalidation: always fetch from Firestore/cloud in background
+            if (!isFetching) {
+                this.loadFromServer();
+            }
+
             const stored = localStorage.getItem(COLLECTIONS_KEY);
             if (stored) {
                 const collections = JSON.parse(stored) as LocalCollection[];
-                if (collections.length > 1) {
+                if (collections.length > 0) {
                     return collections;
                 }
-            }
-
-            // If no collections in localStorage, try to load from server
-            // This is a sync method, so we'll trigger async load in background
-            if (!isFetching) {
-                this.loadFromServer();
             }
 
             return this.getDefaultCollections();
@@ -55,82 +54,103 @@ class LocalCollectionService {
     }
 
     /**
-     * Async method to load collections from admin server API
-     * This bridges the cross-origin gap between admin panel (port 3001) and main site (port 5173)
+     * Async method to load collections from Cloud Firestore (Primary) or Admin Server (Fallback)
      */
     async loadFromServer(): Promise<void> {
         if (isFetching) return;
         isFetching = true;
 
-        let serverFetchSuccess = false;
+        let cloudSyncSuccess = false;
         try {
-            console.log('📂 Loading collections from admin server...');
+            console.log('☁️ [SWR Sync] Sourcing products and collections directly from Firestore cloud...');
+            
+            const productsSnapshot = await getDocs(collection(db, 'products'));
+            const collectionsSnapshot = await getDocs(collection(db, 'collections'));
 
-            // Fetch from admin server API (has CORS enabled)
-            const response = await fetch('http://localhost:3001/api/get-shopify-data');
-            if (response.ok) {
-                const data = await response.json();
+            const productsList: any[] = [];
+            productsSnapshot.forEach(docSnap => {
+                productsList.push({ id: docSnap.id, ...docSnap.data() });
+            });
 
-                if (data.collections && data.collections.length > 0) {
-                    localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(data.collections));
-                    console.log('✅ Loaded', data.collections.length, 'collections from admin server');
+            const collectionsList: any[] = [];
+            collectionsSnapshot.forEach(docSnap => {
+                collectionsList.push({ id: docSnap.id, ...docSnap.data() });
+            });
+
+            if (productsList.length > 0 || collectionsList.length > 0) {
+                // Normalize document IDs back to numeric format if they are numeric
+                const formattedProducts = productsList.map(p => ({
+                    ...p,
+                    id: isNaN(Number(p.id)) ? p.id : Number(p.id)
+                }));
+
+                const formattedCollections = collectionsList.map(c => ({
+                    ...c,
+                    id: isNaN(Number(c.id)) ? c.id : Number(c.id)
+                }));
+
+                let shouldReload = false;
+
+                if (formattedProducts.length > 0) {
+                    const currentProductsStr = localStorage.getItem(PRODUCTS_KEY) || '[]';
+                    const newProductsStr = JSON.stringify(formattedProducts);
+                    if (currentProductsStr !== newProductsStr) {
+                        localStorage.setItem(PRODUCTS_KEY, newProductsStr);
+                        console.log(`✅ [SWR Sync] Storefront updated with ${formattedProducts.length} fresh products.`);
+                        shouldReload = true;
+                    }
                 }
 
-                if (data.products && data.products.length > 0) {
-                    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(data.products));
-                    console.log('✅ Loaded', data.products.length, 'products from admin server');
+                // IMPORTANT: ONLY update local collections if Firestore returned a non-empty list of collections!
+                // This prevents resetting/deleting your rich local storefront collections with empty Firestore lists.
+                if (formattedCollections.length > 0) {
+                    const currentCollectionsStr = localStorage.getItem(COLLECTIONS_KEY) || '[]';
+                    const newCollectionsStr = JSON.stringify(formattedCollections);
+                    if (currentCollectionsStr !== newCollectionsStr) {
+                        localStorage.setItem(COLLECTIONS_KEY, newCollectionsStr);
+                        console.log(`✅ [SWR Sync] Storefront updated with ${formattedCollections.length} fresh collections.`);
+                        shouldReload = true;
+                    }
                 }
 
-                // Trigger page reload to show new data
-                if (data.collections?.length > 0 || data.products?.length > 0) {
+                if (shouldReload) {
+                    console.log('🔄 [SWR Sync] Storefront state updated. Reloading page...');
                     window.location.reload();
+                } else {
+                    console.log('✨ [SWR Sync] Storefront is already in perfect sync with Cloud Firestore.');
                 }
-                serverFetchSuccess = true;
+                cloudSyncSuccess = true;
             }
-        } catch (error) {
-            console.warn('Could not load from admin server, falling back to Firestore database...', error);
+        } catch (firestoreError) {
+            console.warn('⚠️ Firestore direct sync failed, trying local admin server fallback...', firestoreError);
         }
 
-        // If local admin server is offline/unreachable, pull live catalog from Firestore directly!
-        if (!serverFetchSuccess) {
+        // Local Server Fallback (Secondary Source)
+        if (!cloudSyncSuccess) {
             try {
-                console.log('☁️ Sourcing product and collection catalog directly from Firestore...');
-                
-                const productsSnapshot = await getDocs(collection(db, 'products'));
-                const collectionsSnapshot = await getDocs(collection(db, 'collections'));
+                console.log('📂 Loading collections from admin server fallback...');
+                const response = await fetch('http://localhost:3001/api/get-shopify-data');
+                if (response.ok) {
+                    const data = await response.json();
 
-                const productsList: any[] = [];
-                productsSnapshot.forEach(docSnap => {
-                    productsList.push({ id: docSnap.id, ...docSnap.data() });
-                });
+                    const formattedProducts = data.products || [];
+                    const formattedCollections = data.collections || [];
 
-                const collectionsList: any[] = [];
-                collectionsSnapshot.forEach(docSnap => {
-                    collectionsList.push({ id: docSnap.id, ...docSnap.data() });
-                });
+                    const currentProductsStr = localStorage.getItem(PRODUCTS_KEY) || '[]';
+                    const currentCollectionsStr = localStorage.getItem(COLLECTIONS_KEY) || '[]';
 
-                if (productsList.length > 0 || collectionsList.length > 0) {
-                    // Normalize document IDs back to numeric format if they are numeric
-                    const formattedProducts = productsList.map(p => ({
-                        ...p,
-                        id: isNaN(Number(p.id)) ? p.id : Number(p.id)
-                    }));
+                    const newProductsStr = JSON.stringify(formattedProducts);
+                    const newCollectionsStr = JSON.stringify(formattedCollections);
 
-                    const formattedCollections = collectionsList.map(c => ({
-                        ...c,
-                        id: isNaN(Number(c.id)) ? c.id : Number(c.id)
-                    }));
-
-                    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(formattedProducts));
-                    localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(formattedCollections));
-
-                    console.log(`✅ Fully synchronized storefront with Firestore: loaded ${formattedProducts.length} products & ${formattedCollections.length} collections.`);
-                    
-                    // Trigger page reload to show new data
-                    window.location.reload();
+                    if (currentProductsStr !== newProductsStr || currentCollectionsStr !== newCollectionsStr) {
+                        localStorage.setItem(PRODUCTS_KEY, newProductsStr);
+                        localStorage.setItem(COLLECTIONS_KEY, newCollectionsStr);
+                        console.log('✅ Loaded data from admin server fallback. Reloading...');
+                        window.location.reload();
+                    }
                 }
-            } catch (firestoreError) {
-                console.error('❌ Failed to pull catalog from Firestore cloud database:', firestoreError);
+            } catch (error) {
+                console.warn('Could not load from admin server fallback:', error);
             }
         }
 

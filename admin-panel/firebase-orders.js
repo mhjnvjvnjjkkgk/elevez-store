@@ -1,8 +1,13 @@
 // Firebase Order Sync for Admin Panel
 // This script fetches orders from Firebase and displays them in the admin panel with full product details
 
-// Access the global state shared across admin scripts
-const state = window.state || {};
+// Access the global state shared across admin scripts dynamically to prevent reference issues across module boundaries
+const state = {
+  get products() { return window.state?.products || []; },
+  get orders() { return window.state?.orders || []; },
+  set orders(val) { if (window.state) window.state.orders = val; },
+  get currentView() { return window.state?.currentView || ''; }
+};
 
 // Firebase configuration - using your actual credentials
 const firebaseConfig = {
@@ -72,6 +77,7 @@ async function initFirebase() {
 // Get product details by ID or Name (including trial products)
 function getProductDetails(productId, productName) {
   let product = null;
+  console.log(`🔍 [firebase-orders.js] getProductDetails lookup: ID=${productId}, Name="${productName}", catalogCount=${state.products?.length || 0}`);
 
   if (state.products && state.products.length > 0) {
     // 1. Strict/Loose ID match

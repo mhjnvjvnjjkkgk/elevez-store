@@ -59,3 +59,10 @@
 **Status**: ⬜ Not Started
 **Objective**: Replace the rigid "UNDER ₹50" and "₹100+" text filter buttons in the Vault section with a dual-thumb premium neobrutalist price range slider (0 to 5000). Show active price range dynamically, filter inventory instantly, and format with high-fidelity Amazon/Flipkart styling matching our custom theme.
 **Depends on**: Phase 9
+
+---
+
+### Phase 11: Centralized Shopify-like Cloud Database Sourcing
+**Status**: 🏃 In Progress
+**Objective**: Transition the entire product and collection catalog architecture to a centralized, cloud-first Firestore Single Source of Truth (SSOT). Eliminate local storage overwrites and sync conflicts inside the admin panel, and synchronize the storefront in real-time directly with Cloud Firestore.
+**Depends on**: Phase 10

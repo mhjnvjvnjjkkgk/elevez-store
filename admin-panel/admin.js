@@ -100,6 +100,64 @@ const state = {
 // Expose state globally so that deferred module scripts can access it reliably
 window.state = state;
 
+// Centralized self-contained Firebase initialization
+let adminFirestoreDB = null;
+async function getFirebaseDB() {
+  if (adminFirestoreDB) return adminFirestoreDB;
+  
+  // If firebaseOrdersManager already has an active DB, reuse it immediately
+  if (window.firebaseOrdersManager && window.firebaseOrdersManager.db) {
+    adminFirestoreDB = window.firebaseOrdersManager.db;
+    return adminFirestoreDB;
+  }
+
+  try {
+    const { initializeApp, getApps, getApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+    const { getFirestore } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+    const { getAuth, signInAnonymously } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    };
+
+    let app;
+    if (getApps().length > 0) {
+      app = getApp();
+    } else {
+      app = initializeApp(firebaseConfig);
+    }
+
+    // Attempt silent anonymous login to satisfy secure Firestore rules
+    try {
+      const auth = getAuth(app);
+      if (!auth.currentUser) {
+        console.log('🔐 [Auth] Silent anonymous sign-in...');
+        await signInAnonymously(auth);
+        console.log('🔓 [Auth] Successfully signed in anonymously!');
+      }
+    } catch (authErr) {
+      console.warn('⚠️ [Auth] Silent anonymous sign-in skipped/failed:', authErr.message);
+    }
+
+    adminFirestoreDB = getFirestore(app);
+    return adminFirestoreDB;
+  } catch (err) {
+    console.error('❌ Direct Firebase initialization inside admin.js failed:', err);
+    return null;
+  }
+}
+
+// Ensure user is on the permanent production domain and not a frozen Vercel preview snapshot
+if (window.location.hostname.includes('-projects-') && !window.location.hostname.startsWith('admin-panel-shayaks-projects-95c1d909') && !window.location.hostname.includes('localhost')) {
+  console.log('🔄 Snapshot domain detected! Redirecting to permanent production domain...');
+  window.location.replace('https://admin-panel-shayaks-projects-95c1d909.vercel.app' + window.location.search);
+}
+
 // Auto-sync from constants.ts ONLY if localStorage is completely empty
 async function autoSyncFromConstants(force = false) {
   try {
@@ -112,15 +170,18 @@ async function autoSyncFromConstants(force = false) {
       return false;
     }
 
-    // Check if we already have ANY products in localStorage
+    // Check if we already have complete products in localStorage (at least 28 products and must include Samurai Tee)
     const existing = localStorage.getItem('elevez_products');
     if (!force && existing) {
       try {
         const products = JSON.parse(existing);
-        if (products.length > 0) {
+        const hasSamurai = products.some(p => String(p.id) === '7916022530187');
+        if (products.length >= 28 && hasSamurai) {
           const shopifyCount = products.filter(p => p.source === 'shopify').length;
           console.log(`ℹ️ Products already exist in localStorage: ${products.length} total (${shopifyCount} Shopify), skipping auto-sync`);
           return false;
+        } else {
+          console.log(`🩹 Local products cache is incomplete (count: ${products.length}, Samurai Tee: ${hasSamurai}). Forcing auto-sync...`);
         }
       } catch (e) {
         // If parsing fails, continue to sync
@@ -139,9 +200,21 @@ async function autoSyncFromConstants(force = false) {
           localStorage.setItem('elevez_last_save', new Date().toISOString());
           state.products = result.products;
           
-          if (result.collections && result.collections.length > 0) {
+          const existingCollections = localStorage.getItem('elevez_collections');
+          let hasExistingCollections = false;
+          try {
+            if (existingCollections) {
+              const parsed = JSON.parse(existingCollections);
+              if (parsed && parsed.length > 0) hasExistingCollections = true;
+            }
+          } catch (e) { }
+
+          if (result.collections && result.collections.length > 0 && !hasExistingCollections) {
             localStorage.setItem('elevez_collections', JSON.stringify(result.collections));
             state.collections = result.collections;
+            console.log(`📦 Loaded default collections from server sync: ${result.collections.length}`);
+          } else if (hasExistingCollections) {
+            console.log('ℹ️ Retaining existing custom collections from localStorage (bypassed default sync overwrite)');
           }
           if (result.tags) state.availableTags = result.tags;
           if (result.categories) state.availableCategories = result.categories;
@@ -164,9 +237,21 @@ async function autoSyncFromConstants(force = false) {
       localStorage.setItem('elevez_last_save', new Date().toISOString());
       state.products = module.PRODUCTS;
       
-      if (module.COLLECTIONS) {
+      const existingCollections = localStorage.getItem('elevez_collections');
+      let hasExistingCollections = false;
+      try {
+        if (existingCollections) {
+          const parsed = JSON.parse(existingCollections);
+          if (parsed && parsed.length > 0) hasExistingCollections = true;
+        }
+      } catch (e) { }
+
+      if (module.COLLECTIONS && !hasExistingCollections) {
         localStorage.setItem('elevez_collections', JSON.stringify(module.COLLECTIONS));
         state.collections = module.COLLECTIONS;
+        console.log(`📦 Loaded default collections from constants fallback: ${module.COLLECTIONS.length}`);
+      } else if (hasExistingCollections) {
+        console.log('ℹ️ Retaining existing custom collections from localStorage (bypassed fallback sync overwrite)');
       }
       
       console.log(`✅ Synced ${module.PRODUCTS.length} products from constants.js fallback`);
@@ -196,9 +281,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Setup hot-reload first
   setupHotReloadClient();
 
-  // Try auto-sync before loading data
-  await autoSyncFromConstants();
-
+  // Load cloud data directly (prioritizing Firestore Single Source of Truth)
   await loadData();
   setupNavigation();
   setupSyncButton();
@@ -364,84 +447,238 @@ const TRIAL_PRODUCTS = [
   }
 ];
 
-async function loadData() {
-  console.log('📂 Loading data (robust sync enabled)...');
+// Helper functions for Bidirectional SWR Merge of Products and Collections
+function getNewerProduct(p1, p2) {
+  if (!p1) return p2;
+  if (!p2) return p1;
+  const t1 = new Date(p1.updatedAt || p1.importedAt || p1.lastSyncedAt || 0).getTime() || 0;
+  const t2 = new Date(p2.updatedAt || p2.importedAt || p2.lastSyncedAt || 0).getTime() || 0;
+  return t1 >= t2 ? p1 : p2;
+}
 
-  let loadedProducts = [];
-  let loadedFromLive = false;
+function getNewerCollection(c1, c2) {
+  if (!c1) return c2;
+  if (!c2) return c1;
+  const t1 = new Date(c1.updatedAt || c1.createdAt || c1.importedAt || 0).getTime() || 0;
+  const t2 = new Date(c2.updatedAt || c2.createdAt || c2.importedAt || 0).getTime() || 0;
+  return t1 >= t2 ? c1 : c2;
+}
 
-  // 1. TRY FIREBASE AS THE ABSOLUTE PRIMARY GROUND TRUTH FOR LIVE DATA
-  try {
-    // Check if Firebase is available or try to initialize it
-    if (window.firebaseOrdersManager) {
-      if (!window.firebaseOrdersManager.db) {
-        await window.firebaseOrdersManager.initFirebase?.();
+function mergeProductLists(...lists) {
+  const mergedMap = new Map();
+  lists.forEach(list => {
+    if (!list || !Array.isArray(list)) return;
+    list.forEach(p => {
+      if (!p || !p.id) return;
+      const key = String(p.id).trim();
+      const existing = mergedMap.get(key);
+      if (!existing) {
+        mergedMap.set(key, p);
+      } else {
+        mergedMap.set(key, getNewerProduct(existing, p));
       }
-      
-      const db = window.firebaseOrdersManager.db;
-      if (db) {
-        const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-        console.log('🔥 Loading products from Firestore (Primary source)...');
-        const productsSnapshot = await getDocs(collection(db, 'products'));
+    });
+  });
+  return Array.from(mergedMap.values());
+}
 
-        if (!productsSnapshot.empty) {
-          productsSnapshot.forEach(doc => {
-            loadedProducts.push({ id: doc.id, ...doc.data() });
-          });
-          loadedFromLive = true;
-          console.log(`✅ Loaded ${loadedProducts.length} products from Firestore`);
-        }
+function mergeCollectionLists(...lists) {
+  const mergedMap = new Map();
+  lists.forEach(list => {
+    if (!list || !Array.isArray(list)) return;
+    list.forEach(c => {
+      if (!c || !c.id) return;
+      const key = String(c.id).trim();
+      const existing = mergedMap.get(key);
+      if (!existing) {
+        mergedMap.set(key, c);
+      } else {
+        mergedMap.set(key, getNewerCollection(existing, c));
+      }
+    });
+  });
+  return Array.from(mergedMap.values());
+}
+
+async function loadData() {
+  console.log('📂 Loading data (robust bidirectional SWR merge enabled)...');
+
+  // --- PRODUCTS LOAD SECTION ---
+  let cloudProducts = [];
+  let serverProducts = [];
+  let localProducts = [];
+  let staticProducts = [];
+
+  // 1. Try Firestore Cloud
+  try {
+    const db = await getFirebaseDB();
+    if (db) {
+      const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+      console.log('🔥 [SWR Merge] Fetching products from Firestore Cloud...');
+      const productsSnapshot = await getDocs(collection(db, 'products'));
+      if (!productsSnapshot.empty) {
+        productsSnapshot.forEach(doc => {
+          cloudProducts.push({ id: doc.id, ...doc.data() });
+        });
+        console.log(`✅ [SWR Merge] Loaded ${cloudProducts.length} products from Firestore Cloud`);
       }
     }
-  } catch (firebaseError) {
-    console.warn('⚠️ Firestore product load failed, trying backup API...', firebaseError.message);
+  } catch (err) {
+    console.warn('⚠️ [SWR Merge] Firestore product load failed, will merge from other sources:', err.message);
   }
 
-  // 1.5 SELF-HEALING: If Firestore loaded less than the full 28 catalog products, load from local public products JSON
-  if (loadedProducts.length < 28) {
-    console.log(`🩹 Firestore returned only ${loadedProducts.length} products. Fetching full catalog to self-heal...`);
-    let staticProducts = null;
-    
-    // Try primary static path
+  // 2. Try Local Server Backup API
+  try {
+    const response = await fetch('http://localhost:3001/api/products');
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.products && Array.isArray(data.products)) {
+        serverProducts = data.products;
+        console.log(`✅ [SWR Merge] Loaded ${serverProducts.length} products from local server API`);
+      }
+    }
+  } catch (err) {
+    console.log('ℹ️ [SWR Merge] Local backup server offline, skipping local server product source');
+  }
+
+  // 3. Try Local Storage
+  try {
+    const saved = localStorage.getItem('elevez_products');
+    if (saved) {
+      localProducts = JSON.parse(saved) || [];
+      console.log(`✅ [SWR Merge] Loaded ${localProducts.length} products from localStorage`);
+    }
+  } catch (err) {
+    console.warn('⚠️ [SWR Merge] localStorage products parse failed:', err.message);
+  }
+
+  // 4. Try Static Catalog JSON file (for self-healing if incomplete)
+  const hasSamuraiInCloudOrLocal = cloudProducts.some(p => String(p.id) === '7916022530187') || localProducts.some(p => String(p.id) === '7916022530187');
+  if (cloudProducts.length < 28 || !hasSamuraiInCloudOrLocal) {
+    console.log('🩹 [SWR Merge] Products catalog is incomplete. Fetching static public catalog for self-healing...');
     try {
-      const response = await fetch('/data/products.json');
+      const response = await fetch('/data/products.json?v=' + Date.now());
       if (response.ok) {
         staticProducts = await response.json();
-        console.log('✅ Successfully fetched catalog from /data/products.json');
+        console.log(`✅ [SWR Merge] Fetched ${staticProducts.length} products from /data/products.json`);
       }
     } catch (e) {
-      console.log('ℹ️ /data/products.json failed, trying fallback path...');
-    }
-
-    // Try secondary static path fallback
-    if (!staticProducts) {
       try {
-        const response = await fetch('/public/data/products.json');
-        if (response.ok) {
-          staticProducts = await response.json();
-          console.log('✅ Successfully fetched catalog from /public/data/products.json');
+        const responseFallback = await fetch('/public/data/products.json?v=' + Date.now());
+        if (responseFallback.ok) {
+          staticProducts = await responseFallback.json();
+          console.log(`✅ [SWR Merge] Fetched ${staticProducts.length} products from fallback /public/data/products.json`);
         }
-      } catch (e) {
-        console.warn('⚠️ Both static catalog paths failed:', e.message);
+      } catch (err) {
+        console.warn('⚠️ [SWR Merge] Both static product catalog files failed:', err.message);
       }
     }
+  }
 
-    // If we successfully fetched the full 28+ products catalog, use it and heal Firestore!
-    if (staticProducts && Array.isArray(staticProducts) && staticProducts.length >= 28) {
-      loadedProducts = staticProducts;
-      loadedFromLive = true;
-      console.log(`🩹 Healed state with ${loadedProducts.length} products from static JSON!`);
+  // Merge products
+  const mergedProducts = mergeProductLists(staticProducts, localProducts, serverProducts, cloudProducts);
+  console.log(`✨ [SWR Merge] Merged product sources. Total unique products: ${mergedProducts.length}`);
 
-      // Silently sync healed products back to Firestore
+  if (mergedProducts.length > 0) {
+    state.products = mergedProducts.map(p => {
+      if (!p.qid) p.qid = `QID${p.id}`;
+      const numId = Number(p.id);
+      if (!isNaN(numId) && p.id !== numId) {
+        p.id = numId;
+      }
+      return p;
+    });
+    localStorage.setItem('elevez_products', JSON.stringify(state.products));
+  } else {
+    console.log('ℹ️ No products available anywhere, loading default trial products...');
+    loadTrialProducts();
+  }
+
+
+  // --- COLLECTIONS LOAD SECTION ---
+  let cloudCollections = [];
+  let serverCollections = [];
+  let localCollections = [];
+
+  // 1. Try Firestore Cloud
+  try {
+    const db = await getFirebaseDB();
+    if (db) {
+      const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+      console.log('🔥 [SWR Merge] Fetching collections from Firestore Cloud...');
+      const snapshot = await getDocs(collection(db, 'collections'));
+      if (!snapshot.empty) {
+        snapshot.forEach(doc => {
+          cloudCollections.push({ id: doc.id, ...doc.data() });
+        });
+        console.log(`✅ [SWR Merge] Loaded ${cloudCollections.length} collections from Firestore Cloud`);
+      }
+    }
+  } catch (err) {
+    console.warn('⚠️ [SWR Merge] Firestore collection load failed, will merge from other sources:', err.message);
+  }
+
+  // 2. Try Local Server collections API
+  try {
+    const res = await fetch('http://localhost:3001/api/collections');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.collections && Array.isArray(data.collections)) {
+        serverCollections = data.collections;
+        console.log(`✅ [SWR Merge] Loaded ${serverCollections.length} collections from local server API`);
+      }
+    }
+  } catch (err) {
+    console.log('ℹ️ [SWR Merge] Local collections API offline, skipping local server collection source');
+  }
+
+  // 3. Try Local Storage
+  try {
+    const saved = localStorage.getItem('elevez_collections');
+    if (saved) {
+      localCollections = JSON.parse(saved) || [];
+      console.log(`✅ [SWR Merge] Loaded ${localCollections.length} collections from localStorage`);
+    }
+  } catch (err) {
+    console.warn('⚠️ [SWR Merge] localStorage collections parse failed:', err.message);
+  }
+
+  // Merge collections
+  const mergedCollections = mergeCollectionLists(localCollections, serverCollections, cloudCollections);
+  console.log(`✨ [SWR Merge] Merged collection sources. Total unique collections: ${mergedCollections.length}`);
+
+  state.collections = mergedCollections;
+  localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
+
+  // Dynamic Seed fallback if collections list is completely empty
+  if (state.collections.length === 0) {
+    console.log('ℹ️ No collections found anywhere. Bootstrapping default collections from constants fallback...');
+    try {
+      const module = await import('../constants.js');
+      if (module.COLLECTIONS && module.COLLECTIONS.length > 0) {
+        state.collections = module.COLLECTIONS;
+        localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
+        console.log(`📦 Loaded ${state.collections.length} default collections from constants fallback`);
+      }
+    } catch (e) {
+      console.warn('⚠️ Could not load default collections from constants fallback:', e.message);
+    }
+  }
+
+
+  // --- BACKGROUND HEALING AND SYNCHRONIZATION ---
+  // If Firestore is empty, outdated, or incomplete, asynchronously heal Firestore in the background
+  if (state.products.length > 0) {
+    const needsProductsHeal = cloudProducts.length < state.products.length || !cloudProducts.some(p => String(p.id) === '7916022530187');
+    if (needsProductsHeal) {
       setTimeout(async () => {
         try {
-          if (window.firebaseOrdersManager && window.firebaseOrdersManager.db) {
+          const db = await getFirebaseDB();
+          if (db) {
             const { collection, doc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-            const db = window.firebaseOrdersManager.db;
             const batch = writeBatch(db);
-            
-            console.log(`🔥 Background Healing: Uploading all ${loadedProducts.length} products to Firestore...`);
-            for (const p of loadedProducts) {
+            console.log(`🔥 [SWR Merge] Background healing: Uploading ${state.products.length} products to Firestore...`);
+            for (const p of state.products) {
               const productRef = doc(db, 'products', String(p.id));
               batch.set(productRef, {
                 ...p,
@@ -449,111 +686,40 @@ async function loadData() {
               });
             }
             await batch.commit();
-            console.log('🎉 Firestore products collection is now fully healed and up-to-date with 28 products!');
+            console.log('🎉 [SWR Merge] Firestore products collection is now fully healed and persistent!');
           }
         } catch (healError) {
-          console.warn('⚠️ Background Firestore healing sync failed:', healError.message);
+          console.warn('⚠️ [SWR Merge] Background Firestore product healing failed:', healError.message);
         }
-      }, 2000);
+      }, 5000);
     }
   }
 
-  // 2. TRY SERVER BACKUP API AS SECONDARY TRUTH
-  if (!loadedFromLive) {
-    try {
-      console.log('🔄 Trying Server Backup API for products (Secondary source)...');
-      const response = await fetch('http://localhost:3001/api/products');
-      if (response.ok) {
-        const data = await response.json();
-        if (data.products && Array.isArray(data.products) && data.products.length > 0) {
-          loadedProducts = data.products;
-          loadedFromLive = true;
-          console.log(`✅ Loaded ${loadedProducts.length} products from Server Backup API`);
+  if (state.collections.length > 0) {
+    const needsCollectionsHeal = cloudCollections.length < state.collections.length;
+    if (needsCollectionsHeal) {
+      setTimeout(async () => {
+        try {
+          const db = await getFirebaseDB();
+          if (db) {
+            const { collection, doc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+            const batch = writeBatch(db);
+            console.log(`🔥 [SWR Merge] Background healing: Uploading ${state.collections.length} collections to Firestore...`);
+            state.collections.forEach(col => {
+              const colRef = doc(db, 'collections', String(col.id));
+              const cleanCol = JSON.parse(JSON.stringify(col));
+              batch.set(colRef, {
+                ...cleanCol,
+                updatedAt: new Date().toISOString()
+              });
+            });
+            await batch.commit();
+            console.log('🎉 [SWR Merge] Firestore collections are now fully healed and persistent!');
+          }
+        } catch (healError) {
+          console.warn('⚠️ [SWR Merge] Background Firestore collections healing failed:', healError.message);
         }
-      }
-    } catch (e) {
-      console.log('⚠️ Server Backup API unavailable:', e.message);
-    }
-  }
-
-  // 3. FALLBACK TO LOCALSTORAGE ONLY IF BOTH LIVE SOURCES ARE OFFLINE/EMPTY
-  if (!loadedFromLive || loadedProducts.length === 0) {
-    console.log('💾 Live sources unavailable, loading from localStorage fallback...');
-    const saved = localStorage.getItem('elevez_products');
-    if (saved) {
-      try {
-        loadedProducts = JSON.parse(saved);
-        console.log(`📦 Loaded ${loadedProducts.length} products from localStorage`);
-      } catch (e) {
-        console.error('❌ Error parsing localStorage fallback:', e);
-      }
-    }
-  }
-
-  // Set the state
-  if (loadedProducts.length > 0) {
-    state.products = loadedProducts.map(p => {
-      if (!p.qid) p.qid = `QID${p.id}`;
-      // Ensure numeric IDs are matched if they can be converted
-      const numId = Number(p.id);
-      if (!isNaN(numId) && p.id !== numId) {
-        p.id = numId;
-      }
-      return p;
-    });
-    // Update local storage so cache remains fresh
-    localStorage.setItem('elevez_products', JSON.stringify(state.products));
-  } else {
-    // If absolutely nothing was loaded, load trial products
-    console.log('ℹ️ No products available anywhere, loading trial products...');
-    loadTrialProducts();
-  }
-
-  // 1. Load Collections - ROBUST STRATEGY (Api -> Backup -> Local)
-  try {
-    let loaded = false;
-
-    // Attempt 1: API (Main)
-    try {
-      const res = await fetch('http://localhost:3001/api/collections');
-      if (res.ok) {
-        const data = await res.json();
-        if (data.collections && Array.isArray(data.collections)) {
-          state.collections = data.collections;
-          loaded = true;
-          console.log('✅ Loaded collections from Main API');
-        }
-      }
-    } catch (e) { console.log('Main API unavailable'); }
-
-    // Attempt 2: Backup API (if Main failed)
-    if (!loaded) {
-      console.log('🔄 Trying Backup API for collections...');
-      const resBackup = await fetch('http://localhost:3001/api/products');
-      if (resBackup.ok) {
-        const dataBackup = await resBackup.json();
-        if (dataBackup.collections && Array.isArray(dataBackup.collections) && dataBackup.collections.length > 0) {
-          state.collections = dataBackup.collections;
-          loaded = true;
-          console.log('✅ Loaded collections from Backup API');
-        }
-      }
-    }
-
-    if (loaded && state.collections.length > 0) {
-      localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
-    }
-  } catch (e) {
-    console.warn('⚠️ Server collection loading failed:', e);
-  }
-
-  // Fallback to localStorage
-  if (!state.collections || state.collections.length === 0) {
-    const savedCollections = localStorage.getItem('elevez_collections');
-    if (savedCollections) {
-      try {
-        state.collections = JSON.parse(savedCollections);
-      } catch (e) { console.error('Error parsing collections:', e); }
+      }, 5000);
     }
   }
 
@@ -701,9 +867,9 @@ async function saveData() {
 
     // ✅ SYNC TO FIREBASE FOR PERMANENT PERSISTENCE
     try {
-      if (window.firebaseOrdersManager && window.firebaseOrdersManager.isFirebaseAvailable) {
+      const db = await getFirebaseDB();
+      if (db) {
         const { collection, doc, setDoc, getDocs, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-        const db = window.firebaseOrdersManager.db;
 
         console.log(`🔥 Syncing ${state.products.length} products to Firebase...`);
 
@@ -2467,37 +2633,95 @@ window.saveAllCollections = async () => {
     // Save to localStorage first
     localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
 
-    // Then save to server
-    const response = await fetch('http://localhost:3001/api/collections', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ collections: state.collections })
-    });
+    let savedOnFirebase = false;
+    let savedOnServer = false;
 
-    if (response.ok) {
-      const result = await response.json();
-      showSyncStatus(`✅ Saved ${result.count} collections to server`, 'success');
-      console.log('💾 Collections saved to server:', result);
+    // 1. Try Firebase Firestore (Cloud primary)
+    try {
+      const db = await getFirebaseDB();
+      if (db) {
+        const { collection, doc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const batch = writeBatch(db);
+        
+        console.log(`🔥 Uploading all ${state.collections.length} collections to Firestore...`);
+        state.collections.forEach(col => {
+          const colRef = doc(db, 'collections', String(col.id));
+          const cleanCol = JSON.parse(JSON.stringify(col));
+          batch.set(colRef, {
+            ...cleanCol,
+            updatedAt: new Date().toISOString()
+          });
+        });
+        await batch.commit();
+        savedOnFirebase = true;
+        console.log('🔥 Collections successfully saved to Firestore!');
+      }
+    } catch (firebaseErr) {
+      console.error('⚠️ Firebase collection save failed:', firebaseErr);
+    }
+
+    // 2. Try local backup server
+    try {
+      const response = await fetch('http://localhost:3001/api/collections', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ collections: state.collections })
+      });
+
+      if (response.ok) {
+        savedOnServer = true;
+        console.log('💾 Collections saved to local server API');
+      }
+    } catch (error) {
+      console.log('ℹ️ Local backup server offline, skipping localhost write');
+    }
+
+    if (savedOnFirebase) {
+      showSyncStatus(`✅ Saved ${state.collections.length} collections (localStorage + Cloud)!`, 'success');
+    } else if (savedOnServer) {
+      showSyncStatus(`✅ Saved ${state.collections.length} collections to local server!`, 'success');
     } else {
-      throw new Error('Server responded with error');
+      showSyncStatus('⚠️ Saved locally only (Server & Cloud offline)', 'warning');
     }
   } catch (error) {
-    console.error('❌ Error saving collections to server:', error);
-    showSyncStatus('⚠️ Saved locally only (server offline)', 'warning');
+    console.error('❌ Error saving collections:', error);
+    showSyncStatus('⚠️ Error saving collections', 'error');
   }
 };
 
 // Helper function to save collections to server
 async function saveCollectionsToServer() {
   try {
+    // 1. Try Firebase Firestore
+    const db = await getFirebaseDB();
+    if (db) {
+      const { collection, doc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+      const batch = writeBatch(db);
+      state.collections.forEach(col => {
+        const colRef = doc(db, 'collections', String(col.id));
+        const cleanCol = JSON.parse(JSON.stringify(col));
+        batch.set(colRef, {
+          ...cleanCol,
+          updatedAt: new Date().toISOString()
+        });
+      });
+      await batch.commit();
+      console.log('🔥 Collections auto-saved to Firestore');
+    }
+  } catch (firebaseErr) {
+    console.warn('⚠️ Firebase collection auto-save failed:', firebaseErr);
+  }
+
+  // 2. Try Local Node API
+  try {
     await fetch('http://localhost:3001/api/collections', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ collections: state.collections })
     });
-    console.log('💾 Collections auto-saved to server');
+    console.log('💾 Collections auto-saved to localhost server');
   } catch (e) {
-    console.log('ℹ️ Could not auto-save to server');
+    console.log('ℹ️ Local server offline, skipping localhost auto-save write');
   }
 }
 
