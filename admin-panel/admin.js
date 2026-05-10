@@ -3073,10 +3073,13 @@ function renderOrders() {
         
         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px; margin-bottom: 15px;">
           <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 14px;">🛍️ Products (${order.items?.length || 0} items)</h4>
-          ${order.items?.map(item => `
+          ${order.items?.map(item => {
+            console.log(`🖼️ Rendering order item image: ID=${item.id || item.productId}, Name="${item.name}", Image="${item.image}"`);
+            const escapedName = (item.name || '').replace(/"/g, '&quot;');
+            return `
             <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin-bottom: 12px; display: flex; gap: 12px;">
               <div style="flex-shrink: 0;">
-                <img src="${item.image || 'https://via.placeholder.com/100x120?text=No+Image'}" alt="${item.name}" style="width: 100px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(0,255,136,0.2);" onerror="this.onerror=null; this.src='https://via.placeholder.com/100x120?text=No+Image'">
+                <img src="${item.image || 'https://via.placeholder.com/100x120?text=No+Image'}" alt="${escapedName}" style="width: 100px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(0,255,136,0.2);" onerror="this.onerror=null; this.src='https://via.placeholder.com/100x120?text=No+Image'">
               </div>
               <div style="flex: 1;">
                 <p style="margin: 0 0 5px 0;"><strong>${item.name}</strong></p>
@@ -3086,7 +3089,8 @@ function renderOrders() {
                 <p style="margin: 0; font-weight: 700; color: var(--primary);">₹${((item.price || 0) * (item.orderedQuantity || item.quantity || 1)).toFixed(2)}</p>
               </div>
             </div>
-          `).join('') || '<p style="color: var(--text-muted);">No items</p>'}
+            `;
+          }).join('') || '<p style="color: var(--text-muted);">No items</p>'}
         </div>
         
         <div style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 6px; border: 1px solid rgba(0,255,136,0.3); margin-bottom: 15px;">
