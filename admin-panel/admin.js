@@ -862,58 +862,60 @@ async function saveData() {
     }
 
 
-    // ✅ SYNC COLLECTIONS TO SERVER (Collections.json)
-    await saveCollectionsToServer();
+    // ✅ SYNC COLLECTIONS TO SERVER (Collections.json) - Non-blocking
+    saveCollectionsToServer();
 
-    // ✅ SYNC TO FIREBASE FOR PERMANENT PERSISTENCE
-    try {
-      const db = await getFirebaseDB();
-      if (db) {
-        const { collection, doc, setDoc, getDocs, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+    // ✅ SYNC TO FIREBASE FOR PERMANENT PERSISTENCE (BACKGROUND / NON-BLOCKING)
+    (async () => {
+      try {
+        const db = await getFirebaseDB();
+        if (db) {
+          const { collection, doc, setDoc, getDocs, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
 
-        console.log(`🔥 Syncing ${state.products.length} products to Firebase...`);
+          console.log(`🔥 [Background] Syncing ${state.products.length} products to Firebase...`);
 
-        // Get all existing products in Firestore to find orphaned/stale documents
-        const existingSnapshot = await getDocs(collection(db, 'products'));
-        const activeIds = new Set(state.products.map(p => String(p.id)));
-        const orphanedDocs = [];
+          // Get all existing products in Firestore to find orphaned/stale documents
+          const existingSnapshot = await getDocs(collection(db, 'products'));
+          const activeIds = new Set(state.products.map(p => String(p.id)));
+          const orphanedDocs = [];
 
-        existingSnapshot.forEach(docSnap => {
-          const docId = String(docSnap.id);
-          if (!activeIds.has(docId)) {
-            orphanedDocs.push(docId);
-          }
-        });
-
-        if (orphanedDocs.length > 0) {
-          console.log(`🔧 Found ${orphanedDocs.length} orphaned/duplicate documents in Firestore:`, orphanedDocs);
-        }
-
-        // Use batch writes for efficiency
-        const batch = writeBatch(db);
-
-        // 1. Set/Update active products
-        for (const product of state.products) {
-          const productRef = doc(db, 'products', String(product.id));
-          batch.set(productRef, {
-            ...product,
-            updatedAt: new Date().toISOString()
+          existingSnapshot.forEach(docSnap => {
+            const docId = String(docSnap.id);
+            if (!activeIds.has(docId)) {
+              orphanedDocs.push(docId);
+            }
           });
-        }
 
-        // 2. Delete orphaned/duplicate products from Firestore
-        for (const docId of orphanedDocs) {
-          const productRef = doc(db, 'products', docId);
-          batch.delete(productRef);
-        }
+          if (orphanedDocs.length > 0) {
+            console.log(`🔧 [Background] Found ${orphanedDocs.length} orphaned/duplicate documents in Firestore:`, orphanedDocs);
+          }
 
-        await batch.commit();
-        console.log(`✅ Synced ${state.products.length} products to Firebase (Updated: ${state.products.length}, Deleted: ${orphanedDocs.length})`);
+          // Use batch writes for efficiency
+          const batch = writeBatch(db);
+
+          // 1. Set/Update active products
+          for (const product of state.products) {
+            const productRef = doc(db, 'products', String(product.id));
+            batch.set(productRef, {
+              ...product,
+              updatedAt: new Date().toISOString()
+            });
+          }
+
+          // 2. Delete orphaned/duplicate products from Firestore
+          for (const docId of orphanedDocs) {
+            const productRef = doc(db, 'products', docId);
+            batch.delete(productRef);
+          }
+
+          await batch.commit();
+          console.log(`🔥 [Background] Synced ${state.products.length} products to Firebase (Updated: ${state.products.length}, Deleted: ${orphanedDocs.length})`);
+        }
+      } catch (firebaseError) {
+        console.warn('⚠️ [Background] Firebase product sync failed:', firebaseError.message);
+        // Not critical - localStorage and server backup still work
       }
-    } catch (firebaseError) {
-      console.warn('⚠️ Firebase sync failed:', firebaseError.message);
-      // Not critical - localStorage and server backup still work
-    }
+    })();
 
     // Log for debugging
     const lastProduct = state.products[state.products.length - 1];
@@ -2630,53 +2632,80 @@ window.saveAllCollections = async () => {
   try {
     showSyncStatus('Saving collections...', 'info');
 
-    // Save to localStorage first
+    // Save to localStorage first (instant, synchronous)
     localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
 
     let savedOnFirebase = false;
     let savedOnServer = false;
 
-    // 1. Try Firebase Firestore (Cloud primary)
-    try {
-      const db = await getFirebaseDB();
-      if (db) {
-        const { collection, doc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-        const batch = writeBatch(db);
-        
-        console.log(`🔥 Uploading all ${state.collections.length} collections to Firestore...`);
-        state.collections.forEach(col => {
-          if (!col.updatedAt) col.updatedAt = new Date().toISOString();
-          if (!col.createdAt) col.createdAt = col.updatedAt;
-          const colRef = doc(db, 'collections', String(col.id));
-          const cleanCol = JSON.parse(JSON.stringify(col));
-          batch.set(colRef, cleanCol);
+    // Run local server backup in parallel (extremely fast, ~2-5ms)
+    const serverPromise = (async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/collections', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ collections: state.collections })
         });
-        await batch.commit();
-        savedOnFirebase = true;
-        console.log('🔥 Collections successfully saved to Firestore!');
+
+        if (response.ok) {
+          savedOnServer = true;
+          console.log('💾 Collections saved to local server API');
+          return true;
+        }
+      } catch (error) {
+        console.log('ℹ️ Local backup server offline, skipping localhost write');
       }
-    } catch (firebaseErr) {
-      console.error('⚠️ Firebase collection save failed:', firebaseErr);
-    }
+      return false;
+    })();
 
-    // 2. Try local backup server
-    try {
-      const response = await fetch('http://localhost:3001/api/collections', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ collections: state.collections })
-      });
+    // Run Firebase Cloud save in parallel with a fast timeout
+    const firebasePromise = (async () => {
+      try {
+        // Simple timeout helper
+        const timeout = (ms) => new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms));
 
-      if (response.ok) {
-        savedOnServer = true;
-        console.log('💾 Collections saved to local server API');
+        // Connect to Firebase with 5s maximum timeout
+        const db = await Promise.race([
+          getFirebaseDB(),
+          timeout(5000)
+        ]);
+
+        if (db) {
+          const { collection, doc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+          const batch = writeBatch(db);
+          
+          console.log(`🔥 Uploading all ${state.collections.length} collections to Firestore...`);
+          state.collections.forEach(col => {
+            if (!col.updatedAt) col.updatedAt = new Date().toISOString();
+            if (!col.createdAt) col.createdAt = col.updatedAt;
+            const colRef = doc(db, 'collections', String(col.id));
+            const cleanCol = JSON.parse(JSON.stringify(col));
+            batch.set(colRef, cleanCol);
+          });
+
+          // Commit batch with 5s maximum timeout
+          await Promise.race([
+            batch.commit(),
+            timeout(5000)
+          ]);
+
+          savedOnFirebase = true;
+          console.log('🔥 Collections successfully saved to Firestore!');
+          return true;
+        }
+      } catch (firebaseErr) {
+        console.warn('⚠️ Firebase collection save failed or timed out:', firebaseErr.message);
       }
-    } catch (error) {
-      console.log('ℹ️ Local backup server offline, skipping localhost write');
-    }
+      return false;
+    })();
 
-    if (savedOnFirebase) {
-      showSyncStatus(`✅ Saved ${state.collections.length} collections (localStorage + Cloud)!`, 'success');
+    // Await both operations in parallel (neither blocks the other!)
+    await Promise.allSettled([serverPromise, firebasePromise]);
+
+    if (savedOnFirebase && savedOnServer) {
+      showSyncStatus(`✅ Saved ${state.collections.length} collections to Cloud & local server!`, 'success');
+    } else if (savedOnFirebase) {
+      showSyncStatus(`✅ Saved ${state.collections.length} collections to Cloud!`, 'success');
     } else if (savedOnServer) {
       showSyncStatus(`✅ Saved ${state.collections.length} collections to local server!`, 'success');
     } else {
@@ -2688,29 +2717,9 @@ window.saveAllCollections = async () => {
   }
 };
 
-// Helper function to save collections to server
+// Helper function to save collections to server (non-blocking)
 async function saveCollectionsToServer() {
-  try {
-    // 1. Try Firebase Firestore
-    const db = await getFirebaseDB();
-    if (db) {
-      const { collection, doc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-      const batch = writeBatch(db);
-      state.collections.forEach(col => {
-        if (!col.updatedAt) col.updatedAt = new Date().toISOString();
-        if (!col.createdAt) col.createdAt = col.updatedAt;
-        const colRef = doc(db, 'collections', String(col.id));
-        const cleanCol = JSON.parse(JSON.stringify(col));
-        batch.set(colRef, cleanCol);
-      });
-      await batch.commit();
-      console.log('🔥 Collections auto-saved to Firestore');
-    }
-  } catch (firebaseErr) {
-    console.warn('⚠️ Firebase collection auto-save failed:', firebaseErr);
-  }
-
-  // 2. Try Local Node API
+  // 1. Try Local Node API first (extremely fast, ~2ms)
   try {
     await fetch('http://localhost:3001/api/collections', {
       method: 'POST',
@@ -2721,6 +2730,28 @@ async function saveCollectionsToServer() {
   } catch (e) {
     console.log('ℹ️ Local server offline, skipping localhost auto-save write');
   }
+
+  // 2. Try Firebase Firestore in the background (does not block UI thread)
+  (async () => {
+    try {
+      const db = await getFirebaseDB();
+      if (db) {
+        const { collection, doc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const batch = writeBatch(db);
+        state.collections.forEach(col => {
+          if (!col.updatedAt) col.updatedAt = new Date().toISOString();
+          if (!col.createdAt) col.createdAt = col.updatedAt;
+          const colRef = doc(db, 'collections', String(col.id));
+          const cleanCol = JSON.parse(JSON.stringify(col));
+          batch.set(colRef, cleanCol);
+        });
+        await batch.commit();
+        console.log('🔥 Collections auto-saved to Firestore in the background');
+      }
+    } catch (firebaseErr) {
+      console.warn('⚠️ Firebase background collection auto-save failed:', firebaseErr.message);
+    }
+  })();
 }
 
 // Generate collections from product data (useful when collections weren't imported)
