@@ -2629,11 +2629,20 @@ window.deleteCollection = (id) => {
 
 // Save all collections to server for permanent persistence
 window.saveAllCollections = async () => {
+  console.log('🟢 saveAllCollections CALLED! Collections count:', state.collections.length);
+  
   try {
     showSyncStatus('Saving collections...', 'info');
 
+    if (!state.collections || state.collections.length === 0) {
+      alert('⚠️ No collections to save! Create some collections first.');
+      showSyncStatus('⚠️ No collections to save', 'warning');
+      return;
+    }
+
     // Save to localStorage first (instant, synchronous)
     localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
+    console.log('✅ Collections saved to localStorage:', state.collections.length);
 
     let savedOnFirebase = false;
     let savedOnServer = false;
@@ -2704,16 +2713,21 @@ window.saveAllCollections = async () => {
 
     if (savedOnFirebase && savedOnServer) {
       showSyncStatus(`✅ Saved ${state.collections.length} collections to Cloud & local server!`, 'success');
+      alert(`✅ Saved ${state.collections.length} collections!\n\n• localStorage ✓\n• Cloud (Firestore) ✓\n• Local server ✓`);
     } else if (savedOnFirebase) {
       showSyncStatus(`✅ Saved ${state.collections.length} collections to Cloud!`, 'success');
+      alert(`✅ Saved ${state.collections.length} collections!\n\n• localStorage ✓\n• Cloud (Firestore) ✓\n• Local server ✗ (offline)`);
     } else if (savedOnServer) {
       showSyncStatus(`✅ Saved ${state.collections.length} collections to local server!`, 'success');
+      alert(`✅ Saved ${state.collections.length} collections!\n\n• localStorage ✓\n• Cloud (Firestore) ✗ (offline/timeout)\n• Local server ✓`);
     } else {
       showSyncStatus('⚠️ Saved locally only (Server & Cloud offline)', 'warning');
+      alert(`⚠️ Saved ${state.collections.length} collections to localStorage ONLY.\n\nCloud and local server are both offline.`);
     }
   } catch (error) {
     console.error('❌ Error saving collections:', error);
     showSyncStatus('⚠️ Error saving collections', 'error');
+    alert('❌ Error saving collections: ' + error.message);
   }
 };
 
