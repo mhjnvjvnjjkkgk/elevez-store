@@ -39,17 +39,35 @@ class LocalCollectionService {
                 this.loadFromServer();
             }
 
+            const collectionMap = new Map<string, LocalCollection>();
+
+            // 1. Load from compile-time constants first (Guaranteed Baseline)
+            if (COLLECTIONS && Array.isArray(COLLECTIONS)) {
+                COLLECTIONS.forEach((c: any) => {
+                    if (c && (c.id || c.name)) {
+                        const id = c.id || c.name;
+                        const handle = c.handle || id.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                        collectionMap.set(id, { ...c, id, handle } as LocalCollection);
+                    }
+                });
+            }
+
+            // 2. Override/merge with localStorage (User customizations)
             const stored = localStorage.getItem(COLLECTIONS_KEY);
             if (stored) {
                 const parsed = JSON.parse(stored);
-                const collections = Array.isArray(parsed) ? parsed : (parsed.collections || []);
-                if (collections.length > 0) {
-                    return collections as LocalCollection[];
-                }
+                const localCols = Array.isArray(parsed) ? parsed : (parsed.collections || []);
+                localCols.forEach((c: any) => {
+                    if (c && c.id && c.id !== 'all') {
+                        const handle = c.handle || c.id.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                        collectionMap.set(c.id, { ...collectionMap.get(c.id), ...c, handle } as LocalCollection);
+                    }
+                });
             }
 
-            if (COLLECTIONS && COLLECTIONS.length > 0) {
-                return COLLECTIONS as any as LocalCollection[];
+            const allCols = Array.from(collectionMap.values());
+            if (allCols.length > 0) {
+                return allCols;
             }
 
             return this.getDefaultCollections();
