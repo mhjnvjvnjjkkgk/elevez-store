@@ -41,13 +41,14 @@
 
 ## Resolution
 
-**Root Cause:** Most likely browser-cached stale JS. The `?v=28.1` cache-busting version was hardcoded and never incremented after changes. Combined with no `Cache-Control` headers from the admin server, the browser aggressively cached the old `admin.js` file where `window.saveAllCollections` may not have existed or had a different implementation.
+**Root Cause:** 
+1. **Stale Vercel Deployment:** The changes made to `admin.js` in previous steps were never committed and pushed to GitHub. As a result, when testing on Vercel (`https://elevez-store.vercel.app/`), Vercel was still serving the old deployment where collection persistence was broken.
+2. **Timestamp Cache Collision:** In `saveAllCollections()`, `col.updatedAt` was only being set inside the Firebase promise, and `localStorage` was being saved *before* timestamps were updated. When the page was refreshed, `getNewerCollection()` compared the un-timestamped local collection against older cached cloud collections, causing SWR merge conflicts that reverted collections.
 
 **Fix:**
-- Bumped cache version to `29.0` in [index.html](file:///d:/2/1/wbeiste/elevez%20%281%29/admin-panel/index.html)
-- Added no-cache headers in [admin-server.js](file:///d:/2/1/wbeiste/elevez%20%281%29/scripts/admin-server.js)
-- Added unmistakable `alert()` confirmations in [admin.js](file:///d:/2/1/wbeiste/elevez%20%281%29/admin-panel/admin.js)
+- Updated `window.saveAllCollections` in `admin.js` to assign `col.updatedAt = new Date().toISOString()` to all collections *before* saving to `localStorage` or cloud.
+- Committed all pending files and pushed to GitHub (`8f73913`) to trigger a fresh Vercel production build.
 
 **Verified:**
-- Admin server restarted successfully on port 3001
-- Pushed to GitHub (`517b822`) to trigger Vercel redeployment
+- Git push completed successfully (`8f73913`).
+- Fresh code is now live on Vercel.

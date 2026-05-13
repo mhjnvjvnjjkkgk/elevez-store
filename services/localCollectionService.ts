@@ -40,9 +40,10 @@ class LocalCollectionService {
 
             const stored = localStorage.getItem(COLLECTIONS_KEY);
             if (stored) {
-                const collections = JSON.parse(stored) as LocalCollection[];
+                const parsed = JSON.parse(stored);
+                const collections = Array.isArray(parsed) ? parsed : (parsed.collections || []);
                 if (collections.length > 0) {
-                    return collections;
+                    return collections as LocalCollection[];
                 }
             }
 
@@ -89,36 +90,17 @@ class LocalCollectionService {
                     id: isNaN(Number(c.id)) ? c.id : Number(c.id)
                 }));
 
-                let shouldReload = false;
-
                 if (formattedProducts.length > 0) {
-                    const currentProductsStr = localStorage.getItem(PRODUCTS_KEY) || '[]';
-                    const newProductsStr = JSON.stringify(formattedProducts);
-                    if (currentProductsStr !== newProductsStr) {
-                        localStorage.setItem(PRODUCTS_KEY, newProductsStr);
-                        console.log(`✅ [SWR Sync] Storefront updated with ${formattedProducts.length} fresh products.`);
-                        shouldReload = true;
-                    }
+                    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(formattedProducts));
+                    console.log(`✅ [SWR Sync] Storefront updated with ${formattedProducts.length} fresh products.`);
                 }
 
                 // IMPORTANT: ONLY update local collections if Firestore returned a non-empty list of collections!
-                // This prevents resetting/deleting your rich local storefront collections with empty Firestore lists.
                 if (formattedCollections.length > 0) {
-                    const currentCollectionsStr = localStorage.getItem(COLLECTIONS_KEY) || '[]';
-                    const newCollectionsStr = JSON.stringify(formattedCollections);
-                    if (currentCollectionsStr !== newCollectionsStr) {
-                        localStorage.setItem(COLLECTIONS_KEY, newCollectionsStr);
-                        console.log(`✅ [SWR Sync] Storefront updated with ${formattedCollections.length} fresh collections.`);
-                        shouldReload = true;
-                    }
+                    localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(formattedCollections));
+                    console.log(`✅ [SWR Sync] Storefront updated with ${formattedCollections.length} fresh collections.`);
                 }
 
-                if (shouldReload) {
-                    console.log('🔄 [SWR Sync] Storefront state updated. Reloading page...');
-                    window.location.reload();
-                } else {
-                    console.log('✨ [SWR Sync] Storefront is already in perfect sync with Cloud Firestore.');
-                }
                 cloudSyncSuccess = true;
             }
         } catch (firestoreError) {
@@ -134,20 +116,16 @@ class LocalCollectionService {
                     const data = await response.json();
 
                     const formattedProducts = data.products || [];
-                    const formattedCollections = data.collections || [];
+                    const rawCollections = data.collections || [];
+                    const formattedCollections = Array.isArray(rawCollections) ? rawCollections : (rawCollections.collections || []);
 
-                    const currentProductsStr = localStorage.getItem(PRODUCTS_KEY) || '[]';
-                    const currentCollectionsStr = localStorage.getItem(COLLECTIONS_KEY) || '[]';
-
-                    const newProductsStr = JSON.stringify(formattedProducts);
-                    const newCollectionsStr = JSON.stringify(formattedCollections);
-
-                    if (currentProductsStr !== newProductsStr || currentCollectionsStr !== newCollectionsStr) {
-                        localStorage.setItem(PRODUCTS_KEY, newProductsStr);
-                        localStorage.setItem(COLLECTIONS_KEY, newCollectionsStr);
-                        console.log('✅ Loaded data from admin server fallback. Reloading...');
-                        window.location.reload();
+                    if (formattedProducts.length > 0) {
+                        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(formattedProducts));
                     }
+                    if (formattedCollections.length > 0) {
+                        localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(formattedCollections));
+                    }
+                    console.log('✅ Loaded data from admin server fallback.');
                 }
             } catch (error) {
                 console.warn('Could not load from admin server fallback:', error);

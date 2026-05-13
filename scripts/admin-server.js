@@ -647,7 +647,8 @@ const server = http.createServer((req, res) => {
 
       const collectionsPath = path.join(dataDir, 'collections.json');
       if (fs.existsSync(collectionsPath)) {
-        collections = JSON.parse(fs.readFileSync(collectionsPath, 'utf8'));
+        const parsedCol = JSON.parse(fs.readFileSync(collectionsPath, 'utf8'));
+        collections = Array.isArray(parsedCol) ? parsedCol : (parsedCol.collections || []);
       }
 
       res.writeHead(200, { 'Content-Type': 'application/json' });
