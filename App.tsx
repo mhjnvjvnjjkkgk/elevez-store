@@ -4219,7 +4219,7 @@ const Navbar = () => {
 
             <div className="mt-auto pt-20 flex gap-6">
               <Magnetic>
-                <a href="#" className="w-16 h-16 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_#000]">
+                <a href="https://www.instagram.com/elevezdotshop/" target="_blank" rel="noopener noreferrer" className="w-16 h-16 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_#000]">
                   <Instagram size={32} />
                 </a>
               </Magnetic>
@@ -4300,7 +4300,7 @@ const Footer = () => (
           <h4 className="text-lg font-black uppercase mb-8 text-black border-b-[4px] border-black inline-block">Signals</h4>
           <div className="flex gap-4">
             <Magnetic>
-              <a href="#" className="w-16 h-16 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
+              <a href="https://www.instagram.com/elevezdotshop/" target="_blank" rel="noopener noreferrer" className="w-16 h-16 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
                 <Instagram size={32} />
               </a>
             </Magnetic>

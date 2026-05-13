@@ -163,7 +163,9 @@ export const RedeemRewardsSection: React.FC = () => {
         {/* Redemption Options Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {redemptionOptions.map((option, index) => {
-            const canAfford = profile && profile.points >= option.points;
+            const isLoggedIn = !!profile;
+            const canAfford = isLoggedIn && profile.points >= option.points;
+            const isClickable = !isLoggedIn || canAfford;
 
             return (
               <motion.div
@@ -172,9 +174,9 @@ export const RedeemRewardsSection: React.FC = () => {
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: canAfford ? -8 : 0 }}
+                whileHover={{ y: isClickable ? -8 : 0 }}
                 className={`bg-white border-[6px] border-black p-10 transition-all relative group flex flex-col h-full ${
-                  canAfford 
+                  isClickable 
                     ? 'shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88]' 
                     : 'shadow-[8px_8px_0px_0px_#000] opacity-50 grayscale'
                 }`}
@@ -200,14 +202,22 @@ export const RedeemRewardsSection: React.FC = () => {
                 </div>
 
                 <button
-                  onClick={() => handleRedeem(option.points, option.discount)}
-                  disabled={!canAfford || loading}
+                  onClick={() => {
+                    if (!isLoggedIn) {
+                      navigate('/account');
+                    } else {
+                      handleRedeem(option.points, option.discount);
+                    }
+                  }}
+                  disabled={isLoggedIn && !canAfford || loading}
                   className={`w-full py-6 font-black uppercase text-xl border-[4px] border-black shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center justify-center gap-4 ${
-                    canAfford ? 'bg-[#00ff88] text-black' : 'bg-white text-black opacity-30 cursor-not-allowed'
+                    isClickable ? 'bg-[#00ff88] text-black' : 'bg-white text-black opacity-30 cursor-not-allowed'
                   }`}
                 >
                   {loading ? (
                     <Loader size={24} className="animate-spin" />
+                  ) : !isLoggedIn ? (
+                    'LOG IN TO REDEEM'
                   ) : canAfford ? (
                     'REDEEM'
                   ) : (

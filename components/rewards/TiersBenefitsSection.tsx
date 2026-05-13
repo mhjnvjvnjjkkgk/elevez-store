@@ -40,7 +40,7 @@ export const TiersBenefitsSection: React.FC = () => {
           {(tiers || []).map((tier, index) => {
             if (!tier) return null;
             const isCurrentTier = tierInfo?.name === tier.name;
-            const isUnlocked = profile && (profile.totalPointsEarned ?? 0) >= (tier.pointsRequired || 0);
+            const isUnlocked = (tier.pointsRequired || 0) === 0 || (profile && (profile.totalPointsEarned ?? 0) >= (tier.pointsRequired || 0));
 
             return (
               <motion.div

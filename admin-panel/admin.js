@@ -665,6 +665,49 @@ async function loadData() {
     }
   }
 
+  // Automatically ensure default collections exist based on available tags
+  try {
+    let tagsToSeed = [...(state.availableTags || [])];
+    state.products.forEach(p => {
+      if (p.tags && Array.isArray(p.tags)) {
+        p.tags.forEach(t => { if (!tagsToSeed.includes(t)) tagsToSeed.push(t); });
+      }
+    });
+    if (tagsToSeed.length > 0) {
+      const existingHandles = new Set(state.collections.map(c => c.handle));
+      let added = false;
+      tagsToSeed.forEach((tag, idx) => {
+        const name = tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase();
+        const handle = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        if (!existingHandles.has(handle)) {
+          const productHandles = state.products.filter(p => p.tags?.includes(tag)).map(p => p.shopifyHandle || p.handle);
+          state.collections.push({
+            id: 'tag-' + Date.now() + '-' + idx + '-' + Math.floor(Math.random()*1000),
+            handle: handle,
+            name: name,
+            description: `Curated selection of our ${name.toLowerCase()} products`,
+            image: '',
+            productHandles: productHandles,
+            productCount: productHandles.length,
+            sectionMapping: null,
+            order: state.collections.length,
+            isSystem: false,
+            source: 'tag-generated',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+          added = true;
+        }
+      });
+      if (added) {
+        localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
+        saveCollectionsToServer();
+      }
+    }
+  } catch (seedErr) {
+    console.warn('⚠️ Auto-seeding tag collections failed:', seedErr.message);
+  }
+
 
   // --- BACKGROUND HEALING AND SYNCHRONIZATION ---
   // If Firestore is empty, outdated, or incomplete, asynchronously heal Firestore in the background
@@ -2640,6 +2683,12 @@ window.saveAllCollections = async () => {
       return;
     }
 
+    // Update timestamps on all collections BEFORE saving
+    state.collections.forEach(col => {
+      col.updatedAt = new Date().toISOString();
+      if (!col.createdAt) col.createdAt = col.updatedAt;
+    });
+
     // Save to localStorage first (instant, synchronous)
     localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
     console.log('✅ Collections saved to localStorage:', state.collections.length);
@@ -2685,8 +2734,6 @@ window.saveAllCollections = async () => {
           
           console.log(`🔥 Uploading all ${state.collections.length} collections to Firestore...`);
           state.collections.forEach(col => {
-            if (!col.updatedAt) col.updatedAt = new Date().toISOString();
-            if (!col.createdAt) col.createdAt = col.updatedAt;
             const colRef = doc(db, 'collections', String(col.id));
             const cleanCol = JSON.parse(JSON.stringify(col));
             batch.set(colRef, cleanCol);
@@ -2733,6 +2780,13 @@ window.saveAllCollections = async () => {
 
 // Helper function to save collections to server (non-blocking)
 async function saveCollectionsToServer() {
+  // Update timestamps and save to localStorage
+  state.collections.forEach(col => {
+    col.updatedAt = new Date().toISOString();
+    if (!col.createdAt) col.createdAt = col.updatedAt;
+  });
+  localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
+
   // 1. Try Local Node API first (extremely fast, ~2ms)
   try {
     await fetch('http://localhost:3001/api/collections', {
@@ -2753,8 +2807,6 @@ async function saveCollectionsToServer() {
         const { collection, doc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
         const batch = writeBatch(db);
         state.collections.forEach(col => {
-          if (!col.updatedAt) col.updatedAt = new Date().toISOString();
-          if (!col.createdAt) col.createdAt = col.updatedAt;
           const colRef = doc(db, 'collections', String(col.id));
           const cleanCol = JSON.parse(JSON.stringify(col));
           batch.set(colRef, cleanCol);
@@ -2767,6 +2819,67 @@ async function saveCollectionsToServer() {
     }
   })();
 }
+
+// Generate default collections from available tags
+window.generateDefaultCollectionsFromTags = async () => {
+  if (!confirm('Generate collections from available tags? E.g. Trending, Bestseller, Premium, etc.')) {
+    return;
+  }
+
+  let tagsToSeed = [...(state.availableTags || [])];
+  state.products.forEach(p => {
+    if (p.tags && Array.isArray(p.tags)) {
+      p.tags.forEach(t => { if (!tagsToSeed.includes(t)) tagsToSeed.push(t); });
+    }
+  });
+
+  if (tagsToSeed.length === 0) {
+    alert('ℹ️ No tags available to generate collections.');
+    return;
+  }
+
+  const existingHandles = new Set(state.collections.map(c => c.handle));
+  let addedCount = 0;
+
+  tagsToSeed.forEach((tag, idx) => {
+    const name = tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase();
+    const handle = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+    if (existingHandles.has(handle)) return;
+
+    const productHandles = state.products.filter(p => p.tags?.includes(tag)).map(p => p.shopifyHandle || p.handle);
+
+    const newCollection = {
+      id: 'tag-' + Date.now().toString() + '-' + addedCount + '-' + Math.floor(Math.random()*1000),
+      handle: handle,
+      name: name,
+      description: `Curated selection of our ${name.toLowerCase()} products`,
+      image: '',
+      productHandles: productHandles,
+      productCount: productHandles.length,
+      sectionMapping: null,
+      order: state.collections.length + addedCount,
+      isSystem: false,
+      source: 'tag-generated',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    state.collections.push(newCollection);
+    addedCount++;
+  });
+
+  if (addedCount > 0) {
+    localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
+    saveData();
+    await saveCollectionsToServer();
+    renderCollections();
+    showSyncStatus(`✅ Generated ${addedCount} collections from tags!`, 'success');
+  } else {
+    renderCollections();
+    showSyncStatus('ℹ️ Tag collections already exist', 'info');
+  }
+};
 
 // Generate collections from product data (useful when collections weren't imported)
 window.generateCollectionsFromProducts = async () => {
@@ -2814,7 +2927,8 @@ window.generateCollectionsFromProducts = async () => {
       order: addedCount,
       isSystem: false,
       source: 'generated',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     state.collections.push(newCollection);
@@ -2822,6 +2936,7 @@ window.generateCollectionsFromProducts = async () => {
   });
 
   if (addedCount > 0) {
+    localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
     saveData();
     await saveCollectionsToServer(); // Explicit save for safety
     renderCollections();
@@ -2845,10 +2960,12 @@ window.duplicateCollection = (id) => {
     handle: collection.handle ? collection.handle + '-copy' : null,
     isSystem: false,
     source: 'local',
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   };
 
   state.collections.push(newCollection);
+  localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
   saveData();
   saveCollectionsToServer();
   renderCollections();

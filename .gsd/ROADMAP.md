@@ -66,3 +66,10 @@
 **Status**: 🏃 In Progress
 **Objective**: Transition the entire product and collection catalog architecture to a centralized, cloud-first Firestore Single Source of Truth (SSOT). Eliminate local storage overwrites and sync conflicts inside the admin panel, and synchronize the storefront in real-time directly with Cloud Firestore.
 **Depends on**: Phase 10
+
+---
+
+### Phase 12: Real-time User Signup & Admin Panel Sync
+**Status**: ✅ Complete
+**Objective**: Connect the main website's newsletter and syndicate registration forms directly to Firestore, saving subscribers into central users, loyaltyProfiles, and userPoints collections in real-time with automatic Bronze tier and SignUp rewards.
+**Depends on**: Phase 7

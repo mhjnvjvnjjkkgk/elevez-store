@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Check, AlertCircle, Copy } from 'lucide-react';
 import { generateDiscountCode } from '../services/discountService';
-import { db } from '../firebaseConfig';
-import { collection, query, where, getDocs, doc, setDoc, getDoc, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 
 interface NewsletterSignupProps {
   variant?: 'inline' | 'footer' | 'modal';
@@ -34,88 +32,9 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
     setStatus('loading');
 
     try {
-      console.log('Syncing newsletter subscription to Firestore:', email);
-
-      // 1. Query if user already exists
-      const usersRef = collection(db, 'users');
-      const q = query(usersRef, where('email', '==', email.trim().toLowerCase()));
-      const querySnapshot = await getDocs(q);
-
-      let userId = '';
-      if (!querySnapshot.empty) {
-        // User exists, update subscription status
-        const userDoc = querySnapshot.docs[0];
-        userId = userDoc.id;
-        await updateDoc(doc(db, 'users', userId), {
-          subscribed: true,
-          lastLogin: serverTimestamp(),
-          source: 'newsletter'
-        });
-      } else {
-        // User doesn't exist, create auto-generated user document
-        const newUserRef = await addDoc(collection(db, 'users'), {
-          email: email.trim().toLowerCase(),
-          totalPoints: 100,
-          tier: 'bronze',
-          orderCount: 0,
-          totalSpent: 0,
-          createdAt: serverTimestamp(),
-          lastLogin: serverTimestamp(),
-          source: 'newsletter',
-          subscribed: true,
-          firstName: email.split('@')[0],
-          lastName: ''
-        });
-        userId = newUserRef.id;
-      }
-
-      // 2. Ensure loyaltyProfile exists with signup points
-      const loyaltyRef = doc(db, 'loyaltyProfiles', userId);
-      const loyaltyDoc = await getDoc(loyaltyRef);
-      if (!loyaltyDoc.exists()) {
-        await setDoc(loyaltyRef, {
-          userId,
-          email: email.trim().toLowerCase(),
-          points: 100,
-          totalPoints: 100,
-          totalPointsEarned: 100,
-          tier: 'Bronze',
-          joinedAt: serverTimestamp(),
-          lastUpdated: serverTimestamp(),
-          orderCount: 0,
-          socialShares: {
-            instagram: false,
-            whatsapp: false,
-            facebook: false
-          }
-        });
-
-        // Log transaction
-        await addDoc(collection(db, 'pointsTransactions'), {
-          userId,
-          type: 'earn',
-          points: 100,
-          reason: 'Sign-up bonus',
-          timestamp: serverTimestamp()
-        });
-      }
-
-      // 3. Ensure userPoints exists
-      const pointsRef = doc(db, 'userPoints', userId);
-      const pointsDoc = await getDoc(pointsRef);
-      if (!pointsDoc.exists()) {
-        await setDoc(pointsRef, {
-          userId,
-          email: email.trim().toLowerCase(),
-          displayName: email.split('@')[0],
-          totalPoints: 100,
-          totalPointsEarned: 100,
-          tier: 'bronze',
-          orderCount: 0,
-          updatedAt: new Date().toISOString()
-        });
-      }
-
+      // Simulate API call - replace with actual email service
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       // Generate unique discount code for newsletter subscriber
       const code = generateDiscountCode(10, 'newsletter', 1);
       setDiscountCode(code);
@@ -124,14 +43,13 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
       setMessage(`Welcome! Your exclusive code: ${code}`);
       setEmail('');
       
-      // Reset after 10 seconds
+      // Reset after 5 seconds
       setTimeout(() => {
         setStatus('idle');
         setMessage('');
         setDiscountCode('');
-      }, 10000);
+      }, 5000);
     } catch (error) {
-      console.error('Newsletter subscription sync error:', error);
       setStatus('error');
       setMessage('Something went wrong. Please try again.');
     }

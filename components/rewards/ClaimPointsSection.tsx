@@ -9,10 +9,30 @@ export const ClaimPointsSection: React.FC = () => {
   const [loading, setLoading] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
+  const platformUrls = {
+    instagram: 'https://www.instagram.com/elevezdotshop/',
+    whatsapp: 'https://wa.me/918017561073',
+    facebook: 'https://www.facebook.com/elevezdotshop/'
+  };
+
   const handleSocialClaim = async (platform: 'instagram' | 'whatsapp' | 'facebook') => {
     setLoading(platform);
     setMessage(null);
     
+    // Always open the platform URL in a new tab first
+    const url = platformUrls[platform];
+    window.open(url, '_blank', 'noopener,noreferrer');
+    
+    // If user is not authenticated, show a helpful message and abort points claim without throwing
+    if (!profile) {
+      setMessage({ 
+        type: 'error', 
+        text: `Opening ${platform.charAt(0).toUpperCase() + platform.slice(1)}... Please log in to claim your +${pointsRules?.[`${platform.toUpperCase()}_SHARE`] || 50} reward points!` 
+      });
+      setLoading(null);
+      return;
+    }
+
     try {
       const claimed = await claimSocialPoints(platform);
       if (claimed) {
@@ -28,6 +48,15 @@ export const ClaimPointsSection: React.FC = () => {
   };
 
   const handlePhoneClaim = async () => {
+    // If user is not authenticated, show a helpful message and abort claim without throwing
+    if (!profile) {
+      setMessage({ 
+        type: 'error', 
+        text: `Please log in to link your phone number and claim your +${pointsRules?.PHONE_NUMBER || 100} reward points!` 
+      });
+      return;
+    }
+
     if (!phoneNumber || phoneNumber.length < 10) {
       setMessage({ type: 'error', text: 'Please enter a valid phone number' });
       return;
