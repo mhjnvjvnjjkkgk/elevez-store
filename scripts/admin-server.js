@@ -742,19 +742,101 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const data = JSON.parse(body);
+        const products = data.products || [];
+        const collections = data.collections || [];
+        const tags = data.tags || data.availableTags || [];
+        const categories = data.categories || data.availableCategories || [];
+        const types = data.types || data.availableTypes || [];
+        const colors = data.colors || data.availableColors || [];
+        const orders = data.orders || [];
 
-        // Save products to JSON file as backup
-        const backupPath = path.join(__dirname, 'products-backup.json');
-        fs.writeFileSync(backupPath, JSON.stringify(data, null, 2), 'utf8');
+        // 1. Unified backup paths: save to data/backup.json (central database)
+        const centralBackupFile = path.join(__dirname, '..', 'data', 'backup.json');
+        const centralBackupDir = path.dirname(centralBackupFile);
+        if (!fs.existsSync(centralBackupDir)) {
+          fs.mkdirSync(centralBackupDir, { recursive: true });
+        }
+        
+        const backupData = { products, collections, orders };
+        fs.writeFileSync(centralBackupFile, JSON.stringify(backupData, null, 2), 'utf8');
+        console.log(`💾 Saved ${products.length} products to unified backup.json`);
+
+        // Also save to the older scripts/products-backup.json for fallback compatibility
+        const legacyBackupPath = path.join(__dirname, 'products-backup.json');
+        fs.writeFileSync(legacyBackupPath, JSON.stringify(backupData, null, 2), 'utf8');
+
+        // 2. Save collections to data/collections.json (so /api/collections GET returns them on refresh!)
+        if (collections && collections.length > 0) {
+          const collectionsFile = path.join(__dirname, '..', 'data', 'collections.json');
+          fs.writeFileSync(collectionsFile, JSON.stringify({ collections, lastUpdated: new Date().toISOString() }, null, 2), 'utf8');
+          console.log(`💾 Saved ${collections.length} collections to dedicated collections.json`);
+        }
+
+        // 3. Compile and update constants.ts with products, collections, and metadata
+        const tsCode = `import { Product } from './types';
+
+export const BRAND_NAME = "ELEVEZ";
+export const ACCENT_COLOR = "#00ff88";
+
+// Products - Auto-synced from Admin Panel
+// Last update: ${new Date().toLocaleString()}
+export const PRODUCTS: Product[] = ${JSON.stringify(products, null, 2)};
+
+// Collections - Auto-filtered by tags and criteria
+export const COLLECTIONS = ${JSON.stringify(collections, null, 2)};
+
+// Available Tags
+export const AVAILABLE_TAGS = ${JSON.stringify(tags, null, 2)};
+
+// Available Categories (Custom)
+export const AVAILABLE_CATEGORIES = ${JSON.stringify(categories, null, 2)};
+
+// Available Types (Custom)
+export const AVAILABLE_TYPES = ${JSON.stringify(types, null, 2)};
+
+// Available Colors (Custom)
+export const AVAILABLE_COLORS = ${JSON.stringify(colors, null, 2)};
+
+// Helper function to get products for a collection
+export function getCollectionProducts(collectionId: string): Product[] {
+  const collection = COLLECTIONS.find(c => c.id === collectionId);
+  if (!collection) return [];
+  
+  return PRODUCTS.filter(product => {
+    const filters = collection.filters || {};
+    
+    // Tag filter
+    if (filters.tags && filters.tags.length > 0) {
+      const hasMatchingTag = filters.tags.some((tag: string) => product.tags?.includes(tag));
+      if (!hasMatchingTag) return false;
+    }
+    
+    // Category filter
+    if (filters.category && product.category !== filters.category) return false;
+    
+    // Type filter
+    if (filters.type && product.type !== filters.type) return false;
+    
+    // Price filters
+    if (filters.minPrice && product.price < filters.minPrice) return false;
+    if (filters.maxPrice && product.price > filters.maxPrice) return false;
+    
+    return true;
+  });
+}
+`;
+
+        const constantsPath = path.join(__dirname, '..', 'constants.ts');
+        fs.writeFileSync(constantsPath, tsCode, 'utf8');
+        console.log(`✅ Fully updated constants.ts - ${products.length} products, ${collections.length} collections`);
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: true,
-          message: 'Products backed up successfully',
-          count: data.products?.length || 0
+          message: 'Products and collections successfully synchronized to server and constants.ts',
+          productsCount: products.length,
+          collectionsCount: collections.length
         }));
-
-        console.log(`💾 Products backed up: ${data.products?.length || 0} products`);
 
       } catch (error) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -762,7 +844,7 @@ const server = http.createServer((req, res) => {
           success: false,
           error: error.message
         }));
-        console.error('❌ Backup error:', error.message);
+        console.error('❌ Backup save error:', error.message);
       }
     });
   } else if (req.method === 'GET' && req.url === '/load-products') {

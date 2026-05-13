@@ -60,9 +60,13 @@ class SyncDeployManager {
   // Save products before deploying
   async saveProducts() {
     // Get products from window (synced from admin.js state) or fall back to localStorage
-    let products = window.products || [];
-    let collections = window.collections || [];
-    let orders = window.orders || [];
+    let products = window.state?.products || window.products || [];
+    let collections = window.state?.collections || window.collections || [];
+    let orders = window.state?.orders || window.orders || [];
+    let tags = window.state?.availableTags || [];
+    let categories = window.state?.availableCategories || [];
+    let types = window.state?.availableTypes || [];
+    let colors = window.state?.availableColors || [];
 
     // If window.products is empty or only has the default 6, use localStorage
     if (products.length <= 6) {
@@ -80,12 +84,28 @@ class SyncDeployManager {
       }
     }
 
-    console.log(`💾 Saving ${products.length} products for deployment...`);
+    // Fallback for collections if empty
+    if (!collections || collections.length === 0) {
+      const storedCollections = localStorage.getItem('elevez_collections');
+      if (storedCollections) {
+        try {
+          const parsedCollections = JSON.parse(storedCollections);
+          if (parsedCollections && parsedCollections.length > 0) {
+            console.log(`📦 Using localStorage collections (${parsedCollections.length}) instead of empty array`);
+            collections = parsedCollections;
+          }
+        } catch (e) {
+          console.warn('Could not parse localStorage collections:', e);
+        }
+      }
+    }
 
-    const response = await fetch('/api/save-products', {
+    console.log(`💾 Saving ${products.length} products and ${collections.length} collections for deployment...`);
+
+    const response = await fetch('http://localhost:3001/save-products', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ products, collections, orders })
+      body: JSON.stringify({ products, collections, orders, tags, categories, types, colors })
     });
 
     if (!response.ok) {
@@ -98,13 +118,13 @@ class SyncDeployManager {
   // Trigger deployment
   async triggerDeploy() {
     try {
-      const response = await fetch('/api/sync-deploy', {
+      const response = await fetch('http://localhost:3001/sync-deploy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           timestamp: new Date().toISOString(),
-          products: window.products?.length || 0,
-          collections: window.collections?.length || 0
+          products: (window.state?.products || window.products || []).length,
+          collections: (window.state?.collections || window.collections || []).length
         })
       });
 

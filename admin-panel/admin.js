@@ -192,7 +192,7 @@ async function autoSyncFromConstants(force = false) {
 
     // Try server sync API first (highly robust, parses constants.ts on Node server)
     try {
-      const response = await fetch('/api/sync-from-constants');
+      const response = await fetch('http://localhost:3001/api/sync-from-constants');
       if (response.ok) {
         const result = await response.json();
         if (result.success && result.products && result.products.length > 0) {
@@ -3870,7 +3870,7 @@ function setupCollectionFormListeners() {
   // Initial preview
   updateCollectionPreview();
 
-  document.getElementById('collectionForm').onsubmit = (e) => {
+  document.getElementById('collectionForm').onsubmit = async (e) => {
     e.preventDefault();
 
     const collection = {
@@ -3893,7 +3893,7 @@ function setupCollectionFormListeners() {
       state.collections.push(collection);
     }
 
-    saveData();
+    await saveData();
     closeCollectionModal();
     renderCurrentView();
 
