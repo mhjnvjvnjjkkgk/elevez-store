@@ -266,15 +266,21 @@ const server = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url === '/api/collections') {
     try {
       if (fs.existsSync(collectionsFile)) {
-        const data = fs.readFileSync(collectionsFile, 'utf8');
+        const raw = fs.readFileSync(collectionsFile, 'utf8');
+        const parsed = JSON.parse(raw);
+        let collections = Array.isArray(parsed) ? parsed : (parsed.collections || []);
+        if (!Array.isArray(collections)) {
+          collections = collections.collections || [];
+        }
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(data);
+        res.end(JSON.stringify({ collections }));
         console.log('📂 Loaded collections from collections.json');
       } else {
         // Fallback: try to get from backup.json
         if (fs.existsSync(backupFile)) {
           const backupData = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
-          const collections = backupData.collections || [];
+          let collections = backupData.collections || [];
+          if (!Array.isArray(collections)) collections = collections.collections || [];
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ collections }));
           console.log('📂 Loaded collections from backup.json fallback');
@@ -301,7 +307,10 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const data = JSON.parse(body);
-        const collections = data.collections || data;
+        let collections = Array.isArray(data) ? data : (data.collections || []);
+        if (!Array.isArray(collections)) {
+          collections = collections.collections || [];
+        }
 
         // Save to dedicated collections file
         fs.writeFileSync(collectionsFile, JSON.stringify({ collections, lastUpdated: new Date().toISOString() }, null, 2));

@@ -46,8 +46,12 @@
 2. **Missing Shopify Automated Rules Evaluation:** When collections were created or updated in the Admin Panel, they only saved filter criteria (`filters: { tags, category, minPrice, maxPrice }`) but did not calculate or assign matching `productHandles` or `productCount`. In `App.tsx`, product filtering only checked `collection.productHandles?.includes(...)`, ignoring the dynamic filter rules.
 3. **Stale LocalStorage Masking Constants:** On the storefront, `localCollectionService` checked `localStorage` first. If `localStorage` had even one stale placeholder item (e.g. `[{ id: 'all', name: 'All Products' }]`), it returned that single item and completely skipped loading `COLLECTIONS` from `constants.ts`.
 4. **Missing Handles:** Legacy collections saved without a `handle` property were filtered out by `c.handle !== 'all'`, causing collection buttons to completely vanish from the UI.
+5. **Static React State on SWR Sync:** When `loadFromServer()` fetched fresh collections/products asynchronously from Cloud Firestore, it updated `localStorage` but React state (`products`, `collections`) never re-rendered, requiring a manual page refresh to see newly saved data.
 
 **Fix:**
+- Implemented a **Real-Time UI Synchronization Engine**:
+  - `localCollectionService` now dispatches a window event (`elevez_store_updated`) immediately upon completing any background sync.
+  - `App.tsx` subscribes to `elevez_store_updated` and re-renders live state instantly without requiring page refreshes.
 - Rebuilt the **Collection Retrieval Engine** in `localCollectionService.ts`:
   - Implemented a Map-based merging strategy that first loads all baseline collections from compile-time `COLLECTIONS` (`constants.ts`), then merges any user customizations or active edits from `localStorage`.
   - Added robust fallback generators for `handle` (`c.handle || id.toLowerCase().replace(...)`) so no collection ever goes missing.
@@ -55,8 +59,8 @@
   - In `admin.js` (`saveData` and `saveCollectionsToServer`), every save action now iterates through all collections, ensures `col.handle` is assigned, dynamically evaluates filter rules against all current products exactly like Shopify, and assigns exact `productHandles` and `productCount`.
   - In `App.tsx`, product filtering now evaluates `collection.filters` dynamically on the live storefront.
   - In `admin-server.js`, POST `/api/collections` now perfectly synchronizes `public/data/collections.json` and recompiles `constants.ts`.
-- Committed and pushed to GitHub (`6987ea6`) for Vercel deployment.
+- Committed and pushed to GitHub (`287e860`) for Vercel deployment.
 
 **Verified:**
-- Git push completed successfully (`6987ea6`).
-- Collections are now 100% visible, fully interactive, and perfectly synchronized across all live environments.
+- Git push completed successfully (`287e860`).
+- Collections are now 100% visible, fully interactive, and instantly update in real-time across all live environments.

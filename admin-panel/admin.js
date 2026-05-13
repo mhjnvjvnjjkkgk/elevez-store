@@ -623,8 +623,10 @@ async function loadData() {
     const res = await fetch('http://localhost:3001/api/collections');
     if (res.ok) {
       const data = await res.json();
-      if (data && data.collections && Array.isArray(data.collections)) {
-        serverCollections = data.collections;
+      let cols = Array.isArray(data) ? data : (data.collections || []);
+      if (!Array.isArray(cols)) cols = cols.collections || [];
+      if (cols.length > 0) {
+        serverCollections = cols;
         console.log(`✅ [SWR Merge] Loaded ${serverCollections.length} collections from local server API`);
       }
     }
@@ -636,7 +638,10 @@ async function loadData() {
   try {
     const saved = localStorage.getItem('elevez_collections');
     if (saved) {
-      localCollections = JSON.parse(saved) || [];
+      const parsed = JSON.parse(saved);
+      let cols = Array.isArray(parsed) ? parsed : (parsed.collections || []);
+      if (!Array.isArray(cols)) cols = cols.collections || [];
+      localCollections = cols;
       console.log(`✅ [SWR Merge] Loaded ${localCollections.length} collections from localStorage`);
     }
   } catch (err) {
@@ -3824,14 +3829,16 @@ window.addCustomTag = () => {
 async function renderCollections() {
   const grid = document.getElementById('collectionsGrid');
 
-  // Try to load from server first if state.collections is empty
-  if (state.collections.length === 0) {
+  // Try to load from server first if state.collections is not a valid non-empty array
+  if (!Array.isArray(state.collections) || state.collections.length === 0) {
     try {
       const response = await fetch('http://localhost:3001/api/collections');
       if (response.ok) {
         const data = await response.json();
-        if (data.collections && data.collections.length > 0) {
-          state.collections = data.collections;
+        let cols = Array.isArray(data) ? data : (data.collections || []);
+        if (!Array.isArray(cols)) cols = cols.collections || [];
+        if (cols.length > 0) {
+          state.collections = cols;
           localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
           console.log('📂 Loaded', state.collections.length, 'collections from server');
         }
@@ -3841,15 +3848,22 @@ async function renderCollections() {
     }
 
     // Also try localStorage
-    const stored = localStorage.getItem('elevez_collections');
-    if (stored) {
-      try {
-        state.collections = JSON.parse(stored);
-      } catch (e) { }
+    if (!Array.isArray(state.collections) || state.collections.length === 0) {
+      const stored = localStorage.getItem('elevez_collections');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          let cols = Array.isArray(parsed) ? parsed : (parsed.collections || []);
+          if (!Array.isArray(cols)) cols = cols.collections || [];
+          if (cols.length > 0) {
+            state.collections = cols;
+          }
+        } catch (e) { }
+      }
     }
   }
 
-  if (state.collections.length === 0) {
+  if (!Array.isArray(state.collections) || state.collections.length === 0) {
     grid.innerHTML = `
       <div class="empty-state" style="grid-column: 1 / -1;">
         <div class="empty-state-icon">🗂️</div>
