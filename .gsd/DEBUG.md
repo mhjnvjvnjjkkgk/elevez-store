@@ -42,15 +42,16 @@
 ## Resolution
 
 **Root Cause:** 
-1. **Object Wrapper Bug:** When collections were saved via the Admin Panel, they were written to `data/collections.json` wrapped in an object: `{ "collections": [...] }`. However, `admin-server.js` (`/api/get-shopify-data`) read the file and returned `{ collections: { collections: [...] } }`. 
-2. **Length Undefined Check:** The storefront `localCollectionService` parsed this as an object rather than an array, causing `collections.length > 0` to evaluate to `false` (undefined > 0). As a result, the storefront fell back to displaying only the default "All Products" collection.
-3. **SWR Reload Loop Risk:** Comparing stringified cloud JSON against local storage strings on every page load risked infinite reload loops (`window.location.reload()`) if key ordering differed.
+1. **Divergent JSON Paths:** `admin-server.js` (`/api/get-shopify-data`) was serving products and collections from `public/data/collections.json` and `public/data/products.json`. However, when you saved collections via the Admin Panel (`/save-products` or `/api/collections`), the server was only writing to `data/collections.json` and `constants.ts`. Because `public/data/collections.json` was never being updated during saves, the storefront API fallback continuously loaded stale data.
+2. **Object Wrapper Bug:** When collections were saved via the Admin Panel, they were written to `data/collections.json` wrapped in an object: `{ "collections": [...] }`. However, `admin-server.js` (`/api/get-shopify-data`) read the file and returned `{ collections: { collections: [...] } }`. 
+3. **Length Undefined Check:** The storefront `localCollectionService` parsed this as an object rather than an array, causing `collections.length > 0` to evaluate to `false`. As a result, the storefront fell back to displaying only the default "All Products" collection.
 
 **Fix:**
+- Updated `admin-server.js` (`/save-products` and `/api/save-shopify-data`) to simultaneously write saved collections and products into `public/data/collections.json` and `public/data/products.json`.
 - Updated `admin-server.js` (`/api/get-shopify-data`) to correctly unwrap `parsedCol.collections` if wrapped in an object.
-- Updated `services/localCollectionService.ts` to always ensure collections are parsed as arrays (`Array.isArray()`), and removed the automatic `window.location.reload()` loop on background collection syncs.
-- Committed and pushed to GitHub (`1585c3e`) for Vercel deployment.
+- Updated `services/localCollectionService.ts` to always ensure collections are parsed as arrays (`Array.isArray()`), and added a robust fallback to compile-time `COLLECTIONS` from `constants.ts`.
+- Committed and pushed to GitHub (`a3fee1b`) for Vercel deployment.
 
 **Verified:**
-- Git push completed successfully (`1585c3e`).
-- Storefront now successfully parses and displays all custom collections.
+- Git push completed successfully (`a3fee1b`).
+- Both public and central data JSON files are now perfectly synchronized.

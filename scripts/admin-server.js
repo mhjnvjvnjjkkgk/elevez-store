@@ -306,14 +306,81 @@ const server = http.createServer((req, res) => {
         // Save to dedicated collections file
         fs.writeFileSync(collectionsFile, JSON.stringify({ collections, lastUpdated: new Date().toISOString() }, null, 2));
 
-        // Also update backup.json to keep it in sync
+        const publicCollectionsFile = path.join(__dirname, '..', 'public', 'data', 'collections.json');
+        const publicDataDir = path.dirname(publicCollectionsFile);
+        if (!fs.existsSync(publicDataDir)) fs.mkdirSync(publicDataDir, { recursive: true });
+        fs.writeFileSync(publicCollectionsFile, JSON.stringify(collections, null, 2), 'utf8');
+
+        // Also update backup.json to keep it in sync and recompile constants.ts
         if (fs.existsSync(backupFile)) {
           try {
             const backupData = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
             backupData.collections = collections;
             fs.writeFileSync(backupFile, JSON.stringify(backupData, null, 2));
+
+            const products = backupData.products || [];
+            const tags = backupData.tags || [];
+            const categories = backupData.categories || [];
+            const types = backupData.types || [];
+            const colors = backupData.colors || [];
+
+            const tsCode = `import { Product } from './types';
+
+export const BRAND_NAME = "ELEVEZ";
+export const ACCENT_COLOR = "#00ff88";
+
+// Products - Auto-synced from Admin Panel
+// Last update: ${new Date().toLocaleString()}
+export const PRODUCTS: Product[] = ${JSON.stringify(products, null, 2)};
+
+// Collections - Auto-filtered by tags and criteria
+export const COLLECTIONS = ${JSON.stringify(collections, null, 2)};
+
+// Available Tags
+export const AVAILABLE_TAGS = ${JSON.stringify(tags, null, 2)};
+
+// Available Categories (Custom)
+export const AVAILABLE_CATEGORIES = ${JSON.stringify(categories, null, 2)};
+
+// Available Types (Custom)
+export const AVAILABLE_TYPES = ${JSON.stringify(types, null, 2)};
+
+// Available Colors (Custom)
+export const AVAILABLE_COLORS = ${JSON.stringify(colors, null, 2)};
+
+// Helper function to get products for a collection
+export function getCollectionProducts(collectionId: string): Product[] {
+  const collection = COLLECTIONS.find(c => c.id === collectionId);
+  if (!collection) return [];
+  
+  return PRODUCTS.filter(product => {
+    const filters = collection.filters || {};
+    
+    // Tag filter
+    if (filters.tags && filters.tags.length > 0) {
+      const hasMatchingTag = filters.tags.some((tag: string) => product.tags?.includes(tag));
+      if (!hasMatchingTag) return false;
+    }
+    
+    // Category filter
+    if (filters.category && product.category !== filters.category) return false;
+    
+    // Type filter
+    if (filters.type && product.type !== filters.type) return false;
+    
+    // Price filters
+    if (filters.minPrice && product.price < filters.minPrice) return false;
+    if (filters.maxPrice && product.price > filters.maxPrice) return false;
+    
+    return true;
+  });
+}
+`;
+            const constantsPath = path.join(__dirname, '..', 'constants.ts');
+            fs.writeFileSync(constantsPath, tsCode, 'utf8');
+            console.log('✅ Fully recompiled constants.ts on /api/collections save');
           } catch (e) {
-            console.log('⚠️ Could not sync collections to backup.json');
+            console.log('⚠️ Could not sync collections to backup.json or constants.ts', e);
           }
         }
 

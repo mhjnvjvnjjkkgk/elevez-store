@@ -2114,7 +2114,20 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         const productHandle = p.shopifyHandle || p.handle;
         const productId = String(p.id);
 
+        let matchesFilters = false;
+        if (collection.filters) {
+          matchesFilters = true;
+          if (collection.filters.tags && collection.filters.tags.length > 0) {
+            matchesFilters = collection.filters.tags.some((tag: string) => p.tags?.includes(tag));
+          }
+          if (matchesFilters && collection.filters.category && p.category !== collection.filters.category) matchesFilters = false;
+          if (matchesFilters && collection.filters.type && p.type !== collection.filters.type) matchesFilters = false;
+          if (matchesFilters && collection.filters.minPrice !== undefined && p.price < collection.filters.minPrice) matchesFilters = false;
+          if (matchesFilters && collection.filters.maxPrice !== undefined && p.price > collection.filters.maxPrice) matchesFilters = false;
+        }
+
         const inCollection =
+          matchesFilters ||
           collection.productHandles?.includes(productHandle) ||
           collection.productHandles?.includes(p.handle) ||
           collection.productHandles?.includes(productId) ||

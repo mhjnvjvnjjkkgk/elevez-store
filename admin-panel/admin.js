@@ -871,6 +871,30 @@ async function saveData() {
 
     console.log(`💾 Saving ${state.products.length} products (${dataSize.toFixed(0)}KB)...`);
 
+    // 🤖 Shopify Automated Collections System: Auto-evaluate filter rules on all collections before saving!
+    if (state.collections && Array.isArray(state.collections)) {
+      state.collections.forEach(col => {
+        if (!col.handle && col.name) {
+          col.handle = col.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        }
+        if (col.filters) {
+          const matchingProducts = state.products.filter(product => {
+            if (col.filters.tags && col.filters.tags.length > 0) {
+              const hasMatchingTag = col.filters.tags.some(tag => product.tags?.includes(tag));
+              if (!hasMatchingTag) return false;
+            }
+            if (col.filters.category && product.category !== col.filters.category) return false;
+            if (col.filters.type && product.type !== col.filters.type) return false;
+            if (col.filters.minPrice !== undefined && product.price < col.filters.minPrice) return false;
+            if (col.filters.maxPrice !== undefined && product.price > col.filters.maxPrice) return false;
+            return true;
+          });
+          col.productHandles = matchingProducts.map(p => p.shopifyHandle || p.handle || String(p.id));
+          col.productCount = matchingProducts.length;
+        }
+      });
+    }
+
     localStorage.setItem('elevez_products', productsData);
     localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
     localStorage.setItem('elevez_orders', JSON.stringify(state.orders));
@@ -2780,11 +2804,31 @@ window.saveAllCollections = async () => {
 
 // Helper function to save collections to server (non-blocking)
 async function saveCollectionsToServer() {
-  // Update timestamps and save to localStorage
-  state.collections.forEach(col => {
-    col.updatedAt = new Date().toISOString();
-    if (!col.createdAt) col.createdAt = col.updatedAt;
-  });
+  // 🤖 Shopify Automated Collections System: Auto-evaluate filter rules on all collections before saving!
+  if (state.collections && Array.isArray(state.collections)) {
+    state.collections.forEach(col => {
+      if (!col.handle && col.name) {
+        col.handle = col.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      }
+      if (col.filters) {
+        const matchingProducts = state.products.filter(product => {
+          if (col.filters.tags && col.filters.tags.length > 0) {
+            const hasMatchingTag = col.filters.tags.some(tag => product.tags?.includes(tag));
+            if (!hasMatchingTag) return false;
+          }
+          if (col.filters.category && product.category !== col.filters.category) return false;
+          if (col.filters.type && product.type !== col.filters.type) return false;
+          if (col.filters.minPrice !== undefined && product.price < col.filters.minPrice) return false;
+          if (col.filters.maxPrice !== undefined && product.price > col.filters.maxPrice) return false;
+          return true;
+        });
+        col.productHandles = matchingProducts.map(p => p.shopifyHandle || p.handle || String(p.id));
+        col.productCount = matchingProducts.length;
+      }
+      col.updatedAt = new Date().toISOString();
+      if (!col.createdAt) col.createdAt = col.updatedAt;
+    });
+  }
   localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
 
   // 1. Try Local Node API first (extremely fast, ~2ms)
