@@ -2645,12 +2645,11 @@ window.saveAllCollections = async () => {
         
         console.log(`🔥 Uploading all ${state.collections.length} collections to Firestore...`);
         state.collections.forEach(col => {
+          if (!col.updatedAt) col.updatedAt = new Date().toISOString();
+          if (!col.createdAt) col.createdAt = col.updatedAt;
           const colRef = doc(db, 'collections', String(col.id));
           const cleanCol = JSON.parse(JSON.stringify(col));
-          batch.set(colRef, {
-            ...cleanCol,
-            updatedAt: new Date().toISOString()
-          });
+          batch.set(colRef, cleanCol);
         });
         await batch.commit();
         savedOnFirebase = true;
@@ -2698,12 +2697,11 @@ async function saveCollectionsToServer() {
       const { collection, doc, writeBatch } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
       const batch = writeBatch(db);
       state.collections.forEach(col => {
+        if (!col.updatedAt) col.updatedAt = new Date().toISOString();
+        if (!col.createdAt) col.createdAt = col.updatedAt;
         const colRef = doc(db, 'collections', String(col.id));
         const cleanCol = JSON.parse(JSON.stringify(col));
-        batch.set(colRef, {
-          ...cleanCol,
-          updatedAt: new Date().toISOString()
-        });
+        batch.set(colRef, cleanCol);
       });
       await batch.commit();
       console.log('🔥 Collections auto-saved to Firestore');
@@ -3877,6 +3875,8 @@ function setupCollectionFormListeners() {
       id: state.editingCollection?.id || Date.now().toString(),
       name: document.getElementById('collectionName').value,
       description: document.getElementById('collectionDescription').value,
+      createdAt: state.editingCollection?.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       filters: {
         tags: selectedTags,
         category: document.getElementById('collectionCategory').value || null,

@@ -1,45 +1,35 @@
-# Debug Session: Slider Pointer Sticking
+# Debug Session: Collection Saving and Persistence Issues
 
 ## Symptom
-While sliding, the mouse gets stuck and won't release the dual-slider thumbs.
+**Problem:** Collections created or edited in the Admin Panel do not persist and vanish or revert on page refresh.
 
-- **When:** Dragging the price range slider handles very fast, or dragging them outside of the slider track bounding box.
-- **Expected:** Seamless, smooth sliding that instantly releases the thumb when the mouse/finger is lifted, regardless of the pointer's coordinates.
-- **Actual:** Pointer capture on the local track element gets lost or cancelled by other browser gestures, causing the slider to lock up in an active drag state.
+**When:** Occurs immediately upon refreshing the page, especially when using the Vercel-deployed server in combination with the local admin-server.
+**Expected:** Saved collections should be persistent across browser refreshes and fully synced to both Firestore and local JSON files.
+**Actual:** Saved/edited collections revert to older Firestore states or empty lists upon refreshing the browser.
+
+---
+
+## Evidence & Diagnostics
+
+1. **Diagnosis of SWR Merging Logic (`admin.js`):**
+   - The SWR loading mechanism merges collections from Firestore Cloud, Local Server API, and Local Storage using the `getNewerCollection(c1, c2)` helper.
+   - `getNewerCollection` compares timestamps:
+     `const t1 = new Date(c1.updatedAt || c1.createdAt || c1.importedAt || 0).getTime() || 0;`
+   - **Critical Defect found in `onsubmit` of `#collectionForm`:** The form submission does **NOT** write `updatedAt` directly into the saved collection object inside `state.collections` or localStorage.
+   - **Result of Defect:** Any local edit or creation gets saved with no `updatedAt` (timestamp `0`). When Firestore returns its loaded collections (which have `updatedAt` from old background writes), the SWR merge treats the cloud collection as newer (`t2 > 0`), completely overwriting the new local edits and causing them to "vanish" on refresh!
+
+---
 
 ## Hypotheses
 
 | # | Hypothesis | Likelihood | Status |
 |---|------------|------------|--------|
-| 1 | Pointer capture on track is canceled by text selection/drag gestures, and pointerup isn't fired inside the track element boundaries. | 95% | CONFIRMED |
-| 2 | State updates lag behind mouse movement. | 5% | ELIMINATED |
-| 3 | The custom glowing cursor element (OptimizedCursor) freezes because it only listens to legacy mousemove, which is suppressed during active drags. | 100% | CONFIRMED |
+| 1 | Collection edits inside `#collectionForm` submit lack `updatedAt` fields, resulting in a timestamp of `0` during SWR merges. | 100% | CONFIRMED |
+| 2 | `saveCollectionsToServer` writes `updatedAt` to Firestore but fails to update the local `state.collections` array reference, keeping local timestamps as `0`. | 100% | CONFIRMED |
 
-## Attempts
+---
 
-### Attempt 1
-- **Testing:** H1 — Re-binding drag actions to global window event listeners.
-- **Action:** Rewrite `DualPriceSlider` to register temporary window pointermove and pointerup events instead of local track pointer-capture.
-- **Result:** Drags smoothly, but the custom glowing cursor physically freezes in place on the screen when the mouse is down and dragging.
-- **Conclusion:** PARTIALLY RESOLVED (Slider dragging logic is fixed, but custom cursor freezes in place)
+## Proposed Fixes
 
-### Attempt 2
-- **Testing:** H3 — Refactoring custom cursor to listen to `pointermove` instead of legacy `mousemove` & disabling page text selection during drags.
-- **Action:**
-  - Upgraded `OptimizedCursor` to listen to window-level `pointermove` so it stays synced even during active touch/mouse slider drag sessions.
-  - Added a `user-select: none` toggle on the body during drags in `DualPriceSlider` to prevent the OS cursor from changing to selection beams or getting stuck in a browser drag-loop.
-- **Result:** Fully resolved! The custom cursor is 100% fluent, stays perfectly synced while dragging, never freezes or lags, and releases effortlessly.
-- **Conclusion:** CONFIRMED
-
-## Resolution
-
-**Root Cause:**
-1. **Selection Lock:** When dragging slider handles, the browser tries to perform default text-selection or default element dragging. This triggers browser state overrides that freeze the pointer cursor or turn it into a text-selection beam.
-2. **Event Throttling:** The custom glowing cursor was listening only to legacy `mousemove` events on `window`. During active pointer drags (which trigger active pointer capture or mouse-down capture), browsers suppress/throttle `mousemove` in favor of `pointermove`. This made the custom cursor physically freeze in place, looking like a "stuck mouse".
-
-**Fix:**
-1. **Cursor Modernization:** Swapped `mousemove` with `pointermove` in `OptimizedCursor`. It now receives coordinates fluidly under any gesture.
-2. **Global Selection Freeze:** Added a `useEffect` inside `DualPriceSlider` that sets `document.body.style.userSelect = 'none'` (with Safari webkit prefixes) during active drags, preventing any selection bugs.
-
-**Verified:**
-Compiled beautifully via `npm run build` with zero errors.
+1. Update `#collectionForm` submit handler inside `admin.js` to explicitly set both `createdAt` and `updatedAt` on the collection object before saving.
+2. Update `saveCollectionsToServer` to ensure `col.updatedAt` is synchronized locally before sending data to Firestore and the local Node.js API server.
