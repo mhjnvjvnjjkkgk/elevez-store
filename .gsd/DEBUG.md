@@ -42,13 +42,15 @@
 ## Resolution
 
 **Root Cause:** 
-1. **Stale Vercel Deployment:** The changes made to `admin.js` in previous steps were never committed and pushed to GitHub. As a result, when testing on Vercel (`https://elevez-store.vercel.app/`), Vercel was still serving the old deployment where collection persistence was broken.
-2. **Timestamp Cache Collision:** In `saveAllCollections()`, `col.updatedAt` was only being set inside the Firebase promise, and `localStorage` was being saved *before* timestamps were updated. When the page was refreshed, `getNewerCollection()` compared the un-timestamped local collection against older cached cloud collections, causing SWR merge conflicts that reverted collections.
+1. **Object Wrapper Bug:** When collections were saved via the Admin Panel, they were written to `data/collections.json` wrapped in an object: `{ "collections": [...] }`. However, `admin-server.js` (`/api/get-shopify-data`) read the file and returned `{ collections: { collections: [...] } }`. 
+2. **Length Undefined Check:** The storefront `localCollectionService` parsed this as an object rather than an array, causing `collections.length > 0` to evaluate to `false` (undefined > 0). As a result, the storefront fell back to displaying only the default "All Products" collection.
+3. **SWR Reload Loop Risk:** Comparing stringified cloud JSON against local storage strings on every page load risked infinite reload loops (`window.location.reload()`) if key ordering differed.
 
 **Fix:**
-- Updated `window.saveAllCollections` in `admin.js` to assign `col.updatedAt = new Date().toISOString()` to all collections *before* saving to `localStorage` or cloud.
-- Committed all pending files and pushed to GitHub (`8f73913`) to trigger a fresh Vercel production build.
+- Updated `admin-server.js` (`/api/get-shopify-data`) to correctly unwrap `parsedCol.collections` if wrapped in an object.
+- Updated `services/localCollectionService.ts` to always ensure collections are parsed as arrays (`Array.isArray()`), and removed the automatic `window.location.reload()` loop on background collection syncs.
+- Committed and pushed to GitHub (`1585c3e`) for Vercel deployment.
 
 **Verified:**
-- Git push completed successfully (`8f73913`).
-- Fresh code is now live on Vercel.
+- Git push completed successfully (`1585c3e`).
+- Storefront now successfully parses and displays all custom collections.

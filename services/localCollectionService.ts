@@ -3,6 +3,7 @@
 
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import { COLLECTIONS } from '../constants';
 
 export interface LocalCollection {
     id: string;
@@ -47,9 +48,16 @@ class LocalCollectionService {
                 }
             }
 
+            if (COLLECTIONS && COLLECTIONS.length > 0) {
+                return COLLECTIONS as any as LocalCollection[];
+            }
+
             return this.getDefaultCollections();
         } catch (error) {
             console.error('Error getting collections from localStorage:', error);
+            if (COLLECTIONS && COLLECTIONS.length > 0) {
+                return COLLECTIONS as any as LocalCollection[];
+            }
             return this.getDefaultCollections();
         }
     }

@@ -597,11 +597,11 @@ const server = http.createServer((req, res) => {
       try {
         const data = JSON.parse(body);
         const dataDir = path.join(__dirname, '..', 'public', 'data');
+        const centralDataDir = path.join(__dirname, '..', 'data');
 
-        // Ensure data directory exists
-        if (!fs.existsSync(dataDir)) {
-          fs.mkdirSync(dataDir, { recursive: true });
-        }
+        // Ensure data directories exist
+        if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+        if (!fs.existsSync(centralDataDir)) fs.mkdirSync(centralDataDir, { recursive: true });
 
         // Save products
         if (data.products && data.products.length > 0) {
@@ -610,11 +610,14 @@ const server = http.createServer((req, res) => {
           console.log('✅ Saved', data.products.length, 'products to', productsPath);
         }
 
-        // Save collections
+        // Save collections to both public/data and data/collections.json
         if (data.collections && data.collections.length > 0) {
           const collectionsPath = path.join(dataDir, 'collections.json');
           fs.writeFileSync(collectionsPath, JSON.stringify(data.collections, null, 2));
-          console.log('✅ Saved', data.collections.length, 'collections to', collectionsPath);
+          
+          const centralCollectionsPath = path.join(centralDataDir, 'collections.json');
+          fs.writeFileSync(centralCollectionsPath, JSON.stringify({ collections: data.collections, lastUpdated: new Date().toISOString() }, null, 2));
+          console.log('✅ Saved', data.collections.length, 'collections to public and central data dirs');
         }
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -776,6 +779,19 @@ const server = http.createServer((req, res) => {
           const collectionsFile = path.join(__dirname, '..', 'data', 'collections.json');
           fs.writeFileSync(collectionsFile, JSON.stringify({ collections, lastUpdated: new Date().toISOString() }, null, 2), 'utf8');
           console.log(`💾 Saved ${collections.length} collections to dedicated collections.json`);
+
+          const publicCollectionsFile = path.join(__dirname, '..', 'public', 'data', 'collections.json');
+          const publicDataDir = path.dirname(publicCollectionsFile);
+          if (!fs.existsSync(publicDataDir)) fs.mkdirSync(publicDataDir, { recursive: true });
+          fs.writeFileSync(publicCollectionsFile, JSON.stringify(collections, null, 2), 'utf8');
+          console.log(`💾 Saved ${collections.length} collections to public/data/collections.json`);
+        }
+
+        if (products && products.length > 0) {
+          const publicProductsFile = path.join(__dirname, '..', 'public', 'data', 'products.json');
+          const publicDataDir = path.dirname(publicProductsFile);
+          if (!fs.existsSync(publicDataDir)) fs.mkdirSync(publicDataDir, { recursive: true });
+          fs.writeFileSync(publicProductsFile, JSON.stringify(products, null, 2), 'utf8');
         }
 
         // 3. Compile and update constants.ts with products, collections, and metadata
