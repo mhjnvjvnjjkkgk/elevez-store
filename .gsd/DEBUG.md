@@ -33,3 +33,17 @@
 
 1. Update `#collectionForm` submit handler inside `admin.js` to explicitly set both `createdAt` and `updatedAt` on the collection object before saving.
 2. Update `saveCollectionsToServer` to ensure `col.updatedAt` is synchronized locally before sending data to Firestore and the local Node.js API server.
+
+---
+
+## Resolution
+
+**Root Cause:** Submitting `#collectionForm` was saving the edited/created collection with no `updatedAt` timestamp. Because SWR loading merges Firestore records (which are written with positive `updatedAt` values during background synchronization), the browser's merge algorithm consistently treated the Firestore collection as the "newer" one (`timestamp > 0`), reverting or erasing newly saved local collections upon page reload.
+
+**Fix:**
+- Updated [admin.js](file:///d:/2/1/wbeiste/elevez%20%281%29/admin-panel/admin.js#L3873-L3888) to set `createdAt` and `updatedAt` directly on the collection object upon form submission.
+- Updated `saveCollectionsToServer` and `saveAllCollections` inside [admin.js](file:///d:/2/1/wbeiste/elevez%20%281%29/admin-panel/admin.js#L2700-L2711) to synchronize `updatedAt` locally first during the Firebase Batch operations.
+
+**Verified:**
+- Built project locally with `npm run build` successfully (**Exit Code 0**).
+- Committed and pushed changes to GitHub to trigger live Vercel updates.
