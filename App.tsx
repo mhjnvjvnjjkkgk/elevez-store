@@ -2079,24 +2079,31 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const [collections, setCollections] = useState<any[]>([]);
 
   useEffect(() => {
-    const storedProducts = localStorage.getItem('elevez_products');
-    if (storedProducts) {
-      try {
-        const parsed = JSON.parse(storedProducts);
-        setProducts(parsed.length > 0 ? parsed : PRODUCTS);
-      } catch (e) {
+    const handleStoreUpdate = () => {
+      const storedProducts = localStorage.getItem('elevez_products');
+      if (storedProducts) {
+        try {
+          const parsed = JSON.parse(storedProducts);
+          setProducts(parsed.length > 0 ? parsed : PRODUCTS);
+        } catch (e) {
+          setProducts(PRODUCTS);
+        }
+      } else {
         setProducts(PRODUCTS);
       }
-    } else {
-      setProducts(PRODUCTS);
-    }
 
-    const storedCollections = localCollectionService.getAllCollections();
-    setCollections(storedCollections);
+      const storedCollections = localCollectionService.getAllCollections();
+      setCollections(storedCollections);
+    };
+
+    handleStoreUpdate();
 
     if (collectionParam) {
       setSelectedCollection(collectionParam);
     }
+
+    window.addEventListener('elevez_store_updated', handleStoreUpdate);
+    return () => window.removeEventListener('elevez_store_updated', handleStoreUpdate);
   }, [collectionParam]);
 
   useEffect(() => {

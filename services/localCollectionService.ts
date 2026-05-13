@@ -158,6 +158,7 @@ class LocalCollectionService {
             }
         }
 
+        window.dispatchEvent(new Event('elevez_store_updated'));
         isFetching = false;
     }
 
