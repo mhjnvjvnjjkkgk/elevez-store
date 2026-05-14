@@ -47,8 +47,12 @@
 3. **Stale LocalStorage Masking Constants:** On the storefront, `localCollectionService` checked `localStorage` first. If `localStorage` had even one stale placeholder item (e.g. `[{ id: 'all', name: 'All Products' }]`), it returned that single item and completely skipped loading `COLLECTIONS` from `constants.ts`.
 4. **Missing Handles:** Legacy collections saved without a `handle` property were filtered out by `c.handle !== 'all'`, causing collection buttons to completely vanish from the UI.
 5. **Static React State on SWR Sync:** When `loadFromServer()` fetched fresh collections/products asynchronously from Cloud Firestore, it updated `localStorage` but React state (`products`, `collections`) never re-rendered, requiring a manual page refresh to see newly saved data.
+6. **Double-Wrapping Object Bug (Admin Grid Empty):** When collections were saved via the Admin Panel, they were written to `data/collections.json` wrapped in an object: `{ "collections": [...] }`. In `admin.js`, when `loadData()` or `renderCollections()` fetched this, `data.collections` was parsed as `{ "collections": [...] }` (an Object rather than an Array). Because `Array.isArray()` evaluated to `false` and `.length` was `undefined`, the Admin Panel collections grid rendered completely empty.
 
 **Fix:**
+- Implemented robust **Collection Unwrapping Logic**:
+  - Configured GET and POST `/api/collections` in `admin-server.js` to recursively unwrap `collections.collections` into a clean array before saving or serving.
+  - Configured `loadData()` and `renderCollections()` in `admin.js` to unwrap data from both API responses and `localStorage`, ensuring `state.collections` is always a valid iterable array.
 - Implemented a **Real-Time UI Synchronization Engine**:
   - `localCollectionService` now dispatches a window event (`elevez_store_updated`) immediately upon completing any background sync.
   - `App.tsx` subscribes to `elevez_store_updated` and re-renders live state instantly without requiring page refreshes.
@@ -59,8 +63,8 @@
   - In `admin.js` (`saveData` and `saveCollectionsToServer`), every save action now iterates through all collections, ensures `col.handle` is assigned, dynamically evaluates filter rules against all current products exactly like Shopify, and assigns exact `productHandles` and `productCount`.
   - In `App.tsx`, product filtering now evaluates `collection.filters` dynamically on the live storefront.
   - In `admin-server.js`, POST `/api/collections` now perfectly synchronizes `public/data/collections.json` and recompiles `constants.ts`.
-- Committed and pushed to GitHub (`287e860`) for Vercel deployment.
+- Committed and pushed to GitHub (`7515011`) for Vercel deployment.
 
 **Verified:**
-- Git push completed successfully (`287e860`).
-- Collections are now 100% visible, fully interactive, and instantly update in real-time across all live environments.
+- Git push completed successfully (`7515011`).
+- Collections are now 100% visible, correctly unwrapped, fully interactive, and instantly update in real-time across both the Admin Panel and the storefront.

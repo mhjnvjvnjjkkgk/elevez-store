@@ -267,11 +267,11 @@ const server = http.createServer((req, res) => {
     try {
       if (fs.existsSync(collectionsFile)) {
         const raw = fs.readFileSync(collectionsFile, 'utf8');
-        const parsed = JSON.parse(raw);
-        let collections = Array.isArray(parsed) ? parsed : (parsed.collections || []);
-        if (!Array.isArray(collections)) {
-          collections = collections.collections || [];
+        let parsed = JSON.parse(raw);
+        while (parsed && !Array.isArray(parsed) && typeof parsed === 'object') {
+          parsed = parsed.collections || parsed.data;
         }
+        const collections = Array.isArray(parsed) ? parsed : [];
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ collections }));
         console.log('📂 Loaded collections from collections.json');
@@ -279,8 +279,11 @@ const server = http.createServer((req, res) => {
         // Fallback: try to get from backup.json
         if (fs.existsSync(backupFile)) {
           const backupData = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
-          let collections = backupData.collections || [];
-          if (!Array.isArray(collections)) collections = collections.collections || [];
+          let parsed = backupData.collections || [];
+          while (parsed && !Array.isArray(parsed) && typeof parsed === 'object') {
+            parsed = parsed.collections || parsed.data;
+          }
+          const collections = Array.isArray(parsed) ? parsed : [];
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ collections }));
           console.log('📂 Loaded collections from backup.json fallback');
@@ -306,11 +309,11 @@ const server = http.createServer((req, res) => {
     });
     req.on('end', () => {
       try {
-        const data = JSON.parse(body);
-        let collections = Array.isArray(data) ? data : (data.collections || []);
-        if (!Array.isArray(collections)) {
-          collections = collections.collections || [];
+        let data = JSON.parse(body);
+        while (data && !Array.isArray(data) && typeof data === 'object') {
+          data = data.collections || data.data;
         }
+        const collections = Array.isArray(data) ? data : [];
 
         // Save to dedicated collections file
         fs.writeFileSync(collectionsFile, JSON.stringify({ collections, lastUpdated: new Date().toISOString() }, null, 2));

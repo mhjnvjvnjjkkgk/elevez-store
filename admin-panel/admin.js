@@ -622,9 +622,11 @@ async function loadData() {
   try {
     const res = await fetch('http://localhost:3001/api/collections');
     if (res.ok) {
-      const data = await res.json();
-      let cols = Array.isArray(data) ? data : (data.collections || []);
-      if (!Array.isArray(cols)) cols = cols.collections || [];
+      let data = await res.json();
+      while (data && !Array.isArray(data) && typeof data === 'object') {
+        data = data.collections || data.data;
+      }
+      let cols = Array.isArray(data) ? data : [];
       if (cols.length > 0) {
         serverCollections = cols;
         console.log(`✅ [SWR Merge] Loaded ${serverCollections.length} collections from local server API`);
@@ -638,9 +640,11 @@ async function loadData() {
   try {
     const saved = localStorage.getItem('elevez_collections');
     if (saved) {
-      const parsed = JSON.parse(saved);
-      let cols = Array.isArray(parsed) ? parsed : (parsed.collections || []);
-      if (!Array.isArray(cols)) cols = cols.collections || [];
+      let parsed = JSON.parse(saved);
+      while (parsed && !Array.isArray(parsed) && typeof parsed === 'object') {
+        parsed = parsed.collections || parsed.data;
+      }
+      let cols = Array.isArray(parsed) ? parsed : [];
       localCollections = cols;
       console.log(`✅ [SWR Merge] Loaded ${localCollections.length} collections from localStorage`);
     }
@@ -3834,9 +3838,11 @@ async function renderCollections() {
     try {
       const response = await fetch('http://localhost:3001/api/collections');
       if (response.ok) {
-        const data = await response.json();
-        let cols = Array.isArray(data) ? data : (data.collections || []);
-        if (!Array.isArray(cols)) cols = cols.collections || [];
+        let data = await response.json();
+        while (data && !Array.isArray(data) && typeof data === 'object') {
+          data = data.collections || data.data;
+        }
+        let cols = Array.isArray(data) ? data : [];
         if (cols.length > 0) {
           state.collections = cols;
           localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
@@ -3852,9 +3858,11 @@ async function renderCollections() {
       const stored = localStorage.getItem('elevez_collections');
       if (stored) {
         try {
-          const parsed = JSON.parse(stored);
-          let cols = Array.isArray(parsed) ? parsed : (parsed.collections || []);
-          if (!Array.isArray(cols)) cols = cols.collections || [];
+          let parsed = JSON.parse(stored);
+          while (parsed && !Array.isArray(parsed) && typeof parsed === 'object') {
+            parsed = parsed.collections || parsed.data;
+          }
+          let cols = Array.isArray(parsed) ? parsed : [];
           if (cols.length > 0) {
             state.collections = cols;
           }
