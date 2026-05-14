@@ -515,12 +515,12 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         </Link>
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 z-20 flex flex-col gap-2 pointer-events-none select-none">
-          <div className="bg-red-500 text-white text-[10px] font-black px-2 py-1 uppercase tracking-wider border-[2px] border-black shadow-[2px_2px_0px_0px_#000]">
+        <div className="absolute top-1 sm:top-3 left-1 sm:left-3 z-20 flex flex-col gap-1 sm:gap-2 pointer-events-none select-none">
+          <div className="bg-red-500 text-white text-[7px] sm:text-[10px] font-black px-1 sm:px-2 py-[2px] sm:py-1 uppercase tracking-wider border-[1px] sm:border-[2px] border-black shadow-[2px_2px_0px_0px_#000]">
             <GlitchText text="50% OFF" triggerOnHover={false} />
           </div>
           {product.tags?.map(tag => (
-            <div key={tag} className="bg-black text-white text-[10px] font-black px-2 py-1 uppercase tracking-wider border-[2px] border-white">
+            <div key={tag} className="bg-black text-white text-[7px] sm:text-[10px] font-black px-1 sm:px-2 py-[2px] sm:py-1 uppercase tracking-wider border-[1px] sm:border-[2px] border-white">
               {tag}
             </div>
           ))}
@@ -529,11 +529,10 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         {/* Wishlist Heart Button */}
         <button
           onClick={handleWishlistToggle}
-          className="absolute top-3 right-3 z-30 w-10 h-10 bg-white border-[3px] border-black flex items-center justify-center hover:bg-[#00ff88] transition-all shadow-[3px_3px_0px_0px_#000]"
+          className="absolute top-1 sm:top-3 right-1 sm:right-3 z-30 w-6 h-6 sm:w-10 sm:h-10 bg-white border-[2px] sm:border-[3px] border-black flex items-center justify-center hover:bg-[#00ff88] transition-all shadow-[2px_2px_0px_0px_#000] sm:shadow-[3px_3px_0px_0px_#000]"
         >
           <Heart
-            size={20}
-            className={`transition-all ${isInWishlist
+            className={`w-3 h-3 sm:w-5 sm:h-5 transition-all ${isInWishlist
               ? 'text-red-500 fill-red-500'
               : 'text-black'
               }`}
@@ -541,31 +540,31 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         </button>
 
         {/* Slanted sticker tag clipped inside bottom-left corner */}
-        <div className="absolute -bottom-2 -left-10 w-32 bg-[#00ff88] text-black text-[9px] font-black text-center py-1 border-[2px] border-black rotate-[25deg] z-20 select-none pointer-events-none shadow-[2px_2px_0px_0px_#000] tracking-widest uppercase">
+        <div className="absolute -bottom-1 sm:-bottom-2 -left-6 sm:-left-10 w-20 sm:w-32 bg-[#00ff88] text-black text-[6px] sm:text-[9px] font-black text-center py-[2px] sm:py-1 border-[1px] sm:border-[2px] border-black rotate-[25deg] z-20 select-none pointer-events-none shadow-[2px_2px_0px_0px_#000] tracking-widest uppercase">
           {product.price > 500 ? "PREMIUM" : "LIMITED"}
         </div>
 
         {/* Quick View Overlay Button */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 z-30">
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 z-30">
           <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               openQuickView(product);
             }}
-            className="bg-[#00ff88] text-black font-black py-2 px-6 border-[3px] border-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_#000] whitespace-nowrap text-sm cursor-pointer"
+            className="bg-[#00ff88] text-black font-black py-1 sm:py-2 px-3 sm:px-6 border-[2px] sm:border-[3px] border-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000] whitespace-nowrap text-[10px] sm:text-sm cursor-pointer"
           >
             Quick View
           </button>
         </div>
       </div>
 
-      <div className="mt-6 p-2 bg-white border-[3px] border-black shadow-[4px_4px_0px_0px_#000]">
-        <h3 className="text-lg font-black text-black uppercase font-syne line-clamp-1">{product.name}</h3>
-        <div className="flex items-center justify-between mt-1">
-          <div className="flex items-center gap-2">
-            <span className="font-price text-[#00ff88] font-black text-xl stroke-black" style={{ WebkitTextStroke: '1px black' }}>₹{product.price.toFixed(2)}</span>
-            <span className="font-price text-red-400 line-through text-sm">₹{product.originalPrice.toFixed(2)}</span>
+      <div className="mt-3 sm:mt-6 p-2 bg-white border-[2px] sm:border-[3px] border-black shadow-[2px_2px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]">
+        <h3 className="text-[10px] sm:text-lg font-black text-black uppercase font-syne line-clamp-1">{product.name}</h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-1 gap-1 sm:gap-0">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <span className="font-price text-[#00ff88] font-black text-xs sm:text-xl stroke-black" style={{ WebkitTextStroke: '0.5px black' }}>₹{product.price.toFixed(0)}</span>
+            <span className="font-price text-red-400 line-through text-[9px] sm:text-sm">₹{product.originalPrice.toFixed(0)}</span>
           </div>
           <div className="flex gap-1">
             {[...Array(5)].map((_, i) => (
@@ -1048,7 +1047,7 @@ const BestSellers = () => {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 mb-16 relative z-10">
+          <div className="grid grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-8 mb-16 relative z-10">
             {bestSellers.map((product, index) => (
               <ProductCard
                 key={product.id}
@@ -1994,7 +1993,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           />
 
           {/* Dynamic Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-8">
             {filteredProducts.map((product, index) => (
               <motion.div
                 key={product.id}
@@ -2272,7 +2271,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
           {/* Product Grid */}
           <div className="flex-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+            <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-6 md:gap-12">
               <AnimatePresence mode="popLayout">
                 {filteredProducts.map(product => (
                   <motion.div
@@ -2587,7 +2586,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
             </h2>
             <span className="text-xs font-bold uppercase tracking-widest text-black opacity-60">RECOMMENDED PROTOCOL</span>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
             {PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4).map(p => (
               <ProductCard
                 key={p.id}

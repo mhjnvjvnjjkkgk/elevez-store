@@ -27,6 +27,9 @@ const PRODUCTS_KEY = 'elevez_products';
 // Flag to track if we're currently fetching from server
 let isFetching = false;
 
+// Flag to track if we've already fetched to prevent infinite loops
+let hasFetchedServer = false;
+
 class LocalCollectionService {
 
     /**
@@ -35,7 +38,9 @@ class LocalCollectionService {
     getAllCollections(): LocalCollection[] {
         try {
             // Background revalidation: always fetch from Firestore/cloud in background
-            if (!isFetching) {
+            // Ensure this only happens ONCE automatically to prevent infinite event loops
+            if (!isFetching && !hasFetchedServer) {
+                hasFetchedServer = true;
                 this.loadFromServer();
             }
 
