@@ -25,6 +25,7 @@ export const PageLoader: React.FC = () => {
     <AnimatePresence>
       {isVisible && (
         <motion.div
+          key="page-loader"
           initial={{ opacity: 1 }}
           exit={{ y: '-100%', transition: { duration: 0.8, ease: [0.77, 0, 0.175, 1] } }}
           className="fixed inset-0 z-[10000] bg-black flex flex-col items-center justify-center overflow-hidden"

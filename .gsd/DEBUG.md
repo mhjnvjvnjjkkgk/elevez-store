@@ -50,9 +50,27 @@
 6. **Double-Wrapping Object Bug (Admin Grid Empty):** When collections were saved via the Admin Panel, they were written to `data/collections.json` wrapped in an object: `{ "collections": [...] }`. In `admin.js`, when `loadData()` or `renderCollections()` fetched this, `data.collections` was parsed as `{ "collections": [...] }` (an Object rather than an Array). Because `Array.isArray()` evaluated to `false` and `.length` was `undefined`, the Admin Panel collections grid rendered completely empty.
 
 **Fix:**
-- Implemented robust **Collection Unwrapping Logic**:
-  - Configured GET and POST `/api/collections` in `admin-server.js` to recursively unwrap `collections.collections` into a clean array before saving or serving.
-  - Configured `loadData()` and `renderCollections()` in `admin.js` to unwrap data from both API responses and `localStorage`, ensuring `state.collections` is always a valid iterable array.
+- Implemented robust **Deep Collection Unwrapping Logic**:
+  - Configured GET and POST `/api/collections` in `admin-server.js` to use a deep `while` loop to recursively unwrap multi-level nested `collections` or `data` wrappers until a pure array is obtained.
+  - Configured `loadData()` and `renderCollections()` in `admin.js` to use the same deep while loop unwrapping for both API responses and `localStorage`, ensuring `state.collections` is always a valid iterable array.
+- Fixed **Quick View Button Bubbling**:
+  - Added `e.preventDefault()` and `e.stopPropagation()` to the Quick View button in `App.tsx` (`ProductCard`) to prevent the click event from bubbling up to the wrapper `<Link>` component and triggering unintended navigation.
+
+---
+
+# Debug Session: Navigation and Preloader
+
+## Symptom
+1. Users click "Shop Collection" on the hero section but are not taken to the correct page.
+2. The site preloader (`PageLoader`) is looping or stuck.
+
+**When:** During initial site load and clicking the Hero button.
+**Expected:** Preloader should finish and unmount. "Shop Collection" should navigate to the shop page correctly.
+**Actual:** Preloader loops/gets stuck. Navigation fails or goes to the wrong place.
+
+## Evidence & Hypotheses
+- **Preloader Loop**: `PageLoader.tsx` unmounts via `isVisible` being set to `false`. If the user returns to the page or the router remounts `App`, it might retrigger, but it's outside `<HashRouter>`, so it should only mount once. Let's check `App.tsx` for `PageLoader` usage and state.
+- **Shop Collection**: The button has `onClick={() => navigate('/shop/all')}`. The `Shop` component handles `/shop/:category`. Wait, `products.slice(0, 8)` might be missing products, or `useNavigate` fails because it's inside a `motion.div` without proper event propagation? Or maybe the user means the `/shop/all` URL is correct but the page is empty because collections aren't loaded?
 - Implemented a **Real-Time UI Synchronization Engine**:
   - `localCollectionService` now dispatches a window event (`elevez_store_updated`) immediately upon completing any background sync.
   - `App.tsx` subscribes to `elevez_store_updated` and re-renders live state instantly without requiring page refreshes.

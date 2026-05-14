@@ -165,9 +165,11 @@ h1, h2, h3, h4, h5, h6 {
   mix-blend-mode: exclusion;
 }
 
-/* Hide default cursor */
-body * {
-  cursor: none !important;
+/* Hide default cursor only on devices that support hover */
+@media (hover: hover) and (pointer: fine) {
+  body * {
+    cursor: none !important;
+  }
 }
 
 /* Noise overlay */

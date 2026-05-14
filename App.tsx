@@ -44,6 +44,14 @@ import { PageLoader } from './components/PageLoader';
 import { DynamicAccordion } from './components/DynamicAccordion';
 import { PageTransition } from './components/PageTransition';
 import { FloatingElements } from './components/FloatingElements';
+
+const AutoScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
 import { CoreProtocol } from './components/CoreProtocol';
 import { SectionHeader } from './components/SectionHeader';
 
@@ -606,7 +614,7 @@ const QuickViewModal = () => {
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 50 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white w-full max-w-4xl border-[8px] border-black shadow-[24px_24px_0px_0px_#000] flex flex-col md:flex-row max-h-[90vh] md:max-h-[600px] relative overflow-hidden"
+          className="bg-white w-full max-w-4xl border-[4px] md:border-[8px] border-black shadow-[12px_12px_0px_0px_#000] md:shadow-[24px_24px_0px_0px_#000] flex flex-col md:flex-row max-h-[90vh] md:max-h-[600px] relative overflow-hidden"
         >
           {/* Close Button */}
           <button
@@ -627,7 +635,7 @@ const QuickViewModal = () => {
           </div>
 
           {/* Details Side */}
-          <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col h-full min-h-0 overflow-y-auto">
+          <div className="w-full md:w-1/2 p-4 md:p-10 flex flex-col h-full min-h-0 overflow-y-auto">
             <div className="mb-10 flex-shrink-0">
               <div className="flex items-center gap-3 mb-4">
                 <span className="bg-[#00ff88] text-black text-[10px] font-black px-3 py-1 border-[2px] border-black uppercase tracking-widest">In Stock</span>
@@ -1040,7 +1048,7 @@ const BestSellers = () => {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16 relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 mb-16 relative z-10">
             {bestSellers.map((product, index) => (
               <ProductCard
                 key={product.id}
@@ -1240,7 +1248,7 @@ const WhyChooseUs = () => {
           />
 
           {/* Features Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 mb-16">
             {features.map((feature, index) => (
               <div
                 key={feature.title}
@@ -1681,7 +1689,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         
         {/* Large Decorative Text (Neo-Brutalist Style) */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-5 select-none">
-          <div className="text-[12rem] font-black leading-none rotate-[-5deg] translate-x-[-5%] translate-y-[5%]">
+          <div className="text-[6rem] md:text-[12rem] font-black leading-none rotate-[-5deg] translate-x-[-5%] translate-y-[5%]">
             ELEVEZ ELEVEZ ELEVEZ
           </div>
         </div>
@@ -1691,7 +1699,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           style={{ y: heroTextY }}
-          className="relative z-10 text-center w-[95%] max-w-[1400px] mx-auto p-10 md:p-12 lg:p-20 bg-white border-[8px] border-black shadow-[24px_24px_0px_0px_#000] hover:shadow-[32px_32px_0px_0px_#00ff88] transition-all duration-500 flex flex-col justify-center min-h-[60vh] overflow-visible"
+          className="relative z-10 text-center w-[95%] max-w-[1400px] mx-auto p-4 md:p-12 lg:p-20 bg-white border-[8px] border-black shadow-[24px_24px_0px_0px_#000] hover:shadow-[32px_32px_0px_0px_#00ff88] transition-all duration-500 flex flex-col justify-center min-h-[60vh] overflow-visible"
         >
           {/* Left High-Fashion Model */}
           <motion.div
@@ -1774,7 +1782,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
               {/* Centered Symmetrical Header */}
               <h1
-                className="text-6xl md:text-[5.5vw] font-black leading-none tracking-tighter font-syne cursor-default uppercase text-black relative mx-12 flex flex-col items-center justify-center text-center"
+                className="text-6xl md:text-[5.5vw] font-black leading-none tracking-tighter font-syne cursor-default uppercase text-black relative mx-0 md:mx-12 flex flex-col items-center justify-center text-center"
               >
                 {/* Rotating Target Crosshair background */}
                 <motion.div
@@ -1869,7 +1877,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               subtitle="Excellence in every detail, innovation in every stitch"
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
               {[
                 { icon: Truck, title: "3-Day Express", desc: "Lightning-fast shipping straight to your doorstep.", tag: "3 Days" },
                 { icon: Shield, title: "180gsm Premium", desc: "Superior quality cotton that breathes and lasts.", tag: "180gsm" },
@@ -1940,11 +1948,11 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             </motion.div>
 
             <h2 
-              className="text-7xl md:text-9xl font-black text-center font-syne uppercase tracking-tighter hover:scale-105 transition-transform duration-300 relative z-10" 
+              className="text-5xl sm:text-7xl md:text-9xl font-black text-center font-syne uppercase tracking-tighter hover:scale-105 transition-transform duration-300 relative z-10" 
               style={{ 
-                WebkitTextStroke: '4px black', 
+                WebkitTextStroke: '2px black', 
                 color: 'white', 
-                textShadow: '10px 10px 0px #00ff88, 20px 20px 0px black' 
+                textShadow: '6px 6px 0px #00ff88, 12px 12px 0px black' 
               }}
               onMouseEnter={() => setCursorVariant('hover')}
               onMouseLeave={() => setCursorVariant('default')}
@@ -1986,7 +1994,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           />
 
           {/* Dynamic Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
             {filteredProducts.map((product, index) => (
               <motion.div
                 key={product.id}
@@ -2579,7 +2587,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
             </h2>
             <span className="text-xs font-bold uppercase tracking-widest text-black opacity-60">RECOMMENDED PROTOCOL</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4).map(p => (
               <ProductCard
                 key={p.id}
@@ -4502,6 +4510,7 @@ function App() {
       <PageLoader />
       <QuickViewProvider>
         <HashRouter>
+          <AutoScrollToTop />
           <ClickSpark sparkColor="#00ff88" sparkRadius={25} sparkCount={10} duration={500}>
             <div className="bg-black min-h-screen text-white selection:bg-[#00ff88] selection:text-black font-space"
               style={{
