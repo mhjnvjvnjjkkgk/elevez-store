@@ -2088,6 +2088,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const [selectedCollection, setSelectedCollection] = useState<string>('all');
   const [products, setProducts] = useState<any[]>([]);
   const [collections, setCollections] = useState<any[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
 
   useEffect(() => {
     const handleStoreUpdate = () => {
@@ -2164,13 +2165,13 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     else if (filter === 'BOLD') matchesFilter = p.tags?.includes('COLORFUL');
     else if (filter === 'PREMIUM') matchesFilter = p.tags?.includes('PREMIUM');
     else if (filter === 'ESSENTIAL') matchesFilter = p.tags?.includes('ESSENTIAL');
-    else if (filter === 'Under') matchesFilter = p.price < 50;
-    else if (filter === '₹100+') matchesFilter = p.price >= 100;
 
     const matchesSearch = p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.tags?.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    return matchesCategory && matchesFilter && matchesSearch;
+    const matchesPrice = p.price >= priceRange[0] && (priceRange[1] >= 5000 ? true : p.price <= priceRange[1]);
+
+    return matchesCategory && matchesFilter && matchesSearch && matchesPrice;
   });
 
   return (
@@ -2190,10 +2191,10 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           <p className="text-black font-black uppercase text-xl mt-4">Discover all {filteredProducts.length} pieces of pure identity.</p>
         </motion.div>
 
-        <div className="flex flex-col lg:flex-row gap-16 relative">
+        <div className="flex flex-col lg:flex-row gap-16 relative items-start">
           {/* Sticky Sidebar */}
-          <aside className="w-full lg:w-1/4 shrink-0">
-            <div className="sticky top-40 bg-white border-[6px] border-black p-8 shadow-[12px_12px_0px_0px_#000]">
+          <aside className="w-full lg:w-1/4 shrink-0 sticky top-32 max-h-[calc(100vh-8rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden">
+            <div className="bg-white border-[6px] border-black p-8 shadow-[12px_12px_0px_0px_#000] mb-8">
               <div className="flex items-center gap-4 mb-8 pb-4 border-b-[4px] border-black">
                 <SlidersHorizontal size={24} className="text-black" />
                 <span className="font-black font-syne text-2xl uppercase text-black">Filters</span>
@@ -2246,6 +2247,54 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                 </div>
 
                 <div>
+                  <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Price Range</h4>
+                  <div className="px-2 mb-8">
+                    <div className="flex justify-between text-xs font-black mb-2">
+                      <span>₹{priceRange[0]}</span>
+                      <span>₹{priceRange[1]}{priceRange[1] >= 5000 ? '+' : ''}</span>
+                    </div>
+                    <div className="relative h-2 bg-gray-200 rounded-full mb-4">
+                      <div 
+                        className="absolute h-full bg-[#00ff88]" 
+                        style={{ 
+                          left: `${(priceRange[0] / 5000) * 100}%`, 
+                          right: `${100 - (priceRange[1] / 5000) * 100}%` 
+                        }}
+                      />
+                      <input
+                        type="range"
+                        min="0"
+                        max="5000"
+                        step="100"
+                        value={priceRange[0]}
+                        onChange={(e) => setPriceRange([Math.min(parseInt(e.target.value), priceRange[1] - 100), priceRange[1]])}
+                        className="absolute w-full -top-1 h-4 opacity-0 cursor-pointer pointer-events-auto dual-range"
+                        style={{ zIndex: priceRange[0] > 2500 ? 5 : 3 }}
+                      />
+                      <input
+                        type="range"
+                        min="0"
+                        max="5000"
+                        step="100"
+                        value={priceRange[1]}
+                        onChange={(e) => setPriceRange([priceRange[0], Math.max(parseInt(e.target.value), priceRange[0] + 100)])}
+                        className="absolute w-full -top-1 h-4 opacity-0 cursor-pointer pointer-events-auto dual-range"
+                        style={{ zIndex: 4 }}
+                      />
+                      {/* Thumbs */}
+                      <div 
+                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black border-2 border-white rounded-full pointer-events-none transition-all"
+                        style={{ left: `calc(${(priceRange[0] / 5000) * 100}% - 8px)` }}
+                      />
+                      <div 
+                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black border-2 border-white rounded-full pointer-events-none transition-all"
+                        style={{ left: `calc(${(priceRange[1] / 5000) * 100}% - 8px)` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
                   <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Collections</h4>
                   <div className="space-y-2">
                     <button
@@ -2254,7 +2303,10 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                     >
                       All Products
                     </button>
-                    {collections.filter(c => c.handle !== 'all').map(collection => (
+                    {collections
+                      .filter(c => c.handle !== 'all')
+                      .filter(c => !c.name.toLowerCase().includes('under') && !c.name.toLowerCase().includes('below') && !c.name.toLowerCase().includes('₹'))
+                      .map(collection => (
                       <button
                         key={collection.handle}
                         onClick={() => setSelectedCollection(collection.handle)}
@@ -2379,10 +2431,10 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
           <ArrowLeft size={16} /> Back to Archives
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start pb-20 lg:pb-0">
           {/* Left Column - sticky, full image with borders always in view */}
           <div className="lg:col-span-6 lg:sticky lg:top-28">
-          <div className="bg-white border-[8px] border-black p-6 md:p-8 shadow-[16px_16px_0px_0px_#000] relative flex flex-col h-auto md:h-[600px] lg:h-[calc(100vh-9rem)] lg:min-h-[550px] lg:max-h-[750px]">
+          <div className="bg-white border-[4px] sm:border-[8px] border-black p-2 sm:p-6 md:p-8 shadow-[8px_8px_0px_0px_#000] sm:shadow-[16px_16px_0px_0px_#000] relative flex flex-col h-auto md:h-[600px] lg:h-[calc(100vh-9rem)] lg:min-h-[550px] lg:max-h-[750px]">
             {/* Decorative Spinning Stamp */}
             <motion.div
               animate={{ rotate: 360 }}
@@ -2411,7 +2463,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               <img
                 src={activeImage}
                 alt={product.name}
-                className="w-full h-full object-contain bg-[#fcfcfc] transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-contain bg-[#fcfcfc] transition-transform duration-700 group-hover:scale-105 p-2 sm:p-0"
               />
               <div className="absolute top-6 left-6 bg-black text-[#00ff88] px-4 py-1 border-[3px] border-black font-black uppercase text-xs shadow-[4px_4px_0px_0px_#000]">
                 {product.type}
@@ -2482,12 +2534,12 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               {product.colors && (
                 <div>
                   <h4 className="text-sm font-black uppercase mb-4 text-black">Color: {selectedColor}</h4>
-                  <div className="flex gap-4">
+                  <div className="flex flex-wrap gap-2 sm:gap-4">
                     {product.colors.map(color => (
                       <button
                         key={color}
                         onClick={() => setSelectedColor(color)}
-                        className={`w-12 h-12 border-[4px] border-black transition-all ${selectedColor === color ? 'shadow-[4px_4px_0px_0px_#00ff88] scale-110' : 'hover:scale-105'}`}
+                        className={`w-8 h-8 sm:w-12 sm:h-12 border-[2px] sm:border-[4px] border-black transition-all ${selectedColor === color ? 'shadow-[4px_4px_0px_0px_#00ff88] scale-110' : 'hover:scale-105'}`}
                         style={{ backgroundColor: getColorCode(color) }}
                         title={color}
                       />
@@ -2498,12 +2550,12 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
 
               <div>
                 <h4 className="text-sm font-black uppercase mb-4 text-black">Size: {selectedSize}</h4>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2 sm:gap-3">
                   {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`w-14 h-14 border-[4px] border-black font-black text-lg transition-all ${selectedSize === size ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_#000]'}`}
+                      className={`w-10 h-10 sm:w-14 sm:h-14 border-[2px] sm:border-[4px] border-black font-black text-sm sm:text-lg transition-all ${selectedSize === size ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_#000]'}`}
                     >
                       {size}
                     </button>
@@ -2513,12 +2565,12 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
 
               <div>
                 <h4 className="text-sm font-black uppercase mb-4 text-black">Quantity</h4>
-                <div className="flex items-center border-[4px] border-black w-fit bg-white shadow-[4px_4px_0px_0px_#000]">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-12 h-12 flex items-center justify-center font-black text-2xl hover:bg-black hover:text-white transition-all border-r-[4px] border-black">
+                <div className="flex items-center border-[2px] sm:border-[4px] border-black w-fit bg-white shadow-[2px_2px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]">
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center font-black text-lg sm:text-2xl hover:bg-black hover:text-white transition-all border-r-[2px] sm:border-r-[4px] border-black">
                     -
                   </button>
-                  <span className="w-16 text-center font-black text-xl">{quantity}</span>
-                  <button onClick={() => setQuantity(quantity + 1)} className="w-12 h-12 flex items-center justify-center font-black text-2xl hover:bg-black hover:text-white transition-all border-l-[4px] border-black">
+                  <span className="w-10 sm:w-16 text-center font-black text-base sm:text-xl">{quantity}</span>
+                  <button onClick={() => setQuantity(quantity + 1)} className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center font-black text-lg sm:text-2xl hover:bg-black hover:text-white transition-all border-l-[2px] sm:border-l-[4px] border-black">
                     +
                   </button>
                 </div>
@@ -2533,7 +2585,8 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               ]} />
             </div>
 
-            <div className="flex flex-col gap-6 mb-12">
+            {/* Desktop Buttons */}
+            <div className="hidden lg:flex flex-col gap-6 mb-12">
               <Magnetic>
                 <button
                   onClick={() => {
@@ -2557,6 +2610,31 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                 className="w-full bg-[#00ff88] text-black font-black text-2xl py-6 border-[4px] border-black uppercase tracking-widest shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
               >
                 Buy It Now
+              </button>
+            </div>
+
+            {/* Mobile Sticky Action Bar */}
+            <div className="lg:hidden fixed bottom-0 left-0 w-full z-50 bg-white border-t-[4px] border-black flex h-14 shadow-[0_-4px_10px_rgba(0,0,0,0.1)]">
+              <button
+                onClick={() => {
+                  addToCart(product, selectedSize, selectedColor || 'Standard', quantity);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="flex-1 bg-black text-[#00ff88] font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 border-r-[4px] border-black hover:bg-gray-900 active:bg-gray-800 transition-colors"
+              >
+                <ShoppingBag size={14} /> ADD TO CART
+              </button>
+              <button
+                onClick={() => {
+                  addToCart(product, selectedSize, selectedColor || 'Standard', quantity);
+                  setTimeout(() => {
+                    navigate('/checkout');
+                    window.scrollTo(0, 0);
+                  }, 300);
+                }}
+                className="flex-1 bg-[#00ff88] text-black font-black text-[12px] uppercase tracking-widest flex items-center justify-center hover:bg-[#00cc6a] active:bg-[#00b35c] transition-colors"
+              >
+                BUY NOW
               </button>
             </div>
 

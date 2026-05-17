@@ -193,3 +193,5 @@ h1, h2, h3, h4, h5, h6 {
 .animate-scanline {
   animation: scanline 8s linear infinite;
 }
+
+.dual-range { -webkit-appearance: none; appearance: none; background: transparent; pointer-events: none; } .dual-range::-webkit-slider-thumb { -webkit-appearance: none; pointer-events: auto; width: 16px; height: 16px; background: black; border: 2px solid white; border-radius: 50%; cursor: pointer; }
