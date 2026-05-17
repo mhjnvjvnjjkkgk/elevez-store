@@ -156,7 +156,7 @@ const useQuickView = () => {
 
 // --- Utility Hooks ---
 const useCursor = () => {
-  const [cursorVariant, setCursorVariant] = useState<'default' | 'hover' | 'money' | 'shop'>('default');
+  const [cursorVariant, setCursorVariant] = useState<'default' | 'hover' | 'money' | 'shop' | 'hidden'>('default');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -2249,11 +2249,15 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                 <div>
                   <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Price Range</h4>
                   <div className="px-2 mb-8">
-                    <div className="flex justify-between text-xs font-black mb-2">
+                    <div className="flex justify-between text-sm font-black text-black mb-2">
                       <span>₹{priceRange[0]}</span>
                       <span>₹{priceRange[1]}{priceRange[1] >= 5000 ? '+' : ''}</span>
                     </div>
-                    <div className="relative h-2 bg-gray-200 rounded-full mb-4">
+                    <div 
+                      className="relative h-2 bg-gray-200 rounded-full mb-4"
+                      onMouseEnter={() => setCursorVariant('hidden')}
+                      onMouseLeave={() => setCursorVariant('default')}
+                    >
                       <div 
                         className="absolute h-full bg-[#00ff88]" 
                         style={{ 
@@ -2305,6 +2309,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                     </button>
                     {collections
                       .filter(c => c.handle !== 'all')
+                      .filter(c => !c.name.toLowerCase().includes('all products') && c.name.toLowerCase() !== 'all')
                       .filter(c => !c.name.toLowerCase().includes('under') && !c.name.toLowerCase().includes('below') && !c.name.toLowerCase().includes('₹'))
                       .map(collection => (
                       <button
@@ -4453,7 +4458,7 @@ const OptimizedCursor = ({ variant }: { variant: CursorVariant }) => {
   return (
     <div
       ref={cursorRef}
-      className="fixed pointer-events-none"
+      className={`fixed pointer-events-none transition-opacity duration-200 ${variant === 'hidden' ? 'opacity-0' : 'opacity-100'}`}
       style={{
         left: 0,
         top: 0,

@@ -34,4 +34,4 @@ export interface CartItem extends Product {
   color: string;
 }
 
-export type CursorVariant = 'default' | 'hover' | 'money' | 'shop';
+export type CursorVariant = 'default' | 'hover' | 'money' | 'shop' | 'hidden';
