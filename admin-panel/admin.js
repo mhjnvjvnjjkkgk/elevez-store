@@ -826,23 +826,16 @@ async function loadData() {
     }, 500);
   }
 
-  // ✅ FIX DUPLICATE PRODUCTS
+  // ✅ FIX DUPLICATE PRODUCTS — deduplicate by ID only, NOT by name
   const uniqueProducts = [];
   const processedIds = new Set();
-  const processedNames = new Set();
 
   state.products.forEach(p => {
-    // Unique ID check
+    // Skip duplicates by ID only
     if (p.id && processedIds.has(String(p.id))) return;
 
-    // Unique Name check (if ID is new)
-    const normalizedName = (p.name || '').trim().toLowerCase();
-    if (processedNames.has(normalizedName)) return; // Skip dupes
-
-    // Add to unique lists
+    // Add to unique list
     if (p.id) processedIds.add(String(p.id));
-    if (normalizedName) processedNames.add(normalizedName);
-
     uniqueProducts.push(p);
   });
 
@@ -862,14 +855,17 @@ async function loadData() {
 // Save Data
 async function saveData() {
   try {
-    // ✅ DE-DUPLICATE before saving (prevent duplicates in storage)
+    // ✅ DE-DUPLICATE before saving — use ID as the unique key so edits are never silently discarded
     const productMap = new Map();
     for (const product of state.products) {
-      const name = (product.name || '').toLowerCase().trim();
-      if (!name) continue;
-      const existing = productMap.get(name);
+      if (!product.id) continue;
+      const key = String(product.id);
+      const existing = productMap.get(key);
+      // Keep Shopify source over local source, otherwise keep the latest (last write wins)
       if (!existing || (product.source === 'shopify' && existing.source !== 'shopify')) {
-        productMap.set(name, product);
+        productMap.set(key, product);
+      } else if (!existing.source || product.updatedAt > (existing.updatedAt || '')) {
+        productMap.set(key, product);
       }
     }
     const uniqueProducts = Array.from(productMap.values());
@@ -2638,7 +2634,12 @@ window.editProduct = (id) => {
   state.productForm.images = (product.images || [product.image]).map(convertToFullUrl);
   state.productForm.sizeChart = product.sizeChart ? convertToFullUrl(product.sizeChart) : null;
   state.productForm.selectedSizes = product.sizes || ['M'];
-  state.productForm.colors = (product.colors || []).map(name => ({ name, code: '#00ff88' }));
+  // Load actual hex codes from availableColors for proper swatch display and selection
+  state.productForm.selectedColors = (product.colors || []).map(name => {
+    const found = state.availableColors.find(c => c.name === name);
+    return found ? { name: found.name, code: found.code } : { name, code: '#000000' };
+  });
+  state.productForm.colors = state.productForm.selectedColors;
   state.productForm.selectedTags = product.tags || [];
 
   renderImagePreviews();
