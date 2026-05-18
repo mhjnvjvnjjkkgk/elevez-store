@@ -2449,8 +2449,9 @@ function handleProductSubmit(e) {
 
   // Check for duplicate QID (only if not editing the same product)
   const currentProductId = state.editingProduct ? state.editingProduct.id : null;
+  // Use String() cast on both sides to handle Shopify IDs that may be stored as number OR string
   const existingProduct = state.products.find(p => {
-    return p.qid === qid && p.id !== currentProductId;
+    return p.qid === qid && String(p.id) !== String(currentProductId);
   });
 
   if (existingProduct) {
@@ -2462,7 +2463,7 @@ function handleProductSubmit(e) {
     }
 
     // User chose to replace - remove the old product
-    state.products = state.products.filter(p => p.id !== existingProduct.id);
+    state.products = state.products.filter(p => String(p.id) !== String(existingProduct.id));
     console.log(`Replaced product with QID ${qid}`);
   }
 
@@ -2512,8 +2513,13 @@ function handleProductSubmit(e) {
   };
 
   if (state.editingProduct) {
-    const index = state.products.findIndex(p => p.id === state.editingProduct.id);
-    state.products[index] = product;
+    const index = state.products.findIndex(p => String(p.id) === String(state.editingProduct.id));
+    if (index > -1) {
+      state.products[index] = product;
+    } else {
+      // Fallback: ID not found, push as new (shouldn't happen)
+      state.products.push(product);
+    }
   } else {
     state.products.push(product);
   }
