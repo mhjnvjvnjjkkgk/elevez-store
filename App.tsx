@@ -752,8 +752,8 @@ const CartSidebar = () => {
                     key={item.cartId}
                     className="flex gap-6 bg-white p-4 border-[4px] border-black shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
                   >
-                    <div className="w-24 h-32 border-[3px] border-black overflow-hidden shrink-0">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" loading="lazy" />
+                    <div className="w-24 h-32 border-[3px] border-black overflow-hidden shrink-0 bg-white flex items-center justify-center p-1">
+                      <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain transition-transform duration-500 hover:scale-105" loading="lazy" />
                     </div>
                     <div className="flex-1 flex flex-col justify-between min-w-0">
                       <div>
