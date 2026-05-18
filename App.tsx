@@ -2158,22 +2158,27 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     }
 
     const matchesCategory = category === 'all' || !category ? true : p.category?.toLowerCase() === category || p.category === 'Unisex';
+    // Normalize filter string
+    const normalizedFilter = filter.toLowerCase().replace(/s$/, '').replace(/[^a-z0-9]/g, '');
+
     let matchesFilter = true;
     if (filter === 'All') matchesFilter = true;
-    else if (filter === 'Hoodie') {
-      matchesFilter = p.type?.toLowerCase().includes('hoodie') || p.tags?.includes('hoodie') || p.shopifyHandle?.includes('hoodie');
-    } else if (filter === 'T-Shirt') {
-      matchesFilter = p.type?.toLowerCase() === 'tee' || p.type?.toLowerCase().includes('t-shirt') || p.type?.toLowerCase().includes('tshirt') || p.shopifyHandle?.includes('tshirt') || p.shopifyHandle?.includes('tee');
-    } else if (filter === 'Crop Top') {
-      matchesFilter = p.type?.toLowerCase().includes('crop') || p.tags?.includes('croptop');
-    } else if (filter === 'Oversized') {
-      matchesFilter = p.type?.toLowerCase().includes('oversized') || p.tags?.includes('oversized') || p.shopifyHandle?.includes('oversized') || p.name?.toLowerCase().includes('oversized');
+    else if (normalizedFilter === 'hoodie') {
+      matchesFilter = p.type?.toLowerCase().includes('hoodie') || p.tags?.some((t: string) => t.toLowerCase() === 'hoodie') || p.shopifyHandle?.toLowerCase().includes('hoodie') || p.name?.toLowerCase().includes('hoodie');
+    } else if (normalizedFilter === 'tshirt' || normalizedFilter === 'tee') {
+      matchesFilter = (p.type?.toLowerCase() === 'tee' || p.type?.toLowerCase().includes('t-shirt') || p.type?.toLowerCase().includes('tshirt') || p.shopifyHandle?.toLowerCase().includes('tshirt') || p.shopifyHandle?.toLowerCase().includes('tee') || p.name?.toLowerCase().includes('tshirt') || p.name?.toLowerCase().includes('t-shirt') || p.tags?.some((t: string) => t.toLowerCase() === 'tshirt' || t.toLowerCase() === 't-shirt')) && !p.name?.toLowerCase().includes('hoodie');
+    } else if (normalizedFilter === 'croptop') {
+      matchesFilter = p.type?.toLowerCase().includes('crop') || p.tags?.some((t: string) => t.toLowerCase() === 'croptop' || t.toLowerCase() === 'crop top') || p.shopifyHandle?.toLowerCase().includes('croptop') || p.name?.toLowerCase().includes('crop');
+    } else if (normalizedFilter === 'oversized') {
+      matchesFilter = p.type?.toLowerCase().includes('oversized') || p.tags?.some((t: string) => t.toLowerCase() === 'oversized') || p.shopifyHandle?.toLowerCase().includes('oversized') || p.name?.toLowerCase().includes('oversized');
     }
-    else if (['Men', 'Women', 'Unisex'].includes(filter)) matchesFilter = p.category === filter;
-    else if (filter === 'OLD') matchesFilter = p.tags?.includes('VINTAGE');
-    else if (filter === 'BOLD') matchesFilter = p.tags?.includes('COLORFUL');
-    else if (filter === 'PREMIUM') matchesFilter = p.tags?.includes('PREMIUM');
-    else if (filter === 'ESSENTIAL') matchesFilter = p.tags?.includes('ESSENTIAL');
+    else if (['men', 'women', 'unisex'].includes(filter.toLowerCase())) {
+      matchesFilter = p.category?.toLowerCase() === filter.toLowerCase();
+    }
+    else if (filter.toUpperCase() === 'OLD') matchesFilter = p.tags?.some((t: string) => t.toUpperCase() === 'VINTAGE');
+    else if (filter.toUpperCase() === 'BOLD') matchesFilter = p.tags?.some((t: string) => t.toUpperCase() === 'COLORFUL');
+    else if (filter.toUpperCase() === 'PREMIUM') matchesFilter = p.tags?.some((t: string) => t.toUpperCase() === 'PREMIUM');
+    else if (filter.toUpperCase() === 'ESSENTIAL') matchesFilter = p.tags?.some((t: string) => t.toUpperCase() === 'ESSENTIAL');
 
     const matchesSearch = p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.tags?.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
