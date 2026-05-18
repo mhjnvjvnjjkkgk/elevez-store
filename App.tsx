@@ -2089,6 +2089,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const [products, setProducts] = useState<any[]>([]);
   const [collections, setCollections] = useState<any[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   useEffect(() => {
     const handleStoreUpdate = () => {
@@ -2159,7 +2160,15 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     const matchesCategory = category === 'all' || !category ? true : p.category?.toLowerCase() === category || p.category === 'Unisex';
     let matchesFilter = true;
     if (filter === 'All') matchesFilter = true;
-    else if (['Hoodie', 'T-Shirt', 'Crop Top', 'Oversized'].includes(filter)) matchesFilter = p.type?.includes(filter);
+    else if (filter === 'Hoodie') {
+      matchesFilter = p.type?.toLowerCase().includes('hoodie') || p.tags?.includes('hoodie') || p.shopifyHandle?.includes('hoodie');
+    } else if (filter === 'T-Shirt') {
+      matchesFilter = p.type?.toLowerCase() === 'tee' || p.type?.toLowerCase().includes('t-shirt') || p.type?.toLowerCase().includes('tshirt') || p.shopifyHandle?.includes('tshirt') || p.shopifyHandle?.includes('tee');
+    } else if (filter === 'Crop Top') {
+      matchesFilter = p.type?.toLowerCase().includes('crop') || p.tags?.includes('croptop');
+    } else if (filter === 'Oversized') {
+      matchesFilter = p.type?.toLowerCase().includes('oversized') || p.tags?.includes('oversized') || p.shopifyHandle?.includes('oversized') || p.name?.toLowerCase().includes('oversized');
+    }
     else if (['Men', 'Women', 'Unisex'].includes(filter)) matchesFilter = p.category === filter;
     else if (filter === 'OLD') matchesFilter = p.tags?.includes('VINTAGE');
     else if (filter === 'BOLD') matchesFilter = p.tags?.includes('COLORFUL');
@@ -2193,7 +2202,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
         <div className="flex flex-col lg:flex-row gap-16 relative items-start">
           {/* Sticky Sidebar */}
-          <aside className="w-full lg:w-1/4 shrink-0 sticky top-32 max-h-[calc(100vh-8rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden">
+          <aside className="hidden lg:block w-full lg:w-1/4 shrink-0 sticky top-32 max-h-[calc(100vh-8rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden">
             <div className="bg-white border-[6px] border-black p-8 shadow-[12px_12px_0px_0px_#000] mb-8">
               <div className="flex items-center gap-4 mb-8 pb-4 border-b-[4px] border-black">
                 <SlidersHorizontal size={24} className="text-black" />
@@ -2309,6 +2318,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                     </button>
                     {collections
                       .filter(c => c.handle !== 'all')
+                      .filter(c => !['classic-tshirts', 'oversized-fit', 'hoodies-sweatshirts', 'crop-tops'].includes(c.handle))
                       .filter(c => !c.name.toLowerCase().includes('all products') && c.name.toLowerCase() !== 'all')
                       .filter(c => !c.name.toLowerCase().includes('under') && !c.name.toLowerCase().includes('below') && !c.name.toLowerCase().includes('₹'))
                       .map(collection => (
@@ -2322,12 +2332,44 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                     ))}
                   </div>
                 </div>
+
+                <button
+                  onClick={() => {
+                    setFilter('All');
+                    setSelectedCollection('all');
+                    setSearchQuery('');
+                    setPriceRange([0, 5000]);
+                  }}
+                  className="w-full mt-8 py-3 bg-white hover:bg-gray-100 text-black border-[3px] border-black font-black uppercase tracking-widest text-xs shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                >
+                  Clear All Filters
+                </button>
               </div>
             </div>
           </aside>
 
           {/* Product Grid */}
-          <div className="flex-1">
+          <div className="flex-1 w-full">
+            {/* Mobile Search and Filter Bar */}
+            <div className="lg:hidden flex gap-3 mb-8 w-full">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={18} />
+                <input
+                  type="text"
+                  placeholder="SEARCH..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-white border-[3px] border-black px-10 py-3 text-black font-black placeholder-gray-400 focus:shadow-[4px_4px_0px_0px_#00ff88] outline-none transition-all uppercase text-xs"
+                />
+              </div>
+              <button
+                onClick={() => setIsMobileFilterOpen(true)}
+                className="bg-black text-[#00ff88] border-[3px] border-black font-black uppercase text-xs px-5 py-3 shadow-[4px_4px_0px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center gap-2"
+              >
+                <SlidersHorizontal size={14} /> FILTERS
+              </button>
+            </div>
+
             <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-2 sm:gap-6 md:gap-12">
               <AnimatePresence mode="popLayout">
                 {filteredProducts.map(product => (
@@ -2353,7 +2395,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               <div className="text-center py-24 border-[6px] border-black border-dashed bg-gray-50">
                 <p className="text-4xl font-black text-black uppercase mb-8">Nothing Found In The Archives</p>
                 <button 
-                  onClick={() => { setFilter('All'); setSearchQuery('') }} 
+                  onClick={() => { setFilter('All'); setSearchQuery(''); setSelectedCollection('all'); setPriceRange([0, 5000]); }} 
                   className="bg-black text-[#00ff88] px-12 py-4 border-[4px] border-black font-black uppercase tracking-widest shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
                 >
                   Reset All Filters
@@ -2363,6 +2405,166 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Filters Drawer */}
+      <AnimatePresence>
+        {isMobileFilterOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: '100%' }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 250 }}
+            className="fixed inset-0 bg-white z-[100] flex flex-col p-6 overflow-y-auto"
+          >
+            {/* Modal Header */}
+            <div className="flex justify-between items-center mb-8 pb-4 border-b-[4px] border-black">
+              <span className="font-black font-syne text-2xl uppercase text-black">Filters</span>
+              <button 
+                onClick={() => setIsMobileFilterOpen(false)}
+                className="bg-black text-[#00ff88] p-2 border-[2px] border-black font-black uppercase text-xs shadow-[3px_3px_0px_0px_#000]"
+              >
+                Close
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="space-y-8 flex-1">
+              {/* Category */}
+              <div>
+                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Category</h4>
+                <div className="flex flex-wrap gap-2">
+                  {['All', 'Men', 'Women', 'Unisex'].map(c => (
+                    <button
+                      key={c}
+                      onClick={() => setFilter(c)}
+                      className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest transition-all ${filter === c ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black active:translate-y-[1px]'}`}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Product Type */}
+              <div>
+                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Product Type</h4>
+                <div className="flex flex-wrap gap-2">
+                  {['Hoodie', 'T-Shirt', 'Crop Top', 'Oversized'].map(c => (
+                    <button
+                      key={c}
+                      onClick={() => setFilter(c)}
+                      className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest transition-all ${filter === c ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black active:translate-y-[1px]'}`}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Range */}
+              <div>
+                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Price Range</h4>
+                <div className="px-2">
+                  <div className="flex justify-between text-sm font-black text-black mb-2">
+                    <span>₹{priceRange[0]}</span>
+                    <span>₹{priceRange[1]}{priceRange[1] >= 5000 ? '+' : ''}</span>
+                  </div>
+                  <div 
+                    className="relative h-2 bg-gray-200 rounded-full mb-4"
+                    onMouseEnter={() => setCursorVariant('hidden')}
+                    onMouseLeave={() => setCursorVariant('default')}
+                  >
+                    <div 
+                      className="absolute h-full bg-[#00ff88]" 
+                      style={{ 
+                        left: `${(priceRange[0] / 5000) * 100}%`, 
+                        right: `${100 - (priceRange[1] / 5000) * 100}%` 
+                      }}
+                    />
+                    <input
+                      type="range"
+                      min="0"
+                      max="5000"
+                      step="100"
+                      value={priceRange[0]}
+                      onChange={(e) => setPriceRange([Math.min(parseInt(e.target.value), priceRange[1] - 100), priceRange[1]])}
+                      className="absolute w-full -top-1 h-4 opacity-0 cursor-pointer pointer-events-auto dual-range"
+                      style={{ zIndex: priceRange[0] > 2500 ? 5 : 3 }}
+                    />
+                    <input
+                      type="range"
+                      min="0"
+                      max="5000"
+                      step="100"
+                      value={priceRange[1]}
+                      onChange={(e) => setPriceRange([priceRange[0], Math.max(parseInt(e.target.value), priceRange[0] + 100)])}
+                      className="absolute w-full -top-1 h-4 opacity-0 cursor-pointer pointer-events-auto dual-range"
+                      style={{ zIndex: 4 }}
+                    />
+                    {/* Thumbs */}
+                    <div 
+                      className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black border-2 border-white rounded-full pointer-events-none transition-all"
+                      style={{ left: `calc(${(priceRange[0] / 5000) * 100}% - 8px)` }}
+                    />
+                    <div 
+                      className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black border-2 border-white rounded-full pointer-events-none transition-all"
+                      style={{ left: `calc(${(priceRange[1] / 5000) * 100}% - 8px)` }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Collections */}
+              <div>
+                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Collections</h4>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setSelectedCollection('all')}
+                    className={`block w-full text-left px-4 py-2 border-[3px] border-black font-black text-xs uppercase transition-all ${selectedCollection === 'all' ? 'bg-black text-[#00ff88]' : 'bg-white text-black'}`}
+                  >
+                    All Products
+                  </button>
+                  {collections
+                    .filter(c => c.handle !== 'all')
+                    .filter(c => !['classic-tshirts', 'oversized-fit', 'hoodies-sweatshirts', 'crop-tops'].includes(c.handle))
+                    .filter(c => !c.name.toLowerCase().includes('all products') && c.name.toLowerCase() !== 'all')
+                    .filter(c => !c.name.toLowerCase().includes('under') && !c.name.toLowerCase().includes('below') && !c.name.toLowerCase().includes('₹'))
+                    .map(collection => (
+                    <button
+                      key={collection.handle}
+                      onClick={() => setSelectedCollection(collection.handle)}
+                      className={`block w-full text-left px-4 py-2 border-[3px] border-black font-black text-xs uppercase transition-all ${selectedCollection === collection.handle ? 'bg-black text-[#00ff88]' : 'bg-white text-black'}`}
+                    >
+                      {collection.name} ({collection.productCount || 0})
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="mt-8 pt-4 border-t-[4px] border-black flex gap-4">
+              <button
+                onClick={() => {
+                  setFilter('All');
+                  setSelectedCollection('all');
+                  setSearchQuery('');
+                  setPriceRange([0, 5000]);
+                }}
+                className="flex-1 py-4 bg-white text-black border-[3px] border-black font-black uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+              >
+                Clear
+              </button>
+              <button
+                onClick={() => setIsMobileFilterOpen(false)}
+                className="flex-1 py-4 bg-[#00ff88] text-black border-[3px] border-black font-black uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+              >
+                Apply
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
