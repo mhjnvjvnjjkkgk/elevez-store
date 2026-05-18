@@ -294,5 +294,96 @@
     "isSystem": false,
     "source": "shopify",
     "importedAt": "2025-12-28T18:56:29.286Z"
+  },
+  {
+    "id": "1766960993446-0",
+    "handle": "all-products",
+    "name": "All products!",
+    "description": "Products in the All products! collection",
+    "image": "",
+    "productHandles": [
+      "oversized-cute-simple-bunny-tshirt",
+      "cute-blessed-tshirt-for-girls",
+      "japaneese-text-tshirt-cool-front-elevez",
+      "back-dragon-print-epic-design-front-elevez",
+      "cute-butterfly-croptop-for-women",
+      "ami-akta-dhowa-tulsi-pata-tshirt",
+      "kal-ana-tshirt",
+      "navy-blue-premium-tshirt",
+      "grey-melange-tshirt",
+      "coffee-brown-premium-tshirt",
+      "dragon-samurai-main-epic-imp",
+      "guy-sitting-between-sun-and-moon-circuler-tshirt",
+      "grey-hoodie-trident-design",
+      "samurai-dragon-2nd-tshirt",
+      "youre-aldready-under-my-genjutsu",
+      "skull-triangle-oversized-tshirt",
+      "paisa-design-stylish-genz-tshirt",
+      "stylish-buttefly-tshirt",
+      "oversized-unisex-peace-simple-bird-tshirt",
+      "oversized-illuminaty-skull-triangle-design",
+      "ami-akta-dhowa-tulsi-pata-funky",
+      "oversized-cute-bunny-tshirt-for-women"
+    ],
+    "productCount": 22,
+    "sectionMapping": null,
+    "order": 0,
+    "isSystem": false,
+    "source": "generated",
+    "createdAt": "2025-12-28T22:29:53.446Z"
+  },
+  {
+    "id": "1766960993446-1",
+    "handle": "below-699",
+    "name": "Below 699",
+    "description": "Products in the Below 699 collection",
+    "image": "",
+    "productHandles": [
+      "oversized-cute-simple-bunny-tshirt",
+      "oversized-unisex-peace-simple-bird-tshirt",
+      "oversized-illuminaty-skull-triangle-design"
+    ],
+    "productCount": 3,
+    "sectionMapping": null,
+    "order": 1,
+    "isSystem": false,
+    "source": "generated",
+    "createdAt": "2025-12-28T22:29:53.446Z"
+  },
+  {
+    "id": "1766960993446-2",
+    "handle": "under-600",
+    "name": "Under 600",
+    "description": "Products in the Under 600 collection",
+    "image": "",
+    "productHandles": [
+      "japaneese-text-tshirt-cool-front-elevez",
+      "back-dragon-print-epic-design-front-elevez",
+      "guy-sitting-between-sun-and-moon-circuler-tshirt",
+      "skull-triangle-oversized-tshirt",
+      "paisa-design-stylish-genz-tshirt"
+    ],
+    "productCount": 5,
+    "sectionMapping": null,
+    "order": 2,
+    "isSystem": false,
+    "source": "generated",
+    "createdAt": "2025-12-28T22:29:53.446Z"
+  },
+  {
+    "id": "1766960993446-3",
+    "handle": "home-page",
+    "name": "Home page",
+    "description": "Products in the Home page collection",
+    "image": "",
+    "productHandles": [
+      "paisa-design-stylish-genz-tshirt"
+    ],
+    "productCount": 1,
+    "sectionMapping": null,
+    "order": 3,
+    "isSystem": false,
+    "source": "generated",
+    "createdAt": "2025-12-28T22:29:53.446Z"
   }
 ]

@@ -10,7 +10,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-import { PRODUCTS, BRAND_NAME } from './constants';
+import { PRODUCTS, BRAND_NAME, AVAILABLE_COLORS } from './constants';
 import { localCollectionService } from './services/localCollectionService';
 import { Product, ProductType, CartItem, CursorVariant } from './types';
 import { auth } from './firebaseConfig';
@@ -2617,6 +2617,12 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   const productImages = product.images && product.images.length > 0 ? product.images.slice(0, 5) : [product.image];
 
   const getColorCode = (name: string) => {
+    // Dynamic centralized lookup
+    const found = (AVAILABLE_COLORS as any[])?.find(
+      c => c && c.name && c.name.toLowerCase() === name.toLowerCase()
+    );
+    if (found && found.code) return found.code;
+
     const colors: { [key: string]: string } = {
       'Black': '#000000', 'White': '#FFFFFF', 'Void Gray': '#333333',
       'Neon Green': '#39FF14', 'Cyber Pink': '#FF007F', 'Code Green': '#00FF00',

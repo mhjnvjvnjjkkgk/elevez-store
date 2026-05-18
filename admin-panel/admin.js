@@ -284,6 +284,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load cloud data directly (prioritizing Firestore Single Source of Truth)
   await loadData();
   setupNavigation();
+  if (window.renderGlobalColorsGrid) {
+    window.renderGlobalColorsGrid();
+  }
   setupSyncButton();
 
   // Force render orders immediately
@@ -4743,4 +4746,162 @@ ${imageAnalysis}`;
       descField.style.background = '';
     }, 2000);
   }
+};
+
+// ==========================================
+// CENTRALIZED GLOBAL COLORS MANAGEMENT
+// ==========================================
+
+window.renderGlobalColorsGrid = function() {
+  const grid = document.getElementById('globalColorsGrid');
+  if (!grid) return;
+  
+  if (!state.availableColors || state.availableColors.length === 0) {
+    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">No colors in database</div>';
+    return;
+  }
+
+  grid.innerHTML = state.availableColors.map((color, index) => {
+    return `
+      <div class="color-manager-card" style="
+        background: linear-gradient(145deg, rgba(30, 30, 30, 0.9) 0%, rgba(20, 20, 20, 0.95) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+      " onmouseenter="this.style.borderColor='rgba(0, 255, 136, 0.3)'; this.style.transform='translateY(-2px)'"
+         onmouseleave="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='translateY(0)'">
+        
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <!-- Swatch Circle -->
+          <div style="
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: ${color.code};
+            border: 3px solid #000;
+            box-shadow: 3px 3px 0px 0px #000;
+            ${color.name.toLowerCase() === 'white' ? 'border: 3px solid #333;' : ''}
+          "></div>
+          <div>
+            <h4 style="font-weight: 700; color: #fff; margin: 0; font-size: 15px;">${color.name}</h4>
+            <span style="font-family: monospace; font-size: 12px; color: var(--text-muted);">${color.code}</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" onclick="openGlobalColorModal(${index})" style="padding: 6px 12px; font-size: 12px; background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+            ✏️ Edit
+          </button>
+          <button class="btn" onclick="deleteGlobalColor(${index})" style="padding: 6px 12px; font-size: 12px; background: rgba(255, 68, 68, 0.15); color: #ff4444; border: 1px solid rgba(255, 68, 68, 0.2);">
+            🗑️ Delete
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+};
+
+window.openGlobalColorModal = function(index = null) {
+  const modal = document.getElementById('globalColorModal');
+  const title = document.getElementById('globalColorModalTitle');
+  const nameInput = document.getElementById('globalColorName');
+  const hexPicker = document.getElementById('globalColorHexPicker');
+  const hexCode = document.getElementById('globalColorHexCode');
+  const originalName = document.getElementById('globalColorOriginalName');
+
+  if (index !== null) {
+    // Edit Mode
+    const color = state.availableColors[index];
+    title.innerText = 'Edit Global Color';
+    nameInput.value = color.name;
+    hexPicker.value = color.code;
+    hexCode.value = color.code.toUpperCase();
+    originalName.value = color.name;
+  } else {
+    // Create Mode
+    title.innerText = 'Add Global Color';
+    nameInput.value = '';
+    hexPicker.value = '#00ff88';
+    hexCode.value = '#00FF88';
+    originalName.value = '';
+  }
+
+  modal.classList.add('active');
+};
+
+window.closeGlobalColorModal = function() {
+  const modal = document.getElementById('globalColorModal');
+  modal.classList.remove('active');
+};
+
+window.saveGlobalColor = async function(event) {
+  event.preventDefault();
+  const name = document.getElementById('globalColorName').value.trim();
+  const code = document.getElementById('globalColorHexCode').value.trim().toUpperCase();
+  const originalName = document.getElementById('globalColorOriginalName').value;
+
+  if (!name || !code) {
+    alert('❌ Color Name and Hex Code are required!');
+    return;
+  }
+
+  if (originalName) {
+    // Edit operation
+    const index = state.availableColors.findIndex(c => c.name === originalName);
+    if (index > -1) {
+      // Update any products using the old color name/code to prevent breaking
+      state.products.forEach(product => {
+        if (product.colors && Array.isArray(product.colors)) {
+          product.colors.forEach((col, cIdx) => {
+            if (col.name === originalName) {
+              product.colors[cIdx] = { name, code };
+            } else if (col === originalName) {
+              product.colors[cIdx] = name;
+            }
+          });
+        }
+      });
+      state.availableColors[index] = { name, code };
+    }
+  } else {
+    // Add operation
+    if (state.availableColors.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+      alert('❌ Color already exists!');
+      return;
+    }
+    state.availableColors.push({ name, code });
+  }
+
+  // Update localStorage and trigger Server save & compile
+  localStorage.setItem('elevez_colors', JSON.stringify(state.availableColors));
+  await saveData();
+
+  // Render and update UI grids
+  window.renderGlobalColorsGrid();
+  renderColorsGrid(); // Also update product modal checkboxes
+  closeGlobalColorModal();
+
+  showSyncStatus(`Color "${name}" saved successfully`, 'success');
+};
+
+window.deleteGlobalColor = async function(index) {
+  const color = state.availableColors[index];
+  if (!confirm(`Are you sure you want to delete color "${color.name}"?`)) return;
+
+  state.availableColors.splice(index, 1);
+
+  // Update localStorage and sync
+  localStorage.setItem('elevez_colors', JSON.stringify(state.availableColors));
+  await saveData();
+
+  // Render and update UI grids
+  window.renderGlobalColorsGrid();
+  renderColorsGrid(); // Also update product modal checkboxes
+
+  showSyncStatus(`Color "${color.name}" deleted`, 'success');
 };

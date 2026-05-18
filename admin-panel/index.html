@@ -58,6 +58,11 @@
           <span class="nav-text">Users Management</span>
           <span class="nav-badge" style="background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);">LIVE</span>
         </button>
+        <button class="nav-item" data-view="colors-management">
+          <span class="nav-icon">🎨</span>
+          <span class="nav-text">Colors Management</span>
+          <span class="nav-badge" style="background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);">SYSTEM</span>
+        </button>
         <a href="shopify-import.html" class="nav-item" style="text-decoration: none; display: flex;">
           <span class="nav-icon">🛒</span>
           <span class="nav-text">Shopify Import</span>
@@ -209,6 +214,23 @@
         <iframe src="users-management.html"
           style="width: 100%; height: calc(100vh - 100px); border: none; border-radius: 12px;"
           title="Users Management"></iframe>
+      </div>
+
+      <!-- Colors Management View -->
+      <div class="view" id="colors-management-view">
+        <div class="view-header">
+          <h2>Colors Management</h2>
+          <button class="btn btn-primary" onclick="openGlobalColorModal()">+ Add Global Color</button>
+        </div>
+        <div class="card" style="margin-top: 20px;">
+          <div class="card-title">🎨 Global Active Colors</div>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+            Manage the centralized system of active product colors. Colors created or modified here are synced instantly to the shop, database, and products.
+          </p>
+          <div class="colors-management-grid" id="globalColorsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+            <!-- Colors rendered dynamically -->
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -668,6 +690,35 @@
     </div>
   </div>
 
+  <!-- Global Color Modal -->
+  <div class="modal" id="globalColorModal">
+    <div class="modal-backdrop" onclick="closeGlobalColorModal()"></div>
+    <div class="modal-content" style="max-width: 450px;">
+      <div class="modal-header">
+        <h3 id="globalColorModalTitle">Add Global Color</h3>
+        <button class="close-modal" onclick="closeGlobalColorModal()">×</button>
+      </div>
+      <form id="globalColorForm" onsubmit="saveGlobalColor(event)" style="padding: 20px;">
+        <input type="hidden" id="globalColorOriginalName">
+        <div class="form-group">
+          <label class="form-label">Color Name *</label>
+          <input type="text" class="form-input" id="globalColorName" placeholder="e.g., Coffee Brown" required>
+        </div>
+        <div class="form-group" style="margin-top: 15px;">
+          <label class="form-label">Color Hex Code *</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="color" id="globalColorHexPicker" value="#00ff88" style="width: 55px; height: 42px; border: none; border-radius: 8px; cursor: pointer; background: transparent;" oninput="document.getElementById('globalColorHexCode').value = this.value.toUpperCase()">
+            <input type="text" class="form-input" id="globalColorHexCode" placeholder="#00FF88" pattern="^#[0-9A-Fa-f]{6}$" required style="flex: 1;" oninput="if(this.value.match(/^#[0-9A-Fa-f]{6}$/)) document.getElementById('globalColorHexPicker').value = this.value">
+          </div>
+        </div>
+        <div class="modal-footer" style="padding-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-secondary" onclick="closeGlobalColorModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveGlobalColorBtn">Save Color</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <script>
     // Merge trial products with existing products
@@ -730,6 +781,10 @@
         loadDiscounts();
       } else if (viewName === 'user-points') {
         loadUserPoints();
+      } else if (viewName === 'colors-management') {
+        if (window.renderGlobalColorsGrid) {
+          window.renderGlobalColorsGrid();
+        }
       }
     }
 

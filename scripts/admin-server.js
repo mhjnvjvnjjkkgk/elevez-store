@@ -845,7 +845,7 @@ export function getCollectionProducts(collectionId: string): Product[] {
           fs.mkdirSync(centralBackupDir, { recursive: true });
         }
         
-        const backupData = { products, collections, orders };
+        const backupData = { products, collections, orders, tags, categories, types, colors };
         fs.writeFileSync(centralBackupFile, JSON.stringify(backupData, null, 2), 'utf8');
         console.log(`💾 Saved ${products.length} products to unified backup.json`);
 
