@@ -2699,54 +2699,54 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
           </div></div>
 
           {/* Right Column - Details */}
-          <div className="lg:col-span-6"><div className="bg-white border-[8px] border-black p-6 md:p-10 shadow-[16px_16px_0px_0px_#000] flex flex-col relative overflow-hidden">
+          <div className="lg:col-span-6"><div className="bg-white border-[4px] sm:border-[6px] border-black p-4 sm:p-6 md:p-8 shadow-[8px_8px_0px_0px_#000] sm:shadow-[12px_12px_0px_0px_#000] flex flex-col relative overflow-hidden">
             {/* Corner Decorative Star Badge */}
             <motion.div
               animate={{ rotate: -360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute -top-6 -right-6 w-16 h-16 bg-black border-[3px] border-white flex items-center justify-center opacity-10 pointer-events-none"
+              className="absolute -top-6 -right-6 w-12 h-12 bg-black border-[2px] border-white flex items-center justify-center opacity-10 pointer-events-none"
               style={{ clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }}
             />
 
-            <div className="flex items-center gap-3 mb-4 font-black uppercase text-xs">
-              <span className="bg-black text-white px-3 py-1">Premium Collection</span>
+            <div className="flex items-center gap-2 mb-3 font-black uppercase text-[10px]">
+              <span className="bg-black text-white px-2 py-0.5">Premium Collection</span>
               <GlitchText text={product.category} className="text-black" />
             </div>
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-black leading-[0.95] mb-6 font-syne uppercase tracking-tighter relative cursor-default select-none pb-4 border-b-[4px] border-black">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-black leading-[0.95] mb-4 font-syne uppercase tracking-tighter relative cursor-default select-none pb-3 border-b-[3px] border-black">
               {product.name}
             </h1>
 
-            <div className="flex items-center gap-6 mb-4">
-              <div className="text-[#00ff88] text-5xl font-black font-price stroke-black" style={{ WebkitTextStroke: '1.5px black' }}>
+            <div className="flex items-center gap-4 mb-3">
+              <div className="text-[#00ff88] text-4xl font-black font-price stroke-black" style={{ WebkitTextStroke: '1.2px black' }}>
                 ₹<GlitchText text={product.price.toString()} triggerOnHover={false} />
               </div>
-              <span className="font-price text-2xl text-red-400 line-through font-bold">₹{product.originalPrice}</span>
-              <div className="bg-[#00ff88] border-[3px] border-black px-3 py-1 font-black text-xs uppercase shadow-[4px_4px_0px_0px_#000]">
+              <span className="font-price text-xl text-red-400 line-through font-bold">₹{product.originalPrice}</span>
+              <div className="bg-[#00ff88] border-[2px] border-black px-2 py-0.5 font-black text-[10px] uppercase shadow-[3px_3px_0px_0px_#000]">
                 Save <span className="font-price">₹{(product.originalPrice - product.price).toFixed(0)}</span>
               </div>
             </div>
 
             {/* Horizontal Warning Tape */}
-            <div className="my-6 -mx-12 border-y-[4px] border-black bg-yellow-300 text-black py-2 overflow-hidden flex-shrink-0 select-none pointer-events-none">
-              <InfiniteMarquee text="⚠️ STREETWEAR PROTOCOL // SS26 DROP // 100% PREMIUM COTTON // HEAVYWEIGHT 240 GSM // NO REPRINTS ⚠️" className="py-1 text-black text-[10px] font-black tracking-widest" />
+            <div className="my-4 -mx-12 border-y-[3px] border-black bg-yellow-300 text-black py-1.5 overflow-hidden flex-shrink-0 select-none pointer-events-none">
+              <InfiniteMarquee text="⚠️ STREETWEAR PROTOCOL // SS26 DROP // 100% PREMIUM COTTON // HEAVYWEIGHT 240 GSM // NO REPRINTS ⚠️" className="py-0.5 text-black text-[9px] font-black tracking-widest" />
             </div>
 
-            <p className="text-black font-bold uppercase text-base leading-tight mb-8 border-l-[6px] border-black pl-6 italic">
+            <p className="text-black font-bold uppercase text-xs sm:text-sm leading-snug mb-5 border-l-[4px] border-black pl-4 italic">
               {product.description || 'Premium quality streetwear with personality-driven design. Engineered for durability and style in the urban environment.'}
             </p>
 
             {/* Selection Options */}
-            <div className="space-y-8 mb-10">
+            <div className="space-y-6 mb-8">
               {product.colors && (
                 <div>
-                  <h4 className="text-sm font-black uppercase mb-4 text-black">Color: {selectedColor}</h4>
-                  <div className="flex flex-wrap gap-2 sm:gap-4">
+                  <h4 className="text-xs font-black uppercase mb-3 text-black">Color: {selectedColor}</h4>
+                  <div className="flex flex-wrap gap-2 sm:gap-3">
                     {product.colors.map(color => (
                       <button
                         key={color}
                         onClick={() => setSelectedColor(color)}
-                        className={`w-8 h-8 sm:w-12 sm:h-12 border-[2px] sm:border-[4px] border-black transition-all ${selectedColor === color ? 'shadow-[4px_4px_0px_0px_#00ff88] scale-110' : 'hover:scale-105'}`}
+                        className={`w-7 h-7 sm:w-9 sm:h-9 border-[2px] border-black transition-all ${selectedColor === color ? 'shadow-[3px_3px_0px_0px_#00ff88] scale-110' : 'hover:scale-105'}`}
                         style={{ backgroundColor: getColorCode(color) }}
                         title={color}
                       />
@@ -2756,13 +2756,13 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               )}
 
               <div>
-                <h4 className="text-sm font-black uppercase mb-4 text-black">Size: {selectedSize}</h4>
-                <div className="flex flex-wrap gap-2 sm:gap-3">
+                <h4 className="text-xs font-black uppercase mb-3 text-black">Size: {selectedSize}</h4>
+                <div className="flex flex-wrap gap-2">
                   {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`w-10 h-10 sm:w-14 sm:h-14 border-[2px] sm:border-[4px] border-black font-black text-sm sm:text-lg transition-all ${selectedSize === size ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_#000]'}`}
+                      className={`w-8 h-8 sm:w-10 sm:h-10 border-[2px] sm:border-[3px] border-black font-black text-xs sm:text-sm transition-all ${selectedSize === size ? 'bg-[#00ff88] text-black shadow-[3px_3px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_#000]'}`}
                     >
                       {size}
                     </button>
@@ -2771,20 +2771,20 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               </div>
 
               <div>
-                <h4 className="text-sm font-black uppercase mb-4 text-black">Quantity</h4>
-                <div className="flex items-center border-[2px] sm:border-[4px] border-black w-fit bg-white shadow-[2px_2px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center font-black text-lg sm:text-2xl hover:bg-black hover:text-white transition-all border-r-[2px] sm:border-r-[4px] border-black">
+                <h4 className="text-xs font-black uppercase mb-3 text-black">Quantity</h4>
+                <div className="flex items-center border-[2px] sm:border-[3px] border-black w-fit bg-white shadow-[2px_2px_0px_0px_#000] sm:shadow-[3px_3px_0px_0px_#000]">
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center font-black text-sm sm:text-lg hover:bg-black hover:text-white transition-all border-r-[2px] sm:border-r-[3px] border-black">
                     -
                   </button>
-                  <span className="w-10 sm:w-16 text-center font-black text-base sm:text-xl">{quantity}</span>
-                  <button onClick={() => setQuantity(quantity + 1)} className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center font-black text-lg sm:text-2xl hover:bg-black hover:text-white transition-all border-l-[2px] sm:border-l-[4px] border-black">
+                  <span className="w-8 sm:w-12 text-center font-black text-xs sm:text-sm">{quantity}</span>
+                  <button onClick={() => setQuantity(quantity + 1)} className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center font-black text-sm sm:text-lg hover:bg-black hover:text-white transition-all border-l-[2px] sm:border-l-[3px] border-black">
                     +
                   </button>
                 </div>
               </div>
             </div>
 
-            <div className="mb-10">
+            <div className="mb-6">
               <DynamicAccordion items={[
                 { title: "Product Architecture", content: product.description || "Designed for maximum utility and urban aesthetics. Built with high-grade GSM fabric for durability and comfort." },
                 { title: "Material Protocol", content: "100% Premium Cotton // 240 GSM // Pre-shrunk // Bio-washed // Sustainably sourced." },
@@ -2793,16 +2793,16 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
             </div>
 
             {/* Desktop Buttons */}
-            <div className="hidden lg:flex flex-col gap-6 mb-12">
+            <div className="hidden lg:flex flex-col gap-4 mb-8">
               <Magnetic>
                 <button
                   onClick={() => {
                     addToCart(product, selectedSize, selectedColor || 'Standard', quantity);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="w-full py-8 bg-black text-[#00ff88] border-[4px] border-black font-black text-3xl uppercase tracking-widest shadow-[10px_10px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all flex items-center justify-center gap-6"
+                  className="w-full py-4 bg-black text-[#00ff88] border-[3px] border-black font-black text-xl uppercase tracking-widest shadow-[6px_6px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center justify-center gap-4"
                 >
-                  <ShoppingBag size={32} /> Initiate Purchase
+                  <ShoppingBag size={20} /> Initiate Purchase
                 </button>
               </Magnetic>
 
@@ -2814,7 +2814,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                     window.scrollTo(0, 0);
                   }, 300);
                 }}
-                className="w-full bg-[#00ff88] text-black font-black text-2xl py-6 border-[4px] border-black uppercase tracking-widest shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
+                className="w-full bg-[#00ff88] text-black font-black text-base py-3 border-[3px] border-black uppercase tracking-widest shadow-[5px_5px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
               >
                 Buy It Now
               </button>
@@ -2846,17 +2846,17 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
             </div>
 
             {/* Service Grid */}
-            <div className="grid grid-cols-3 gap-6 pt-10 border-t-[4px] border-black">
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t-[3px] border-black">
               {[
                 { icon: Truck, label: "3-Day Delivery" },
                 { icon: RefreshCw, label: "Easy Returns" },
                 { icon: ShieldCheck, label: "Safe Payment" }
               ].map((service, i) => (
-                <div key={i} className="flex flex-col items-center text-center gap-3">
-                  <div className="w-12 h-12 bg-black text-[#00ff88] flex items-center justify-center border-[2px] border-black shadow-[4px_4px_0px_0px_#ccc]">
-                    <service.icon size={24} />
+                <div key={i} className="flex flex-col items-center text-center gap-2">
+                  <div className="w-9 h-9 bg-black text-[#00ff88] flex items-center justify-center border-[2px] border-black shadow-[3px_3px_0px_0px_#ccc]">
+                    <service.icon size={16} />
                   </div>
-                  <span className="text-[10px] font-black uppercase text-black tracking-widest">{service.label}</span>
+                  <span className="text-[9px] font-black uppercase text-black tracking-widest">{service.label}</span>
                 </div>
               ))}
             </div>
