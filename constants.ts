@@ -4334,7 +4334,7 @@ export const PRODUCTS: Product[] = [
   }
 ];
 
-// Collections - Auto-filtered by tags and criteria
+// Collections - Manually curated and structured precisely
 export const COLLECTIONS = [
   {
     "id": "col_oversized",
@@ -4368,7 +4368,6 @@ export const COLLECTIONS = [
       "cute-blessed-tshirt-for-girls",
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez",
-      "cute-butterfly-croptop-for-women",
       "ami-akta-dhowa-tulsi-pata-tshirt",
       "kal-ana-tshirt",
       "navy-blue-premium-tshirt",
@@ -4376,7 +4375,6 @@ export const COLLECTIONS = [
       "coffee-brown-premium-tshirt",
       "dragon-samurai-main-epic-imp",
       "guy-sitting-between-sun-and-moon-circuler-tshirt",
-      "grey-hoodie-trident-design",
       "samurai-dragon-2nd-tshirt",
       "youre-aldready-under-my-genjutsu",
       "skull-triangle-oversized-tshirt",
@@ -4386,9 +4384,10 @@ export const COLLECTIONS = [
       "oversized-unisex-peace-simple-bird-tshirt",
       "oversized-illuminaty-skull-triangle-design",
       "ami-akta-dhowa-tulsi-pata-funky",
-      "oversized-cute-bunny-tshirt-for-women"
+      "oversized-cute-bunny-tshirt-for-women",
+      "3"
     ],
-    "productCount": 23,
+    "productCount": 22,
     "order": 2,
     "isSystem": false,
     "source": "manual"
@@ -4436,22 +4435,25 @@ export const COLLECTIONS = [
     "image": "",
     "productHandles": [
       "1",
+      "1765149944844",
+      "4",
+      "grey-hoodie-trident-design",
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez",
       "ami-akta-dhowa-tulsi-pata-tshirt",
-      "1765149944844",
       "navy-blue-premium-tshirt",
       "grey-melange-tshirt",
       "dragon-samurai-main-epic-imp",
       "guy-sitting-between-sun-and-moon-circuler-tshirt",
       "samurai-dragon-2nd-tshirt",
       "youre-aldready-under-my-genjutsu",
-      "4",
       "paisa-design-stylish-genz-tshirt",
       "stylish-buttefly-tshirt",
-      "oversized-illuminaty-skull-triangle-design"
+      "oversized-illuminaty-skull-triangle-design",
+      "5",
+      "3"
     ],
-    "productCount": 15,
+    "productCount": 18,
     "order": 5,
     "isSystem": false,
     "source": "manual"
@@ -4470,9 +4472,11 @@ export const COLLECTIONS = [
       "2",
       "oversized-unisex-peace-simple-bird-tshirt",
       "oversized-illuminaty-skull-triangle-design",
-      "oversized-cute-bunny-tshirt-for-women"
+      "oversized-cute-bunny-tshirt-for-women",
+      "3",
+      "5"
     ],
-    "productCount": 7,
+    "productCount": 9,
     "order": 6,
     "isSystem": false,
     "source": "manual"
