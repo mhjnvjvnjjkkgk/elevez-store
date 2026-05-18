@@ -328,7 +328,9 @@ export const PRODUCTS: Product[] = [
       "Under 500",
       "Tshirt"
     ],
-    "colors": [],
+    "colors": [
+      "Black"
+    ],
     "name": "\"Blessed Ascent\" Black Premium Tee",
     "isFeatured": false,
     "isBestSeller": false,
@@ -584,7 +586,9 @@ export const PRODUCTS: Product[] = [
     "isBestSeller": false,
     "isFeatured": false,
     "name": "\"K-Street Samurai\" | Graffiti Kanji 180gsm T-Shirt (Back Print)",
-    "colors": [],
+    "colors": [
+      "Black"
+    ],
     "rating": 4.8,
     "qid": "SHOP-JAPANEES",
     "collections": [
@@ -810,7 +814,9 @@ export const PRODUCTS: Product[] = [
     "reviews": 169,
     "inStock": true,
     "name": "\"The Sovereign Serpent\" - Black T-Shirt with Japanese Dragon Back Print",
-    "colors": []
+    "colors": [
+      "Black"
+    ]
   },
   {
     "id": 15,
@@ -1241,7 +1247,9 @@ export const PRODUCTS: Product[] = [
     "reviews": 146,
     "inStock": true,
     "name": "\"Ami akta dhowa tulsi pata\" Tshirt",
-    "colors": []
+    "colors": [
+      "White"
+    ]
   },
   {
     "id": 1765149944844,
@@ -1410,7 +1418,9 @@ export const PRODUCTS: Product[] = [
     "isBestSeller": false,
     "descriptionHtml": "",
     "stock": 100,
-    "colors": [],
+    "colors": [
+      "White"
+    ],
     "name": "\"Kal Ana\" tshirt",
     "reviews": 154,
     "inStock": true,
@@ -1433,7 +1443,9 @@ export const PRODUCTS: Product[] = [
     "isBestSeller": false,
     "stock": 100,
     "descriptionHtml": "<p>Embrace the essence of enduring style with the <b>Elevéz Heritage Navy Tee</b>. This isn't just a T-shirt; it's a staple of sophisticated simplicity, designed for those who appreciate understated luxury and impeccable quality. Crafted from premium <b>180 GSM cotton</b>, this tee offers a substantial yet breathable feel, drapes elegantly, and maintains its shape and color wash after wash.</p>\n<p>The rich navy hue provides a versatile foundation for any discerning wardrobe, while the subtle Elevéz logo, meticulously placed on the left chest, signifies a commitment to quiet confidence and timeless design. This tee speaks volumes without saying a word, embodying the refined taste of classic elegance.</p>\n<p><b>Key Features:</b></p>\n<ul>\n<li>\n<p><b>Timeless Elegance:</b> A rich navy color and minimalist design for enduring style.</p>\n</li>\n<li>\n<p><b>Premium Comfort &amp; Quality:</b> Made from substantial <b>180 GSM cotton</b> for a luxurious feel and lasting wear.</p>\n</li>\n<li>\n<p><b>Subtle Sophistication:</b> Discreet Elevéz logo on the left chest signifies exclusivity and taste.</p>\n</li>\n<li>\n<p><b>Versatile Wardrobe Essential:</b> Perfect for elevated casual wear or layering under blazers and fine knits.</p>\n</li>\n</ul>\n<p>Invest in a piece that transcends trends and becomes a cornerstone of your distinguished style.</p>",
-    "colors": [],
+    "colors": [
+      "Navy"
+    ],
     "name": "Navy Blue Premium Old money Tshirt",
     "inStock": true,
     "reviews": 197,
@@ -1671,7 +1683,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     "id": 20,
-    "colors": [],
+    "colors": [
+      "Heather Grey"
+    ],
     "name": "Grey Melange Premium Old money tshirt",
     "reviews": 133,
     "inStock": true,
@@ -1935,7 +1949,9 @@ export const PRODUCTS: Product[] = [
     "isBestSeller": false,
     "isFeatured": false,
     "name": "Coffee brown premium tshirt",
-    "colors": [],
+    "colors": [
+      "Coffee Brown"
+    ],
     "rating": 4.2,
     "qid": "SHOP-COFFEEBR",
     "collections": [
@@ -1958,7 +1974,9 @@ export const PRODUCTS: Product[] = [
     "isFeatured": false,
     "isBestSeller": false,
     "name": "\"The Ronin Spirit\" Samurai graphic Tee",
-    "colors": [],
+    "colors": [
+      "Black"
+    ],
     "collections": [
       "All products!",
       "Best Sellers",
@@ -2229,7 +2247,9 @@ export const PRODUCTS: Product[] = [
     "isFeatured": false,
     "stock": 100,
     "descriptionHtml": "<p>This garment tells the tale of the <b>Sentinel of the Split Gate</b>, a warrior whose very essence is a fusion of primal fury and disciplined honor. It represents the internal struggle and the ultimate balance found on the path of the sword.</p>\n<p>On the <b>left</b>, the fierce crimson half is fueled by the <b>Dragon's Fire</b>—raw, untamed power, and the shadow of destruction. This side is the <b>Ronin</b>, a mercenary of necessity, swift and unforgiving, acting on pure, battle-hardened instinct.</p>\n<p>On the <b>right</b>, the tranquil white light embodies the <b>Spirit of Bushido</b>—discipline, clarity, and noble purpose. This is the <b>Samurai</b>, guided by a strict code of honor, whose mastery is not just in killing, but in knowing when <i>not</i> to.</p>\n<p>The dividing line, crossed by the blade, is the <b>balance</b> Kenshin must maintain. To wear this shirt is to carry the knowledge that true strength lies not in choosing one side, but in mastering the duality of both—harnessing the dragon's power without being consumed by its flame.</p>\n<p><b>Choose your strength. Master your balance.</b></p>\n<p> </p>",
-    "colors": [],
+    "colors": [
+      "Black"
+    ],
     "name": "\"Kenshin's Duality\" Premium Tshirt",
     "inStock": true,
     "reviews": 198,
@@ -2251,7 +2271,9 @@ export const PRODUCTS: Product[] = [
     "inStock": true,
     "reviews": 120,
     "name": "\"The serpent's Key\" Melange Hoodie",
-    "colors": [],
+    "colors": [
+      "Heather Grey"
+    ],
     "stock": 100,
     "descriptionHtml": "<p>The <b>Serpent's Key</b> is an echo of an ancient power—a sigil whispered to grant passage through the unseen. In a world of concrete and fleeting moments, this design binds the modern spirit to the eternal mystery. The script, coiling and unbroken, is a calligraphy of <b>elevation</b> and <b>unbinding</b>, a hidden map for those who seek to rise above the noise.</p>\n<p>This hoodie is forged for the urban wanderer, the one who knows that the true path is always found off the beaten track. Wear it as your shield in the harsh light of the city and as your sigil of intent. It is more than just fabric; it is a vow to <b>unlock your own legend</b>.</p>",
     "isFeatured": false,
@@ -2514,7 +2536,9 @@ export const PRODUCTS: Product[] = [
       "Under 500",
       "Tshirt"
     ],
-    "colors": [],
+    "colors": [
+      "Black"
+    ],
     "name": "\"The Kenshō\" Premium Graphic Tee"
   },
   {
@@ -2536,7 +2560,9 @@ export const PRODUCTS: Product[] = [
     ],
     "rating": 4.9,
     "qid": "SHOP-YOUREALD",
-    "colors": [],
+    "colors": [
+      "White"
+    ],
     "name": "\"You're aldready under my genjutsu\" tshirt",
     "sizes": [
       "S",
@@ -2641,7 +2667,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     "id": 28,
-    "colors": [],
+    "colors": [
+      "Black"
+    ],
     "name": "\"Hex-Hand Ascension\" Oversized Tee",
     "inStock": true,
     "reviews": 119,
@@ -3338,7 +3366,9 @@ export const PRODUCTS: Product[] = [
     "inStock": true,
     "reviews": 120,
     "name": "Metamorphosis Echoes: Geometric Butterfly Tee",
-    "colors": [],
+    "colors": [
+      "White"
+    ],
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_gonw9sgonw9sgonw.png?v=1760954859",
     "sizes": [
       "XS",
@@ -4004,7 +4034,9 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fdv34xfdv34xfdv3.png?v=1761047591"
     ],
     "rating": 4.7,
-    "colors": [],
+    "colors": [
+      "White"
+    ],
     "sizes": [
       "XS",
       "S",
@@ -4317,7 +4349,9 @@ export const PRODUCTS: Product[] = [
       "XL",
       "XXL"
     ],
-    "colors": [],
+    "colors": [
+      "White"
+    ],
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_4.png?v=1761748282",
     "cost": 240,
     "inStock": true,
@@ -4334,7 +4368,6 @@ export const PRODUCTS: Product[] = [
   }
 ];
 
-// Collections - Manually curated and structured precisely
 export const COLLECTIONS = [
   {
     "id": "col_oversized",

@@ -2626,7 +2626,8 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
       'Heather Grey': '#9DA3A6', 'Concrete': '#808080', 'Midnight Blue': '#191970',
       'Chrome Grey': '#A0A0A0', 'Shadow Black': '#121212', 'Cement': '#D3D3D3',
       'Asphalt': '#505050', 'Pulse Red': '#FF0000', 'Static White': '#F8F8FF',
-      'Glitch Purple': '#8A2BE2', 'Metal Grey': '#696969', 'Space Black': '#0A0A0A'
+      'Glitch Purple': '#8A2BE2', 'Metal Grey': '#696969', 'Space Black': '#0A0A0A',
+      'Coffee Brown': '#3E2723'
     };
     return colors[name] || '#000000';
   };
@@ -2773,11 +2774,11 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               <div>
                 <h4 className="text-xs font-black uppercase mb-3 text-black">Quantity</h4>
                 <div className="flex items-center border-[2px] sm:border-[3px] border-black w-fit bg-white shadow-[2px_2px_0px_0px_#000] sm:shadow-[3px_3px_0px_0px_#000]">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center font-black text-sm sm:text-lg hover:bg-black hover:text-white transition-all border-r-[2px] sm:border-r-[3px] border-black">
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center font-black text-sm sm:text-lg hover:bg-black hover:text-white text-black transition-all border-r-[2px] sm:border-r-[3px] border-black">
                     -
                   </button>
-                  <span className="w-8 sm:w-12 text-center font-black text-xs sm:text-sm">{quantity}</span>
-                  <button onClick={() => setQuantity(quantity + 1)} className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center font-black text-sm sm:text-lg hover:bg-black hover:text-white transition-all border-l-[2px] sm:border-l-[3px] border-black">
+                  <span className="w-8 sm:w-12 text-center font-black text-xs sm:text-sm text-black">{quantity}</span>
+                  <button onClick={() => setQuantity(quantity + 1)} className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center font-black text-sm sm:text-lg hover:bg-black hover:text-white text-black transition-all border-l-[2px] sm:border-l-[3px] border-black">
                     +
                   </button>
                 </div>
