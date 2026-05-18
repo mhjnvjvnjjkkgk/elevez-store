@@ -519,11 +519,6 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
           <div className="bg-red-500 text-white text-[6px] sm:text-[8px] font-black px-[2px] sm:px-1 py-[1px] sm:py-[2px] uppercase tracking-wider border-[1px] sm:border-[2px] border-black shadow-[1px_1px_0px_0px_#000]">
             <GlitchText text="50% OFF" triggerOnHover={false} />
           </div>
-          {product.tags?.map(tag => (
-            <div key={tag} className="bg-black text-white text-[6px] sm:text-[8px] font-black px-[2px] sm:px-1 py-[1px] sm:py-[2px] uppercase tracking-wider border-[1px] sm:border-[2px] border-white">
-              {tag}
-            </div>
-          ))}
         </div>
 
         {/* Wishlist Heart Button */}
