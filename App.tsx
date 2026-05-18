@@ -2641,7 +2641,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start pb-20 lg:pb-0">
           {/* Left Column - sticky, full image with borders always in view */}
           <div className="lg:col-span-6 lg:sticky lg:top-28">
-          <div className="bg-white border-[4px] sm:border-[8px] border-black p-2 sm:p-6 md:p-8 shadow-[8px_8px_0px_0px_#000] sm:shadow-[16px_16px_0px_0px_#000] relative flex flex-col h-auto md:h-[600px] lg:h-[calc(100vh-9rem)] lg:min-h-[550px] lg:max-h-[750px]">
+          <div className="bg-white border-[4px] sm:border-[8px] border-black p-2 sm:p-6 md:p-8 shadow-[8px_8px_0px_0px_#000] sm:shadow-[16px_16px_0px_0px_#000] relative flex flex-col h-auto w-full">
             {/* Decorative Spinning Stamp */}
             <motion.div
               animate={{ rotate: 360 }}
@@ -2663,14 +2663,14 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
 
             <div 
               onClick={() => setIsLightboxOpen(true)}
-              className="relative flex-1 min-h-0 border-[4px] border-black bg-white mb-4 group overflow-hidden cursor-zoom-in"
+              className="relative w-full h-auto border-[4px] border-black bg-white mb-4 group overflow-hidden cursor-zoom-in"
               onMouseEnter={() => setCursorVariant('hover')}
               onMouseLeave={() => setCursorVariant('default')}
             >
               <img
                 src={activeImage}
                 alt={product.name}
-                className="w-full h-full object-contain bg-white transition-transform duration-700 group-hover:scale-105 p-0"
+                className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute top-6 left-6 bg-black text-[#00ff88] px-4 py-1 border-[3px] border-black font-black uppercase text-xs shadow-[4px_4px_0px_0px_#000]">
                 {product.type}
