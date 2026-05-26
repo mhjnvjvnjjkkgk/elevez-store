@@ -642,21 +642,39 @@ const QuickViewModal = () => {
               </div>
             </div>
 
-            {/* Color Selection */}
-            <div className="mb-8 flex-shrink-0">
-              <h3 className="text-xs font-black uppercase text-black opacity-40 mb-4 tracking-widest">Select Color: <span className="text-black opacity-100">{selectedColor}</span></h3>
-              <div className="flex flex-wrap gap-4">
-                {activeProduct.colors?.map(color => (
-                  <button
-                    key={color}
-                    onClick={() => setSelectedColor(color)}
-                    className={`px-4 py-2 border-[3px] border-black text-xs font-black uppercase tracking-widest transition-all ${selectedColor === color ? 'bg-black text-[#00ff88] shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000]'}`}
-                  >
-                    {color}
-                  </button>
-                ))}
+            {/* Color Selection — Shopify-style dot swatches */}
+            {activeProduct.colors && activeProduct.colors.length > 0 && (
+              <div className="mb-8 flex-shrink-0">
+                <h3 className="text-xs font-black uppercase text-black opacity-40 mb-4 tracking-widest">
+                  Color: <span className="text-black opacity-100">{selectedColor}</span>
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {activeProduct.colors.map(color => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      title={color}
+                      className="flex flex-col items-center gap-1 group"
+                    >
+                      <div
+                        style={{
+                          background: getColorCode(color),
+                          border: color.toLowerCase() === 'white' ? '2px solid #333' : '2px solid transparent'
+                        }}
+                        className={`w-9 h-9 rounded-full transition-all duration-200 ${
+                          selectedColor === color
+                            ? 'ring-2 ring-[#00ff88] ring-offset-2 scale-110 shadow-[0_0_0_2px_#000]'
+                            : 'group-hover:scale-105 ring-2 ring-transparent ring-offset-1'
+                        }`}
+                      />
+                      <span className={`text-[9px] font-black uppercase tracking-wide ${
+                        selectedColor === color ? 'text-black' : 'text-black opacity-50'
+                      }`}>{color}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Size Selection */}
             <div className="mb-10 flex-shrink-0">
@@ -2745,18 +2763,32 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
 
             {/* Selection Options */}
             <div className="space-y-6 mb-8">
-              {product.colors && (
+              {product.colors && product.colors.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-black uppercase mb-3 text-black">Color: {selectedColor}</h4>
-                  <div className="flex flex-wrap gap-2 sm:gap-3">
+                  <h4 className="text-xs font-black uppercase mb-3 text-black">Color: <span className="text-[#00ff88]">{selectedColor}</span></h4>
+                  <div className="flex flex-wrap gap-3 sm:gap-4">
                     {product.colors.map(color => (
                       <button
                         key={color}
                         onClick={() => setSelectedColor(color)}
-                        className={`w-7 h-7 sm:w-9 sm:h-9 border-[2px] border-black transition-all ${selectedColor === color ? 'shadow-[3px_3px_0px_0px_#00ff88] scale-110' : 'hover:scale-105'}`}
-                        style={{ backgroundColor: getColorCode(color) }}
                         title={color}
-                      />
+                        className="flex flex-col items-center gap-1 group"
+                      >
+                        <div
+                          style={{
+                            background: getColorCode(color),
+                            border: color.toLowerCase() === 'white' ? '2px solid #333' : '2px solid transparent'
+                          }}
+                          className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full transition-all duration-200 ${
+                            selectedColor === color
+                              ? 'ring-2 ring-[#00ff88] ring-offset-2 scale-110'
+                              : 'group-hover:scale-105 ring-2 ring-transparent ring-offset-1'
+                          }`}
+                        />
+                        <span className={`text-[9px] font-black uppercase tracking-wide ${
+                          selectedColor === color ? 'text-black' : 'text-black opacity-40'
+                        }`}>{color}</span>
+                      </button>
                     ))}
                   </div>
                 </div>

@@ -2594,22 +2594,33 @@ function handleProductSubmit(e) {
     });
   }, 100);
 
-  // Show alert with product details
-  const successMsg = `✅ ${isNew ? 'PRODUCT ADDED!' : 'PRODUCT UPDATED!'}\n\n` +
-    `Name: ${product.name}\n` +
-    `QID: ${product.qid}\n` +
-    `Price: ₹${product.price}\n` +
-    `Category: ${product.category}\n` +
-    `Type: ${product.type}\n\n` +
-    `Total Products: ${state.products.length}\n\n` +
-    `Do you want to sync and deploy to your website now?`;
-
-  // Ask if user wants to auto-deploy
+  // ─── AUTO-SYNC constants.ts on every save (background, non-blocking) ───────
+  // This ensures colors/sizes/prices saved in admin panel are immediately
+  // reflected in the storefront data file without a manual Sync & Deploy.
   setTimeout(() => {
-    if (confirm(successMsg)) {
-      autoSyncAndDeploy();
-    }
-  }, 500);
+    fetch('http://localhost:3001/update-constants', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        products: state.products,
+        collections: state.collections,
+        tags: state.availableTags,
+        categories: state.availableCategories,
+        types: state.availableTypes,
+        colors: state.availableColors
+      })
+    })
+    .then(r => {
+      if (r.ok) {
+        console.log('✅ constants.ts auto-synced — colors/data now live in storefront');
+        showSyncStatus('✅ Saved & synced to website!', 'success');
+      }
+    })
+    .catch(() => {
+      // Server offline — silently ignore, user can manually sync later
+      console.log('ℹ️ Admin server offline — constants.ts not auto-synced. Use Sync & Deploy button.');
+    });
+  }, 300);
 }
 
 // Edit Product
