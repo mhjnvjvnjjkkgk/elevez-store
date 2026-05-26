@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ELEVEZ Admin — Cache Reset</title>
+  <style>
+    body { background: #0a0a0a; color: #00ff88; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    h1 { font-size: 2rem; margin-bottom: 10px; }
+    p { color: #aaa; margin: 5px 0; }
+    .log { background: #111; border: 1px solid #00ff8844; border-radius: 8px; padding: 20px; margin-top: 20px; min-width: 400px; }
+    .done { color: #00ff88; }
+    .info { color: #888; }
+  </style>
+</head>
+<body>
+  <h1>🔄 Admin Cache Reset</h1>
+  <p>Clearing stale localStorage product cache...</p>
+  <div class="log" id="log"></div>
+
+  <script>
+    const log = document.getElementById('log');
+    function print(msg, cls='done') {
+      const line = document.createElement('div');
+      line.className = cls;
+      line.textContent = msg;
+      log.appendChild(line);
+    }
+
+    // Keys to wipe so admin panel reloads fresh from server
+    const keys = ['elevez_products', 'elevez_last_save', 'elevez_collections', 'elevez_orders'];
+    keys.forEach(k => {
+      const had = localStorage.getItem(k) !== null;
+      localStorage.removeItem(k);
+      print(`${had ? '🗑️ Removed' : '✅ Already clear'}: ${k}`, had ? 'done' : 'info');
+    });
+
+    print('');
+    print('✅ Cache cleared! Redirecting to admin panel in 2s...', 'done');
+
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 2000);
+  </script>
+</body>
+</html>

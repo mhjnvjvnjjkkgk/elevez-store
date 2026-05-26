@@ -482,7 +482,30 @@ function mergeProductLists(...lists) {
       }
     });
   });
-  return Array.from(mergedMap.values());
+
+  // Second pass: deduplicate by name — prefer long Shopify IDs over short numeric IDs
+  const byName = new Map();
+  for (const p of mergedMap.values()) {
+    const nameKey = (p.name || '').trim().toLowerCase();
+    if (!nameKey) continue;
+    const existing = byName.get(nameKey);
+    if (!existing) {
+      byName.set(nameKey, p);
+    } else {
+      // Keep the one with the longer (Shopify) ID
+      const existingIsShopify = String(existing.id).length > 6;
+      const pIsShopify = String(p.id).length > 6;
+      if (pIsShopify && !existingIsShopify) {
+        byName.set(nameKey, p);
+      } else if (!pIsShopify && existingIsShopify) {
+        // keep existing
+      } else {
+        byName.set(nameKey, getNewerProduct(existing, p));
+      }
+    }
+  }
+
+  return Array.from(byName.values());
 }
 
 function mergeCollectionLists(...lists) {
