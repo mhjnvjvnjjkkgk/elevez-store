@@ -4,12 +4,12 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: 30/5/2026, 4:02:40 am
+// Last update: 30/5/2026, 4:14:30 am
 export const PRODUCTS: Product[] = [
   {
     "id": 7915861377163,
     "rating": 4.3,
-    "category": "Topwear",
+    "category": "Unisex",
     "sku": "UOsMRnHs-Bk-XS-womenflowermain-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "collections": [
@@ -287,7 +287,7 @@ export const PRODUCTS: Product[] = [
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "FRnHs-Bk-XS-blessedbirdmain-Fr-ca",
     "rating": 4.4,
-    "category": "Topwear",
+    "category": "Unisex",
     "collections": [
       "All products!",
       "Women",
@@ -448,7 +448,7 @@ export const PRODUCTS: Product[] = [
       "Under 600",
       "Tshirt"
     ],
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.2,
     "sku": "MRnHs-Bk-XS-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
@@ -584,7 +584,7 @@ export const PRODUCTS: Product[] = [
     "name": "\"The Sovereign Serpent\" - Black T-Shirt with Japanese Dragon Back Print",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_agh1k8agh1k8agh1.png?v=1761329197",
     "originalPrice": 899,
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.9,
     "sku": "MRnHs-Bk-XS-dragonprintingfinalwithpng(1)-Bkelevezmainwhitelogo(1)-Lp-ca",
     "colors": [
@@ -621,7 +621,7 @@ export const PRODUCTS: Product[] = [
     "sku": "FCpTp-Wh-XS-maincroptopbutteflypng_1-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "rating": 4.6,
-    "category": "Topwear",
+    "category": "Women",
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_u9g2euu9g2euu9g2.png?v=1761748319",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/l.png?v=1761046421",
@@ -1014,7 +1014,7 @@ export const PRODUCTS: Product[] = [
     "sku": "MRnHs-Wh-XS-amiaktadhowatulsipata-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "rating": 4.5,
-    "category": "Topwear",
+    "category": "Unisex",
     "collections": [
       "All products!",
       "Below 400",
@@ -1068,7 +1068,7 @@ export const PRODUCTS: Product[] = [
       "XXL"
     ],
     "rating": 4.5,
-    "category": "Men",
+    "category": "Unisex",
     "price": 850,
     "originalPrice": 1500,
     "image": "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
@@ -1104,7 +1104,7 @@ export const PRODUCTS: Product[] = [
       "ALL"
     ],
     "showInHome": true,
-    "category": "Men",
+    "category": "Unisex",
     "profit": 75,
     "isNew": true,
     "isBestSeller": true,
@@ -1233,7 +1233,7 @@ export const PRODUCTS: Product[] = [
     "isFeatured": false,
     "sku": "MRnHs-Wh-XS-NewProject(12)-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.6,
     "collections": [
       "All products!",
@@ -1425,7 +1425,7 @@ export const PRODUCTS: Product[] = [
     "inStock": true,
     "qid": "SHOP-7916018237579",
     "updatedAt": "2026-05-28T10:54:07.771Z",
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.6,
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "MRnHs-Nb-XS-elevezmainwhitelogo(1)-Lp-ca",
@@ -1627,7 +1627,7 @@ export const PRODUCTS: Product[] = [
       "Tshirt"
     ],
     "rating": 5,
-    "category": "Topwear",
+    "category": "Unisex",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "MRnHs-Gm-XS-elevezlogoblack_1-Lp-ca",
     "tags": [
@@ -1670,7 +1670,7 @@ export const PRODUCTS: Product[] = [
       "Tshirt"
     ],
     "rating": 4.8,
-    "category": "Topwear",
+    "category": "Unisex",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "MRnHs-bn-XS-elevezmainwhitelogo(1)_1-Lp-ca",
     "updatedAt": "2026-05-28T10:54:07.772Z",
@@ -1803,7 +1803,7 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-in-a-white-background-wearing-a-white-tshirt_4.png?v=1761063305",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-in-a-white-background-wearing-a-white-tshirt_5.png?v=1761058587"
     ],
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.5,
     "sku": "MRnHs-Wh-XS-longsamuraimainwithllogo-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
@@ -1929,7 +1929,7 @@ export const PRODUCTS: Product[] = [
     "id": 7916024234123,
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "MRnHs-Bk-XS-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.5,
     "collections": [
       "All products!",
@@ -2097,7 +2097,7 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_lb9ffrlb9ffrlb9f.png?v=1761125938"
     ],
     "rating": 4,
-    "category": "Topwear",
+    "category": "Unisex",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "UHd-Gm-XS-NewProject(12)_1-Bk-ca",
     "collections": [
@@ -2350,14 +2350,14 @@ export const PRODUCTS: Product[] = [
       "Under 500",
       "Tshirt"
     ],
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.3,
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "MRnHs-Wh-S-dragonsamuraiwithlogo-Fr-ca"
   },
   {
     "id": 7963981807755,
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.5,
     "sku": "MRnHs-Wh-S-youarealdreadyundermygenjutsu-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
@@ -2581,7 +2581,7 @@ export const PRODUCTS: Product[] = [
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "UOsMRnHs-Bk-S-NewProject(19)-Fr-ca",
     "rating": 4.8,
-    "category": "Topwear",
+    "category": "Unisex",
     "originalPrice": 999,
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fvti68fvti68fvti.png?v=1761741294",
     "shopifyHandle": "skull-triangle-oversized-tshirt",
@@ -2635,7 +2635,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     "id": 4,
-    "category": "Men",
+    "category": "Unisex",
     "rating": 4.8,
     "price": 95,
     "sizes": [
@@ -2728,7 +2728,7 @@ export const PRODUCTS: Product[] = [
       "Under 600",
       "Tshirt"
     ],
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.2,
     "sku": "MRnHs-Bk-XS-NewProject(11)-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.854Z",
@@ -3158,7 +3158,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     "id": 7915855806603,
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.6,
     "importedAt": "2025-12-28T18:56:30.854Z",
     "sku": "MRnHs-Bk-XS-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
@@ -3490,7 +3490,7 @@ export const PRODUCTS: Product[] = [
     "inStock": true,
     "lastSyncedAt": "2025-12-28T18:56:30.855Z",
     "updatedAt": "2026-05-28T11:46:34.249Z",
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4,
     "sku": "UOsMRnHs-Lv-XS-oversizedbirdflowertshirt-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
@@ -3561,7 +3561,7 @@ export const PRODUCTS: Product[] = [
     "shopifyHandle": "oversized-illuminaty-skull-triangle-design",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "UOsMRnHs-Bk-XS-skullflowermain-Fr-ca",
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.5,
     "collections": [
       "All products!",
@@ -3818,7 +3818,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": 7915971805323,
     "rating": 4.7,
-    "category": "Topwear",
+    "category": "Unisex",
     "sku": "MRnHs-Wh-XS-nijerchorkaetelde-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "collections": [
@@ -4146,7 +4146,7 @@ export const PRODUCTS: Product[] = [
       "oversized",
       "Oversized Tshirt"
     ],
-    "category": "Topwear",
+    "category": "Unisex",
     "rating": 4.1,
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "UOsMRnHs-Wh-XS-designfinal_1-Fr-ca",
@@ -4318,28 +4318,6 @@ export const COLLECTIONS = [
       "skull-triangle-oversized-tshirt"
     ],
     "source": "generated"
-  },
-  {
-    "id": "1778682078130-5",
-    "handle": "women",
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T14:21:18.130Z",
-    "productCount": 6,
-    "isSystem": false,
-    "order": 5,
-    "description": "Products in the Women collection",
-    "source": "generated",
-    "name": "Women",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "productHandles": [
-      "cute-blessed-tshirt-for-girls",
-      "cute-butterfly-croptop-for-women",
-      "oversized-unisex-peace-simple-bird-tshirt",
-      "oversized-cute-bunny-tshirt-for-women",
-      "cute-blessed-tshirt-for-girls",
-      "cute-butterfly-croptop-for-women"
-    ],
-    "image": ""
   },
   {
     "id": "1778682078130-6",
@@ -4611,28 +4589,6 @@ export const COLLECTIONS = [
     ],
     "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Best Sellers",
-    "source": "shopify"
-  },
-  {
-    "id": "shopify-women",
-    "shopifyId": "gid://shopify/Collection/307502973067",
-    "productCount": 4,
-    "isSystem": false,
-    "order": 3,
-    "description": "",
-    "importedAt": "2025-12-28T18:56:29.286Z",
-    "handle": "women",
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T14:21:25.043Z",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Women",
-    "productHandles": [
-      "oversized-cute-bunny-tshirt-for-women",
-      "cute-butterfly-croptop-for-women",
-      "cute-blessed-tshirt-for-girls",
-      "oversized-unisex-peace-simple-bird-tshirt"
-    ],
-    "image": "",
     "source": "shopify"
   },
   {
@@ -5107,25 +5063,6 @@ export const COLLECTIONS = [
     "name": "Oversized Tshirt",
     "image": "",
     "source": "generated"
-  },
-  {
-    "id": "1778446196513-5",
-    "source": "generated",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Women",
-    "productHandles": [
-      "cute-blessed-tshirt-for-girls",
-      "cute-butterfly-croptop-for-women",
-      "oversized-unisex-peace-simple-bird-tshirt"
-    ],
-    "image": "",
-    "handle": "women",
-    "sectionMapping": null,
-    "createdAt": "2026-05-10T20:49:56.513Z",
-    "isSystem": false,
-    "productCount": 3,
-    "order": 5,
-    "description": "Products in the Women collection"
   },
   {
     "id": "1778446196513-6",
@@ -5737,6 +5674,104 @@ export const COLLECTIONS = [
     "handle": "unisex",
     "createdAt": "2026-05-13T19:21:15.663Z",
     "sectionMapping": null
+  },
+  {
+    "id": "men",
+    "name": "Men",
+    "handle": "men",
+    "description": "Men & Unisex Streetwear",
+    "image": "",
+    "isSystem": false,
+    "source": "generated",
+    "order": 66,
+    "filters": {
+      "tags": [],
+      "category": "Men",
+      "type": "",
+      "minPrice": 0,
+      "maxPrice": null
+    },
+    "productHandles": [
+      "oversized-cute-simple-bunny-tshirt",
+      "cute-blessed-tshirt-for-girls",
+      "japaneese-text-tshirt-cool-front-elevez",
+      "1779147469445",
+      "ami-akta-dhowa-tulsi-pata-tshirt",
+      "1765149944844",
+      "1765149958744",
+      "kal-ana-tshirt",
+      "navy-blue-premium-tshirt",
+      "grey-melange-tshirt",
+      "coffee-brown-premium-tshirt",
+      "dragon-samurai-main-epic-imp",
+      "guy-sitting-between-sun-and-moon-circuler-tshirt",
+      "grey-hoodie-trident-design",
+      "samurai-dragon-2nd-tshirt",
+      "youre-aldready-under-my-genjutsu",
+      "skull-triangle-oversized-tshirt",
+      "3",
+      "4",
+      "5",
+      "paisa-design-stylish-genz-tshirt",
+      "stylish-buttefly-tshirt",
+      "oversized-unisex-peace-simple-bird-tshirt",
+      "oversized-illuminaty-skull-triangle-design",
+      "ami-akta-dhowa-tulsi-pata-funky",
+      "oversized-cute-bunny-tshirt-for-women"
+    ],
+    "productCount": 26,
+    "updatedAt": "2026-05-29T22:44:24.539Z",
+    "createdAt": "2026-05-29T22:44:24.540Z"
+  },
+  {
+    "id": "women",
+    "name": "Women",
+    "handle": "women",
+    "description": "Women & Unisex Streetwear",
+    "image": "",
+    "isSystem": false,
+    "source": "generated",
+    "order": 67,
+    "filters": {
+      "tags": [],
+      "category": "Women",
+      "type": "",
+      "minPrice": 0,
+      "maxPrice": null
+    },
+    "productHandles": [
+      "oversized-cute-simple-bunny-tshirt",
+      "cute-blessed-tshirt-for-girls",
+      "japaneese-text-tshirt-cool-front-elevez",
+      "1779147469445",
+      "cute-butterfly-croptop-for-women",
+      "ami-akta-dhowa-tulsi-pata-tshirt",
+      "1765149944844",
+      "1765149958744",
+      "kal-ana-tshirt",
+      "navy-blue-premium-tshirt",
+      "2",
+      "grey-melange-tshirt",
+      "coffee-brown-premium-tshirt",
+      "dragon-samurai-main-epic-imp",
+      "guy-sitting-between-sun-and-moon-circuler-tshirt",
+      "grey-hoodie-trident-design",
+      "samurai-dragon-2nd-tshirt",
+      "youre-aldready-under-my-genjutsu",
+      "skull-triangle-oversized-tshirt",
+      "3",
+      "4",
+      "5",
+      "paisa-design-stylish-genz-tshirt",
+      "stylish-buttefly-tshirt",
+      "oversized-unisex-peace-simple-bird-tshirt",
+      "oversized-illuminaty-skull-triangle-design",
+      "ami-akta-dhowa-tulsi-pata-funky",
+      "oversized-cute-bunny-tshirt-for-women"
+    ],
+    "productCount": 28,
+    "updatedAt": "2026-05-29T22:44:24.540Z",
+    "createdAt": "2026-05-29T22:44:24.540Z"
   }
 ];
 
@@ -5777,8 +5812,7 @@ export const AVAILABLE_TAGS = [
 export const AVAILABLE_CATEGORIES = [
   "Men",
   "Women",
-  "Unisex",
-  "Topwear"
+  "Unisex"
 ];
 
 // Available Types (Custom)

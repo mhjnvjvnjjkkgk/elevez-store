@@ -146,28 +146,6 @@
       "source": "generated"
     },
     {
-      "id": "1778682078130-5",
-      "handle": "women",
-      "sectionMapping": null,
-      "createdAt": "2026-05-13T14:21:18.130Z",
-      "productCount": 6,
-      "isSystem": false,
-      "order": 5,
-      "description": "Products in the Women collection",
-      "source": "generated",
-      "name": "Women",
-      "updatedAt": "2026-05-29T22:32:39.892Z",
-      "productHandles": [
-        "cute-blessed-tshirt-for-girls",
-        "cute-butterfly-croptop-for-women",
-        "oversized-unisex-peace-simple-bird-tshirt",
-        "oversized-cute-bunny-tshirt-for-women",
-        "cute-blessed-tshirt-for-girls",
-        "cute-butterfly-croptop-for-women"
-      ],
-      "image": ""
-    },
-    {
       "id": "1778682078130-6",
       "isSystem": false,
       "productCount": 9,
@@ -437,28 +415,6 @@
       ],
       "updatedAt": "2026-05-29T22:32:39.892Z",
       "name": "Best Sellers",
-      "source": "shopify"
-    },
-    {
-      "id": "shopify-women",
-      "shopifyId": "gid://shopify/Collection/307502973067",
-      "productCount": 4,
-      "isSystem": false,
-      "order": 3,
-      "description": "",
-      "importedAt": "2025-12-28T18:56:29.286Z",
-      "handle": "women",
-      "sectionMapping": null,
-      "createdAt": "2026-05-13T14:21:25.043Z",
-      "updatedAt": "2026-05-29T22:32:39.892Z",
-      "name": "Women",
-      "productHandles": [
-        "oversized-cute-bunny-tshirt-for-women",
-        "cute-butterfly-croptop-for-women",
-        "cute-blessed-tshirt-for-girls",
-        "oversized-unisex-peace-simple-bird-tshirt"
-      ],
-      "image": "",
       "source": "shopify"
     },
     {
@@ -933,25 +889,6 @@
       "name": "Oversized Tshirt",
       "image": "",
       "source": "generated"
-    },
-    {
-      "id": "1778446196513-5",
-      "source": "generated",
-      "updatedAt": "2026-05-29T22:32:39.892Z",
-      "name": "Women",
-      "productHandles": [
-        "cute-blessed-tshirt-for-girls",
-        "cute-butterfly-croptop-for-women",
-        "oversized-unisex-peace-simple-bird-tshirt"
-      ],
-      "image": "",
-      "handle": "women",
-      "sectionMapping": null,
-      "createdAt": "2026-05-10T20:49:56.513Z",
-      "isSystem": false,
-      "productCount": 3,
-      "order": 5,
-      "description": "Products in the Women collection"
     },
     {
       "id": "1778446196513-6",
@@ -1563,7 +1500,105 @@
       "handle": "unisex",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "sectionMapping": null
+    },
+    {
+      "id": "men",
+      "name": "Men",
+      "handle": "men",
+      "description": "Men & Unisex Streetwear",
+      "image": "",
+      "isSystem": false,
+      "source": "generated",
+      "order": 66,
+      "filters": {
+        "tags": [],
+        "category": "Men",
+        "type": "",
+        "minPrice": 0,
+        "maxPrice": null
+      },
+      "productHandles": [
+        "oversized-cute-simple-bunny-tshirt",
+        "cute-blessed-tshirt-for-girls",
+        "japaneese-text-tshirt-cool-front-elevez",
+        "1779147469445",
+        "ami-akta-dhowa-tulsi-pata-tshirt",
+        "1765149944844",
+        "1765149958744",
+        "kal-ana-tshirt",
+        "navy-blue-premium-tshirt",
+        "grey-melange-tshirt",
+        "coffee-brown-premium-tshirt",
+        "dragon-samurai-main-epic-imp",
+        "guy-sitting-between-sun-and-moon-circuler-tshirt",
+        "grey-hoodie-trident-design",
+        "samurai-dragon-2nd-tshirt",
+        "youre-aldready-under-my-genjutsu",
+        "skull-triangle-oversized-tshirt",
+        "3",
+        "4",
+        "5",
+        "paisa-design-stylish-genz-tshirt",
+        "stylish-buttefly-tshirt",
+        "oversized-unisex-peace-simple-bird-tshirt",
+        "oversized-illuminaty-skull-triangle-design",
+        "ami-akta-dhowa-tulsi-pata-funky",
+        "oversized-cute-bunny-tshirt-for-women"
+      ],
+      "productCount": 26,
+      "updatedAt": "2026-05-29T22:44:24.539Z",
+      "createdAt": "2026-05-29T22:44:24.540Z"
+    },
+    {
+      "id": "women",
+      "name": "Women",
+      "handle": "women",
+      "description": "Women & Unisex Streetwear",
+      "image": "",
+      "isSystem": false,
+      "source": "generated",
+      "order": 67,
+      "filters": {
+        "tags": [],
+        "category": "Women",
+        "type": "",
+        "minPrice": 0,
+        "maxPrice": null
+      },
+      "productHandles": [
+        "oversized-cute-simple-bunny-tshirt",
+        "cute-blessed-tshirt-for-girls",
+        "japaneese-text-tshirt-cool-front-elevez",
+        "1779147469445",
+        "cute-butterfly-croptop-for-women",
+        "ami-akta-dhowa-tulsi-pata-tshirt",
+        "1765149944844",
+        "1765149958744",
+        "kal-ana-tshirt",
+        "navy-blue-premium-tshirt",
+        "2",
+        "grey-melange-tshirt",
+        "coffee-brown-premium-tshirt",
+        "dragon-samurai-main-epic-imp",
+        "guy-sitting-between-sun-and-moon-circuler-tshirt",
+        "grey-hoodie-trident-design",
+        "samurai-dragon-2nd-tshirt",
+        "youre-aldready-under-my-genjutsu",
+        "skull-triangle-oversized-tshirt",
+        "3",
+        "4",
+        "5",
+        "paisa-design-stylish-genz-tshirt",
+        "stylish-buttefly-tshirt",
+        "oversized-unisex-peace-simple-bird-tshirt",
+        "oversized-illuminaty-skull-triangle-design",
+        "ami-akta-dhowa-tulsi-pata-funky",
+        "oversized-cute-bunny-tshirt-for-women"
+      ],
+      "productCount": 28,
+      "updatedAt": "2026-05-29T22:44:24.540Z",
+      "createdAt": "2026-05-29T22:44:24.540Z"
     }
   ],
-  "lastUpdated": "2026-05-29T22:32:39.905Z"
+  "lastUpdated": "2026-05-29T22:44:24.549Z"
 }
