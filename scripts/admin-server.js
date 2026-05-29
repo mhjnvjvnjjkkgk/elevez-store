@@ -158,7 +158,7 @@ export function getCollectionProducts(collectionId: string): Product[] {
   if (!collection) return [];
   
   return PRODUCTS.filter(product => {
-    const filters = collection.filters || {};
+    const filters = (collection.filters || {}) as any;
     
     // Tag filter
     if (filters.tags && filters.tags.length > 0) {

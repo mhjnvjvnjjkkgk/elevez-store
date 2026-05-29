@@ -1,6 +1,6 @@
 
-export type Category = 'Men' | 'Women' | 'Unisex';
-export type ProductType = 'Hoodie' | 'T-Shirt' | 'Crop Top' | 'Oversized T-Shirt';
+export type Category = 'Men' | 'Women' | 'Unisex' | string;
+export type ProductType = 'Hoodie' | 'T-Shirt' | 'Crop Top' | 'Oversized T-Shirt' | string;
 
 export interface Product {
   id: number;

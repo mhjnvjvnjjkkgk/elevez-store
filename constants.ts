@@ -4,7 +4,7 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: 30/5/2026, 4:15:41 am
+// Last update: 30/5/2026, 4:16:35 am
 export const PRODUCTS: Product[] = [
   {
     "id": 7915861377163,
