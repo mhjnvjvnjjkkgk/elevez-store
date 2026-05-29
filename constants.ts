@@ -4,7 +4,7 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: 30/5/2026, 4:00:14 am
+// Last update: 30/5/2026, 4:02:40 am
 export const PRODUCTS: Product[] = [
   {
     "id": 7915861377163,
@@ -569,7 +569,8 @@ export const PRODUCTS: Product[] = [
       "S",
       "M",
       "L",
-      "XL"
+      "XL",
+      "XXL"
     ],
     "type": "tee",
     "description": "Embrace the power of the Ryūjin, the Dragon God of the sea. This striking design, set against the backdrop of a setting sun over Mount Fuji, tells a story of ancient myth and modern spirit. The great Sovereign Serpent rises from the serene coastal landscape of Tokyo, Japan. Its scales shimmer in deep indigo and royal violet, colors of the deep ocean and imperial nobility. More than just a mythical beast, this dragon is a force of nature—it commands the tides, brings forth the thunder, and symbolizes unyielding strength, wisdom, and good fortune. The cherry blossoms, or sakura, drift in its wake, representing the beauty and transient nature of life, while the towering palms hint at an eternal, tropical peace that the dragon guards. This T-shirt is not just a piece of apparel; it is a wearable piece of Japanese mythology, a tribute to the enduring spirit of its culture, and a bold statement for those who walk their own path. Wear the Sovereign Serpent and carry a legend on your back.",
@@ -607,7 +608,7 @@ export const PRODUCTS: Product[] = [
     ],
     "stock": 100,
     "qid": "SHOP-7915885199499",
-    "updatedAt": "2026-05-29T22:30:14.058Z",
+    "updatedAt": "2026-05-29T22:32:39.849Z",
     "showInCollections": true
   },
   {
@@ -4225,7 +4226,7 @@ export const COLLECTIONS = [
       "skull-triangle-oversized-tshirt"
     ],
     "name": "All products!",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": ""
   },
   {
@@ -4241,7 +4242,7 @@ export const COLLECTIONS = [
       "samurai-dragon-2nd-tshirt"
     ],
     "name": "Best Sellers",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "source": "generated",
     "productCount": 8,
@@ -4263,7 +4264,7 @@ export const COLLECTIONS = [
       "oversized-cute-simple-bunny-tshirt"
     ],
     "name": "Below 699",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "createdAt": "2026-05-13T14:21:18.130Z",
     "sectionMapping": null,
     "handle": "below-699",
@@ -4275,7 +4276,7 @@ export const COLLECTIONS = [
   {
     "id": "1778682078130-3",
     "source": "generated",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "oversized",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
@@ -4306,7 +4307,7 @@ export const COLLECTIONS = [
     "handle": "oversized-tshirt",
     "image": "",
     "name": "Oversized Tshirt",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "skull-triangle-oversized-tshirt",
@@ -4329,7 +4330,7 @@ export const COLLECTIONS = [
     "description": "Products in the Women collection",
     "source": "generated",
     "name": "Women",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
       "cute-butterfly-croptop-for-women",
@@ -4361,7 +4362,7 @@ export const COLLECTIONS = [
       "youre-aldready-under-my-genjutsu"
     ],
     "name": "Under 500",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "source": "generated"
   },
@@ -4399,7 +4400,7 @@ export const COLLECTIONS = [
       "youre-aldready-under-my-genjutsu"
     ],
     "name": "Tshirt",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "handle": "tshirt",
     "createdAt": "2026-05-13T14:21:18.130Z",
@@ -4420,7 +4421,7 @@ export const COLLECTIONS = [
     "handle": "under-600",
     "image": "",
     "name": "Under 600",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez",
@@ -4460,7 +4461,7 @@ export const COLLECTIONS = [
       "grey-melange-tshirt",
       "coffee-brown-premium-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Below 400",
     "source": "generated"
   },
@@ -4475,7 +4476,7 @@ export const COLLECTIONS = [
       "kal-ana-tshirt"
     ],
     "name": "Bold and vibrant",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "handle": "bold-and-vibrant",
     "createdAt": "2026-05-13T14:21:18.130Z",
@@ -4503,7 +4504,7 @@ export const COLLECTIONS = [
       "grey-melange-tshirt",
       "coffee-brown-premium-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "old money",
     "source": "generated"
   },
@@ -4517,7 +4518,7 @@ export const COLLECTIONS = [
     "createdAt": "2026-05-13T14:21:18.130Z",
     "handle": "home-page",
     "image": "",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Home page",
     "productHandles": [
       "paisa-design-stylish-genz-tshirt",
@@ -4531,7 +4532,7 @@ export const COLLECTIONS = [
       "paisa-design-stylish-genz-tshirt"
     ],
     "name": "Home page",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "source": "shopify",
     "shopifyId": "gid://shopify/Collection/306335416459",
@@ -4558,7 +4559,7 @@ export const COLLECTIONS = [
     "source": "shopify",
     "image": "",
     "name": "All products!",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       null,
       null,
@@ -4608,7 +4609,7 @@ export const COLLECTIONS = [
       "back-dragon-print-epic-design-front-elevez",
       "oversized-cute-simple-bunny-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Best Sellers",
     "source": "shopify"
   },
@@ -4623,7 +4624,7 @@ export const COLLECTIONS = [
     "handle": "women",
     "sectionMapping": null,
     "createdAt": "2026-05-13T14:21:25.043Z",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Women",
     "productHandles": [
       "oversized-cute-bunny-tshirt-for-women",
@@ -4653,7 +4654,7 @@ export const COLLECTIONS = [
       "youre-aldready-under-my-genjutsu"
     ],
     "name": "Under 500",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "source": "shopify"
   },
@@ -4670,7 +4671,7 @@ export const COLLECTIONS = [
     "description": "",
     "source": "shopify",
     "name": "Under 600",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "skull-triangle-oversized-tshirt",
       "guy-sitting-between-sun-and-moon-circuler-tshirt",
@@ -4683,7 +4684,7 @@ export const COLLECTIONS = [
   {
     "id": "shopify-below-799",
     "name": "Below 699",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "oversized-illuminaty-skull-triangle-design",
       "oversized-cute-simple-bunny-tshirt",
@@ -4714,7 +4715,7 @@ export const COLLECTIONS = [
       "ami-akta-dhowa-tulsi-pata-tshirt",
       "cute-butterfly-croptop-for-women"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Below 400",
     "createdAt": "2026-05-13T14:21:25.043Z",
     "sectionMapping": null,
@@ -4738,7 +4739,7 @@ export const COLLECTIONS = [
     "sectionMapping": null,
     "createdAt": "2026-05-13T14:21:25.043Z",
     "name": "oversized",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "skull-triangle-oversized-tshirt",
@@ -4752,7 +4753,7 @@ export const COLLECTIONS = [
   {
     "id": "shopify-old-money",
     "source": "shopify",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "old money",
     "productHandles": [
       "coffee-brown-premium-tshirt",
@@ -4779,7 +4780,7 @@ export const COLLECTIONS = [
       "ami-akta-dhowa-tulsi-pata-tshirt"
     ],
     "name": "Bold and vibrant",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "handle": "bold-and-vibrant",
     "importedAt": "2025-12-28T18:56:29.286Z",
@@ -4796,7 +4797,7 @@ export const COLLECTIONS = [
     "source": "shopify",
     "image": "",
     "name": "Tshirt",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "youre-aldready-under-my-genjutsu",
       "samurai-dragon-2nd-tshirt",
@@ -4826,7 +4827,7 @@ export const COLLECTIONS = [
   },
   {
     "id": "shopify-oversized-tshirt",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Oversized Tshirt",
     "productHandles": [
       "skull-triangle-oversized-tshirt",
@@ -4881,7 +4882,7 @@ export const COLLECTIONS = [
       "ami-akta-dhowa-tulsi-pata-funky",
       "oversized-cute-bunny-tshirt-for-women"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "All products!",
     "image": ""
   },
@@ -4894,7 +4895,7 @@ export const COLLECTIONS = [
       "oversized-illuminaty-skull-triangle-design"
     ],
     "name": "Below 699",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "handle": "below-699",
     "createdAt": "2025-12-28T22:29:53.446Z",
@@ -4907,7 +4908,7 @@ export const COLLECTIONS = [
   {
     "id": "1766960993446-2",
     "source": "generated",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Under 600",
     "productHandles": [
       "japaneese-text-tshirt-cool-front-elevez",
@@ -4931,7 +4932,7 @@ export const COLLECTIONS = [
     "productHandles": [
       "paisa-design-stylish-genz-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Home page",
     "image": "",
     "handle": "home-page",
@@ -4974,13 +4975,13 @@ export const COLLECTIONS = [
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
     "name": "All products!",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "source": "generated"
   },
   {
     "id": "1778446196513-1",
     "image": "",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Best Sellers",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
@@ -5013,7 +5014,7 @@ export const COLLECTIONS = [
       "kal-ana-tshirt"
     ],
     "name": "Bold and vibrant",
-    "updatedAt": "2026-05-29T22:30:14.096Z"
+    "updatedAt": "2026-05-29T22:32:39.892Z"
   },
   {
     "id": "1778446196513-11",
@@ -5024,7 +5025,7 @@ export const COLLECTIONS = [
       "coffee-brown-premium-tshirt"
     ],
     "name": "old money",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "handle": "old-money",
     "createdAt": "2026-05-10T20:49:56.513Z",
@@ -5044,7 +5045,7 @@ export const COLLECTIONS = [
     "order": 12,
     "description": "Products in the Home page collection",
     "source": "generated",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Home page",
     "productHandles": [
       "paisa-design-stylish-genz-tshirt"
@@ -5057,7 +5058,7 @@ export const COLLECTIONS = [
       "oversized-cute-simple-bunny-tshirt",
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Below 699",
     "image": "",
     "source": "generated",
@@ -5072,7 +5073,7 @@ export const COLLECTIONS = [
   {
     "id": "1778446196513-3",
     "image": "",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "oversized",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
@@ -5102,7 +5103,7 @@ export const COLLECTIONS = [
       "skull-triangle-oversized-tshirt",
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Oversized Tshirt",
     "image": "",
     "source": "generated"
@@ -5110,7 +5111,7 @@ export const COLLECTIONS = [
   {
     "id": "1778446196513-5",
     "source": "generated",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Women",
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
@@ -5143,7 +5144,7 @@ export const COLLECTIONS = [
       "stylish-buttefly-tshirt"
     ],
     "name": "Under 500",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "source": "generated"
   },
@@ -5159,7 +5160,7 @@ export const COLLECTIONS = [
     "source": "generated",
     "image": "",
     "name": "Tshirt",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
       "japaneese-text-tshirt-cool-front-elevez",
@@ -5188,7 +5189,7 @@ export const COLLECTIONS = [
       "paisa-design-stylish-genz-tshirt"
     ],
     "name": "Under 600",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "source": "generated",
     "description": "Products in the Under 600 collection",
     "order": 8,
@@ -5211,7 +5212,7 @@ export const COLLECTIONS = [
       "coffee-brown-premium-tshirt"
     ],
     "name": "Below 400",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "createdAt": "2026-05-10T20:49:56.513Z",
     "sectionMapping": null,
     "handle": "below-400",
@@ -5227,7 +5228,7 @@ export const COLLECTIONS = [
       null
     ],
     "name": "Essential",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "handle": "essential",
     "createdAt": "2026-05-13T19:21:15.663Z",
@@ -5253,7 +5254,7 @@ export const COLLECTIONS = [
       null
     ],
     "name": "Trending",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "source": "tag-generated"
   },
@@ -5261,7 +5262,7 @@ export const COLLECTIONS = [
     "id": "tag-1778700075663-2-741",
     "image": "",
     "name": "Premium",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       null
     ],
@@ -5288,7 +5289,7 @@ export const COLLECTIONS = [
       null
     ],
     "name": "New",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "source": "tag-generated"
   },
   {
@@ -5299,7 +5300,7 @@ export const COLLECTIONS = [
       null,
       null
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Bestseller",
     "source": "tag-generated",
     "description": "Curated selection of our bestseller products",
@@ -5316,7 +5317,7 @@ export const COLLECTIONS = [
       null
     ],
     "name": "Vintage",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "source": "tag-generated",
     "productCount": 1,
@@ -5342,7 +5343,7 @@ export const COLLECTIONS = [
       null
     ],
     "name": "Colorful",
-    "updatedAt": "2026-05-29T22:30:14.096Z"
+    "updatedAt": "2026-05-29T22:32:39.892Z"
   },
   {
     "id": "tag-1778700075663-7-262",
@@ -5360,7 +5361,7 @@ export const COLLECTIONS = [
       "oversized-cute-simple-bunny-tshirt"
     ],
     "name": "649",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "source": "tag-generated"
   },
   {
@@ -5373,7 +5374,7 @@ export const COLLECTIONS = [
     "sectionMapping": null,
     "createdAt": "2026-05-13T19:21:15.663Z",
     "name": "Female",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "cute-blessed-tshirt-for-girls",
@@ -5397,7 +5398,7 @@ export const COLLECTIONS = [
     "createdAt": "2026-05-13T19:21:15.663Z",
     "handle": "449",
     "image": "",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "449",
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
@@ -5429,7 +5430,7 @@ export const COLLECTIONS = [
       "skull-triangle-oversized-tshirt"
     ],
     "name": "599",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "source": "tag-generated"
   },
@@ -5442,7 +5443,7 @@ export const COLLECTIONS = [
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Back design",
     "image": "",
     "handle": "back-design",
@@ -5458,7 +5459,7 @@ export const COLLECTIONS = [
     "source": "tag-generated",
     "image": "",
     "name": "Male",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez",
@@ -5497,7 +5498,7 @@ export const COLLECTIONS = [
       "cute-butterfly-croptop-for-women",
       "cute-butterfly-croptop-for-women"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "349",
     "image": "",
     "handle": "349",
@@ -5513,7 +5514,7 @@ export const COLLECTIONS = [
     "source": "tag-generated",
     "image": "",
     "name": "Croptop",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "cute-butterfly-croptop-for-women",
       "cute-butterfly-croptop-for-women"
@@ -5528,7 +5529,7 @@ export const COLLECTIONS = [
   },
   {
     "id": "tag-1778700075663-16-272",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "399",
     "productHandles": [
       "ami-akta-dhowa-tulsi-pata-tshirt",
@@ -5564,7 +5565,7 @@ export const COLLECTIONS = [
       "ami-akta-dhowa-tulsi-pata-tshirt",
       "kal-ana-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Funny",
     "createdAt": "2026-05-13T19:21:15.663Z",
     "sectionMapping": null,
@@ -5590,7 +5591,7 @@ export const COLLECTIONS = [
       "dragon-samurai-main-epic-imp",
       "samurai-dragon-2nd-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Best",
     "image": ""
   },
@@ -5603,7 +5604,7 @@ export const COLLECTIONS = [
     "handle": "549",
     "sectionMapping": null,
     "createdAt": "2026-05-13T19:21:15.663Z",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "549",
     "productHandles": [
       "guy-sitting-between-sun-and-moon-circuler-tshirt",
@@ -5629,7 +5630,7 @@ export const COLLECTIONS = [
       "grey-hoodie-trident-design",
       "grey-hoodie-trident-design"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "1099"
   },
   {
@@ -5640,7 +5641,7 @@ export const COLLECTIONS = [
       "grey-hoodie-trident-design"
     ],
     "name": "Hoodie",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
     "handle": "hoodie",
     "createdAt": "2026-05-13T19:21:15.663Z",
@@ -5657,7 +5658,7 @@ export const COLLECTIONS = [
       "paisa-design-stylish-genz-tshirt",
       "paisa-design-stylish-genz-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Stylish",
     "image": "",
     "handle": "stylish",
@@ -5684,7 +5685,7 @@ export const COLLECTIONS = [
       "paisa-design-stylish-genz-tshirt"
     ],
     "name": "Typography",
-    "updatedAt": "2026-05-29T22:30:14.096Z"
+    "updatedAt": "2026-05-29T22:32:39.892Z"
   },
   {
     "id": "tag-1778700075663-26-767",
@@ -5697,7 +5698,7 @@ export const COLLECTIONS = [
     "productCount": 1,
     "source": "tag-generated",
     "image": "",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "499",
     "productHandles": [
       "stylish-buttefly-tshirt"
@@ -5717,7 +5718,7 @@ export const COLLECTIONS = [
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
     "name": "699",
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "source": "tag-generated"
   },
   {
@@ -5725,7 +5726,7 @@ export const COLLECTIONS = [
     "productHandles": [
       "oversized-illuminaty-skull-triangle-design"
     ],
-    "updatedAt": "2026-05-29T22:30:14.096Z",
+    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "Unisex",
     "image": "",
     "source": "tag-generated",
