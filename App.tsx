@@ -10,7 +10,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-import { PRODUCTS, BRAND_NAME, AVAILABLE_COLORS } from './constants';
+import { PRODUCTS, BRAND_NAME, AVAILABLE_COLORS, AVAILABLE_SIZES } from './constants';
 import { localCollectionService } from './services/localCollectionService';
 import { Product, ProductType, CartItem, CursorVariant } from './types';
 import { auth } from './firebaseConfig';
@@ -54,6 +54,61 @@ const AutoScrollToTop = () => {
 };
 import { CoreProtocol } from './components/CoreProtocol';
 import { SectionHeader } from './components/SectionHeader';
+
+// Global utility for resolving hex color codes dynamically
+const getColorCode = (name: string): string => {
+  try {
+    const storedColors = localStorage.getItem('elevez_colors');
+    if (storedColors) {
+      const parsed = JSON.parse(storedColors);
+      if (Array.isArray(parsed)) {
+        const found = parsed.find(
+          c => c && c.name && c.name.toLowerCase() === name.toLowerCase()
+        );
+        if (found && found.code) return found.code;
+      }
+    }
+  } catch (e) {
+    console.warn('Error reading colors from localStorage:', e);
+  }
+
+  const found = (AVAILABLE_COLORS as any[])?.find(
+    c => c && c.name && c.name.toLowerCase() === name.toLowerCase()
+  );
+  if (found && found.code) return found.code;
+
+  const colors: { [key: string]: string } = {
+    'Black': '#000000', 'White': '#FFFFFF', 'Void Gray': '#333333',
+    'Neon Green': '#39FF14', 'Cyber Pink': '#FF007F', 'Code Green': '#00FF00',
+    'Matte Black': '#1A1A1A', 'Dust White': '#EBEBEB', 'Grey': '#808080',
+    'Acid Black': '#2B2B2B', 'Rust': '#B7410E', 'Obsidian': '#0B0B0B',
+    'Navy': '#000080', 'Vapor Blue': '#00FFFF', 'Pink': '#FFC0CB',
+    'Heather Grey': '#9DA3A6', 'Concrete': '#808080', 'Midnight Blue': '#191970',
+    'Chrome Grey': '#A0A0A0', 'Shadow Black': '#121212', 'Cement': '#D3D3D3',
+    'Asphalt': '#505050', 'Pulse Red': '#FF0000', 'Static White': '#F8F8FF',
+    'Glitch Purple': '#8A2BE2', 'Metal Grey': '#696969', 'Space Black': '#0A0A0A',
+    'Coffee Brown': '#3E2723'
+  };
+
+  const matchedKey = Object.keys(colors).find(key => key.toLowerCase() === name.toLowerCase());
+  return matchedKey ? colors[matchedKey] : name;
+};
+
+// Global utility for resolving available sizes dynamically
+const getAvailableSizes = (): string[] => {
+  try {
+    const storedSizes = localStorage.getItem('elevez_sizes');
+    if (storedSizes) {
+      const parsed = JSON.parse(storedSizes);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.warn('Error reading sizes from localStorage:', e);
+  }
+  return AVAILABLE_SIZES || ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+};
 
 // --- Cart Context ---
 interface CartContextType {
@@ -584,7 +639,8 @@ const QuickViewModal = () => {
     if (activeProduct && activeProduct.colors && activeProduct.colors.length > 0) {
       setSelectedColor(activeProduct.colors[0]);
     }
-    setSelectedSize('M');
+    const sizesToUse = activeProduct?.sizes && activeProduct.sizes.length > 0 ? activeProduct.sizes : getAvailableSizes();
+    setSelectedSize(sizesToUse[0] || 'M');
   }, [activeProduct]);
 
   if (!activeProduct) return null;
@@ -680,7 +736,7 @@ const QuickViewModal = () => {
             <div className="mb-10 flex-shrink-0">
               <h3 className="text-xs font-black uppercase text-black opacity-40 mb-4 tracking-widest">Select Size: <span className="text-black opacity-100">{selectedSize}</span></h3>
               <div className="flex gap-4">
-                {['XS', 'S', 'M', 'L', 'XL'].map(size => (
+                {(activeProduct.sizes && activeProduct.sizes.length > 0 ? activeProduct.sizes : getAvailableSizes()).map(size => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
@@ -1621,6 +1677,22 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const [collectionFilter, setCollectionFilter] = useState<string>('All');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
 
+  // Dynamic products state — updates instantly when admin saves changes
+  const [allProducts, setAllProducts] = useState<any[]>(() => {
+    const fresh = localCollectionService.getActiveProducts();
+    return fresh.length > 0 ? fresh : PRODUCTS;
+  });
+
+  // Listen for admin panel updates (SSE-driven) and re-render immediately
+  useEffect(() => {
+    const handleStoreUpdate = () => {
+      const fresh = localCollectionService.getActiveProducts();
+      setAllProducts(fresh.length > 0 ? fresh : PRODUCTS);
+    };
+    window.addEventListener('elevez_store_updated', handleStoreUpdate);
+    return () => window.removeEventListener('elevez_store_updated', handleStoreUpdate);
+  }, []);
+
   // Parallax Transforms (Applied to the Main Hero Box for contained card scroll depth)
   const heroTextY = useTransform(scrollY, [0, 500], [0, 120]);
   const heroImageY = useTransform(scrollY, [0, 500], [0, 100]);
@@ -1662,7 +1734,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const rightModelSpringRotate = useSpring(rightModelRotate, { stiffness: 100, damping: 25 });
 
   // Filter products based on collection filter and price range slider (cumulative)
-  const filteredProducts = PRODUCTS.filter(p => {
+  const filteredProducts = allProducts.filter(p => {
     // Only show products that are enabled for homepage
     if (p.showInHome === false) return false;
 
@@ -2106,18 +2178,9 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
   useEffect(() => {
     const handleStoreUpdate = () => {
-      const storedProducts = localStorage.getItem('elevez_products');
-      if (storedProducts) {
-        try {
-          const parsed = JSON.parse(storedProducts);
-          setProducts(parsed.length > 0 ? parsed : PRODUCTS);
-        } catch (e) {
-          setProducts(PRODUCTS);
-        }
-      } else {
-        setProducts(PRODUCTS);
-      }
-
+      // Always read from localCollectionService so SSE-triggered refreshes work in all envs
+      const freshProducts = localCollectionService.getActiveProducts();
+      setProducts(freshProducts.length > 0 ? freshProducts : PRODUCTS);
       const storedCollections = localCollectionService.getAllCollections();
       setCollections(storedCollections);
     };
@@ -2597,6 +2660,8 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   const [activeImage, setActiveImage] = useState('');
   const [product, setProduct] = useState<any>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  // isLoading prevents 'Product Not Found' from flashing during SSE re-fetch
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fix: Scroll to top when product page loads
   useEffect(() => {
@@ -2604,57 +2669,84 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   }, [id]);
 
   useEffect(() => {
-    const storedProducts = localStorage.getItem('elevez_products');
-    if (storedProducts) {
-      try {
-        const parsed = JSON.parse(storedProducts);
-        const found = parsed.find((p: any) =>
-          p.id === Number(id) || p.shopifyId === id || p.handle === id
-        );
-        if (found) {
-          setProduct(found);
-          setActiveImage(found.image);
-          if (found.colors?.[0]) setSelectedColor(found.colors[0]);
-          return;
-        }
-      } catch (e) {
-        console.error('Error parsing localStorage products:', e);
-      }
-    }
+    setIsLoading(true);
+    const handleStoreUpdate = () => {
+      const products = localCollectionService.getActiveProducts();
+      const cleanId = String(id).trim();
 
-    const constantsProduct = PRODUCTS.find(p => p.id === Number(id));
-    if (constantsProduct) {
-      setProduct(constantsProduct);
-      setActiveImage(constantsProduct.image);
-      if (constantsProduct.colors?.[0]) setSelectedColor(constantsProduct.colors[0]);
-    }
+      const findInList = (list: any[]) => {
+        return list.find((p: any) => {
+          if (!p) return false;
+          
+          // Match 1: numeric exact id
+          if (p.id === Number(cleanId)) return true;
+          
+          // Match 2: string exact id
+          if (String(p.id) === cleanId) return true;
+          
+          // Match 3: shopifyId match (exact or exact match on the numeric ID part of the GID)
+          if (p.shopifyId) {
+            if (String(p.shopifyId) === cleanId) return true;
+            const parts = String(p.shopifyId).split('/');
+            const lastPart = parts[parts.length - 1];
+            if (lastPart === cleanId) return true;
+          }
+          
+          // Match 4: handle match
+          if (p.handle && p.handle.toLowerCase() === cleanId.toLowerCase()) return true;
+          
+          // Match 5: shopifyHandle match
+          if (p.shopifyHandle && p.shopifyHandle.toLowerCase() === cleanId.toLowerCase()) return true;
+          
+          // Match 6: qid match
+          if (p.qid && p.qid.toLowerCase() === cleanId.toLowerCase()) return true;
+
+          return false;
+        });
+      };
+
+      // Try localStorage first (always fresh after SSE re-fetch)
+      let found = findInList(products);
+      // Safety net: fall back to compile-time PRODUCTS if localStorage is empty/loading
+      if (!found && products.length === 0) {
+        found = findInList(PRODUCTS);
+      }
+
+      if (found) {
+        setProduct(found);
+        setActiveImage(found.image);
+        if (found.colors && found.colors.length > 0) {
+          setSelectedColor(prev => found.colors.includes(prev) ? prev : found.colors[0]);
+        }
+        const sizesToUse = found.sizes && found.sizes.length > 0 ? found.sizes : getAvailableSizes();
+        setSelectedSize(prev => sizesToUse.includes(prev) ? prev : sizesToUse[0] || 'M');
+      } else {
+        setProduct(null);
+      }
+      setIsLoading(false);
+    };
+
+    handleStoreUpdate();
+
+    window.addEventListener('elevez_store_updated', handleStoreUpdate);
+    return () => {
+      window.removeEventListener('elevez_store_updated', handleStoreUpdate);
+    };
   }, [id]);
 
+  // Show loading spinner while fetching — never flash 'Not Found' during re-fetch
+  if (isLoading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-black border-t-[#00ff88] rounded-full animate-spin" />
+        <span className="font-black uppercase text-sm tracking-widest">Loading...</span>
+      </div>
+    </div>
+  );
   if (!product) return <div className="min-h-screen flex items-center justify-center font-black uppercase text-4xl">Product Not Found</div>;
 
   const productImages = product.images && product.images.length > 0 ? product.images.slice(0, 5) : [product.image];
 
-  const getColorCode = (name: string) => {
-    // Dynamic centralized lookup
-    const found = (AVAILABLE_COLORS as any[])?.find(
-      c => c && c.name && c.name.toLowerCase() === name.toLowerCase()
-    );
-    if (found && found.code) return found.code;
-
-    const colors: { [key: string]: string } = {
-      'Black': '#000000', 'White': '#FFFFFF', 'Void Gray': '#333333',
-      'Neon Green': '#39FF14', 'Cyber Pink': '#FF007F', 'Code Green': '#00FF00',
-      'Matte Black': '#1A1A1A', 'Dust White': '#EBEBEB', 'Grey': '#808080',
-      'Acid Black': '#2B2B2B', 'Rust': '#B7410E', 'Obsidian': '#0B0B0B',
-      'Navy': '#000080', 'Vapor Blue': '#00FFFF', 'Pink': '#FFC0CB',
-      'Heather Grey': '#9DA3A6', 'Concrete': '#808080', 'Midnight Blue': '#191970',
-      'Chrome Grey': '#A0A0A0', 'Shadow Black': '#121212', 'Cement': '#D3D3D3',
-      'Asphalt': '#505050', 'Pulse Red': '#FF0000', 'Static White': '#F8F8FF',
-      'Glitch Purple': '#8A2BE2', 'Metal Grey': '#696969', 'Space Black': '#0A0A0A',
-      'Coffee Brown': '#3E2723'
-    };
-    return colors[name] || '#000000';
-  };
 
   return (
     <div className="min-h-screen pt-48 pb-20 bg-white">
@@ -2797,7 +2889,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               <div>
                 <h4 className="text-xs font-black uppercase mb-3 text-black">Size: {selectedSize}</h4>
                 <div className="flex flex-wrap gap-2">
-                  {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => (
+                  {(product.sizes && product.sizes.length > 0 ? product.sizes : getAvailableSizes()).map(size => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
@@ -4760,8 +4852,14 @@ function App() {
   const { cursorVariant, setCursorVariant } = useCursor();
   const [isRewardsModalOpen, setIsRewardsModalOpen] = useState(false);
 
-  // Initialize Firebase sync on app load
+  // Initialize Firebase sync and SWR revalidation on app load
   useEffect(() => {
+    // Trigger SWR sync at the root so all pages get updated products (loads from local admin server in dev, Firestore in prod)
+    console.log('☁️ [SWR Sync] Triggering root data revalidation from cloud/server...');
+    localCollectionService.loadFromServer().catch((e) => {
+      console.warn('[SWR Sync] Failed to load server data at root:', e);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         // Sync user profile on login

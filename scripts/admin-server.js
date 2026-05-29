@@ -14,6 +14,30 @@ const WS_PORT = 3002;
 // Track connected clients for hot-reload
 const connectedClients = new Set();
 
+// ─── SSE: Real-Time Push to Storefront ──────────────────────────────────────
+// Tracks all open storefront SSE connections
+const sseClients = new Set();
+
+/**
+ * Broadcast a data_updated event to all connected storefront SSE clients.
+ * This is the core of Shopify-like instant sync: admin saves → storefront re-renders.
+ * @param {string} type - The type of data that changed (products|collections|colors|all)
+ * @param {object} [meta] - Optional extra info to send with the event
+ */
+function broadcastUpdate(type = 'all', meta = {}) {
+  const payload = JSON.stringify({ type, timestamp: Date.now(), ...meta });
+  const dead = [];
+  sseClients.forEach(res => {
+    try {
+      res.write(`event: data_updated\ndata: ${payload}\n\n`);
+    } catch (e) {
+      dead.push(res);
+    }
+  });
+  dead.forEach(res => sseClients.delete(res));
+  console.log(`📡 [SSE] Broadcasted data_updated(${type}) to ${sseClients.size} client(s)`);
+}
+
 // Load GitHub configuration
 let githubConfig = {
   username: 'YOUR-GITHUB-USERNAME',
@@ -43,6 +67,132 @@ const imagesDir = path.join(__dirname, 'public', 'images', 'products');
 if (!fs.existsSync(imagesDir)) {
   fs.mkdirSync(imagesDir, { recursive: true });
   console.log('✅ Created images directory:', imagesDir);
+}
+
+// Helper to compile constants.ts
+function recompileConstants(data) {
+  const dataDir = path.join(__dirname, '..', 'data');
+  const backupFile = path.join(dataDir, 'backup.json');
+  let backupData = {};
+  if (fs.existsSync(backupFile)) {
+    try {
+      backupData = JSON.parse(fs.readFileSync(backupFile, 'utf8')) || {};
+    } catch (e) {
+      console.warn('Could not read backup file in recompileConstants:', e.message);
+    }
+  }
+
+  const products = data.products || backupData.products || [];
+  const collections = data.collections || backupData.collections || [];
+  const tags = data.tags || backupData.tags || [];
+  const categories = data.categories || backupData.categories || [];
+  const types = data.types || backupData.types || [];
+
+  // Extract all unique colors from products to ensure availability
+  const allColors = [...(data.colors || backupData.colors || [])];
+  products.forEach(p => {
+    if (p.colors && Array.isArray(p.colors)) {
+      p.colors.forEach(col => {
+        const colName = typeof col === 'string' ? col : col?.name;
+        const colCode = typeof col === 'object' && col?.code ? col.code : '#000000';
+        if (colName && !allColors.some(c => c.name.toLowerCase() === colName.toLowerCase())) {
+          allColors.push({ name: colName, code: colCode });
+        }
+      });
+    }
+  });
+  const colors = allColors;
+
+  // Extract all unique sizes from products to ensure availability and logical sorting
+  const allSizesSet = new Set(data.sizes || backupData.sizes || ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL']);
+  products.forEach(p => {
+    if (p.sizes && Array.isArray(p.sizes)) {
+      p.sizes.forEach(size => {
+        if (size && typeof size === 'string') allSizesSet.add(size);
+      });
+    }
+  });
+  
+  const sizeWeights = {
+    '3XS': 1, '2XS': 2, 'XS': 3, 'S': 4, 'M': 5, 'L': 6, 'XL': 7, 
+    'XXL': 8, '2XL': 8, '3XL': 9, '4XL': 10, '5XL': 11, '6XL': 12, 
+    '7XL': 13, '8XL': 14, '9XL': 15, '10XL': 16, 'FREE': 99, 'ONE SIZE': 100
+  };
+  const sizes = Array.from(allSizesSet).sort((a, b) => {
+    const wa = sizeWeights[a.toUpperCase()] || 50;
+    const wb = sizeWeights[b.toUpperCase()] || 50;
+    if (wa !== wb) return wa - wb;
+    return a.localeCompare(b);
+  });
+
+  const tsCode = `import { Product } from './types';
+
+export const BRAND_NAME = "ELEVEZ";
+export const ACCENT_COLOR = "#00ff88";
+
+// Products - Auto-synced from Admin Panel
+// Last update: ${new Date().toLocaleString()}
+export const PRODUCTS: Product[] = ${JSON.stringify(products, null, 2)};
+
+// Collections - Auto-filtered by tags and criteria
+export const COLLECTIONS = ${JSON.stringify(collections, null, 2)};
+
+// Available Tags
+export const AVAILABLE_TAGS = ${JSON.stringify(tags, null, 2)};
+
+// Available Categories (Custom)
+export const AVAILABLE_CATEGORIES = ${JSON.stringify(categories, null, 2)};
+
+// Available Types (Custom)
+export const AVAILABLE_TYPES = ${JSON.stringify(types, null, 2)};
+
+// Available Colors (Custom)
+export const AVAILABLE_COLORS = ${JSON.stringify(colors, null, 2)};
+
+// Available Sizes (Custom)
+export const AVAILABLE_SIZES = ${JSON.stringify(sizes, null, 2)};
+
+// Helper function to get products for a collection
+export function getCollectionProducts(collectionId: string): Product[] {
+  const collection = COLLECTIONS.find(c => c.id === collectionId);
+  if (!collection) return [];
+  
+  return PRODUCTS.filter(product => {
+    const filters = collection.filters || {};
+    
+    // Tag filter
+    if (filters.tags && filters.tags.length > 0) {
+      const hasMatchingTag = filters.tags.some((tag: string) => product.tags?.includes(tag));
+      if (!hasMatchingTag) return false;
+    }
+    
+    // Category filter
+    if (filters.category && product.category !== filters.category) return false;
+    
+    // Type filter
+    if (filters.type && product.type !== filters.type) return false;
+    
+    // Price filters
+    if (filters.minPrice && product.price < filters.minPrice) return false;
+    if (filters.maxPrice && product.price > filters.maxPrice) return false;
+    
+    return true;
+  });
+}
+`;
+
+  const constantsPath = path.join(__dirname, '..', 'constants.ts');
+  fs.writeFileSync(constantsPath, tsCode, 'utf8');
+  console.log(`✅ Fully recompiled constants.ts - ${products.length} products, ${collections.length} collections`);
+
+  // Hot-reload connected clients if WebSocket server is used
+  connectedClients.forEach(client => {
+    if (client.readyState === 1) { // WebSocket.OPEN
+      try {
+        client.send(JSON.stringify({ type: 'reload' }));
+      } catch (err) {}
+    }
+  });
 }
 
 const server = http.createServer((req, res) => {
@@ -118,12 +268,18 @@ const server = http.createServer((req, res) => {
       const categories = parseArray('AVAILABLE_CATEGORIES') || [];
       const types = parseArray('AVAILABLE_TYPES') || [];
       const colors = parseArray('AVAILABLE_COLORS') || [];
+      const sizes = parseArray('AVAILABLE_SIZES') || [];
 
       // Save synced data to backup.json to ensure server state is also updated
       const backupData = {
         products: products,
         collections: collections,
-        orders: []
+        orders: [],
+        tags: tags,
+        categories: categories,
+        types: types,
+        colors: colors,
+        sizes: sizes
       };
 
       // If backup.json already exists, preserve orders
@@ -149,7 +305,8 @@ const server = http.createServer((req, res) => {
         tags,
         categories,
         types,
-        colors
+        colors,
+        sizes
       }));
     } catch (error) {
       console.error('❌ Error syncing constants:', error);
@@ -234,6 +391,25 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // GET /api/events - SSE endpoint for real-time storefront push notifications
+  if (req.method === 'GET' && req.url === '/api/events') {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    });
+    res.write(':ok\n\n'); // initial handshake
+    sseClients.add(res);
+    console.log(`🔌 [SSE] Client connected. Total: ${sseClients.size}`);
+    req.on('close', () => {
+      sseClients.delete(res);
+      console.log(`🔌 [SSE] Client disconnected. Total: ${sseClients.size}`);
+    });
+    return;
+  }
+
   // POST /api/products - Save to backup
   if (req.method === 'POST' && req.url === '/api/products') {
     let body = '';
@@ -244,12 +420,33 @@ const server = http.createServer((req, res) => {
       try {
         const data = JSON.parse(body);
         fs.writeFileSync(backupFile, JSON.stringify(data, null, 2));
+
+        // Also update public static files to keep static catalog in sync
+        if (data.products && data.products.length > 0) {
+          const publicProductsFile = path.join(__dirname, '..', 'public', 'data', 'products.json');
+          const publicDataDir = path.dirname(publicProductsFile);
+          if (!fs.existsSync(publicDataDir)) fs.mkdirSync(publicDataDir, { recursive: true });
+          fs.writeFileSync(publicProductsFile, JSON.stringify(data.products, null, 2), 'utf8');
+        }
+        if (data.collections && data.collections.length > 0) {
+          const publicCollectionsFile = path.join(__dirname, '..', 'public', 'data', 'collections.json');
+          const publicDataDir = path.dirname(publicCollectionsFile);
+          if (!fs.existsSync(publicDataDir)) fs.mkdirSync(publicDataDir, { recursive: true });
+          fs.writeFileSync(publicCollectionsFile, JSON.stringify(data.collections, null, 2), 'utf8');
+        }
+
+        // Recompile constants.ts to reflect updates instantly on storefront
+        recompileConstants(data);
+
+        // 🚀 Broadcast real-time update to all connected storefront tabs
+        broadcastUpdate('all', { productsCount: data.products?.length || 0, collectionsCount: data.collections?.length || 0 });
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: true,
           message: `Saved ${data.products?.length || 0} products, ${data.collections?.length || 0} collections`
         }));
-        console.log(`💾 Saved backup: ${data.products?.length || 0} products, ${data.collections?.length || 0} collections`);
+        console.log(`💾 Saved backup, updated public files, and recompiled constants.ts: ${data.products?.length || 0} products, ${data.collections?.length || 0} collections`);
       } catch (error) {
         console.error('❌ Error saving backup:', error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -330,67 +527,7 @@ const server = http.createServer((req, res) => {
             backupData.collections = collections;
             fs.writeFileSync(backupFile, JSON.stringify(backupData, null, 2));
 
-            const products = backupData.products || [];
-            const tags = backupData.tags || [];
-            const categories = backupData.categories || [];
-            const types = backupData.types || [];
-            const colors = backupData.colors || [];
-
-            const tsCode = `import { Product } from './types';
-
-export const BRAND_NAME = "ELEVEZ";
-export const ACCENT_COLOR = "#00ff88";
-
-// Products - Auto-synced from Admin Panel
-// Last update: ${new Date().toLocaleString()}
-export const PRODUCTS: Product[] = ${JSON.stringify(products, null, 2)};
-
-// Collections - Auto-filtered by tags and criteria
-export const COLLECTIONS = ${JSON.stringify(collections, null, 2)};
-
-// Available Tags
-export const AVAILABLE_TAGS = ${JSON.stringify(tags, null, 2)};
-
-// Available Categories (Custom)
-export const AVAILABLE_CATEGORIES = ${JSON.stringify(categories, null, 2)};
-
-// Available Types (Custom)
-export const AVAILABLE_TYPES = ${JSON.stringify(types, null, 2)};
-
-// Available Colors (Custom)
-export const AVAILABLE_COLORS = ${JSON.stringify(colors, null, 2)};
-
-// Helper function to get products for a collection
-export function getCollectionProducts(collectionId: string): Product[] {
-  const collection = COLLECTIONS.find(c => c.id === collectionId);
-  if (!collection) return [];
-  
-  return PRODUCTS.filter(product => {
-    const filters = collection.filters || {};
-    
-    // Tag filter
-    if (filters.tags && filters.tags.length > 0) {
-      const hasMatchingTag = filters.tags.some((tag: string) => product.tags?.includes(tag));
-      if (!hasMatchingTag) return false;
-    }
-    
-    // Category filter
-    if (filters.category && product.category !== filters.category) return false;
-    
-    // Type filter
-    if (filters.type && product.type !== filters.type) return false;
-    
-    // Price filters
-    if (filters.minPrice && product.price < filters.minPrice) return false;
-    if (filters.maxPrice && product.price > filters.maxPrice) return false;
-    
-    return true;
-  });
-}
-`;
-            const constantsPath = path.join(__dirname, '..', 'constants.ts');
-            fs.writeFileSync(constantsPath, tsCode, 'utf8');
-            console.log('✅ Fully recompiled constants.ts on /api/collections save');
+            recompileConstants(backupData);
           } catch (e) {
             console.log('⚠️ Could not sync collections to backup.json or constants.ts', e);
           }
@@ -721,6 +858,11 @@ export function getCollectionProducts(collectionId: string): Product[] {
 
       let products = [];
       let collections = [];
+      let colors = [];
+      let tags = [];
+      let categories = [];
+      let types = [];
+      let sizes = [];
 
       const productsPath = path.join(dataDir, 'products.json');
       if (fs.existsSync(productsPath)) {
@@ -733,8 +875,23 @@ export function getCollectionProducts(collectionId: string): Product[] {
         collections = Array.isArray(parsedCol) ? parsedCol : (parsedCol.collections || []);
       }
 
+      // Load additional configs from backup.json
+      const backupFile = path.join(__dirname, '..', 'data', 'backup.json');
+      if (fs.existsSync(backupFile)) {
+        try {
+          const backupData = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
+          colors = backupData.colors || [];
+          tags = backupData.tags || [];
+          categories = backupData.categories || [];
+          types = backupData.types || [];
+          sizes = backupData.sizes || [];
+        } catch (e) {
+          console.warn('Could not read backup file in get-shopify-data:', e.message);
+        }
+      }
+
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ products, collections }));
+      res.end(JSON.stringify({ products, collections, colors, tags, categories, types, sizes }));
     } catch (error) {
       console.error('❌ Error getting shopify data:', error);
       res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -836,6 +993,7 @@ export function getCollectionProducts(collectionId: string): Product[] {
         const categories = data.categories || data.availableCategories || [];
         const types = data.types || data.availableTypes || [];
         const colors = data.colors || data.availableColors || [];
+        const sizes = data.sizes || data.availableSizes || [];
         const orders = data.orders || [];
 
         // 1. Unified backup paths: save to data/backup.json (central database)
@@ -845,7 +1003,7 @@ export function getCollectionProducts(collectionId: string): Product[] {
           fs.mkdirSync(centralBackupDir, { recursive: true });
         }
         
-        const backupData = { products, collections, orders, tags, categories, types, colors };
+        const backupData = { products, collections, orders, tags, categories, types, colors, sizes };
         fs.writeFileSync(centralBackupFile, JSON.stringify(backupData, null, 2), 'utf8');
         console.log(`💾 Saved ${products.length} products to unified backup.json`);
 
@@ -874,62 +1032,10 @@ export function getCollectionProducts(collectionId: string): Product[] {
         }
 
         // 3. Compile and update constants.ts with products, collections, and metadata
-        const tsCode = `import { Product } from './types';
+        recompileConstants(backupData);
 
-export const BRAND_NAME = "ELEVEZ";
-export const ACCENT_COLOR = "#00ff88";
-
-// Products - Auto-synced from Admin Panel
-// Last update: ${new Date().toLocaleString()}
-export const PRODUCTS: Product[] = ${JSON.stringify(products, null, 2)};
-
-// Collections - Auto-filtered by tags and criteria
-export const COLLECTIONS = ${JSON.stringify(collections, null, 2)};
-
-// Available Tags
-export const AVAILABLE_TAGS = ${JSON.stringify(tags, null, 2)};
-
-// Available Categories (Custom)
-export const AVAILABLE_CATEGORIES = ${JSON.stringify(categories, null, 2)};
-
-// Available Types (Custom)
-export const AVAILABLE_TYPES = ${JSON.stringify(types, null, 2)};
-
-// Available Colors (Custom)
-export const AVAILABLE_COLORS = ${JSON.stringify(colors, null, 2)};
-
-// Helper function to get products for a collection
-export function getCollectionProducts(collectionId: string): Product[] {
-  const collection = COLLECTIONS.find(c => c.id === collectionId);
-  if (!collection) return [];
-  
-  return PRODUCTS.filter(product => {
-    const filters = collection.filters || {};
-    
-    // Tag filter
-    if (filters.tags && filters.tags.length > 0) {
-      const hasMatchingTag = filters.tags.some((tag: string) => product.tags?.includes(tag));
-      if (!hasMatchingTag) return false;
-    }
-    
-    // Category filter
-    if (filters.category && product.category !== filters.category) return false;
-    
-    // Type filter
-    if (filters.type && product.type !== filters.type) return false;
-    
-    // Price filters
-    if (filters.minPrice && product.price < filters.minPrice) return false;
-    if (filters.maxPrice && product.price > filters.maxPrice) return false;
-    
-    return true;
-  });
-}
-`;
-
-        const constantsPath = path.join(__dirname, '..', 'constants.ts');
-        fs.writeFileSync(constantsPath, tsCode, 'utf8');
-        console.log(`✅ Fully updated constants.ts - ${products.length} products, ${collections.length} collections`);
+        // 🚀 Broadcast real-time update to all connected storefront tabs
+        broadcastUpdate('all', { productsCount: products.length, collectionsCount: collections.length });
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -1175,62 +1281,26 @@ export function getCollectionProducts(collectionId: string): Product[] {
         const data = JSON.parse(body);
         const { products, collections, tags, categories, types, colors } = data;
 
-        const tsCode = `import { Product } from './types';
+        // Write to constants.ts using unified recompileConstants
+        recompileConstants(data);
 
-export const BRAND_NAME = "ELEVEZ";
-export const ACCENT_COLOR = "#00ff88";
+        // IMPORTANT: Do NOT write to public/data/ here — that directory is watched by Vite
+        // and writing to it causes a FULL PAGE RELOAD, which breaks the product detail page.
+        // The /api/products POST handler already writes to public/data/ correctly.
+        // Here we only update backup.json (data/ dir is outside Vite's watch scope).
+        const centralBackupFile = path.join(__dirname, '..', 'data', 'backup.json');
+        if (fs.existsSync(centralBackupFile)) {
+          try {
+            const bk = JSON.parse(fs.readFileSync(centralBackupFile, 'utf8'));
+            if (products && products.length > 0) bk.products = products;
+            if (collections && collections.length > 0) bk.collections = collections;
+            if (colors && colors.length > 0) bk.colors = colors;
+            fs.writeFileSync(centralBackupFile, JSON.stringify(bk, null, 2), 'utf8');
+          } catch (e) { /* ignore */ }
+        }
 
-// Products - Auto-synced from Admin Panel
-// Last update: ${new Date().toLocaleString()}
-export const PRODUCTS: Product[] = ${JSON.stringify(products, null, 2)};
-
-// Collections - Auto-filtered by tags and criteria
-export const COLLECTIONS = ${JSON.stringify(collections, null, 2)};
-
-// Available Tags
-export const AVAILABLE_TAGS = ${JSON.stringify(tags, null, 2)};
-
-// Available Categories (Custom)
-export const AVAILABLE_CATEGORIES = ${JSON.stringify(categories, null, 2)};
-
-// Available Types (Custom)
-export const AVAILABLE_TYPES = ${JSON.stringify(types, null, 2)};
-
-// Available Colors (Custom)
-export const AVAILABLE_COLORS = ${JSON.stringify(colors, null, 2)};
-
-// Helper function to get products for a collection
-export function getCollectionProducts(collectionId: string): Product[] {
-  const collection = COLLECTIONS.find(c => c.id === collectionId);
-  if (!collection) return [];
-  
-  return PRODUCTS.filter(product => {
-    const filters = collection.filters || {};
-    
-    // Tag filter
-    if (filters.tags && filters.tags.length > 0) {
-      const hasMatchingTag = filters.tags.some((tag: string) => product.tags?.includes(tag));
-      if (!hasMatchingTag) return false;
-    }
-    
-    // Category filter
-    if (filters.category && product.category !== filters.category) return false;
-    
-    // Type filter
-    if (filters.type && product.type !== filters.type) return false;
-    
-    // Price filters
-    if (filters.minPrice && product.price < filters.minPrice) return false;
-    if (filters.maxPrice && product.price > filters.maxPrice) return false;
-    
-    return true;
-  });
-}
-`;
-
-        // Write to constants.ts
-        const constantsPath = path.join(__dirname, '..', 'constants.ts');
-        fs.writeFileSync(constantsPath, tsCode, 'utf8');
+        // 🚀 Broadcast real-time update to all connected storefront tabs
+        broadcastUpdate('all', { productsCount: products?.length || 0, collectionsCount: collections?.length || 0 });
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -1325,7 +1395,10 @@ export function getCollectionProducts(collectionId: string): Product[] {
   } else {
     // Try to serve from admin-panel directory if not handled above
     // Strip query string from URL
-    const urlPath = req.url.split('?')[0];
+    let urlPath = req.url.split('?')[0];
+    if (urlPath === '/' || urlPath === '') {
+      urlPath = '/index.html';
+    }
     const potentialAssetPath = path.join(__dirname, '..', 'admin-panel', urlPath);
     if (fs.existsSync(potentialAssetPath) && fs.statSync(potentialAssetPath).isFile()) {
       const ext = path.extname(potentialAssetPath);

@@ -75,6 +75,7 @@ const state = {
     { name: 'Orange', code: '#FFA500' },
     { name: 'Gray', code: '#808080' }
   ],
+  availableSizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'],
   currentView: 'dashboard',
   editingProduct: null,
   editingCollection: null,
@@ -254,6 +255,11 @@ async function autoSyncFromConstants(force = false) {
         console.log('ℹ️ Retaining existing custom collections from localStorage (bypassed fallback sync overwrite)');
       }
       
+      if (module.AVAILABLE_TAGS) state.availableTags = module.AVAILABLE_TAGS;
+      if (module.AVAILABLE_CATEGORIES) state.availableCategories = module.AVAILABLE_CATEGORIES;
+      if (module.AVAILABLE_TYPES) state.availableTypes = module.AVAILABLE_TYPES;
+      if (module.AVAILABLE_COLORS) state.availableColors = module.AVAILABLE_COLORS;
+      
       console.log(`✅ Synced ${module.PRODUCTS.length} products from constants.js fallback`);
       showSyncStatus(`✅ Loaded ${module.PRODUCTS.length} products from website`, 'success');
       return true;
@@ -312,19 +318,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('⚠️ Firebase orders script not loaded. Include firebase-orders.js');
   }
 
-  // Auto-save every 30 seconds
+  // Auto-save every 30 seconds (localStorage only to prevent server reload loops)
   setInterval(() => {
     if (state.products.length > 0) {
-      saveData();
-      console.log('🔄 Auto-saved products');
+      saveData(true);
+      console.log('🔄 Auto-saved products (local)');
     }
   }, 30000);
 
-  // Save before page unload
+  // Save before page unload (localStorage only to prevent server reload loops)
   window.addEventListener('beforeunload', () => {
     if (state.products.length > 0) {
-      saveData();
-      console.log('💾 Saved before page close');
+      saveData(true);
+      console.log('💾 Saved before page close (local)');
     }
   });
 
@@ -529,6 +535,57 @@ function mergeCollectionLists(...lists) {
 async function loadData() {
   console.log('📂 Loading data (robust bidirectional SWR merge enabled)...');
 
+  // Load custom configurations from localStorage on startup to prevent reverting to defaults
+  try {
+    const savedColors = localStorage.getItem('elevez_colors');
+    if (savedColors) {
+      const parsed = JSON.parse(savedColors);
+      if (parsed && parsed.length > 0) state.availableColors = parsed;
+    }
+  } catch (e) {
+    console.warn('Error loading availableColors from localStorage:', e);
+  }
+
+  try {
+    const savedSizes = localStorage.getItem('elevez_sizes');
+    if (savedSizes) {
+      const parsed = JSON.parse(savedSizes);
+      if (parsed && parsed.length > 0) state.availableSizes = parsed;
+    }
+  } catch (e) {
+    console.warn('Error loading availableSizes from localStorage:', e);
+  }
+
+  try {
+    const savedTags = localStorage.getItem('elevez_tags');
+    if (savedTags) {
+      const parsed = JSON.parse(savedTags);
+      if (parsed && parsed.length > 0) state.availableTags = parsed;
+    }
+  } catch (e) {
+    console.warn('Error loading availableTags from localStorage:', e);
+  }
+
+  try {
+    const savedCategories = localStorage.getItem('elevez_categories');
+    if (savedCategories) {
+      const parsed = JSON.parse(savedCategories);
+      if (parsed && parsed.length > 0) state.availableCategories = parsed;
+    }
+  } catch (e) {
+    console.warn('Error loading availableCategories from localStorage:', e);
+  }
+
+  try {
+    const savedTypes = localStorage.getItem('elevez_types');
+    if (savedTypes) {
+      const parsed = JSON.parse(savedTypes);
+      if (parsed && parsed.length > 0) state.availableTypes = parsed;
+    }
+  } catch (e) {
+    console.warn('Error loading availableTypes from localStorage:', e);
+  }
+
   // --- PRODUCTS LOAD SECTION ---
   let cloudProducts = [];
   let serverProducts = [];
@@ -561,6 +618,30 @@ async function loadData() {
       if (data && data.products && Array.isArray(data.products)) {
         serverProducts = data.products;
         console.log(`✅ [SWR Merge] Loaded ${serverProducts.length} products from local server API`);
+      }
+      
+      // Load configurations if present in local server response
+      if (data) {
+        if (data.colors && data.colors.length > 0) {
+          state.availableColors = data.colors;
+          localStorage.setItem('elevez_colors', JSON.stringify(data.colors));
+        }
+        if (data.sizes && data.sizes.length > 0) {
+          state.availableSizes = data.sizes;
+          localStorage.setItem('elevez_sizes', JSON.stringify(data.sizes));
+        }
+        if (data.tags && data.tags.length > 0) {
+          state.availableTags = data.tags;
+          localStorage.setItem('elevez_tags', JSON.stringify(data.tags));
+        }
+        if (data.categories && data.categories.length > 0) {
+          state.availableCategories = data.categories;
+          localStorage.setItem('elevez_categories', JSON.stringify(data.categories));
+        }
+        if (data.types && data.types.length > 0) {
+          state.availableTypes = data.types;
+          localStorage.setItem('elevez_types', JSON.stringify(data.types));
+        }
       }
     }
   } catch (err) {
@@ -868,6 +949,51 @@ async function loadData() {
     localStorage.setItem('elevez_products', JSON.stringify(state.products));
   }
 
+  // ✅ Automatically extract unique sizes from all loaded products
+  if (state.products && state.products.length > 0) {
+    const allSizes = new Set(state.availableSizes || []);
+    state.products.forEach(p => {
+      if (p.sizes && Array.isArray(p.sizes)) {
+        p.sizes.forEach(size => {
+          if (size && typeof size === 'string') allSizes.add(size);
+        });
+      }
+    });
+    
+    // Custom sort sizes logically (e.g. XS -> S -> M -> L -> XL -> XXL -> 3XL -> 4XL -> 5XL -> 6XL -> 7XL)
+    const sizeWeights = {
+      '3XS': 1, '2XS': 2, 'XS': 3, 'S': 4, 'M': 5, 'L': 6, 'XL': 7, 
+      'XXL': 8, '2XL': 8, '3XL': 9, '4XL': 10, '5XL': 11, '6XL': 12, 
+      '7XL': 13, '8XL': 14, '9XL': 15, '10XL': 16, 'FREE': 99, 'ONE SIZE': 100
+    };
+    state.availableSizes = Array.from(allSizes).sort((a, b) => {
+      const wa = sizeWeights[a.toUpperCase()] || 50;
+      const wb = sizeWeights[b.toUpperCase()] || 50;
+      if (wa !== wb) return wa - wb;
+      return a.localeCompare(b);
+    });
+    
+    localStorage.setItem('elevez_sizes', JSON.stringify(state.availableSizes));
+  }
+
+  // ✅ Automatically extract unique colors from all loaded products
+  if (state.products && state.products.length > 0) {
+    const allColors = [...(state.availableColors || [])];
+    state.products.forEach(p => {
+      if (p.colors && Array.isArray(p.colors)) {
+        p.colors.forEach(col => {
+          const colName = typeof col === 'string' ? col : col?.name;
+          const colCode = typeof col === 'object' && col?.code ? col.code : '#000000';
+          if (colName && !allColors.some(c => c.name.toLowerCase() === colName.toLowerCase())) {
+            allColors.push({ name: colName, code: colCode });
+          }
+        });
+      }
+    });
+    state.availableColors = allColors;
+    localStorage.setItem('elevez_colors', JSON.stringify(state.availableColors));
+  }
+
   // ✅ CRITICAL: Sync state to window object for sync-deploy.js to access
   window.products = state.products;
   window.collections = state.collections;
@@ -876,7 +1002,7 @@ async function loadData() {
 }
 
 // Save Data
-async function saveData() {
+async function saveData(skipServer = false) {
   try {
     // ✅ DE-DUPLICATE before saving — use ID as the unique key so edits are never silently discarded
     const productMap = new Map();
@@ -933,11 +1059,17 @@ async function saveData() {
     localStorage.setItem('elevez_categories', JSON.stringify(state.availableCategories));
     localStorage.setItem('elevez_types', JSON.stringify(state.availableTypes));
     localStorage.setItem('elevez_colors', JSON.stringify(state.availableColors));
+    localStorage.setItem('elevez_sizes', JSON.stringify(state.availableSizes));
 
     // Save timestamp
     localStorage.setItem('elevez_last_save', new Date().toISOString());
 
     updateOrdersBadge();
+
+    if (skipServer) {
+      console.log('⚡ saveData (local-only): Saved successfully to localStorage.');
+      return;
+    }
 
     // Also backup to server (permanent persistence)
     try {
@@ -951,7 +1083,8 @@ async function saveData() {
           tags: state.availableTags,
           categories: state.availableCategories,
           types: state.availableTypes,
-          colors: state.availableColors
+          colors: state.availableColors,
+          sizes: state.availableSizes
         })
       });
       console.log('✅ Backed up to server (data/backup.json)');
@@ -1178,6 +1311,26 @@ function renderCurrentView() {
     case 'sections':
       if (typeof renderSections === 'function') {
         renderSections();
+      }
+      break;
+    case 'discounts':
+      if (typeof window.loadDiscounts === 'function') {
+        window.loadDiscounts();
+      }
+      break;
+    case 'user-points':
+      if (typeof window.loadUserPoints === 'function') {
+        window.loadUserPoints();
+      }
+      break;
+    case 'colors-management':
+      if (typeof window.renderGlobalColorsGrid === 'function') {
+        window.renderGlobalColorsGrid();
+      }
+      break;
+    case 'sizes-management':
+      if (typeof window.renderGlobalSizesGrid === 'function') {
+        window.renderGlobalSizesGrid();
       }
       break;
   }
@@ -1477,9 +1630,7 @@ function resetProductForm() {
   if (categorySelect) categorySelect.disabled = false;
   if (typeSelect) typeSelect.disabled = false;
 
-  document.querySelectorAll('.size-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.size === 'M');
-  });
+  renderSizesGrid();
 
   document.querySelectorAll('.tag-btn').forEach(btn => {
     btn.classList.remove('active');
@@ -1536,20 +1687,8 @@ function setupProductFormListeners() {
   salePrice.addEventListener('input', calculateAll);
   productCost.addEventListener('input', calculateAll);
 
-  // Size selection
-  document.querySelectorAll('.size-btn').forEach(btn => {
-    btn.onclick = () => {
-      btn.classList.toggle('active');
-      const size = btn.dataset.size;
-      if (btn.classList.contains('active')) {
-        if (!state.productForm.selectedSizes.includes(size)) {
-          state.productForm.selectedSizes.push(size);
-        }
-      } else {
-        state.productForm.selectedSizes = state.productForm.selectedSizes.filter(s => s !== size);
-      }
-    };
-  });
+  // Render available sizes dynamically
+  renderSizesGrid();
 
   // Render available tags
   renderProductTags();
@@ -2504,6 +2643,7 @@ function handleProductSubmit(e) {
   const profitMargin = productCost > 0 && salePrice > 0 ? ((profit / salePrice) * 100).toFixed(1) : 0;
 
   const product = {
+    ...(state.editingProduct || {}),
     id: state.editingProduct?.id || Date.now(),
     qid: qid,
     name: document.getElementById('productName').value,
@@ -2532,7 +2672,8 @@ function handleProductSubmit(e) {
     showInCollections: document.getElementById('showInCollections')?.checked !== false,
     isBestSeller: document.getElementById('isBestSeller').checked || undefined,
     isNew: document.getElementById('isNew').checked || undefined,
-    isFeatured: document.getElementById('isFeatured')?.checked || undefined
+    isFeatured: document.getElementById('isFeatured')?.checked || undefined,
+    updatedAt: new Date().toISOString()
   };
 
   if (state.editingProduct) {
@@ -2561,7 +2702,7 @@ function handleProductSubmit(e) {
       state.products.pop();
     } else {
       // Restore original product
-      const index = state.products.findIndex(p => p.id === state.editingProduct.id);
+      const index = state.products.findIndex(p => String(p.id) === String(state.editingProduct.id));
       state.products[index] = state.editingProduct;
     }
     return; // Stop execution
@@ -2625,11 +2766,11 @@ function handleProductSubmit(e) {
 
 // Edit Product
 window.editProduct = (id) => {
-  const product = state.products.find(p => p.id === id);
+  const product = state.products.find(p => String(p.id) === String(id));
   if (!product) return;
 
-  state.editingProduct = product;
   openProductModal();
+  state.editingProduct = product;
 
   document.getElementById('productModalTitle').textContent = 'Edit Product';
   document.getElementById('productName').value = product.name;
@@ -2684,11 +2825,9 @@ window.editProduct = (id) => {
 
   renderImagePreviews();
   renderSizeChartPreview();
-  renderColorList();
+  renderColorsGrid();
 
-  document.querySelectorAll('.size-btn').forEach(btn => {
-    btn.classList.toggle('active', state.productForm.selectedSizes.includes(btn.dataset.size));
-  });
+  renderSizesGrid();
 
   document.querySelectorAll('#productForm .tag-btn').forEach(btn => {
     btn.classList.toggle('active', state.productForm.selectedTags.includes(btn.dataset.tag));
@@ -2721,7 +2860,7 @@ window.editProduct = (id) => {
 
 window.deleteProduct = (id) => {
   if (confirm('Are you sure you want to delete this product?')) {
-    state.products = state.products.filter(p => p.id !== id);
+    state.products = state.products.filter(p => String(p.id) !== String(id));
     saveData();
     renderCurrentView();
     alert('✅ Product deleted successfully!');
@@ -2739,7 +2878,7 @@ window.openCollectionModal = () => {
 
 window.deleteCollection = (id) => {
   if (confirm('Delete this collection?')) {
-    state.collections = state.collections.filter(c => c.id !== id);
+    state.collections = state.collections.filter(c => String(c.id) !== String(id));
     saveData();
     saveCollectionsToServer();
     renderCurrentView();
@@ -3047,7 +3186,7 @@ window.generateCollectionsFromProducts = async () => {
 
 // Duplicate a collection
 window.duplicateCollection = (id) => {
-  const collection = state.collections.find(c => c.id === id);
+  const collection = state.collections.find(c => String(c.id) === String(id));
   if (!collection) return;
 
   const newCollection = {
@@ -3071,7 +3210,7 @@ window.duplicateCollection = (id) => {
 
 // Open manage products modal for a collection
 window.openManageProductsModal = (collectionId) => {
-  const collection = state.collections.find(c => c.id === collectionId);
+  const collection = state.collections.find(c => String(c.id) === String(collectionId));
   if (!collection) return;
 
   // Store the current collection being edited
@@ -3298,7 +3437,7 @@ window.selectAllAvailable = () => {
 // Save collection products
 window.saveCollectionProducts = async () => {
   const collectionId = state.editingCollectionProducts;
-  const collectionIndex = state.collections.findIndex(c => c.id === collectionId);
+  const collectionIndex = state.collections.findIndex(c => String(c.id) === String(collectionId));
 
   if (collectionIndex === -1) {
     alert('Error: Collection not found');
@@ -3363,7 +3502,7 @@ export const AVAILABLE_TYPES = ${JSON.stringify(state.availableTypes, null, 2)};
 
 // Helper function to get products for a collection
 export function getCollectionProducts(collectionId: string): Product[] {
-  const collection = COLLECTIONS.find(c => c.id === collectionId);
+  const collection = COLLECTIONS.find(c => String(c.id) === String(collectionId));
   if (!collection) return [];
   
   return PRODUCTS.filter(product => {
@@ -4058,7 +4197,7 @@ function getCollectionProducts(collection) {
 }
 
 window.viewCollectionProducts = (collectionId) => {
-  const collection = state.collections.find(c => c.id === collectionId);
+  const collection = state.collections.find(c => String(c.id) === String(collectionId));
   if (!collection) return;
 
   const products = getCollectionProducts(collection);
@@ -4159,7 +4298,7 @@ function setupCollectionFormListeners() {
     };
 
     if (state.editingCollection) {
-      const index = state.collections.findIndex(c => c.id === state.editingCollection.id);
+      const index = state.collections.findIndex(c => String(c.id) === String(state.editingCollection.id));
       state.collections[index] = collection;
     } else {
       state.collections.push(collection);
@@ -4174,7 +4313,7 @@ function setupCollectionFormListeners() {
 }
 
 window.editCollection = (id) => {
-  const collection = state.collections.find(c => c.id === id);
+  const collection = state.collections.find(c => String(c.id) === String(id));
   if (!collection) return;
 
   state.editingCollection = collection;
@@ -4429,7 +4568,7 @@ export const AVAILABLE_COLORS = ${JSON.stringify(state.availableColors, null, 2)
 
 // Helper function to get products for a collection
 export function getCollectionProducts(collectionId: string): Product[] {
-  const collection = COLLECTIONS.find(c => c.id === collectionId);
+  const collection = COLLECTIONS.find(c => String(c.id) === String(collectionId));
   if (!collection) return [];
   
   return PRODUCTS.filter(product => {
@@ -4945,4 +5084,180 @@ window.deleteGlobalColor = async function(index) {
   renderColorsGrid(); // Also update product modal checkboxes
 
   showSyncStatus(`Color "${color.name}" deleted`, 'success');
+};
+
+// ─── SIZES DYNAMIC RENDERING & GLOBAL MANAGEMENT ──────────────────────────
+
+function renderSizesGrid() {
+  const grid = document.getElementById('sizeSelector');
+  if (!grid) return;
+  
+  grid.innerHTML = state.availableSizes.map(size => {
+    const isSelected = state.productForm.selectedSizes.includes(size);
+    return `
+      <button type="button" class="size-btn ${isSelected ? 'active' : ''}" onclick="toggleSize('${size}')" data-size="${size}">
+        ${size}
+      </button>
+    `;
+  }).join('');
+}
+
+window.toggleSize = (size) => {
+  const existingIndex = state.productForm.selectedSizes.indexOf(size);
+  if (existingIndex > -1) {
+    state.productForm.selectedSizes.splice(existingIndex, 1);
+  } else {
+    state.productForm.selectedSizes.push(size);
+  }
+  renderSizesGrid();
+};
+
+window.renderGlobalSizesGrid = function() {
+  const grid = document.getElementById('globalSizesGrid');
+  if (!grid) return;
+  
+  if (!state.availableSizes || state.availableSizes.length === 0) {
+    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">No sizes in database</div>';
+    return;
+  }
+
+  grid.innerHTML = state.availableSizes.map((size, index) => {
+    return `
+      <div class="size-manager-card" style="
+        background: linear-gradient(145deg, rgba(30, 30, 30, 0.9) 0%, rgba(20, 20, 20, 0.95) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+      " onmouseenter="this.style.borderColor='rgba(0, 255, 136, 0.3)'; this.style.transform='translateY(-2px)'"
+         onmouseleave="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.transform='translateY(0)'">
+        
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <!-- Ruler Badge -->
+          <div style="
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            border: 2px solid var(--primary);
+            box-shadow: 2px 2px 0px 0px #000;
+          ">
+            ${size}
+          </div>
+          <div>
+            <h4 style="font-weight: 700; color: #fff; margin: 0; font-size: 15px;">Size ${size}</h4>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" onclick="openGlobalSizeModal(${index})" style="padding: 6px 12px; font-size: 12px; background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+            ✏️ Edit
+          </button>
+          <button class="btn" onclick="deleteGlobalSize(${index})" style="padding: 6px 12px; font-size: 12px; background: rgba(255, 68, 68, 0.15); color: #ff4444; border: 1px solid rgba(255, 68, 68, 0.2);">
+            🗑️ Delete
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+};
+
+window.openGlobalSizeModal = function(index = null) {
+  const modal = document.getElementById('globalSizeModal');
+  const title = document.getElementById('globalSizeModalTitle');
+  const nameInput = document.getElementById('globalSizeName');
+  const originalName = document.getElementById('globalSizeOriginalName');
+
+  if (index !== null) {
+    // Edit Mode
+    const size = state.availableSizes[index];
+    title.innerText = 'Edit Global Size';
+    nameInput.value = size;
+    originalName.value = size;
+  } else {
+    // Create Mode
+    title.innerText = 'Add Global Size';
+    nameInput.value = '';
+    originalName.value = '';
+  }
+
+  modal.classList.add('active');
+};
+
+window.closeGlobalSizeModal = function() {
+  const modal = document.getElementById('globalSizeModal');
+  modal.classList.remove('active');
+};
+
+window.saveGlobalSize = async function(event) {
+  event.preventDefault();
+  const name = document.getElementById('globalSizeName').value.trim();
+  const originalName = document.getElementById('globalSizeOriginalName').value;
+
+  if (!name) {
+    alert('❌ Size name is required!');
+    return;
+  }
+
+  if (originalName) {
+    // Edit operation
+    const index = state.availableSizes.indexOf(originalName);
+    if (index > -1) {
+      // Update any products using the old size name
+      state.products.forEach(product => {
+        if (product.sizes && Array.isArray(product.sizes)) {
+          const sIdx = product.sizes.indexOf(originalName);
+          if (sIdx > -1) {
+            product.sizes[sIdx] = name;
+          }
+        }
+      });
+      state.availableSizes[index] = name;
+    }
+  } else {
+    // Add operation
+    if (state.availableSizes.includes(name)) {
+      alert('❌ Size already exists!');
+      return;
+    }
+    state.availableSizes.push(name);
+  }
+
+  // Update localStorage and trigger Server save & compile
+  localStorage.setItem('elevez_sizes', JSON.stringify(state.availableSizes));
+  await saveData();
+
+  // Render and update UI grids
+  window.renderGlobalSizesGrid();
+  renderSizesGrid(); // Also update product modal checkboxes
+  closeGlobalSizeModal();
+
+  showSyncStatus(`Size "${name}" saved successfully`, 'success');
+};
+
+window.deleteGlobalSize = async function(index) {
+  const size = state.availableSizes[index];
+  if (!confirm(`Are you sure you want to delete size "${size}"?`)) return;
+
+  state.availableSizes.splice(index, 1);
+
+  // Update localStorage and sync
+  localStorage.setItem('elevez_sizes', JSON.stringify(state.availableSizes));
+  await saveData();
+
+  // Render and update UI grids
+  window.renderGlobalSizesGrid();
+  renderSizesGrid(); // Also update product modal checkboxes
+
+  showSyncStatus(`Size "${size}" deleted`, 'success');
 };

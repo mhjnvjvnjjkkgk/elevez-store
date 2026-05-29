@@ -3,7 +3,7 @@
 
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
-import { COLLECTIONS } from '../constants';
+import { COLLECTIONS, PRODUCTS } from '../constants';
 
 export interface LocalCollection {
     id: string;
@@ -28,9 +28,29 @@ const PRODUCTS_KEY = 'elevez_products';
 let isFetching = false;
 
 // Flag to track if we've already fetched to prevent infinite loops
+// NOTE: Force-fetches (from SSE events) bypass this flag
 let hasFetchedServer = false;
 
 class LocalCollectionService {
+
+    /**
+     * Get active products list, choosing between localStorage and compile-time constants
+     */
+    getActiveProducts(): any[] {
+        try {
+            const stored = localStorage.getItem(PRODUCTS_KEY);
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
+            }
+        } catch (error) {
+            console.error('Error getting active products:', error);
+        }
+
+        return PRODUCTS;
+    }
 
     /**
      * Get all collections - first tries localStorage, then server JSON file
@@ -39,6 +59,7 @@ class LocalCollectionService {
         try {
             // Background revalidation: always fetch from Firestore/cloud in background
             // Ensure this only happens ONCE automatically to prevent infinite event loops
+            // Skip in dev to avoid using cached collections
             if (!isFetching && !hasFetchedServer) {
                 hasFetchedServer = true;
                 this.loadFromServer();
@@ -87,55 +108,61 @@ class LocalCollectionService {
 
     /**
      * Async method to load collections from Cloud Firestore (Primary) or Admin Server (Fallback)
+     * @param force - When true, bypasses isFetching and hasFetchedServer flags (used by SSE events)
      */
-    async loadFromServer(): Promise<void> {
-        if (isFetching) return;
+    async loadFromServer(force = false): Promise<void> {
+        if (isFetching && !force) return;
+        if (hasFetchedServer && !force) return;
         isFetching = true;
 
         let cloudSyncSuccess = false;
-        try {
-            console.log('☁️ [SWR Sync] Sourcing products and collections directly from Firestore cloud...');
-            
-            const productsSnapshot = await getDocs(collection(db, 'products'));
-            const collectionsSnapshot = await getDocs(collection(db, 'collections'));
+        const isDev = (import.meta as any).env.DEV;
 
-            const productsList: any[] = [];
-            productsSnapshot.forEach(docSnap => {
-                productsList.push({ id: docSnap.id, ...docSnap.data() });
-            });
+        if (!isDev) {
+            try {
+                console.log('☁️ [SWR Sync] Sourcing products and collections directly from Firestore cloud...');
+                
+                const productsSnapshot = await getDocs(collection(db, 'products'));
+                const collectionsSnapshot = await getDocs(collection(db, 'collections'));
 
-            const collectionsList: any[] = [];
-            collectionsSnapshot.forEach(docSnap => {
-                collectionsList.push({ id: docSnap.id, ...docSnap.data() });
-            });
+                const productsList: any[] = [];
+                productsSnapshot.forEach(docSnap => {
+                    productsList.push({ id: docSnap.id, ...docSnap.data() });
+                });
 
-            if (productsList.length > 0 || collectionsList.length > 0) {
-                // Normalize document IDs back to numeric format if they are numeric
-                const formattedProducts = productsList.map(p => ({
-                    ...p,
-                    id: isNaN(Number(p.id)) ? p.id : Number(p.id)
-                }));
+                const collectionsList: any[] = [];
+                collectionsSnapshot.forEach(docSnap => {
+                    collectionsList.push({ id: docSnap.id, ...docSnap.data() });
+                });
 
-                const formattedCollections = collectionsList.map(c => ({
-                    ...c,
-                    id: isNaN(Number(c.id)) ? c.id : Number(c.id)
-                }));
+                if (productsList.length > 0 || collectionsList.length > 0) {
+                    // Normalize document IDs back to numeric format if they are numeric
+                    const formattedProducts = productsList.map(p => ({
+                        ...p,
+                        id: isNaN(Number(p.id)) ? p.id : Number(p.id)
+                    }));
 
-                if (formattedProducts.length > 0) {
-                    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(formattedProducts));
-                    console.log(`✅ [SWR Sync] Storefront updated with ${formattedProducts.length} fresh products.`);
+                    const formattedCollections = collectionsList.map(c => ({
+                        ...c,
+                        id: isNaN(Number(c.id)) ? c.id : Number(c.id)
+                    }));
+
+                    if (formattedProducts.length > 0) {
+                        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(formattedProducts));
+                        console.log(`✅ [SWR Sync] Storefront updated with ${formattedProducts.length} fresh products.`);
+                    }
+
+                    // IMPORTANT: ONLY update local collections if Firestore returned a non-empty list of collections!
+                    if (formattedCollections.length > 0) {
+                        localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(formattedCollections));
+                        console.log(`✅ [SWR Sync] Storefront updated with ${formattedCollections.length} fresh collections.`);
+                    }
+
+                    cloudSyncSuccess = true;
                 }
-
-                // IMPORTANT: ONLY update local collections if Firestore returned a non-empty list of collections!
-                if (formattedCollections.length > 0) {
-                    localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(formattedCollections));
-                    console.log(`✅ [SWR Sync] Storefront updated with ${formattedCollections.length} fresh collections.`);
-                }
-
-                cloudSyncSuccess = true;
+            } catch (firestoreError) {
+                console.warn('⚠️ Firestore direct sync failed, trying local admin server fallback...', firestoreError);
             }
-        } catch (firestoreError) {
-            console.warn('⚠️ Firestore direct sync failed, trying local admin server fallback...', firestoreError);
         }
 
         // Local Server Fallback (Secondary Source)
@@ -156,7 +183,22 @@ class LocalCollectionService {
                     if (formattedCollections.length > 0) {
                         localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(formattedCollections));
                     }
-                    console.log('✅ Loaded data from admin server fallback.');
+                    if (data.colors && data.colors.length > 0) {
+                        localStorage.setItem('elevez_colors', JSON.stringify(data.colors));
+                    }
+                    if (data.sizes && data.sizes.length > 0) {
+                        localStorage.setItem('elevez_sizes', JSON.stringify(data.sizes));
+                    }
+                    if (data.tags && data.tags.length > 0) {
+                        localStorage.setItem('elevez_tags', JSON.stringify(data.tags));
+                    }
+                    if (data.categories && data.categories.length > 0) {
+                        localStorage.setItem('elevez_categories', JSON.stringify(data.categories));
+                    }
+                    if (data.types && data.types.length > 0) {
+                        localStorage.setItem('elevez_types', JSON.stringify(data.types));
+                    }
+                    console.log('✅ Loaded data and configuration lists from admin server fallback.');
                 }
             } catch (error) {
                 console.warn('Could not load from admin server fallback:', error);
@@ -165,6 +207,7 @@ class LocalCollectionService {
 
         window.dispatchEvent(new Event('elevez_store_updated'));
         isFetching = false;
+        hasFetchedServer = true;
     }
 
     /**
@@ -180,7 +223,7 @@ class LocalCollectionService {
      */
     getCollectionProducts(handle: string): any[] {
         try {
-            const products = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]');
+            const products = this.getActiveProducts();
 
             if (handle === 'all') {
                 return products;
@@ -206,7 +249,7 @@ class LocalCollectionService {
      */
     getProductsBySection(section: 'bestSellers' | 'newArrivals' | 'featured'): any[] {
         try {
-            const products = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]');
+            const products = this.getActiveProducts();
 
             switch (section) {
                 case 'bestSellers':
@@ -248,7 +291,7 @@ class LocalCollectionService {
      * Get default "All Products" collection
      */
     private getDefaultCollections(): LocalCollection[] {
-        const products = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]');
+        const products = this.getActiveProducts();
 
         return [{
             id: 'all',
@@ -271,7 +314,7 @@ class LocalCollectionService {
      */
     getStats(): { totalCollections: number; totalProducts: number } {
         const collections = this.getAllCollections();
-        const products = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]');
+        const products = this.getActiveProducts();
 
         return {
             totalCollections: collections.length,
@@ -290,3 +333,58 @@ class LocalCollectionService {
 
 // Export singleton instance
 export const localCollectionService = new LocalCollectionService();
+
+// ─── SSE Real-Time Sync: Listen for admin panel changes ─────────────────────────────────
+/**
+ * In development, connects to the admin server's SSE stream.
+ * Whenever the admin saves any product/collection/color, the server
+ * broadcasts a data_updated event and we immediately force-refresh
+ * localStorage + fire elevez_store_updated so every React page re-renders.
+ */
+function setupAdminSync(): void {
+    const isDev = (import.meta as any).env.DEV;
+    if (!isDev) {
+        // Production: fall back to polling every 30 seconds
+        setInterval(async () => {
+            console.log('🔄 [Polling] Checking for admin updates...');
+            await localCollectionService.loadFromServer(true);
+        }, 30000);
+        return;
+    }
+
+    const ADMIN_SSE_URL = 'http://localhost:3001/api/events';
+    let retryTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    function connect() {
+        console.log('📡 [SSE] Connecting to admin server for real-time sync...');
+        const es = new EventSource(ADMIN_SSE_URL);
+
+        es.addEventListener('data_updated', async (e: MessageEvent) => {
+            const payload = JSON.parse(e.data || '{}');
+            console.log('⚡ [SSE] Admin saved data! Force re-fetching storefront...', payload);
+            // Force bypass hasFetchedServer so we always re-load fresh data
+            hasFetchedServer = false;
+            isFetching = false;
+            await localCollectionService.loadFromServer(true);
+        });
+
+        es.onerror = () => {
+            es.close();
+            if (!retryTimeout) {
+                retryTimeout = setTimeout(() => {
+                    retryTimeout = null;
+                    connect();
+                }, 5000); // retry after 5s
+            }
+        };
+
+        es.onopen = () => {
+            console.log('✅ [SSE] Connected to admin server. Storefront will update instantly on admin saves.');
+        };
+    }
+
+    connect();
+}
+
+// Auto-start SSE sync when the service module is loaded
+setupAdminSync();

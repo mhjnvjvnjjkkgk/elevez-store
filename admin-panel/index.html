@@ -63,6 +63,11 @@
           <span class="nav-text">Colors Management</span>
           <span class="nav-badge" style="background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);">SYSTEM</span>
         </button>
+        <button class="nav-item" data-view="sizes-management">
+          <span class="nav-icon">📏</span>
+          <span class="nav-text">Sizes Management</span>
+          <span class="nav-badge" style="background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);">SYSTEM</span>
+        </button>
         <a href="shopify-import.html" class="nav-item" style="text-decoration: none; display: flex;">
           <span class="nav-icon">🛒</span>
           <span class="nav-text">Shopify Import</span>
@@ -229,6 +234,23 @@
           </p>
           <div class="colors-management-grid" id="globalColorsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
             <!-- Colors rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Sizes Management View -->
+      <div class="view" id="sizes-management-view">
+        <div class="view-header">
+          <h2>Sizes Management</h2>
+          <button class="btn btn-primary" onclick="openGlobalSizeModal()">+ Add Global Size</button>
+        </div>
+        <div class="card" style="margin-top: 20px;">
+          <div class="card-title">📏 Global Active Sizes</div>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+            Manage the centralized system of active product sizes. Sizes created or modified here are synced instantly to the shop, database, and products.
+          </p>
+          <div class="sizes-management-grid" id="globalSizesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            <!-- Sizes rendered dynamically -->
           </div>
         </div>
       </div>
@@ -719,6 +741,28 @@
     </div>
   </div>
 
+  <!-- Global Size Modal -->
+  <div class="modal" id="globalSizeModal">
+    <div class="modal-backdrop" onclick="closeGlobalSizeModal()"></div>
+    <div class="modal-content" style="max-width: 450px;">
+      <div class="modal-header">
+        <h3 id="globalSizeModalTitle">Add Global Size</h3>
+        <button class="close-modal" onclick="closeGlobalSizeModal()">×</button>
+      </div>
+      <form id="globalSizeForm" onsubmit="saveGlobalSize(event)" style="padding: 20px;">
+        <input type="hidden" id="globalSizeOriginalName">
+        <div class="form-group">
+          <label class="form-label">Size Name (e.g. S, M, L, XL, 3XL, One Size) *</label>
+          <input type="text" class="form-input" id="globalSizeName" placeholder="e.g., M" required>
+        </div>
+        <div class="modal-footer" style="padding-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-secondary" onclick="closeGlobalSizeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveGlobalSizeBtn">Save Size</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <script>
     // Merge trial products with existing products
@@ -763,30 +807,7 @@
       })
     };
 
-    // View switching
-    document.querySelectorAll('.nav-item[data-view]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const view = e.currentTarget.dataset.view;
-        switchView(view);
-      });
-    });
 
-    function switchView(viewName) {
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById(`${viewName}-view`).classList.add('active');
-      event.target.closest('.nav-item').classList.add('active');
-
-      if (viewName === 'discounts') {
-        loadDiscounts();
-      } else if (viewName === 'user-points') {
-        loadUserPoints();
-      } else if (viewName === 'colors-management') {
-        if (window.renderGlobalColorsGrid) {
-          window.renderGlobalColorsGrid();
-        }
-      }
-    }
 
     // Discount Management Functions
     async function loadDiscounts() {
@@ -1442,6 +1463,10 @@
         alert(`User: ${user.email}\nPoints: ${user.totalPoints}\nTier: ${user.tier}`);
       });
     }
+
+    // Expose local view handlers globally for admin.js to access
+    window.loadDiscounts = loadDiscounts;
+    window.loadUserPoints = loadUserPoints;
 
     // Start Firebase order sync after page loads
     window.addEventListener('load', () => {

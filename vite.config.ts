@@ -14,6 +14,13 @@ export default defineConfig(({ mode }) => {
             changeOrigin: true,
             rewrite: (path) => path.replace(/^\/api/, '')
           }
+        },
+        // Exclude data files from Vite's file watcher.
+        // The admin server writes to public/data/*.json on every save;
+        // without this, Vite detects those writes and triggers a full page
+        // reload, which breaks the ProductDetail page (shows 'Not Found').
+        watch: {
+          ignored: ['**/public/data/**', '**/data/backup.json', '**/data/collections.json']
         }
       },
       plugins: [react()],
