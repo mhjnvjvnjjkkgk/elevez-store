@@ -167,7 +167,15 @@ export function getCollectionProducts(collectionId: string): Product[] {
     }
     
     // Category filter
-    if (filters.category && product.category !== filters.category) return false;
+    if (filters.category) {
+      if (filters.category === 'Men') {
+        if (product.category !== 'Men' && product.category !== 'Unisex') return false;
+      } else if (filters.category === 'Women') {
+        if (product.category !== 'Women' && product.category !== 'Unisex') return false;
+      } else if (product.category !== filters.category) {
+        return false;
+      }
+    }
     
     // Type filter
     if (filters.type && product.type !== filters.type) return false;

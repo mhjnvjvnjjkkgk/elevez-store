@@ -4,7 +4,7 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: 30/5/2026, 4:14:30 am
+// Last update: 30/5/2026, 4:15:41 am
 export const PRODUCTS: Product[] = [
   {
     "id": 7915861377163,
@@ -5914,7 +5914,15 @@ export function getCollectionProducts(collectionId: string): Product[] {
     }
     
     // Category filter
-    if (filters.category && product.category !== filters.category) return false;
+    if (filters.category) {
+      if (filters.category === 'Men') {
+        if (product.category !== 'Men' && product.category !== 'Unisex') return false;
+      } else if (filters.category === 'Women') {
+        if (product.category !== 'Women' && product.category !== 'Unisex') return false;
+      } else if (product.category !== filters.category) {
+        return false;
+      }
+    }
     
     // Type filter
     if (filters.type && product.type !== filters.type) return false;

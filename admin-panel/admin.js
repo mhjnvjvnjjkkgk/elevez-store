@@ -1040,7 +1040,15 @@ async function saveData(skipServer = false) {
               const hasMatchingTag = col.filters.tags.some(tag => product.tags?.includes(tag));
               if (!hasMatchingTag) return false;
             }
-            if (col.filters.category && product.category !== col.filters.category) return false;
+            if (col.filters.category) {
+              if (col.filters.category === 'Men') {
+                if (product.category !== 'Men' && product.category !== 'Unisex') return false;
+              } else if (col.filters.category === 'Women') {
+                if (product.category !== 'Women' && product.category !== 'Unisex') return false;
+              } else if (product.category !== col.filters.category) {
+                return false;
+              }
+            }
             if (col.filters.type && product.type !== col.filters.type) return false;
             if (col.filters.minPrice !== undefined && product.price < col.filters.minPrice) return false;
             if (col.filters.maxPrice !== undefined && product.price > col.filters.maxPrice) return false;
@@ -3008,7 +3016,15 @@ async function saveCollectionsToServer() {
             const hasMatchingTag = col.filters.tags.some(tag => product.tags?.includes(tag));
             if (!hasMatchingTag) return false;
           }
-          if (col.filters.category && product.category !== col.filters.category) return false;
+          if (col.filters.category) {
+            if (col.filters.category === 'Men') {
+              if (product.category !== 'Men' && product.category !== 'Unisex') return false;
+            } else if (col.filters.category === 'Women') {
+              if (product.category !== 'Women' && product.category !== 'Unisex') return false;
+            } else if (product.category !== col.filters.category) {
+              return false;
+            }
+          }
           if (col.filters.type && product.type !== col.filters.type) return false;
           if (col.filters.minPrice !== undefined && product.price < col.filters.minPrice) return false;
           if (col.filters.maxPrice !== undefined && product.price > col.filters.maxPrice) return false;
@@ -3515,7 +3531,15 @@ export function getCollectionProducts(collectionId: string): Product[] {
     }
     
     // Category filter
-    if (filters.category && product.category !== filters.category) return false;
+    if (filters.category) {
+      if (filters.category === 'Men') {
+        if (product.category !== 'Men' && product.category !== 'Unisex') return false;
+      } else if (filters.category === 'Women') {
+        if (product.category !== 'Women' && product.category !== 'Unisex') return false;
+      } else if (product.category !== filters.category) {
+        return false;
+      }
+    }
     
     // Type filter
     if (filters.type && product.type !== filters.type) return false;
@@ -4174,8 +4198,14 @@ function getCollectionProducts(collection) {
     }
 
     // Category filter
-    if (filters.category && product.category !== filters.category) {
-      return false;
+    if (filters.category) {
+      if (filters.category === 'Men') {
+        if (product.category !== 'Men' && product.category !== 'Unisex') return false;
+      } else if (filters.category === 'Women') {
+        if (product.category !== 'Women' && product.category !== 'Unisex') return false;
+      } else if (product.category !== filters.category) {
+        return false;
+      }
     }
 
     // Type filter
@@ -4253,7 +4283,15 @@ function setupCollectionFormListeners() {
         if (!hasMatchingTag) return false;
       }
 
-      if (filters.category && product.category !== filters.category) return false;
+      if (filters.category) {
+        if (filters.category === 'Men') {
+          if (product.category !== 'Men' && product.category !== 'Unisex') return false;
+        } else if (filters.category === 'Women') {
+          if (product.category !== 'Women' && product.category !== 'Unisex') return false;
+        } else if (product.category !== filters.category) {
+          return false;
+        }
+      }
       if (filters.type && product.type !== filters.type) return false;
       if (product.price < filters.minPrice) return false;
       if (product.price > filters.maxPrice) return false;
@@ -4579,7 +4617,15 @@ export function getCollectionProducts(collectionId: string): Product[] {
       if (!hasMatchingTag) return false;
     }
     
-    if (filters.category && product.category !== filters.category) return false;
+    if (filters.category) {
+      if (filters.category === 'Men') {
+        if (product.category !== 'Men' && product.category !== 'Unisex') return false;
+      } else if (filters.category === 'Women') {
+        if (product.category !== 'Women' && product.category !== 'Unisex') return false;
+      } else if (product.category !== filters.category) {
+        return false;
+      }
+    }
     if (filters.type && product.type !== filters.type) return false;
     if (filters.minPrice && product.price < filters.minPrice) return false;
     if (filters.maxPrice && product.price > filters.maxPrice) return false;
