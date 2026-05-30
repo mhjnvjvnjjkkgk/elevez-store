@@ -4923,12 +4923,13 @@ const Navbar = () => {
       </AnimatePresence>
 
       {/* Liquid Glass Mobile Bottom Navigation Bar (Myntra-Style) */}
-      <motion.div
-        initial={{ y: 0 }}
-        animate={{ y: isBottomNavVisible ? 0 : 100 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="lg:hidden fixed bottom-0 left-0 w-full z-[90]"
-      >
+      {!currentPath.startsWith('/product/') && currentPath !== '/checkout' && (
+        <motion.div
+          initial={{ y: 0 }}
+          animate={{ y: isBottomNavVisible ? 0 : 100 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="lg:hidden fixed bottom-0 left-0 w-full z-[90]"
+        >
         <div className="bg-black/85 backdrop-blur-xl border-t border-white/10 shadow-[0_-8px_32px_0_rgba(0,0,0,0.3)] rounded-t-2xl flex items-center justify-around py-2 px-6 h-18 relative">
           {mobileNavItems.map((item) => {
             const Icon = item.icon;
@@ -4954,6 +4955,7 @@ const Navbar = () => {
           })}
         </div>
       </motion.div>
+      )}
     </>
   );
 };
