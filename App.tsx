@@ -621,16 +621,16 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         </div>
       </div>
 
-      <div className="mt-2 sm:mt-4 p-1.5 sm:p-3 bg-white border-[1px] sm:border-[2px] border-black shadow-[1px_1px_0px_0px_#000] sm:shadow-[2px_2px_0px_0px_#000]">
-        <h3 className="text-[10px] sm:text-sm font-black text-black uppercase font-syne line-clamp-1 leading-tight">{product.name}</h3>
+      <div className="mt-2 sm:mt-4 p-2 sm:p-3 bg-white border-2 sm:border-[2px] border-black shadow-[3px_3px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]">
+        <h3 className="text-xs sm:text-sm font-black text-black uppercase font-syne line-clamp-1 leading-tight">{product.name}</h3>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-1 gap-0.5 sm:gap-0">
           <div className="flex items-center gap-1 sm:gap-2">
-            <span className="font-price text-[#00ff88] font-black text-[11px] sm:text-base stroke-black" style={{ WebkitTextStroke: '0.3px black' }}>₹{product.price.toFixed(0)}</span>
-            <span className="font-price text-red-400 line-through text-[8px] sm:text-xs">₹{product.originalPrice.toFixed(0)}</span>
+            <span className="font-price text-[#00ff88] font-black text-xs sm:text-base stroke-black" style={{ WebkitTextStroke: '0.3px black' }}>₹{product.price.toFixed(0)}</span>
+            <span className="font-price text-red-400 line-through text-[9px] sm:text-xs">₹{product.originalPrice.toFixed(0)}</span>
           </div>
           <div className="flex gap-[2px] sm:gap-1">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className={`w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 ${i < Math.floor(product.rating) ? 'fill-black text-black' : 'text-gray-300'}`} />
+              <Star key={i} className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${i < Math.floor(product.rating) ? 'fill-black text-black' : 'text-gray-300'}`} />
             ))}
           </div>
         </div>
@@ -1599,29 +1599,29 @@ const DualPriceSlider = ({
   const maxPercent = ((value[1] - min) / (max - min)) * 100;
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-6 py-6 bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] mb-16 relative z-10 hover:shadow-[12px_12px_0px_0px_#000] transition-all duration-300">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+    <div className="w-full max-w-2xl mx-auto px-4 sm:px-6 py-4 sm:py-6 bg-white border-2 sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] mb-8 sm:mb-16 relative z-10 hover:shadow-[6px_6px_0px_0px_#000] sm:hover:shadow-[12px_12px_0px_0px_#000] transition-all duration-300">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4 sm:mb-6">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-6 h-6 text-black" />
-          <span className="text-xl font-black uppercase tracking-widest text-black">
+          <SlidersHorizontal className="w-4 h-4 sm:w-6 sm:h-6 text-black" />
+          <span className="text-sm sm:text-xl font-black uppercase tracking-widest text-black">
             SELECT PRICE RANGE
           </span>
         </div>
-        <div className="flex items-center gap-2 font-price text-lg font-black text-black">
-          <span className="bg-[#00ff88] text-black px-4 py-1.5 border-[3px] border-black shadow-[4px_4px_0px_0px_#000] uppercase tracking-wider">
+        <div className="flex items-center gap-2 font-price text-xs sm:text-lg font-black text-black">
+          <span className="bg-[#00ff88] text-black px-2 py-1 sm:px-4 sm:py-1.5 border-2 sm:border-[3px] border-black shadow-[2px_2px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000] uppercase tracking-wider">
             ₹{value[0]}
           </span>
-          <span className="font-black text-2xl px-1 text-black">-</span>
-          <span className="bg-[#00ff88] text-black px-4 py-1.5 border-[3px] border-black shadow-[4px_4px_0px_0px_#000] uppercase tracking-wider">
+          <span className="font-black text-lg sm:text-2xl px-1 text-black">-</span>
+          <span className="bg-[#00ff88] text-black px-2 py-1 sm:px-4 sm:py-1.5 border-2 sm:border-[3px] border-black shadow-[2px_2px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000] uppercase tracking-wider">
             ₹{value[1]}
           </span>
         </div>
       </div>
 
-      <div className="relative py-4 select-none">
+      <div className="relative py-3 sm:py-4 select-none">
         <div 
           ref={trackRef} 
-          className="relative h-5 bg-gray-100 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] cursor-pointer touch-none"
+          className="relative h-3 sm:h-5 bg-gray-100 border-2 sm:border-[4px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] cursor-pointer touch-none"
           onPointerDown={(e) => {
             const newVal = calculateValue(e.clientX);
             const roundedVal = Math.round(newVal / 50) * 50;
@@ -1637,12 +1637,12 @@ const DualPriceSlider = ({
           }}
         >
           <div 
-            className="absolute h-full bg-[#00ff88] border-r-[4px] border-l-[4px] border-black transition-all duration-75" 
+            className="absolute h-full bg-[#00ff88] border-r-2 sm:border-r-[4px] border-l-2 sm:border-l-[4px] border-black transition-all duration-75" 
             style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }}
           />
           
           <div 
-            className="absolute top-1/2 -translate-y-1/2 -ml-4 w-8 h-10 bg-white border-[4px] border-black shadow-[3px_3px_0px_0px_#000] cursor-grab active:cursor-grabbing hover:bg-[#00ff88] hover:scale-105 active:scale-95 transition-all duration-75 select-none"
+            className="absolute top-1/2 -translate-y-1/2 -ml-2.5 sm:-ml-4 w-5 h-7 sm:w-8 sm:h-10 bg-white border-2 sm:border-[4px] border-black shadow-[2px_2px_0px_0px_#000] sm:shadow-[3px_3px_0px_0px_#000] cursor-grab active:cursor-grabbing hover:bg-[#00ff88] hover:scale-105 active:scale-95 transition-all duration-75 select-none"
             style={{ left: `${minPercent}%` }}
             onPointerDown={(e) => {
               e.preventDefault();
@@ -1651,15 +1651,15 @@ const DualPriceSlider = ({
               setCursorVariant('hover');
             }}
           >
-            <div className="flex justify-center items-center gap-[2px] h-full">
-              <div className="w-[3px] h-4 bg-black" />
-              <div className="w-[3px] h-4 bg-black" />
-              <div className="w-[3px] h-4 bg-black" />
+            <div className="flex justify-center items-center gap-[1px] sm:gap-[2px] h-full">
+              <div className="w-[1.5px] sm:w-[3px] h-3 sm:h-4 bg-black" />
+              <div className="w-[1.5px] sm:w-[3px] h-3 sm:h-4 bg-black" />
+              <div className="w-[1.5px] sm:w-[3px] h-3 sm:h-4 bg-black" />
             </div>
           </div>
 
           <div 
-            className="absolute top-1/2 -translate-y-1/2 -ml-4 w-8 h-10 bg-white border-[4px] border-black shadow-[3px_3px_0px_0px_#000] cursor-grab active:cursor-grabbing hover:bg-[#00ff88] hover:scale-105 active:scale-95 transition-all duration-75 select-none"
+            className="absolute top-1/2 -translate-y-1/2 -ml-2.5 sm:-ml-4 w-5 h-7 sm:w-8 sm:h-10 bg-white border-2 sm:border-[4px] border-black shadow-[2px_2px_0px_0px_#000] sm:shadow-[3px_3px_0px_0px_#000] cursor-grab active:cursor-grabbing hover:bg-[#00ff88] hover:scale-105 active:scale-95 transition-all duration-75 select-none"
             style={{ left: `${maxPercent}%` }}
             onPointerDown={(e) => {
               e.preventDefault();
@@ -1668,18 +1668,18 @@ const DualPriceSlider = ({
               setCursorVariant('hover');
             }}
           >
-            <div className="flex justify-center items-center gap-[2px] h-full">
-              <div className="w-[3px] h-4 bg-black" />
-              <div className="w-[3px] h-4 bg-black" />
-              <div className="w-[3px] h-4 bg-black" />
+            <div className="flex justify-center items-center gap-[1px] sm:gap-[2px] h-full">
+              <div className="w-[1.5px] sm:w-[3px] h-3 sm:h-4 bg-black" />
+              <div className="w-[1.5px] sm:w-[3px] h-3 sm:h-4 bg-black" />
+              <div className="w-[1.5px] sm:w-[3px] h-3 sm:h-4 bg-black" />
             </div>
           </div>
         </div>
       </div>
       
-      <div className="flex justify-between items-center mt-2 text-xs font-black uppercase text-gray-500 tracking-wider">
+      <div className="flex justify-between items-center mt-2 text-[10px] sm:text-xs font-black uppercase text-gray-500 tracking-wider">
         <span>MIN: ₹{min}</span>
-        <span className="text-[10px] tracking-widest text-[#00ff88] animate-pulse">● ADJUST RANGE DRAG POINTS</span>
+        <span className="text-[8px] sm:text-[10px] tracking-widest text-[#00ff88] animate-pulse">● ADJUST RANGE DRAG POINTS</span>
         <span>MAX: ₹{max}</span>
       </div>
     </div>
@@ -1798,7 +1798,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           style={{ y: heroTextY }}
-          className="relative z-10 text-center w-[95%] max-w-[1400px] mx-auto p-4 md:p-12 lg:p-20 bg-white border-[8px] border-black shadow-[24px_24px_0px_0px_#000] hover:shadow-[32px_32px_0px_0px_#00ff88] transition-all duration-500 flex flex-col justify-center min-h-[60vh] overflow-visible"
+          className="relative z-10 text-center w-[95%] max-w-[1400px] mx-auto p-4 sm:p-12 lg:p-20 bg-white border-[3px] sm:border-[8px] border-black shadow-[8px_8px_0px_0px_#000] sm:shadow-[24px_24px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] sm:hover:shadow-[32px_32px_0px_0px_#00ff88] transition-all duration-500 flex flex-col justify-center min-h-[60vh] overflow-visible"
         >
           {/* Left High-Fashion Model */}
           <motion.div
@@ -1866,13 +1866,13 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             className="flex-1 flex flex-col justify-center"
           >
             {/* Symmetrical System Active Header */}
-            <div className="flex items-center justify-center gap-4 mb-8 text-black font-black uppercase text-xs md:text-sm tracking-widest border-b-[3px] border-black pb-3 w-fit mx-auto select-none">
+            <div className="flex items-center justify-center gap-2 sm:gap-4 mb-4 sm:mb-8 text-black font-black uppercase text-[10px] sm:text-xs md:text-sm tracking-widest border-b-2 sm:border-b-[3px] border-black pb-2 sm:pb-3 w-fit mx-auto select-none">
               <span>SYSTEM ACTIVE // PROTOCOL 01</span>
-              <span className="w-2.5 h-2.5 bg-[#00ff88] border-[2px] border-black rounded-full animate-pulse" />
+              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#00ff88] border-[1.5px] sm:border-[2px] border-black rounded-full animate-pulse" />
               <span>SS26 DROP</span>
             </div>
 
-            <div className="relative flex items-center justify-center w-full my-6 select-none">
+            <div className="relative flex items-center justify-center w-full my-4 sm:my-6 select-none">
               {/* Left bracket */}
               <div className="hidden xl:flex flex-col items-end text-black font-black text-xs uppercase tracking-widest opacity-60 pr-8 border-r-[3px] border-black leading-tight">
                 <span>[ CORE-GRID ]</span>
@@ -1881,13 +1881,13 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
               {/* Centered Symmetrical Header */}
               <h1
-                className="text-6xl md:text-[5.5vw] font-black leading-none tracking-tighter font-syne cursor-default uppercase text-black relative mx-0 md:mx-12 flex flex-col items-center justify-center text-center"
+                className="text-3xl sm:text-6xl md:text-[5.5vw] font-black leading-none tracking-tighter font-syne cursor-default uppercase text-black relative mx-0 md:mx-12 flex flex-col items-center justify-center text-center"
               >
                 {/* Rotating Target Crosshair background */}
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 m-auto w-[350px] h-[350px] pointer-events-none opacity-[0.05] z-0 flex items-center justify-center"
+                  className="absolute inset-0 m-auto w-[200px] h-[200px] sm:w-[350px] sm:h-[350px] pointer-events-none opacity-[0.05] z-0 flex items-center justify-center"
                 >
                   <svg viewBox="0 0 100 100" className="w-full h-full text-black stroke-current stroke-[2] fill-none">
                     <circle cx="50" cy="50" r="40" />
@@ -1902,7 +1902,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                 <motion.img
                   src="/stickers/neon_star.png"
                   alt="Elevez Badge"
-                  className="absolute -top-16 -right-12 md:-top-20 md:-right-20 w-20 h-20 md:w-28 md:h-28 pointer-events-auto select-none z-20"
+                  className="absolute -top-10 -right-6 md:-top-20 md:-right-20 w-12 h-12 md:w-28 md:h-28 pointer-events-auto select-none z-20"
                   initial={{ scale: 0, rotate: -45 }}
                   animate={{ scale: 1, rotate: 15 }}
                   whileHover={{ 
@@ -1913,8 +1913,8 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                   transition={{ delay: 0.8, type: "spring", stiffness: 200, damping: 15 }}
                 />
 
-                <InteractiveText text="Elevate Your" className="block mb-2 text-center justify-center" />
-                <InteractiveText text="Style Game" className="block text-[#00ff88]" style={{ WebkitTextStroke: '3px black' }} />
+                <InteractiveText text="Elevate Your" className="block mb-1 sm:mb-2 text-center justify-center" />
+                <InteractiveText text="Style Game" className="block text-[#00ff88]" style={{ WebkitTextStroke: '2.5px black' }} />
               </h1>
 
               {/* Right bracket */}
@@ -1928,17 +1928,17 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-black text-lg md:text-xl max-w-2xl mx-auto mb-16 leading-relaxed font-bold border-t-[3px] border-black pt-12"
+              className="text-black text-sm sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 sm:mb-16 leading-relaxed font-bold border-t-2 sm:border-t-[3px] border-black pt-6 sm:pt-12"
             >
               Experience fashion reimagined with cutting-edge design and unparalleled comfort.
               Welcome to the new era of <span className="bg-black text-white px-2 uppercase">{BRAND_NAME}</span>.
             </motion.p>
 
-            <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center">
               <Magnetic>
                 <button
                   onClick={() => navigate('/shop/all')}
-                  className="px-12 py-6 bg-[#00ff88] border-[4px] border-black shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-black font-black text-xl tracking-widest uppercase"
+                  className="w-full sm:w-auto px-6 py-3 sm:px-12 sm:py-6 bg-[#00ff88] border-2 sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-black font-black text-sm sm:text-xl tracking-widest uppercase"
                 >
                   Shop Collection
                 </button>
@@ -1947,7 +1947,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               <Magnetic>
                 <button
                   onClick={() => navigate('/rewards')}
-                  className="px-12 py-6 bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-black font-black text-xl tracking-widest uppercase"
+                  className="w-full sm:w-auto px-6 py-3 sm:px-12 sm:py-6 bg-white border-2 sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-black font-black text-sm sm:text-xl tracking-widest uppercase"
                 >
                   Join Rewards
                 </button>
@@ -1958,25 +1958,25 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       </section>
 
       {/* Symmetrical X-Shaped Crossing Marquees */}
-      <div className="relative w-full h-80 z-40 flex items-center justify-center -my-16 pointer-events-none select-none">
+      <div className="relative w-full h-40 sm:h-80 z-40 flex items-center justify-center -my-8 sm:-my-16 pointer-events-none select-none">
         <div className="absolute w-[150%] transform -rotate-[4deg] z-10">
-          <InfiniteMarquee text="NEW DROPS // LIMITED EDITION // PREMIUM STREETWEAR // FREE SHIPPING ON ORDERS OVER ₹999 // JOIN THE REWARDS PROGRAM" className="py-4 shadow-[0_8px_0_0_#000]" />
+          <InfiniteMarquee text="NEW DROPS // LIMITED EDITION // PREMIUM STREETWEAR // FREE SHIPPING ON ORDERS OVER ₹999 // JOIN THE REWARDS PROGRAM" className="py-2 sm:py-4 shadow-[0_4px_0_0_#000] sm:shadow-[0_8px_0_0_#000]" />
         </div>
         <div className="absolute w-[150%] transform rotate-[4deg] z-20">
-          <InfiniteMarquee text="EXCELLENCE IN EVERY DETAIL // CUSTOM STITCHED // SS26 RUNWAY // ELEVEZ LABS" className="py-4 shadow-[0_8px_0_0_#000]" direction="right" />
+          <InfiniteMarquee text="EXCELLENCE IN EVERY DETAIL // CUSTOM STITCHED // SS26 RUNWAY // ELEVEZ LABS" className="py-2 sm:py-4 shadow-[0_4px_0_0_#000] sm:shadow-[0_8px_0_0_#000]" direction="right" />
         </div>
       </div>
 
       {/* Why Choose Elevez - Neobrutalist */}
       <ScrollAnimatedSection>
-        <section className="pt-24 pb-12 relative z-30 bg-white">
-          <div className="container mx-auto px-6">
+        <section className="pt-12 sm:pt-24 pb-6 sm:pb-12 relative z-30 bg-white">
+          <div className="container mx-auto px-4 sm:px-6">
             <SectionHeader 
               title="Why Elevez" 
               subtitle="Excellence in every detail, innovation in every stitch"
             />
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-8">
               {[
                 { icon: Truck, title: "3-Day Express", desc: "Lightning-fast shipping straight to your doorstep.", tag: "3 Days" },
                 { icon: Shield, title: "180gsm Premium", desc: "Superior quality cotton that breathes and lasts.", tag: "180gsm" },
@@ -1989,16 +1989,16 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.5 }}
-                  className="bg-white border-[4px] border-black p-5 md:p-6 relative group hover:shadow-[10px_10px_0px_0px_#00ff88] transition-all duration-300 shadow-[6px_6px_0px_0px_#000] hover:translate-x-[-2px] hover:translate-y-[-2px]"
+                  className="bg-white border-2 sm:border-[4px] border-black p-3 sm:p-5 md:p-6 relative group hover:shadow-[8px_8px_0px_0px_#00ff88] sm:hover:shadow-[10px_10px_0px_0px_#00ff88] transition-all duration-300 shadow-[4px_4px_0px_0px_#000] sm:shadow-[6px_6px_0px_0px_#000] hover:translate-x-[-2px] hover:translate-y-[-2px]"
                 >
-                  <div className="absolute -top-4 -right-2 bg-black text-[#00ff88] text-[10px] font-black px-3 py-0.5 uppercase tracking-widest border-[2px] border-black shadow-[2px_2px_0px_0px_#000]">
+                  <div className="absolute -top-3 sm:-top-4 -right-1 sm:-right-2 bg-black text-[#00ff88] text-[8px] sm:text-[10px] font-black px-2 sm:px-3 py-0.5 uppercase tracking-widest border-[1.5px] sm:border-[2px] border-black shadow-[1.5px_1.5px_0px_0px_#000] sm:shadow-[2px_2px_0px_0px_#000]">
                     {item.tag}
                   </div>
-                  <div className="w-12 h-12 bg-[#00ff88] border-[3px] border-black flex items-center justify-center mb-5 shadow-[3px_3px_0px_0px_#000]">
-                    <item.icon className="w-6 h-6 text-black" />
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 bg-[#00ff88] border-2 sm:border-[3px] border-black flex items-center justify-center mb-3 sm:mb-5 shadow-[2px_2px_0px_0px_#000] sm:shadow-[3px_3px_0px_0px_#000]">
+                    <item.icon className="w-4 h-4 sm:w-6 sm:h-6 text-black" />
                   </div>
-                  <h3 className="text-xl md:text-2xl font-black mb-3 font-syne uppercase text-black leading-none">{item.title}</h3>
-                  <p className="text-black font-black text-xs md:text-sm leading-snug uppercase tracking-tight">{item.desc}</p>
+                  <h3 className="text-sm sm:text-xl md:text-2xl font-black mb-1.5 sm:mb-3 font-syne uppercase text-black leading-none">{item.title}</h3>
+                  <p className="text-black font-black text-[10px] sm:text-xs md:text-sm leading-snug uppercase tracking-tight">{item.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -2014,21 +2014,21 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
 
       {/* The Vault - Dynamic Category Divider & Grid */}
-      <section className="relative border-y-[8px] border-black bg-white overflow-hidden">
+      <section className="relative border-y-4 sm:border-y-[8px] border-black bg-white overflow-hidden">
         {/* Massive Marquee Header */}
-        <div className="border-b-[8px] border-black bg-[#00ff88]">
+        <div className="border-b-4 sm:border-b-[8px] border-black bg-[#00ff88]">
           <InfiniteMarquee 
             text="ENTER THE VAULT // CHOOSE YOUR ARSENAL // SELECT CATEGORY // NO COMPROMISE //" 
-            className="py-4 text-black text-2xl font-black" 
+            className="py-2 sm:py-4 text-black text-sm sm:text-2xl font-black" 
           />
         </div>
 
-        <div className="container mx-auto px-6 py-24">
+        <div className="container mx-auto px-4 sm:px-6 py-10 sm:py-24">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-16 relative py-10"
+            className="mb-8 sm:mb-16 relative py-6 sm:py-10"
           >
             {/* Brutalist accents */}
             <motion.div 
@@ -2047,11 +2047,11 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             </motion.div>
 
             <h2 
-              className="text-5xl sm:text-7xl md:text-9xl font-black text-center font-syne uppercase tracking-tighter hover:scale-105 transition-transform duration-300 relative z-10" 
+              className="text-3xl sm:text-7xl md:text-9xl font-black text-center font-syne uppercase tracking-tighter hover:scale-105 transition-transform duration-300 relative z-10" 
               style={{ 
-                WebkitTextStroke: '2px black', 
+                WebkitTextStroke: window.innerWidth < 768 ? '1px black' : '2px black', 
                 color: 'white', 
-                textShadow: '6px 6px 0px #00ff88, 12px 12px 0px black' 
+                textShadow: window.innerWidth < 768 ? '3px 3px 0px #00ff88, 6px 6px 0px black' : '6px 6px 0px #00ff88, 12px 12px 0px black' 
               }}
               onMouseEnter={() => setCursorVariant('hover')}
               onMouseLeave={() => setCursorVariant('default')}
@@ -2059,8 +2059,8 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               The Vault
             </h2>
             
-            <div className="text-center mt-12 relative z-10">
-              <span className="inline-block bg-black text-white px-8 py-3 border-[4px] border-black font-black uppercase tracking-widest text-sm md:text-lg shadow-[6px_6px_0_0_#00ff88] hover:bg-[#00ff88] hover:text-black transition-colors cursor-pointer"
+            <div className="text-center mt-6 sm:mt-12 relative z-10">
+              <span className="inline-block bg-black text-white px-4 py-2 sm:px-8 sm:py-3 border-2 sm:border-[4px] border-black font-black uppercase tracking-widest text-xs sm:text-sm md:text-lg shadow-[4px_4px_0_0_#00ff88] sm:shadow-[6px_6px_0_0_#00ff88] hover:bg-[#00ff88] hover:text-black transition-colors cursor-pointer"
                     onMouseEnter={() => setCursorVariant('hover')}
                     onMouseLeave={() => setCursorVariant('default')}>
                 /// INVENTORY UNLOCKED ///
@@ -2069,14 +2069,14 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           </motion.div>
 
           {/* Category Vise Divider (Massive Buttons) */}
-          <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-12">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-6 mb-6 sm:mb-12">
             {['All', 'HOODIES', 'T-SHIRTS', 'CROP TOPS', 'OVERSIZED TSHIRTS'].map((filter, i) => (
               <button
                 key={filter}
                 onClick={() => setCollectionFilter(filter)}
                 onMouseEnter={() => setCursorVariant('hover')}
                 onMouseLeave={() => setCursorVariant('default')}
-                className={`px-6 py-4 md:px-10 md:py-6 border-[4px] border-black text-lg md:text-2xl font-black uppercase tracking-widest transition-all ${collectionFilter === filter ? 'bg-black text-[#00ff88] shadow-[8px_8px_0px_0px_#00ff88] translate-x-1 translate-y-1' : 'bg-white text-black hover:bg-[#00ff88] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-[6px_6px_0px_0px_#000]'}`}
+                className={`px-3 py-2 sm:px-6 sm:py-4 md:px-10 md:py-6 border-2 sm:border-[4px] border-black text-[11px] sm:text-lg md:text-2xl font-black uppercase tracking-wider sm:tracking-widest transition-all ${collectionFilter === filter ? 'bg-black text-[#00ff88] shadow-[4px_4px_0px_0px_#00ff88] sm:shadow-[8px_8px_0px_0px_#00ff88] translate-x-[2px] translate-y-[2px] sm:translate-x-1 sm:translate-y-1' : 'bg-white text-black hover:bg-[#00ff88] hover:translate-x-[2px] hover:translate-y-[2px] sm:hover:translate-x-[4px] sm:hover:translate-y-[4px] hover:shadow-[4px_4px_0px_0px_#000] sm:hover:shadow-[6px_6px_0px_0px_#000]'}`}
               >
                 {filter}
               </button>
@@ -4580,6 +4580,27 @@ const Navbar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
+  // Track scroll direction to show/hide mobile bottom navbar
+  const [isBottomNavVisible, setIsBottomNavVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
+        // Scrolling down -> hide navbar
+        setIsBottomNavVisible(false);
+      } else {
+        // Scrolling up -> show navbar
+        setIsBottomNavVisible(true);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Handle quick add to cart from ProductRecommendations
   const { addToCart } = useCart();
   useEffect(() => {
@@ -4901,9 +4922,14 @@ const Navbar = () => {
         )}
       </AnimatePresence>
 
-      {/* Liquid Glass Mobile Bottom Navigation Bar */}
-      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] w-[92%] max-w-[420px]">
-        <div className="bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] rounded-2xl flex items-center justify-around py-2 px-3 h-18 relative">
+      {/* Liquid Glass Mobile Bottom Navigation Bar (Myntra-Style) */}
+      <motion.div
+        initial={{ y: 0 }}
+        animate={{ y: isBottomNavVisible ? 0 : 100 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="lg:hidden fixed bottom-0 left-0 w-full z-[90]"
+      >
+        <div className="bg-black/85 backdrop-blur-xl border-t border-white/10 shadow-[0_-8px_32px_0_rgba(0,0,0,0.3)] rounded-t-2xl flex items-center justify-around py-2 px-6 h-18 relative">
           {mobileNavItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -4927,7 +4953,7 @@ const Navbar = () => {
             );
           })}
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };
