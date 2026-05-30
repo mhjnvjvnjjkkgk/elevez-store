@@ -1150,6 +1150,17 @@ async function saveData(skipServer = false) {
             batch.delete(productRef);
           }
 
+          // 3. Set/Update global catalog metadata (colors, sizes, tags, categories, types)
+          const metadataRef = doc(db, 'metadata', 'catalog');
+          batch.set(metadataRef, {
+            colors: state.availableColors || [],
+            sizes: state.availableSizes || [],
+            tags: state.availableTags || [],
+            categories: state.availableCategories || [],
+            types: state.availableTypes || [],
+            updatedAt: new Date().toISOString()
+          });
+
           await batch.commit();
           console.log(`🔥 [Background] Synced ${state.products.length} products to Firebase (Updated: ${state.products.length}, Deleted: ${orphanedDocs.length})`);
         }

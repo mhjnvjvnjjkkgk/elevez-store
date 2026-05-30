@@ -1,7 +1,7 @@
 // Local Collection Service - localStorage-based for offline support
 // Stores and retrieves collections from localStorage
 
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { COLLECTIONS, PRODUCTS } from '../constants';
 
@@ -115,60 +115,14 @@ class LocalCollectionService {
         if (hasFetchedServer && !force) return;
         isFetching = true;
 
-        let cloudSyncSuccess = false;
+        let syncSuccess = false;
         const isDev = (import.meta as any).env.DEV;
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-        if (!isDev) {
+        // 1. If running locally on localhost, always try the local admin server API first
+        if (isLocalhost) {
             try {
-                console.log('☁️ [SWR Sync] Sourcing products and collections directly from Firestore cloud...');
-                
-                const productsSnapshot = await getDocs(collection(db, 'products'));
-                const collectionsSnapshot = await getDocs(collection(db, 'collections'));
-
-                const productsList: any[] = [];
-                productsSnapshot.forEach(docSnap => {
-                    productsList.push({ id: docSnap.id, ...docSnap.data() });
-                });
-
-                const collectionsList: any[] = [];
-                collectionsSnapshot.forEach(docSnap => {
-                    collectionsList.push({ id: docSnap.id, ...docSnap.data() });
-                });
-
-                if (productsList.length > 0 || collectionsList.length > 0) {
-                    // Normalize document IDs back to numeric format if they are numeric
-                    const formattedProducts = productsList.map(p => ({
-                        ...p,
-                        id: isNaN(Number(p.id)) ? p.id : Number(p.id)
-                    }));
-
-                    const formattedCollections = collectionsList.map(c => ({
-                        ...c,
-                        id: isNaN(Number(c.id)) ? c.id : Number(c.id)
-                    }));
-
-                    if (formattedProducts.length > 0) {
-                        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(formattedProducts));
-                        console.log(`✅ [SWR Sync] Storefront updated with ${formattedProducts.length} fresh products.`);
-                    }
-
-                    // IMPORTANT: ONLY update local collections if Firestore returned a non-empty list of collections!
-                    if (formattedCollections.length > 0) {
-                        localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(formattedCollections));
-                        console.log(`✅ [SWR Sync] Storefront updated with ${formattedCollections.length} fresh collections.`);
-                    }
-
-                    cloudSyncSuccess = true;
-                }
-            } catch (firestoreError) {
-                console.warn('⚠️ Firestore direct sync failed, trying local admin server fallback...', firestoreError);
-            }
-        }
-
-        // Local Server Fallback (Secondary Source)
-        if (!cloudSyncSuccess) {
-            try {
-                console.log('📂 Loading collections from admin server fallback...');
+                console.log('📂 [Centralized Sync] Sourcing data from local admin server first...');
                 const response = await fetch('http://localhost:3001/api/get-shopify-data');
                 if (response.ok) {
                     const data = await response.json();
@@ -198,16 +152,95 @@ class LocalCollectionService {
                     if (data.types && data.types.length > 0) {
                         localStorage.setItem('elevez_types', JSON.stringify(data.types));
                     }
-                    console.log('✅ Loaded data and configuration lists from admin server fallback.');
+                    console.log('✅ [Centralized Sync] Loaded all products and configuration lists from local admin server.');
+                    syncSuccess = true;
                 }
             } catch (error) {
-                console.warn('Could not load from admin server fallback:', error);
+                console.warn('⚠️ [Centralized Sync] Local admin server fetch failed, trying fallback...', error);
             }
         }
 
-        window.dispatchEvent(new Event('elevez_store_updated'));
+        // 2. Fallback: load from Firestore cloud (runs in prod, or when local server is offline/unavailable)
+        if (!syncSuccess) {
+            try {
+                console.log('☁️ [Centralized Sync] Sourcing products and collections directly from Firestore cloud...');
+                
+                const productsSnapshot = await getDocs(collection(db, 'products'));
+                const collectionsSnapshot = await getDocs(collection(db, 'collections'));
+
+                const productsList: any[] = [];
+                productsSnapshot.forEach(docSnap => {
+                    productsList.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                const collectionsList: any[] = [];
+                collectionsSnapshot.forEach(docSnap => {
+                    collectionsList.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                if (productsList.length > 0 || collectionsList.length > 0) {
+                    // Normalize document IDs back to numeric format if they are numeric
+                    const formattedProducts = productsList.map(p => ({
+                        ...p,
+                        id: isNaN(Number(p.id)) ? p.id : Number(p.id)
+                    }));
+
+                    const formattedCollections = collectionsList.map(c => ({
+                        ...c,
+                        id: isNaN(Number(c.id)) ? c.id : Number(c.id)
+                    }));
+
+                    if (formattedProducts.length > 0) {
+                        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(formattedProducts));
+                        console.log(`✅ [Centralized Sync] Storefront updated with ${formattedProducts.length} fresh products from cloud.`);
+                    }
+
+                    // IMPORTANT: ONLY update local collections if Firestore returned a non-empty list of collections!
+                    if (formattedCollections.length > 0) {
+                        localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(formattedCollections));
+                        console.log(`✅ [Centralized Sync] Storefront updated with ${formattedCollections.length} fresh collections from cloud.`);
+                    }
+
+                    // Load metadata/catalog document from Firestore containing colors, sizes, etc.
+                    try {
+                        const metadataSnap = await getDoc(doc(db, 'metadata', 'catalog'));
+                        if (metadataSnap.exists()) {
+                            const metaData = metadataSnap.data();
+                            if (metaData.colors && Array.isArray(metaData.colors)) {
+                                localStorage.setItem('elevez_colors', JSON.stringify(metaData.colors));
+                            }
+                            if (metaData.sizes && Array.isArray(metaData.sizes)) {
+                                localStorage.setItem('elevez_sizes', JSON.stringify(metaData.sizes));
+                            }
+                            if (metaData.tags && Array.isArray(metaData.tags)) {
+                                localStorage.setItem('elevez_tags', JSON.stringify(metaData.tags));
+                            }
+                            if (metaData.categories && Array.isArray(metaData.categories)) {
+                                localStorage.setItem('elevez_categories', JSON.stringify(metaData.categories));
+                            }
+                            if (metaData.types && Array.isArray(metaData.types)) {
+                                localStorage.setItem('elevez_types', JSON.stringify(metaData.types));
+                            }
+                            console.log('✅ [Centralized Sync] Loaded metadata lists from Firestore cloud.');
+                        }
+                    } catch (metaErr: any) {
+                        console.warn('⚠️ [Centralized Sync] Could not fetch catalog metadata from Firestore:', metaErr.message);
+                    }
+
+                    syncSuccess = true;
+                }
+            } catch (firestoreError) {
+                console.warn('⚠️ [Centralized Sync] Firestore direct sync failed.', firestoreError);
+            }
+        }
+
+        // Only set hasFetchedServer = true if we successfully loaded data from SOME server/source!
+        if (syncSuccess) {
+            hasFetchedServer = true;
+        }
+
         isFetching = false;
-        hasFetchedServer = true;
+        window.dispatchEvent(new Event('elevez_store_updated'));
     }
 
     /**

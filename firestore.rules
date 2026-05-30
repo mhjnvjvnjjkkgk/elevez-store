@@ -20,6 +20,11 @@ service cloud.firestore {
     match /collections/{collectionId} {
       allow read, write: if true;
     }
+
+    // Allow full access to metadata (for admin panel sync)
+    match /metadata/{metadataId} {
+      allow read, write: if true;
+    }
     
     // Allow full access to loyalty rules (for admin panel)
     match /loyaltyRules/{ruleId} {
