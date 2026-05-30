@@ -21,7 +21,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   const flexClass = align === 'left' ? 'items-start' : align === 'right' ? 'items-end' : 'items-center';
 
   return (
-    <div className={`mb-20 flex flex-col ${flexClass} ${alignmentClass} ${className}`}>
+    <div className={`mb-10 sm:mb-20 flex flex-col ${flexClass} ${alignmentClass} ${className}`}>
       {/* Small badge above title */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -31,7 +31,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
         }}
         onViewportEnter={() => setHasGlitched(true)}
         viewport={{ once: false, margin: "-100px" }}
-        className="inline-block bg-black text-[#00ff88] text-xs font-black uppercase tracking-[0.5em] px-4 py-1 border-[2px] border-black mb-6"
+        className="inline-block bg-black text-[#00ff88] text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] sm:tracking-[0.5em] px-3 sm:px-4 py-1 border-[2px] border-black mb-4 sm:mb-6"
       >
         Protocol: {title.replace(/\s+/g, '_').toUpperCase()}
       </motion.div>
@@ -41,7 +41,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
         <GlitchText 
           text={title} 
           forceGlitch={hasGlitched}
-          className={`w-full font-syne font-black uppercase text-black leading-[0.85] text-7xl md:text-[8rem] lg:text-[10rem] ${align === 'center' ? 'justify-center' : ''}`} 
+          className={`w-full font-syne font-black uppercase text-black leading-[0.85] text-4xl sm:text-6xl md:text-[8rem] lg:text-[10rem] ${align === 'center' ? 'justify-center' : ''}`} 
         />
         
         {/* Secondary reveal layer if needed - using InteractiveText for character reveal if requested, 
@@ -53,7 +53,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
         initial={{ width: 0 }}
         whileInView={{ width: '100px' }}
         viewport={{ once: false }}
-        className="h-[6px] bg-black mt-4 mb-8"
+        className="h-[4px] sm:h-[6px] bg-black mt-3 sm:mt-4 mb-6 sm:mb-8"
       />
 
       {/* Subtitle with reveal animation */}
@@ -63,7 +63,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ delay: 0.2 }}
-          className="max-w-2xl text-black font-black uppercase text-xl md:text-2xl tracking-tighter leading-none"
+          className="max-w-2xl text-black font-black uppercase text-sm sm:text-xl md:text-2xl tracking-tighter leading-none"
         >
           {subtitle}
         </motion.p>

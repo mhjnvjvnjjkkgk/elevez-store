@@ -496,6 +496,7 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
   const [rotateY, setRotateY] = useState(0);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (window.innerWidth < 768 || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) return;
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -562,7 +563,7 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
       animate={{ rotateX, rotateY }}
       style={{ perspective: 1000 }}
     >
-      <div className="relative block overflow-hidden bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] group-hover:shadow-[16px_16px_0px_0px_#00ff88] transition-all duration-300 aspect-[4/5] group-hover:scale-105">
+      <div className="relative block overflow-hidden bg-white border-2 sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] group-hover:shadow-[8px_8px_0px_0px_#00ff88] sm:group-hover:shadow-[16px_16px_0px_0px_#00ff88] transition-all duration-300 aspect-[4/5] group-hover:scale-105">
         {/* Clickable Image Link Layer */}
         <Link
           to={`/product/${product.id}`}
@@ -601,7 +602,7 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         </button>
 
         {/* Slanted sticker tag clipped inside bottom-left corner */}
-        <div className="absolute -bottom-1 sm:-bottom-1 -left-4 sm:-left-8 w-16 sm:w-24 bg-[#00ff88] text-black text-[5px] sm:text-[7px] font-black text-center py-[1px] sm:py-[2px] border-[1px] sm:border-[2px] border-black rotate-[25deg] z-20 select-none pointer-events-none shadow-[1px_1px_0px_0px_#000] tracking-widest uppercase">
+        <div className="absolute -bottom-1 sm:-bottom-1 -left-4 sm:-left-8 w-14 sm:w-24 bg-[#00ff88] text-black text-[5px] sm:text-[7px] font-black text-center py-[1px] sm:py-[2px] border-[1px] sm:border-[2px] border-black rotate-[25deg] z-20 select-none pointer-events-none shadow-[1px_1px_0px_0px_#000] tracking-widest uppercase">
           {product.price > 500 ? "PREMIUM" : "LIMITED"}
         </div>
 
@@ -621,15 +622,15 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
       </div>
 
       <div className="mt-2 sm:mt-4 p-1.5 sm:p-3 bg-white border-[1px] sm:border-[2px] border-black shadow-[1px_1px_0px_0px_#000] sm:shadow-[2px_2px_0px_0px_#000]">
-        <h3 className="text-[9px] sm:text-sm font-black text-black uppercase font-syne line-clamp-1">{product.name}</h3>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-0.5 sm:mt-1 gap-0.5 sm:gap-0">
+        <h3 className="text-[10px] sm:text-sm font-black text-black uppercase font-syne line-clamp-1 leading-tight">{product.name}</h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-1 gap-0.5 sm:gap-0">
           <div className="flex items-center gap-1 sm:gap-2">
-            <span className="font-price text-[#00ff88] font-black text-[10px] sm:text-base stroke-black" style={{ WebkitTextStroke: '0.3px black' }}>₹{product.price.toFixed(0)}</span>
+            <span className="font-price text-[#00ff88] font-black text-[11px] sm:text-base stroke-black" style={{ WebkitTextStroke: '0.3px black' }}>₹{product.price.toFixed(0)}</span>
             <span className="font-price text-red-400 line-through text-[8px] sm:text-xs">₹{product.originalPrice.toFixed(0)}</span>
           </div>
-          <div className="flex gap-1">
+          <div className="flex gap-[2px] sm:gap-1">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} size={12} className={`${i < Math.floor(product.rating) ? 'fill-black text-black' : 'text-gray-300'}`} />
+              <Star key={i} className={`w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 ${i < Math.floor(product.rating) ? 'fill-black text-black' : 'text-gray-300'}`} />
             ))}
           </div>
         </div>
@@ -802,30 +803,32 @@ const CartSidebar = () => {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-screen w-full sm:w-[450px] bg-white border-l-[6px] border-black z-[70] flex flex-col shadow-[-16px_0px_0px_0px_rgba(0,0,0,0.1)] overflow-hidden"
+            className="fixed top-0 right-0 h-screen w-full sm:w-[450px] bg-white border-l-4 sm:border-l-[6px] border-black z-[70] flex flex-col shadow-[-8px_0px_0px_0px_rgba(0,0,0,0.05)] sm:shadow-[-16px_0px_0px_0px_rgba(0,0,0,0.1)] overflow-hidden"
           >
-            <div className="p-8 border-b-[6px] border-black flex items-center justify-between flex-shrink-0 bg-white relative">
-              <VelocityHeader text="Your Cart" className="!text-4xl" />
-              <div className="flex items-center gap-4">
-                <span className="bg-black text-[#00ff88] px-3 py-1 font-black text-xs border-[2px] border-black">{items.length}</span>
+            <div className="p-4 sm:p-8 border-b-4 sm:border-b-[6px] border-black flex items-center justify-between flex-shrink-0 bg-white relative">
+              <VelocityHeader text="Your Cart" className="!text-2xl sm:!text-4xl" />
+              <div className="flex items-center gap-2 sm:gap-4">
+                <span className="bg-black text-[#00ff88] px-2 py-0.5 sm:px-3 sm:py-1 font-black text-[10px] sm:text-xs border-[2px] border-black">{items.length}</span>
                 <button 
                   onClick={() => setIsCartOpen(false)} 
-                  className="p-2 bg-white border-[3px] border-black shadow-[4px_4px_0px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex-shrink-0"
+                  className="p-1.5 sm:p-2 bg-white border-2 sm:border-[3px] border-black shadow-[2px_2px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex-shrink-0"
                 >
-                  <X size={24} className="text-black" />
+                  <X size={18} className="text-black sm:hidden" />
+                  <X size={24} className="text-black hidden sm:block" />
                 </button>
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-white">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-4 sm:space-y-8 bg-white">
               {items.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-black gap-8">
-                  <div className="w-24 h-24 bg-gray-100 border-[4px] border-black flex items-center justify-center shadow-[8px_8px_0px_0px_#000]">
-                    <ShoppingBag size={48} className="opacity-20" />
+                <div className="h-full flex flex-col items-center justify-center text-black gap-6 sm:gap-8">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 border-[3px] sm:border-[4px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000]">
+                    <ShoppingBag size={36} className="opacity-20 sm:hidden" />
+                    <ShoppingBag size={48} className="opacity-20 hidden sm:block" />
                   </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-black uppercase mb-4 italic">The Vault is Empty</p>
-                    <button onClick={() => setIsCartOpen(false)} className="bg-black text-[#00ff88] px-8 py-3 border-[3px] border-black font-black uppercase text-sm shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">Begin Selection</button>
+                  <div className="text-center animate-fade-in">
+                    <p className="text-xl sm:text-2xl font-black uppercase mb-3 sm:mb-4 italic">The Vault is Empty</p>
+                    <button onClick={() => setIsCartOpen(false)} className="bg-black text-[#00ff88] px-6 py-2.5 sm:px-8 sm:py-3 border-2 sm:border-[3px] border-black font-black uppercase text-xs sm:text-sm shadow-[4px_4px_0px_0px_#000] sm:shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">Begin Selection</button>
                   </div>
                 </div>
               ) : (
@@ -835,26 +838,27 @@ const CartSidebar = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     key={item.cartId}
-                    className="flex gap-6 bg-white p-4 border-[4px] border-black shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+                    className="flex gap-4 sm:gap-6 bg-white p-3 sm:p-4 border-2 sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
                   >
-                    <div className="w-24 h-32 border-[3px] border-black overflow-hidden shrink-0 bg-white flex items-center justify-center p-1">
+                    <div className="w-20 h-28 sm:w-24 sm:h-32 border-2 sm:border-[3px] border-black overflow-hidden shrink-0 bg-white flex items-center justify-center p-1">
                       <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain transition-transform duration-500 hover:scale-105" loading="lazy" />
                     </div>
                     <div className="flex-1 flex flex-col justify-between min-w-0">
                       <div>
-                        <h3 className="font-black text-lg uppercase text-black line-clamp-1 leading-none mb-2">{item.name}</h3>
-                        <div className="flex flex-wrap gap-2 mb-2">
-                          <span className="bg-black text-white px-2 py-1 text-[10px] font-black uppercase border-[1px] border-black">{item.size}</span>
-                          {item.color && <span className="bg-[#00ff88] text-black px-2 py-1 text-[10px] font-black uppercase border-[1px] border-black">{item.color}</span>}
-                          <span className="bg-white text-black px-2 py-1 text-[10px] font-black uppercase border-[1px] border-black">QTY: {item.quantity}</span>
+                        <h3 className="font-black text-sm sm:text-lg uppercase text-black line-clamp-1 leading-none mb-1.5 sm:mb-2">{item.name}</h3>
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                          <span className="bg-black text-white px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">{item.size}</span>
+                          {item.color && <span className="bg-[#00ff88] text-black px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">{item.color}</span>}
+                          <span className="bg-white text-black px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">QTY: {item.quantity}</span>
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="text-2xl font-black text-black">
+                        <div className="text-xl sm:text-2xl font-black text-black">
                           ₹<GlitchText text={(item.price * item.quantity).toFixed(0)} triggerOnHover={false} />
                         </div>
-                        <button onClick={() => removeFromCart(item.cartId)} className="w-10 h-10 bg-white border-[3px] border-black flex items-center justify-center hover:bg-red-500 hover:text-white shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                          <Trash2 size={18} />
+                        <button onClick={() => removeFromCart(item.cartId)} className="w-8 h-8 sm:w-10 sm:h-10 bg-white border-2 sm:border-[3px] border-black flex items-center justify-center hover:bg-red-500 hover:text-white shadow-[2px_2px_0px_0px_#000] sm:shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
+                          <Trash2 size={14} className="sm:hidden" />
+                          <Trash2 size={18} className="hidden sm:block" />
                         </button>
                       </div>
                     </div>
@@ -864,15 +868,15 @@ const CartSidebar = () => {
             </div>
 
             {items.length > 0 && (
-              <div className="p-8 border-t-[6px] border-black bg-white flex-shrink-0">
-                <div className="space-y-4 mb-8">
+              <div className="p-4 sm:p-8 border-t-4 sm:border-t-[6px] border-black bg-white flex-shrink-0">
+                <div className="space-y-2 sm:space-y-4 mb-4 sm:mb-8">
                   <div className="flex justify-between items-end">
-                    <span className="text-sm font-black uppercase opacity-40 tracking-[0.2em]">Subtotal</span>
-                    <div className="text-4xl font-black text-black font-syne uppercase tracking-tighter">
+                    <span className="text-[10px] sm:text-sm font-black uppercase opacity-40 tracking-[0.2em]">Subtotal</span>
+                    <div className="text-2xl sm:text-4xl font-black text-black font-syne uppercase tracking-tighter">
                       ₹<GlitchText text={cartTotal.toFixed(0)} triggerOnHover={false} />
                     </div>
                   </div>
-                  <p className="text-[10px] font-black uppercase text-black opacity-30 italic leading-none">Logistics and taxes calculated during mission briefing.</p>
+                  <p className="text-[8px] sm:text-[10px] font-black uppercase text-black opacity-30 italic leading-none">Logistics and taxes calculated during mission briefing.</p>
                 </div>
                 <Magnetic>
                   <button
@@ -880,7 +884,7 @@ const CartSidebar = () => {
                       setIsCartOpen(false);
                       navigate('/checkout');
                     }}
-                    className="w-full bg-[#00ff88] text-black font-black py-6 border-[4px] border-black uppercase tracking-[0.2em] shadow-[10px_10px_0px_0px_#000] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all text-2xl"
+                    className="w-full bg-[#00ff88] text-black font-black py-4 sm:py-6 border-2 sm:border-[4px] border-black uppercase tracking-[0.2em] shadow-[6px_6px_0px_0px_#000] sm:shadow-[10px_10px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] sm:hover:translate-x-[6px] sm:hover:translate-y-[6px] transition-all text-xl sm:text-2xl"
                   >
                     Checkout Now
                   </button>
@@ -1127,7 +1131,7 @@ const BestSellers = () => {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-3 lg:grid-cols-3 gap-2 sm:gap-4 md:gap-8 mb-16 relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-8 mb-16 relative z-10">
             {bestSellers.map((product, index) => (
               <ProductCard
                 key={product.id}
@@ -2089,7 +2093,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           />
 
           {/* Dynamic Grid */}
-          <div className="grid grid-cols-3 lg:grid-cols-3 gap-2 sm:gap-4 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-8">
             {filteredProducts.map((product, index) => (
               <motion.div
                 key={product.id}
@@ -2474,7 +2478,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               </button>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-2 sm:gap-6 md:gap-12">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-6 md:gap-12">
               <AnimatePresence mode="popLayout">
                 {filteredProducts.map(product => (
                   <motion.div
@@ -3027,7 +3031,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
             </h2>
             <span className="text-xs font-bold uppercase tracking-widest text-black opacity-60">RECOMMENDED PROTOCOL</span>
           </div>
-          <div className="grid grid-cols-3 lg:grid-cols-3 gap-2 sm:gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6">
             {PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4).map(p => (
               <ProductCard
                 key={p.id}
