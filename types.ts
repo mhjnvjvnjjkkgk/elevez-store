@@ -21,10 +21,10 @@ export interface Product {
   colors?: string[];
   sizes?: string[]; // Available sizes: XS, S, M, L, XL, XXL
   sizeChart?: string; // Size chart image URL or base64
-  // Section visibility flags (centralized management)
   showInHome?: boolean; // Show on homepage (default: true)
   showInShop?: boolean; // Show in shop/all products (default: true)
   showInCollections?: boolean; // Show in collections page (default: true)
+  [key: string]: any; // Allow arbitrary extra fields from shopify/backups
 }
 
 export interface CartItem extends Product {

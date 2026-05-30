@@ -4,12 +4,12 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: 30/5/2026, 4:16:47 am
+// Last update: 30/5/2026, 5:51:07 pm
 export const PRODUCTS: Product[] = [
   {
     "id": 7915861377163,
     "rating": 4.3,
-    "category": "Unisex",
+    "category": "Topwear",
     "sku": "UOsMRnHs-Bk-XS-womenflowermain-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "collections": [
@@ -287,7 +287,7 @@ export const PRODUCTS: Product[] = [
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "FRnHs-Bk-XS-blessedbirdmain-Fr-ca",
     "rating": 4.4,
-    "category": "Unisex",
+    "category": "Topwear",
     "collections": [
       "All products!",
       "Women",
@@ -448,7 +448,7 @@ export const PRODUCTS: Product[] = [
       "Under 600",
       "Tshirt"
     ],
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4.2,
     "sku": "MRnHs-Bk-XS-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
@@ -584,7 +584,7 @@ export const PRODUCTS: Product[] = [
     "name": "\"The Sovereign Serpent\" - Black T-Shirt with Japanese Dragon Back Print",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_agh1k8agh1k8agh1.png?v=1761329197",
     "originalPrice": 899,
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4.9,
     "sku": "MRnHs-Bk-XS-dragonprintingfinalwithpng(1)-Bkelevezmainwhitelogo(1)-Lp-ca",
     "colors": [
@@ -621,7 +621,7 @@ export const PRODUCTS: Product[] = [
     "sku": "FCpTp-Wh-XS-maincroptopbutteflypng_1-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "rating": 4.6,
-    "category": "Women",
+    "category": "Topwear",
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_u9g2euu9g2euu9g2.png?v=1761748319",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/l.png?v=1761046421",
@@ -1014,7 +1014,7 @@ export const PRODUCTS: Product[] = [
     "sku": "MRnHs-Wh-XS-amiaktadhowatulsipata-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "rating": 4.5,
-    "category": "Unisex",
+    "category": "Topwear",
     "collections": [
       "All products!",
       "Below 400",
@@ -1068,7 +1068,7 @@ export const PRODUCTS: Product[] = [
       "XXL"
     ],
     "rating": 4.5,
-    "category": "Unisex",
+    "category": "Men",
     "price": 850,
     "originalPrice": 1500,
     "image": "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
@@ -1104,7 +1104,7 @@ export const PRODUCTS: Product[] = [
       "ALL"
     ],
     "showInHome": true,
-    "category": "Unisex",
+    "category": "Men",
     "profit": 75,
     "isNew": true,
     "isBestSeller": true,
@@ -1233,7 +1233,7 @@ export const PRODUCTS: Product[] = [
     "isFeatured": false,
     "sku": "MRnHs-Wh-XS-NewProject(12)-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4.6,
     "collections": [
       "All products!",
@@ -1424,8 +1424,8 @@ export const PRODUCTS: Product[] = [
     "lastSyncedAt": "2025-12-28T18:56:30.855Z",
     "inStock": true,
     "qid": "SHOP-7916018237579",
-    "updatedAt": "2026-05-28T10:54:07.771Z",
-    "category": "Unisex",
+    "updatedAt": "2026-05-30T12:21:07.422Z",
+    "category": "Topwear",
     "rating": 4.6,
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "MRnHs-Nb-XS-elevezmainwhitelogo(1)-Lp-ca",
@@ -1441,9 +1441,9 @@ export const PRODUCTS: Product[] = [
       "male",
       "old money"
     ],
-    "colors": [],
-    "isFeatured": false,
-    "isBestSeller": false,
+    "colors": [
+      "Navy Blue"
+    ],
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_o396y4o396y4o396.png?v=1761049036",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_dc4qiydc4qiydc4q.png?v=1761049036",
@@ -1473,7 +1473,13 @@ export const PRODUCTS: Product[] = [
     "description": "Embrace the essence of enduring style with the Elevéz Heritage Navy Tee. This isn't just a T-shirt; it's a staple of sophisticated simplicity, designed for those who appreciate understated luxury and impeccable quality. Crafted from premium 180 GSM cotton, this tee offers a substantial yet breathable feel, drapes elegantly, and maintains its shape and color wash after wash. The rich navy hue provides a versatile foundation for any discerning wardrobe, while the subtle Elevéz logo, meticulously placed on the left chest, signifies a commitment to quiet confidence and timeless design. This tee speaks volumes without saying a word, embodying the refined taste of classic elegance. Key Features: Timeless Elegance: A rich navy color and minimalist design for enduring style. Premium Comfort & Quality: Made from substantial 180 GSM cotton for a luxurious feel and lasting wear. Subtle Sophistication: Discreet Elevéz logo on the left chest signifies exclusivity and taste. Versatile Wardrobe Essential: Perfect for elevated casual wear or layering under blazers and fine knits. Invest in a piece that transcends trends and becomes a cornerstone of your distinguished style.",
     "type": "tee",
     "descriptionHtml": "<p>Embrace the essence of enduring style with the <b>Elevéz Heritage Navy Tee</b>. This isn't just a T-shirt; it's a staple of sophisticated simplicity, designed for those who appreciate understated luxury and impeccable quality. Crafted from premium <b>180 GSM cotton</b>, this tee offers a substantial yet breathable feel, drapes elegantly, and maintains its shape and color wash after wash.</p>\n<p>The rich navy hue provides a versatile foundation for any discerning wardrobe, while the subtle Elevéz logo, meticulously placed on the left chest, signifies a commitment to quiet confidence and timeless design. This tee speaks volumes without saying a word, embodying the refined taste of classic elegance.</p>\n<p><b>Key Features:</b></p>\n<ul>\n<li>\n<p><b>Timeless Elegance:</b> A rich navy color and minimalist design for enduring style.</p>\n</li>\n<li>\n<p><b>Premium Comfort &amp; Quality:</b> Made from substantial <b>180 GSM cotton</b> for a luxurious feel and lasting wear.</p>\n</li>\n<li>\n<p><b>Subtle Sophistication:</b> Discreet Elevéz logo on the left chest signifies exclusivity and taste.</p>\n</li>\n<li>\n<p><b>Versatile Wardrobe Essential:</b> Perfect for elevated casual wear or layering under blazers and fine knits.</p>\n</li>\n</ul>\n<p>Invest in a piece that transcends trends and becomes a cornerstone of your distinguished style.</p>",
-    "reviews": 65
+    "reviews": 65,
+    "profit": 239,
+    "profitMargin": 59.9,
+    "status": "active",
+    "showInHome": true,
+    "showInShop": true,
+    "showInCollections": true
   },
   {
     "id": 2,
@@ -1627,7 +1633,7 @@ export const PRODUCTS: Product[] = [
       "Tshirt"
     ],
     "rating": 5,
-    "category": "Unisex",
+    "category": "Topwear",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "MRnHs-Gm-XS-elevezlogoblack_1-Lp-ca",
     "tags": [
@@ -1670,7 +1676,7 @@ export const PRODUCTS: Product[] = [
       "Tshirt"
     ],
     "rating": 4.8,
-    "category": "Unisex",
+    "category": "Topwear",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "MRnHs-bn-XS-elevezmainwhitelogo(1)_1-Lp-ca",
     "updatedAt": "2026-05-28T10:54:07.772Z",
@@ -1803,7 +1809,7 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-in-a-white-background-wearing-a-white-tshirt_4.png?v=1761063305",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-in-a-white-background-wearing-a-white-tshirt_5.png?v=1761058587"
     ],
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4.5,
     "sku": "MRnHs-Wh-XS-longsamuraimainwithllogo-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
@@ -1929,7 +1935,7 @@ export const PRODUCTS: Product[] = [
     "id": 7916024234123,
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "MRnHs-Bk-XS-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4.5,
     "collections": [
       "All products!",
@@ -2097,7 +2103,7 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_lb9ffrlb9ffrlb9f.png?v=1761125938"
     ],
     "rating": 4,
-    "category": "Unisex",
+    "category": "Topwear",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "UHd-Gm-XS-NewProject(12)_1-Bk-ca",
     "collections": [
@@ -2350,14 +2356,14 @@ export const PRODUCTS: Product[] = [
       "Under 500",
       "Tshirt"
     ],
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4.3,
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "MRnHs-Wh-S-dragonsamuraiwithlogo-Fr-ca"
   },
   {
     "id": 7963981807755,
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4.5,
     "sku": "MRnHs-Wh-S-youarealdreadyundermygenjutsu-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
@@ -2581,7 +2587,7 @@ export const PRODUCTS: Product[] = [
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "UOsMRnHs-Bk-S-NewProject(19)-Fr-ca",
     "rating": 4.8,
-    "category": "Unisex",
+    "category": "Topwear",
     "originalPrice": 999,
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fvti68fvti68fvti.png?v=1761741294",
     "shopifyHandle": "skull-triangle-oversized-tshirt",
@@ -2635,7 +2641,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     "id": 4,
-    "category": "Unisex",
+    "category": "Men",
     "rating": 4.8,
     "price": 95,
     "sizes": [
@@ -2728,7 +2734,7 @@ export const PRODUCTS: Product[] = [
       "Under 600",
       "Tshirt"
     ],
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4.2,
     "sku": "MRnHs-Bk-XS-NewProject(11)-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.854Z",
@@ -3158,7 +3164,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     "id": 7915855806603,
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4.6,
     "importedAt": "2025-12-28T18:56:30.854Z",
     "sku": "MRnHs-Bk-XS-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
@@ -3490,7 +3496,7 @@ export const PRODUCTS: Product[] = [
     "inStock": true,
     "lastSyncedAt": "2025-12-28T18:56:30.855Z",
     "updatedAt": "2026-05-28T11:46:34.249Z",
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4,
     "sku": "UOsMRnHs-Lv-XS-oversizedbirdflowertshirt-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
@@ -3561,7 +3567,7 @@ export const PRODUCTS: Product[] = [
     "shopifyHandle": "oversized-illuminaty-skull-triangle-design",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "UOsMRnHs-Bk-XS-skullflowermain-Fr-ca",
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4.5,
     "collections": [
       "All products!",
@@ -3818,7 +3824,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": 7915971805323,
     "rating": 4.7,
-    "category": "Unisex",
+    "category": "Topwear",
     "sku": "MRnHs-Wh-XS-nijerchorkaetelde-Fr-ca",
     "importedAt": "2025-12-28T18:56:30.855Z",
     "collections": [
@@ -4146,7 +4152,7 @@ export const PRODUCTS: Product[] = [
       "oversized",
       "Oversized Tshirt"
     ],
-    "category": "Unisex",
+    "category": "Topwear",
     "rating": 4.1,
     "importedAt": "2025-12-28T18:56:30.855Z",
     "sku": "UOsMRnHs-Wh-XS-designfinal_1-Fr-ca",
@@ -4176,14 +4182,16 @@ export const PRODUCTS: Product[] = [
 export const COLLECTIONS = [
   {
     "id": "1778682078130-0",
-    "handle": "all-products",
-    "createdAt": "2026-05-13T14:21:18.130Z",
-    "sectionMapping": null,
-    "isSystem": false,
-    "productCount": 39,
     "description": "Products in the All products! collection",
+    "isSystem": false,
+    "name": "All products!",
+    "handle": "all-products",
     "order": 0,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated",
+    "sectionMapping": null,
+    "image": "",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "cute-blessed-tshirt-for-girls",
@@ -4225,12 +4233,14 @@ export const COLLECTIONS = [
       "youre-aldready-under-my-genjutsu",
       "skull-triangle-oversized-tshirt"
     ],
-    "name": "All products!",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": ""
+    "productCount": 39
   },
   {
     "id": "1778682078130-1",
+    "name": "Best Sellers",
+    "handle": "best-sellers",
+    "description": "Products in the Best Sellers collection",
+    "isSystem": false,
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "back-dragon-print-epic-design-front-elevez",
@@ -4241,43 +4251,40 @@ export const COLLECTIONS = [
       "dragon-samurai-main-epic-imp",
       "samurai-dragon-2nd-tshirt"
     ],
-    "name": "Best Sellers",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "source": "generated",
     "productCount": 8,
-    "isSystem": false,
-    "description": "Products in the Best Sellers collection",
-    "order": 1,
-    "handle": "best-sellers",
+    "sectionMapping": null,
+    "image": "",
     "createdAt": "2026-05-13T14:21:18.130Z",
-    "sectionMapping": null
+    "source": "generated",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 1
   },
   {
     "id": "1778682078130-2",
-    "source": "generated",
     "image": "",
+    "sectionMapping": null,
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "oversized-unisex-peace-simple-bird-tshirt",
       "oversized-illuminaty-skull-triangle-design",
       "oversized-cute-simple-bunny-tshirt"
     ],
-    "name": "Below 699",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "createdAt": "2026-05-13T14:21:18.130Z",
-    "sectionMapping": null,
-    "handle": "below-699",
-    "description": "Products in the Below 699 collection",
+    "productCount": 4,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
     "order": 2,
+    "createdAt": "2026-05-13T14:21:18.130Z",
+    "source": "generated",
+    "description": "Products in the Below 699 collection",
     "isSystem": false,
-    "productCount": 4
+    "name": "Below 699",
+    "handle": "below-699"
   },
   {
     "id": "1778682078130-3",
+    "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "oversized",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 3,
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "skull-triangle-oversized-tshirt",
@@ -4287,27 +4294,20 @@ export const COLLECTIONS = [
       "oversized-cute-simple-bunny-tshirt",
       "skull-triangle-oversized-tshirt"
     ],
-    "image": "",
-    "handle": "oversized",
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T14:21:18.130Z",
     "productCount": 7,
-    "isSystem": false,
-    "order": 3,
-    "description": "Products in the oversized collection"
+    "image": "",
+    "sectionMapping": null,
+    "name": "oversized",
+    "handle": "oversized",
+    "description": "Products in the oversized collection",
+    "isSystem": false
   },
   {
     "id": "1778682078130-4",
-    "order": 4,
-    "description": "Products in the Oversized Tshirt collection",
-    "productCount": 7,
-    "isSystem": false,
-    "sectionMapping": null,
     "createdAt": "2026-05-13T14:21:18.130Z",
-    "handle": "oversized-tshirt",
-    "image": "",
-    "name": "Oversized Tshirt",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "source": "generated",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 4,
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "skull-triangle-oversized-tshirt",
@@ -4317,17 +4317,41 @@ export const COLLECTIONS = [
       "oversized-cute-simple-bunny-tshirt",
       "skull-triangle-oversized-tshirt"
     ],
-    "source": "generated"
+    "productCount": 7,
+    "image": "",
+    "sectionMapping": null,
+    "name": "Oversized Tshirt",
+    "handle": "oversized-tshirt",
+    "description": "Products in the Oversized Tshirt collection",
+    "isSystem": false
+  },
+  {
+    "id": "1778682078130-5",
+    "isSystem": false,
+    "description": "Products in the Women collection",
+    "handle": "women",
+    "name": "Women",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 5,
+    "source": "generated",
+    "createdAt": "2026-05-13T14:21:18.130Z",
+    "sectionMapping": null,
+    "image": "",
+    "productCount": 6,
+    "productHandles": [
+      "cute-blessed-tshirt-for-girls",
+      "cute-butterfly-croptop-for-women",
+      "oversized-unisex-peace-simple-bird-tshirt",
+      "oversized-cute-bunny-tshirt-for-women",
+      "cute-blessed-tshirt-for-girls",
+      "cute-butterfly-croptop-for-women"
+    ]
   },
   {
     "id": "1778682078130-6",
-    "isSystem": false,
-    "productCount": 9,
-    "description": "Products in the Under 500 collection",
-    "order": 6,
-    "handle": "under-500",
-    "createdAt": "2026-05-13T14:21:18.130Z",
     "sectionMapping": null,
+    "image": "",
+    "productCount": 9,
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
       "dragon-samurai-main-epic-imp",
@@ -4339,14 +4363,21 @@ export const COLLECTIONS = [
       "samurai-dragon-2nd-tshirt",
       "youre-aldready-under-my-genjutsu"
     ],
-    "name": "Under 500",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "source": "generated"
+    "order": 6,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "source": "generated",
+    "createdAt": "2026-05-13T14:21:18.130Z",
+    "isSystem": false,
+    "description": "Products in the Under 500 collection",
+    "handle": "under-500",
+    "name": "Under 500"
   },
   {
     "id": "1778682078130-7",
+    "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated",
+    "order": 7,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
       "japaneese-text-tshirt-cool-front-elevez",
@@ -4377,29 +4408,21 @@ export const COLLECTIONS = [
       "samurai-dragon-2nd-tshirt",
       "youre-aldready-under-my-genjutsu"
     ],
-    "name": "Tshirt",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "handle": "tshirt",
-    "createdAt": "2026-05-13T14:21:18.130Z",
-    "sectionMapping": null,
-    "isSystem": false,
     "productCount": 28,
+    "image": "",
+    "sectionMapping": null,
+    "name": "Tshirt",
+    "handle": "tshirt",
     "description": "Products in the Tshirt collection",
-    "order": 7
+    "isSystem": false
   },
   {
     "id": "1778682078130-8",
-    "order": 8,
+    "handle": "under-600",
+    "name": "Under 600",
+    "isSystem": false,
     "description": "Products in the Under 600 collection",
     "productCount": 10,
-    "isSystem": false,
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T14:21:18.130Z",
-    "handle": "under-600",
-    "image": "",
-    "name": "Under 600",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez",
@@ -4412,17 +4435,20 @@ export const COLLECTIONS = [
       "guy-sitting-between-sun-and-moon-circuler-tshirt",
       "skull-triangle-oversized-tshirt"
     ],
-    "source": "generated"
+    "sectionMapping": null,
+    "image": "",
+    "source": "generated",
+    "createdAt": "2026-05-13T14:21:18.130Z",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 8
   },
   {
     "id": "1778682078130-9",
     "description": "Products in the Below 400 collection",
-    "order": 9,
-    "productCount": 13,
     "isSystem": false,
-    "createdAt": "2026-05-13T14:21:18.130Z",
-    "sectionMapping": null,
+    "name": "Below 400",
     "handle": "below-400",
+    "sectionMapping": null,
     "image": "",
     "productHandles": [
       "cute-butterfly-croptop-for-women",
@@ -4439,13 +4465,20 @@ export const COLLECTIONS = [
       "grey-melange-tshirt",
       "coffee-brown-premium-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Below 400",
+    "productCount": 13,
+    "order": 9,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated"
   },
   {
     "id": "1778682078130-10",
-    "source": "generated",
+    "description": "Products in the Bold and vibrant collection",
+    "isSystem": false,
+    "name": "Bold and vibrant",
+    "handle": "bold-and-vibrant",
+    "sectionMapping": null,
+    "image": "",
     "productHandles": [
       "ami-akta-dhowa-tulsi-pata-tshirt",
       "kal-ana-tshirt",
@@ -4453,27 +4486,24 @@ export const COLLECTIONS = [
       "ami-akta-dhowa-tulsi-pata-tshirt",
       "kal-ana-tshirt"
     ],
-    "name": "Bold and vibrant",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "handle": "bold-and-vibrant",
-    "createdAt": "2026-05-13T14:21:18.130Z",
-    "sectionMapping": null,
-    "isSystem": false,
     "productCount": 5,
-    "description": "Products in the Bold and vibrant collection",
-    "order": 10
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 10,
+    "createdAt": "2026-05-13T14:21:18.130Z",
+    "source": "generated"
   },
   {
     "id": "1778682078130-11",
     "description": "Products in the old money collection",
-    "order": 11,
-    "productCount": 6,
     "isSystem": false,
-    "createdAt": "2026-05-13T14:21:18.130Z",
-    "sectionMapping": null,
+    "name": "old money",
     "handle": "old-money",
+    "order": 11,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "createdAt": "2026-05-13T14:21:18.130Z",
+    "source": "generated",
     "image": "",
+    "sectionMapping": null,
     "productHandles": [
       "navy-blue-premium-tshirt",
       "grey-melange-tshirt",
@@ -4482,62 +4512,58 @@ export const COLLECTIONS = [
       "grey-melange-tshirt",
       "coffee-brown-premium-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "old money",
-    "source": "generated"
+    "productCount": 6
   },
   {
     "id": "1778682078130-12",
-    "order": 12,
-    "description": "Products in the Home page collection",
-    "productCount": 2,
-    "isSystem": false,
-    "sectionMapping": null,
+    "source": "generated",
     "createdAt": "2026-05-13T14:21:18.130Z",
-    "handle": "home-page",
-    "image": "",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Home page",
+    "order": 12,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "productCount": 2,
     "productHandles": [
       "paisa-design-stylish-genz-tshirt",
       "paisa-design-stylish-genz-tshirt"
     ],
-    "source": "generated"
+    "image": "",
+    "sectionMapping": null,
+    "handle": "home-page",
+    "name": "Home page",
+    "isSystem": false,
+    "description": "Products in the Home page collection"
   },
   {
     "id": "shopify-frontpage",
+    "shopifyId": "gid://shopify/Collection/306335416459",
+    "order": 0,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "source": "shopify",
+    "createdAt": "2026-05-13T14:21:25.042Z",
+    "sectionMapping": null,
+    "image": "",
+    "productCount": 1,
     "productHandles": [
       "paisa-design-stylish-genz-tshirt"
     ],
-    "name": "Home page",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "source": "shopify",
-    "shopifyId": "gid://shopify/Collection/306335416459",
-    "productCount": 1,
     "isSystem": false,
     "description": "",
-    "order": 0,
-    "importedAt": "2025-12-28T18:56:29.286Z",
     "handle": "frontpage",
-    "createdAt": "2026-05-13T14:21:25.042Z",
-    "sectionMapping": null
+    "name": "Home page",
+    "importedAt": "2025-12-28T18:56:29.286Z"
   },
   {
     "id": "shopify-all",
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T14:21:25.042Z",
     "handle": "all",
-    "importedAt": "2025-12-28T18:56:29.286Z",
-    "order": 1,
-    "description": "",
-    "isSystem": false,
-    "productCount": 28,
-    "shopifyId": "gid://shopify/Collection/307465158795",
-    "source": "shopify",
-    "image": "",
     "name": "All products!",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "isSystem": false,
+    "description": "",
+    "importedAt": "2025-12-28T18:56:29.286Z",
+    "source": "shopify",
+    "createdAt": "2026-05-13T14:21:25.042Z",
+    "shopifyId": "gid://shopify/Collection/307465158795",
+    "order": 1,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "productCount": 28,
     "productHandles": [
       null,
       null,
@@ -4567,41 +4593,62 @@ export const COLLECTIONS = [
       "youre-aldready-under-my-genjutsu",
       "oversized-cute-bunny-tshirt-for-women",
       "skull-triangle-oversized-tshirt"
-    ]
+    ],
+    "sectionMapping": null,
+    "image": ""
   },
   {
     "id": "shopify-best-sellers",
-    "description": "",
-    "order": 2,
-    "isSystem": false,
-    "shopifyId": "gid://shopify/Collection/307502022795",
-    "productCount": 4,
-    "createdAt": "2026-05-13T14:21:25.042Z",
-    "sectionMapping": "bestSellers",
-    "handle": "best-sellers",
     "importedAt": "2025-12-28T18:56:29.286Z",
+    "description": "",
+    "isSystem": false,
+    "name": "Best Sellers",
+    "handle": "best-sellers",
     "image": "",
+    "sectionMapping": "bestSellers",
     "productHandles": [
       "samurai-dragon-2nd-tshirt",
       "dragon-samurai-main-epic-imp",
       "back-dragon-print-epic-design-front-elevez",
       "oversized-cute-simple-bunny-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Best Sellers",
+    "productCount": 4,
+    "order": 2,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "shopifyId": "gid://shopify/Collection/307502022795",
+    "createdAt": "2026-05-13T14:21:25.042Z",
     "source": "shopify"
   },
   {
-    "id": "shopify-under-500",
-    "productCount": 5,
-    "shopifyId": "gid://shopify/Collection/307639484555",
-    "isSystem": false,
-    "description": "",
-    "order": 4,
-    "importedAt": "2025-12-28T18:56:29.286Z",
-    "handle": "under-500",
-    "createdAt": "2026-05-13T14:21:25.043Z",
+    "id": "shopify-women",
+    "productHandles": [
+      "oversized-cute-bunny-tshirt-for-women",
+      "cute-butterfly-croptop-for-women",
+      "cute-blessed-tshirt-for-girls",
+      "oversized-unisex-peace-simple-bird-tshirt"
+    ],
+    "productCount": 4,
     "sectionMapping": null,
+    "image": "",
+    "createdAt": "2026-05-13T14:21:25.043Z",
+    "source": "shopify",
+    "shopifyId": "gid://shopify/Collection/307502973067",
+    "order": 3,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "importedAt": "2025-12-28T18:56:29.286Z",
+    "name": "Women",
+    "handle": "women",
+    "description": "",
+    "isSystem": false
+  },
+  {
+    "id": "shopify-under-500",
+    "source": "shopify",
+    "createdAt": "2026-05-13T14:21:25.043Z",
+    "shopifyId": "gid://shopify/Collection/307639484555",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 4,
+    "productCount": 5,
     "productHandles": [
       "dragon-samurai-main-epic-imp",
       "samurai-dragon-2nd-tshirt",
@@ -4609,25 +4656,26 @@ export const COLLECTIONS = [
       "stylish-buttefly-tshirt",
       "youre-aldready-under-my-genjutsu"
     ],
-    "name": "Under 500",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "sectionMapping": null,
     "image": "",
-    "source": "shopify"
+    "handle": "under-500",
+    "name": "Under 500",
+    "isSystem": false,
+    "description": "",
+    "importedAt": "2025-12-28T18:56:29.286Z"
   },
   {
     "id": "shopify-below-600",
-    "handle": "below-600",
-    "importedAt": "2025-12-28T18:56:29.286Z",
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T14:21:25.043Z",
-    "isSystem": false,
-    "productCount": 5,
-    "shopifyId": "gid://shopify/Collection/307639615627",
-    "order": 5,
-    "description": "",
-    "source": "shopify",
     "name": "Under 600",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "handle": "below-600",
+    "description": "",
+    "isSystem": false,
+    "importedAt": "2025-12-28T18:56:29.286Z",
+    "createdAt": "2026-05-13T14:21:25.043Z",
+    "source": "shopify",
+    "shopifyId": "gid://shopify/Collection/307639615627",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 5,
     "productHandles": [
       "skull-triangle-oversized-tshirt",
       "guy-sitting-between-sun-and-moon-circuler-tshirt",
@@ -4635,32 +4683,39 @@ export const COLLECTIONS = [
       "japaneese-text-tshirt-cool-front-elevez",
       "paisa-design-stylish-genz-tshirt"
     ],
+    "productCount": 5,
+    "sectionMapping": null,
     "image": ""
   },
   {
     "id": "shopify-below-799",
-    "name": "Below 699",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "image": "",
+    "sectionMapping": null,
+    "productCount": 3,
     "productHandles": [
       "oversized-illuminaty-skull-triangle-design",
       "oversized-cute-simple-bunny-tshirt",
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
-    "image": "",
-    "source": "shopify",
-    "shopifyId": "gid://shopify/Collection/307639681163",
-    "productCount": 3,
-    "isSystem": false,
     "order": 6,
-    "description": "",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "shopifyId": "gid://shopify/Collection/307639681163",
+    "source": "shopify",
+    "createdAt": "2026-05-13T14:21:25.043Z",
     "importedAt": "2025-12-28T18:56:29.286Z",
+    "isSystem": false,
+    "description": "",
     "handle": "below-799",
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T14:21:25.043Z"
+    "name": "Below 699"
   },
   {
     "id": "shopify-below-400",
-    "source": "shopify",
+    "importedAt": "2025-12-28T18:56:29.286Z",
+    "description": "",
+    "isSystem": false,
+    "name": "Below 400",
+    "handle": "below-400",
+    "sectionMapping": null,
     "image": "",
     "productHandles": [
       "coffee-brown-premium-tshirt",
@@ -4671,31 +4726,27 @@ export const COLLECTIONS = [
       "ami-akta-dhowa-tulsi-pata-tshirt",
       "cute-butterfly-croptop-for-women"
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Below 400",
-    "createdAt": "2026-05-13T14:21:25.043Z",
-    "sectionMapping": null,
-    "handle": "below-400",
-    "importedAt": "2025-12-28T18:56:29.286Z",
-    "description": "",
-    "order": 7,
-    "isSystem": false,
+    "productCount": 7,
     "shopifyId": "gid://shopify/Collection/307639713931",
-    "productCount": 7
+    "order": 7,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "createdAt": "2026-05-13T14:21:25.043Z",
+    "source": "shopify"
   },
   {
     "id": "shopify-oversized",
-    "productCount": 5,
-    "shopifyId": "gid://shopify/Collection/307662028939",
-    "isSystem": false,
-    "order": 8,
     "description": "",
-    "importedAt": "2025-12-28T18:56:29.286Z",
-    "handle": "oversized",
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T14:21:25.043Z",
+    "isSystem": false,
     "name": "oversized",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "handle": "oversized",
+    "importedAt": "2025-12-28T18:56:29.286Z",
+    "shopifyId": "gid://shopify/Collection/307662028939",
+    "order": 8,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "createdAt": "2026-05-13T14:21:25.043Z",
+    "source": "shopify",
+    "sectionMapping": null,
+    "image": "",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "skull-triangle-oversized-tshirt",
@@ -4703,57 +4754,57 @@ export const COLLECTIONS = [
       "oversized-illuminaty-skull-triangle-design",
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
-    "image": "",
-    "source": "shopify"
+    "productCount": 5
   },
   {
     "id": "shopify-old-money",
-    "source": "shopify",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "old money",
     "productHandles": [
       "coffee-brown-premium-tshirt",
       "grey-melange-tshirt",
       "navy-blue-premium-tshirt"
     ],
+    "productCount": 3,
     "image": "",
-    "importedAt": "2025-12-28T18:56:29.286Z",
-    "handle": "old-money",
     "sectionMapping": null,
     "createdAt": "2026-05-13T14:21:25.043Z",
-    "productCount": 3,
-    "shopifyId": "gid://shopify/Collection/307744080011",
-    "isSystem": false,
+    "source": "shopify",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
     "order": 9,
-    "description": ""
+    "shopifyId": "gid://shopify/Collection/307744080011",
+    "importedAt": "2025-12-28T18:56:29.286Z",
+    "name": "old money",
+    "handle": "old-money",
+    "description": "",
+    "isSystem": false
   },
   {
     "id": "shopify-bold-and-vibrant",
+    "handle": "bold-and-vibrant",
+    "name": "Bold and vibrant",
+    "isSystem": false,
+    "description": "",
+    "importedAt": "2025-12-28T18:56:29.286Z",
     "source": "shopify",
+    "createdAt": "2026-05-13T14:21:25.043Z",
+    "order": 10,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "shopifyId": "gid://shopify/Collection/307744112779",
+    "productCount": 3,
     "productHandles": [
       "kal-ana-tshirt",
       "ami-akta-dhowa-tulsi-pata-funky",
       "ami-akta-dhowa-tulsi-pata-tshirt"
     ],
-    "name": "Bold and vibrant",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
-    "handle": "bold-and-vibrant",
-    "importedAt": "2025-12-28T18:56:29.286Z",
-    "createdAt": "2026-05-13T14:21:25.043Z",
-    "sectionMapping": null,
-    "isSystem": false,
-    "productCount": 3,
-    "shopifyId": "gid://shopify/Collection/307744112779",
-    "description": "",
-    "order": 10
+    "sectionMapping": null
   },
   {
     "id": "shopify-tshirt",
-    "source": "shopify",
-    "image": "",
+    "importedAt": "2025-12-28T18:56:29.286Z",
     "name": "Tshirt",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "handle": "tshirt",
+    "description": "",
+    "isSystem": false,
     "productHandles": [
       "youre-aldready-under-my-genjutsu",
       "samurai-dragon-2nd-tshirt",
@@ -4771,20 +4822,22 @@ export const COLLECTIONS = [
       "stylish-buttefly-tshirt",
       "paisa-design-stylish-genz-tshirt"
     ],
+    "productCount": 15,
+    "image": "",
     "sectionMapping": null,
     "createdAt": "2026-05-13T14:21:25.043Z",
-    "handle": "tshirt",
-    "importedAt": "2025-12-28T18:56:29.286Z",
+    "source": "shopify",
     "order": 11,
-    "description": "",
-    "isSystem": false,
-    "productCount": 15,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
     "shopifyId": "gid://shopify/Collection/307999441035"
   },
   {
     "id": "shopify-oversized-tshirt",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Oversized Tshirt",
+    "createdAt": "2026-05-13T14:21:25.043Z",
+    "source": "shopify",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 12,
+    "shopifyId": "gid://shopify/Collection/307999473803",
     "productHandles": [
       "skull-triangle-oversized-tshirt",
       "oversized-cute-bunny-tshirt-for-women",
@@ -4792,28 +4845,21 @@ export const COLLECTIONS = [
       "oversized-cute-simple-bunny-tshirt",
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
-    "image": "",
-    "source": "shopify",
     "productCount": 5,
-    "shopifyId": "gid://shopify/Collection/307999473803",
-    "isSystem": false,
-    "order": 12,
-    "description": "",
-    "importedAt": "2025-12-28T18:56:29.286Z",
-    "handle": "oversized-tshirt",
+    "image": "",
     "sectionMapping": null,
-    "createdAt": "2026-05-13T14:21:25.043Z"
+    "name": "Oversized Tshirt",
+    "handle": "oversized-tshirt",
+    "description": "",
+    "isSystem": false,
+    "importedAt": "2025-12-28T18:56:29.286Z"
   },
   {
     "id": "1766960993446-0",
-    "handle": "all-products",
     "createdAt": "2025-12-28T22:29:53.446Z",
-    "sectionMapping": null,
-    "productCount": 22,
-    "isSystem": false,
-    "description": "Products in the All products! collection",
-    "order": 0,
     "source": "generated",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 0,
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "cute-blessed-tshirt-for-girls",
@@ -4838,34 +4884,40 @@ export const COLLECTIONS = [
       "ami-akta-dhowa-tulsi-pata-funky",
       "oversized-cute-bunny-tshirt-for-women"
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "productCount": 22,
+    "image": "",
+    "sectionMapping": null,
     "name": "All products!",
-    "image": ""
+    "handle": "all-products",
+    "description": "Products in the All products! collection",
+    "isSystem": false
   },
   {
     "id": "1766960993446-1",
+    "createdAt": "2025-12-28T22:29:53.446Z",
     "source": "generated",
+    "order": 1,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "oversized-unisex-peace-simple-bird-tshirt",
       "oversized-illuminaty-skull-triangle-design"
     ],
-    "name": "Below 699",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "handle": "below-699",
-    "createdAt": "2025-12-28T22:29:53.446Z",
-    "sectionMapping": null,
     "productCount": 3,
-    "isSystem": false,
+    "sectionMapping": null,
+    "image": "",
+    "name": "Below 699",
+    "handle": "below-699",
     "description": "Products in the Below 699 collection",
-    "order": 1
+    "isSystem": false
   },
   {
     "id": "1766960993446-2",
-    "source": "generated",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "handle": "under-600",
     "name": "Under 600",
+    "isSystem": false,
+    "description": "Products in the Under 600 collection",
+    "productCount": 5,
     "productHandles": [
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez",
@@ -4873,42 +4925,39 @@ export const COLLECTIONS = [
       "skull-triangle-oversized-tshirt",
       "paisa-design-stylish-genz-tshirt"
     ],
-    "image": "",
-    "handle": "under-600",
     "sectionMapping": null,
+    "image": "",
+    "source": "generated",
     "createdAt": "2025-12-28T22:29:53.446Z",
-    "productCount": 5,
-    "isSystem": false,
     "order": 2,
-    "description": "Products in the Under 600 collection"
+    "updatedAt": "2026-05-30T12:21:07.462Z"
   },
   {
     "id": "1766960993446-3",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 3,
+    "createdAt": "2025-12-28T22:29:53.446Z",
     "source": "generated",
+    "sectionMapping": null,
+    "image": "",
     "productHandles": [
       "paisa-design-stylish-genz-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Home page",
-    "image": "",
-    "handle": "home-page",
-    "createdAt": "2025-12-28T22:29:53.446Z",
-    "sectionMapping": null,
     "productCount": 1,
-    "isSystem": false,
     "description": "Products in the Home page collection",
-    "order": 3
+    "isSystem": false,
+    "name": "Home page",
+    "handle": "home-page"
   },
   {
     "id": "1778446196513-0",
-    "description": "Products in the All products! collection",
-    "order": 0,
-    "productCount": 19,
     "isSystem": false,
-    "createdAt": "2026-05-10T20:49:56.513Z",
-    "sectionMapping": null,
+    "description": "Products in the All products! collection",
     "handle": "all-products",
+    "name": "All products!",
+    "sectionMapping": null,
     "image": "",
+    "productCount": 19,
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "cute-blessed-tshirt-for-girls",
@@ -4930,149 +4979,167 @@ export const COLLECTIONS = [
       "stylish-buttefly-tshirt",
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
-    "name": "All products!",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "source": "generated"
+    "order": 0,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "source": "generated",
+    "createdAt": "2026-05-10T20:49:56.513Z"
   },
   {
     "id": "1778446196513-1",
-    "image": "",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "handle": "best-sellers",
     "name": "Best Sellers",
+    "isSystem": false,
+    "description": "Products in the Best Sellers collection",
+    "source": "generated",
+    "createdAt": "2026-05-10T20:49:56.513Z",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 1,
+    "productCount": 4,
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "back-dragon-print-epic-design-front-elevez",
       "dragon-samurai-main-epic-imp",
       "samurai-dragon-2nd-tshirt"
     ],
-    "source": "generated",
-    "order": 1,
-    "description": "Products in the Best Sellers collection",
-    "isSystem": false,
-    "productCount": 4,
-    "sectionMapping": null,
-    "createdAt": "2026-05-10T20:49:56.513Z",
-    "handle": "best-sellers"
+    "image": "",
+    "sectionMapping": null
   },
   {
     "id": "1778446196513-10",
-    "createdAt": "2026-05-10T20:49:56.513Z",
-    "sectionMapping": null,
-    "handle": "bold-and-vibrant",
     "description": "Products in the Bold and vibrant collection",
-    "order": 10,
     "isSystem": false,
-    "productCount": 2,
-    "source": "generated",
+    "name": "Bold and vibrant",
+    "handle": "bold-and-vibrant",
+    "sectionMapping": null,
     "image": "",
     "productHandles": [
       "ami-akta-dhowa-tulsi-pata-tshirt",
       "kal-ana-tshirt"
     ],
-    "name": "Bold and vibrant",
-    "updatedAt": "2026-05-29T22:32:39.892Z"
+    "productCount": 2,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 10,
+    "createdAt": "2026-05-10T20:49:56.513Z",
+    "source": "generated"
   },
   {
     "id": "1778446196513-11",
-    "source": "generated",
+    "productCount": 3,
     "productHandles": [
       "navy-blue-premium-tshirt",
       "grey-melange-tshirt",
       "coffee-brown-premium-tshirt"
     ],
-    "name": "old money",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "handle": "old-money",
-    "createdAt": "2026-05-10T20:49:56.513Z",
     "sectionMapping": null,
-    "productCount": 3,
+    "image": "",
+    "source": "generated",
+    "createdAt": "2026-05-10T20:49:56.513Z",
+    "order": 11,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "handle": "old-money",
+    "name": "old money",
     "isSystem": false,
-    "description": "Products in the old money collection",
-    "order": 11
+    "description": "Products in the old money collection"
   },
   {
     "id": "1778446196513-12",
     "handle": "home-page",
-    "sectionMapping": null,
-    "createdAt": "2026-05-10T20:49:56.513Z",
+    "name": "Home page",
     "isSystem": false,
-    "productCount": 1,
-    "order": 12,
     "description": "Products in the Home page collection",
     "source": "generated",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Home page",
+    "createdAt": "2026-05-10T20:49:56.513Z",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 12,
+    "productCount": 1,
     "productHandles": [
       "paisa-design-stylish-genz-tshirt"
     ],
-    "image": ""
-  },
-  {
-    "id": "1778446196513-2",
-    "productHandles": [
-      "oversized-cute-simple-bunny-tshirt",
-      "oversized-unisex-peace-simple-bird-tshirt"
-    ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Below 699",
     "image": "",
-    "source": "generated",
-    "isSystem": false,
-    "productCount": 2,
-    "description": "Products in the Below 699 collection",
-    "order": 2,
-    "handle": "below-699",
-    "createdAt": "2026-05-10T20:49:56.513Z",
     "sectionMapping": null
   },
   {
-    "id": "1778446196513-3",
+    "id": "1778446196513-2",
+    "description": "Products in the Below 699 collection",
+    "isSystem": false,
+    "name": "Below 699",
+    "handle": "below-699",
+    "sectionMapping": null,
     "image": "",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "oversized",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
-      "skull-triangle-oversized-tshirt",
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
-    "source": "generated",
-    "order": 3,
-    "description": "Products in the oversized collection",
-    "productCount": 3,
-    "isSystem": false,
-    "sectionMapping": null,
+    "productCount": 2,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 2,
     "createdAt": "2026-05-10T20:49:56.513Z",
-    "handle": "oversized"
-  },
-  {
-    "id": "1778446196513-4",
-    "isSystem": false,
-    "productCount": 3,
-    "description": "Products in the Oversized Tshirt collection",
-    "order": 4,
-    "handle": "oversized-tshirt",
-    "createdAt": "2026-05-10T20:49:56.513Z",
-    "sectionMapping": null,
-    "productHandles": [
-      "oversized-cute-simple-bunny-tshirt",
-      "skull-triangle-oversized-tshirt",
-      "oversized-unisex-peace-simple-bird-tshirt"
-    ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Oversized Tshirt",
-    "image": "",
     "source": "generated"
   },
   {
-    "id": "1778446196513-6",
-    "productCount": 5,
-    "isSystem": false,
-    "description": "Products in the Under 500 collection",
-    "order": 6,
-    "handle": "under-500",
+    "id": "1778446196513-3",
+    "source": "generated",
     "createdAt": "2026-05-10T20:49:56.513Z",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 3,
+    "productCount": 3,
+    "productHandles": [
+      "oversized-cute-simple-bunny-tshirt",
+      "skull-triangle-oversized-tshirt",
+      "oversized-unisex-peace-simple-bird-tshirt"
+    ],
+    "image": "",
     "sectionMapping": null,
+    "handle": "oversized",
+    "name": "oversized",
+    "isSystem": false,
+    "description": "Products in the oversized collection"
+  },
+  {
+    "id": "1778446196513-4",
+    "description": "Products in the Oversized Tshirt collection",
+    "isSystem": false,
+    "name": "Oversized Tshirt",
+    "handle": "oversized-tshirt",
+    "sectionMapping": null,
+    "image": "",
+    "productHandles": [
+      "oversized-cute-simple-bunny-tshirt",
+      "skull-triangle-oversized-tshirt",
+      "oversized-unisex-peace-simple-bird-tshirt"
+    ],
+    "productCount": 3,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 4,
+    "createdAt": "2026-05-10T20:49:56.513Z",
+    "source": "generated"
+  },
+  {
+    "id": "1778446196513-5",
+    "handle": "women",
+    "name": "Women",
+    "isSystem": false,
+    "description": "Products in the Women collection",
+    "source": "generated",
+    "createdAt": "2026-05-10T20:49:56.513Z",
+    "order": 5,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "productCount": 3,
+    "productHandles": [
+      "cute-blessed-tshirt-for-girls",
+      "cute-butterfly-croptop-for-women",
+      "oversized-unisex-peace-simple-bird-tshirt"
+    ],
+    "image": "",
+    "sectionMapping": null
+  },
+  {
+    "id": "1778446196513-6",
+    "source": "generated",
+    "createdAt": "2026-05-10T20:49:56.513Z",
+    "order": 6,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "productCount": 5,
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
       "dragon-samurai-main-epic-imp",
@@ -5080,24 +5147,22 @@ export const COLLECTIONS = [
       "youre-aldready-under-my-genjutsu",
       "stylish-buttefly-tshirt"
     ],
-    "name": "Under 500",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
     "image": "",
-    "source": "generated"
+    "sectionMapping": null,
+    "handle": "under-500",
+    "name": "Under 500",
+    "isSystem": false,
+    "description": "Products in the Under 500 collection"
   },
   {
     "id": "1778446196513-7",
-    "sectionMapping": null,
-    "createdAt": "2026-05-10T20:49:56.513Z",
-    "handle": "tshirt",
-    "order": 7,
-    "description": "Products in the Tshirt collection",
     "isSystem": false,
-    "productCount": 14,
-    "source": "generated",
-    "image": "",
+    "description": "Products in the Tshirt collection",
+    "handle": "tshirt",
     "name": "Tshirt",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "image": "",
+    "sectionMapping": null,
+    "productCount": 14,
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
       "japaneese-text-tshirt-cool-front-elevez",
@@ -5113,11 +5178,23 @@ export const COLLECTIONS = [
       "youre-aldready-under-my-genjutsu",
       "paisa-design-stylish-genz-tshirt",
       "stylish-buttefly-tshirt"
-    ]
+    ],
+    "order": 7,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "source": "generated",
+    "createdAt": "2026-05-10T20:49:56.513Z"
   },
   {
     "id": "1778446196513-8",
-    "image": "",
+    "handle": "under-600",
+    "name": "Under 600",
+    "isSystem": false,
+    "description": "Products in the Under 600 collection",
+    "source": "generated",
+    "createdAt": "2026-05-10T20:49:56.513Z",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 8,
+    "productCount": 5,
     "productHandles": [
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez",
@@ -5125,20 +5202,20 @@ export const COLLECTIONS = [
       "skull-triangle-oversized-tshirt",
       "paisa-design-stylish-genz-tshirt"
     ],
-    "name": "Under 600",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "source": "generated",
-    "description": "Products in the Under 600 collection",
-    "order": 8,
-    "productCount": 5,
-    "isSystem": false,
-    "createdAt": "2026-05-10T20:49:56.513Z",
     "sectionMapping": null,
-    "handle": "under-600"
+    "image": ""
   },
   {
     "id": "1778446196513-9",
+    "description": "Products in the Below 400 collection",
+    "isSystem": false,
+    "name": "Below 400",
+    "handle": "below-400",
+    "order": 9,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "createdAt": "2026-05-10T20:49:56.513Z",
     "source": "generated",
+    "sectionMapping": null,
     "image": "",
     "productHandles": [
       "cute-butterfly-croptop-for-women",
@@ -5148,41 +5225,36 @@ export const COLLECTIONS = [
       "grey-melange-tshirt",
       "coffee-brown-premium-tshirt"
     ],
-    "name": "Below 400",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "createdAt": "2026-05-10T20:49:56.513Z",
-    "sectionMapping": null,
-    "handle": "below-400",
-    "description": "Products in the Below 400 collection",
-    "order": 9,
-    "productCount": 6,
-    "isSystem": false
+    "productCount": 6
   },
   {
     "id": "tag-1778700075663-0-105",
+    "description": "Curated selection of our essential products",
+    "isSystem": false,
+    "name": "Essential",
+    "handle": "essential",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 43,
+    "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
+    "image": "",
+    "sectionMapping": null,
     "productHandles": [
       null
     ],
-    "name": "Essential",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "handle": "essential",
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
-    "productCount": 1,
-    "isSystem": false,
-    "description": "Curated selection of our essential products",
-    "order": 43
+    "productCount": 1
   },
   {
     "id": "tag-1778700075663-1-869",
-    "isSystem": false,
-    "productCount": 4,
     "description": "Curated selection of our trending products",
-    "order": 44,
+    "isSystem": false,
+    "name": "Trending",
     "handle": "trending",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 44,
     "createdAt": "2026-05-13T19:21:15.663Z",
+    "source": "tag-generated",
+    "image": "",
     "sectionMapping": null,
     "productHandles": [
       null,
@@ -5190,128 +5262,117 @@ export const COLLECTIONS = [
       null,
       null
     ],
-    "name": "Trending",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "source": "tag-generated"
+    "productCount": 4
   },
   {
     "id": "tag-1778700075663-2-741",
+    "order": 45,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "source": "tag-generated",
+    "sectionMapping": null,
     "image": "",
-    "name": "Premium",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       null
     ],
-    "source": "tag-generated",
-    "order": 45,
+    "productCount": 1,
     "description": "Curated selection of our premium products",
     "isSystem": false,
-    "productCount": 1,
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T19:21:15.663Z",
+    "name": "Premium",
     "handle": "premium"
   },
   {
     "id": "tag-1778700075663-3-939",
-    "description": "Curated selection of our new products",
-    "order": 46,
-    "productCount": 1,
     "isSystem": false,
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
+    "description": "Curated selection of our new products",
     "handle": "new",
+    "name": "New",
     "image": "",
+    "sectionMapping": null,
+    "productCount": 1,
     "productHandles": [
       null
     ],
-    "name": "New",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "source": "tag-generated"
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 46,
+    "source": "tag-generated",
+    "createdAt": "2026-05-13T19:21:15.663Z"
   },
   {
     "id": "tag-1778700075663-4-767",
     "image": "",
+    "sectionMapping": null,
     "productHandles": [
       null,
       null,
       null
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Bestseller",
+    "productCount": 3,
+    "order": 47,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
     "description": "Curated selection of our bestseller products",
-    "order": 47,
     "isSystem": false,
-    "productCount": 3,
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
+    "name": "Bestseller",
     "handle": "bestseller"
   },
   {
     "id": "tag-1778700075663-5-631",
-    "productHandles": [
-      null
-    ],
-    "name": "Vintage",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "source": "tag-generated",
-    "productCount": 1,
     "isSystem": false,
     "description": "Curated selection of our vintage products",
-    "order": 48,
     "handle": "vintage",
+    "name": "Vintage",
+    "order": 48,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null
+    "sectionMapping": null,
+    "image": "",
+    "productCount": 1,
+    "productHandles": [
+      null
+    ]
   },
   {
     "id": "tag-1778700075663-6-418",
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
     "handle": "colorful",
-    "description": "Curated selection of our colorful products",
-    "order": 49,
+    "name": "Colorful",
     "isSystem": false,
+    "description": "Curated selection of our colorful products",
     "productCount": 1,
-    "source": "tag-generated",
-    "image": "",
     "productHandles": [
       null
     ],
-    "name": "Colorful",
-    "updatedAt": "2026-05-29T22:32:39.892Z"
+    "sectionMapping": null,
+    "image": "",
+    "source": "tag-generated",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 49
   },
   {
     "id": "tag-1778700075663-7-262",
-    "description": "Curated selection of our 649 products",
-    "order": 50,
-    "productCount": 3,
     "isSystem": false,
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
+    "description": "Curated selection of our 649 products",
     "handle": "649",
+    "name": "649",
     "image": "",
+    "sectionMapping": null,
+    "productCount": 3,
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "oversized-illuminaty-skull-triangle-design",
       "oversized-cute-simple-bunny-tshirt"
     ],
-    "name": "649",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "source": "tag-generated"
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 50,
+    "source": "tag-generated",
+    "createdAt": "2026-05-13T19:21:15.663Z"
   },
   {
     "id": "tag-1778700075663-8-508",
-    "isSystem": false,
     "productCount": 8,
-    "order": 51,
-    "description": "Curated selection of our female products",
-    "handle": "female",
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "name": "Female",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "cute-blessed-tshirt-for-girls",
@@ -5323,20 +5384,25 @@ export const COLLECTIONS = [
       "cute-butterfly-croptop-for-women"
     ],
     "image": "",
-    "source": "tag-generated"
+    "sectionMapping": null,
+    "source": "tag-generated",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 51,
+    "handle": "female",
+    "name": "Female",
+    "isSystem": false,
+    "description": "Curated selection of our female products"
   },
   {
     "id": "tag-1778700075663-10-373",
-    "order": 52,
-    "description": "Curated selection of our 449 products",
-    "productCount": 8,
     "isSystem": false,
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T19:21:15.663Z",
+    "description": "Curated selection of our 449 products",
     "handle": "449",
-    "image": "",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "449",
+    "sectionMapping": null,
+    "image": "",
+    "productCount": 8,
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
       "dragon-samurai-main-epic-imp",
@@ -5347,16 +5413,14 @@ export const COLLECTIONS = [
       "samurai-dragon-2nd-tshirt",
       "youre-aldready-under-my-genjutsu"
     ],
-    "source": "tag-generated"
+    "order": 52,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "source": "tag-generated",
+    "createdAt": "2026-05-13T19:21:15.663Z"
   },
   {
     "id": "tag-1778700075663-11-563",
-    "productCount": 6,
-    "isSystem": false,
-    "description": "Curated selection of our 599 products",
-    "order": 53,
-    "handle": "599",
-    "createdAt": "2026-05-13T19:21:15.663Z",
+    "image": "",
     "sectionMapping": null,
     "productHandles": [
       "japaneese-text-tshirt-cool-front-elevez",
@@ -5366,37 +5430,43 @@ export const COLLECTIONS = [
       "back-dragon-print-epic-design-front-elevez",
       "skull-triangle-oversized-tshirt"
     ],
+    "productCount": 6,
+    "order": 53,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "source": "tag-generated",
+    "description": "Curated selection of our 599 products",
+    "isSystem": false,
     "name": "599",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "source": "tag-generated"
+    "handle": "599"
   },
   {
     "id": "tag-1778700075663-12-138",
+    "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
+    "order": 54,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
     "productHandles": [
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez",
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez"
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Back design",
-    "image": "",
-    "handle": "back-design",
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
-    "isSystem": false,
     "productCount": 4,
+    "sectionMapping": null,
+    "image": "",
+    "name": "Back design",
+    "handle": "back-design",
     "description": "Curated selection of our back design products",
-    "order": 54
+    "isSystem": false
   },
   {
     "id": "tag-1778700075663-13-712",
     "source": "tag-generated",
-    "image": "",
-    "name": "Male",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "order": 55,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "productCount": 21,
     "productHandles": [
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez",
@@ -5420,54 +5490,51 @@ export const COLLECTIONS = [
       "samurai-dragon-2nd-tshirt",
       "youre-aldready-under-my-genjutsu"
     ],
+    "image": "",
     "sectionMapping": null,
-    "createdAt": "2026-05-13T19:21:15.663Z",
     "handle": "male",
-    "order": 55,
-    "description": "Curated selection of our male products",
+    "name": "Male",
     "isSystem": false,
-    "productCount": 21
+    "description": "Curated selection of our male products"
   },
   {
     "id": "tag-1778700075663-14-70",
-    "source": "tag-generated",
     "productHandles": [
       "cute-butterfly-croptop-for-women",
       "cute-butterfly-croptop-for-women"
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
+    "productCount": 2,
+    "image": "",
+    "sectionMapping": null,
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "source": "tag-generated",
+    "order": 56,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
     "name": "349",
-    "image": "",
     "handle": "349",
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
-    "isSystem": false,
-    "productCount": 2,
     "description": "Curated selection of our 349 products",
-    "order": 56
-  },
-  {
-    "id": "tag-1778700075663-15-352",
-    "source": "tag-generated",
-    "image": "",
-    "name": "Croptop",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "productHandles": [
-      "cute-butterfly-croptop-for-women",
-      "cute-butterfly-croptop-for-women"
-    ],
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "handle": "croptop",
-    "order": 57,
-    "description": "Curated selection of our croptop products",
-    "productCount": 2,
     "isSystem": false
   },
   {
+    "id": "tag-1778700075663-15-352",
+    "sectionMapping": null,
+    "image": "",
+    "productCount": 2,
+    "productHandles": [
+      "cute-butterfly-croptop-for-women",
+      "cute-butterfly-croptop-for-women"
+    ],
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 57,
+    "source": "tag-generated",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "isSystem": false,
+    "description": "Curated selection of our croptop products",
+    "handle": "croptop",
+    "name": "Croptop"
+  },
+  {
     "id": "tag-1778700075663-16-272",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "399",
     "productHandles": [
       "ami-akta-dhowa-tulsi-pata-tshirt",
       "kal-ana-tshirt",
@@ -5481,297 +5548,243 @@ export const COLLECTIONS = [
       "grey-melange-tshirt",
       "coffee-brown-premium-tshirt"
     ],
-    "image": "",
-    "source": "tag-generated",
-    "isSystem": false,
     "productCount": 11,
-    "order": 58,
-    "description": "Curated selection of our 399 products",
-    "handle": "399",
+    "image": "",
     "sectionMapping": null,
-    "createdAt": "2026-05-13T19:21:15.663Z"
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "source": "tag-generated",
+    "order": 58,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "name": "399",
+    "handle": "399",
+    "description": "Curated selection of our 399 products",
+    "isSystem": false
   },
   {
     "id": "tag-1778700075663-17-662",
+    "isSystem": false,
+    "description": "Curated selection of our funny products",
+    "handle": "funny",
+    "name": "Funny",
+    "order": 59,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
     "source": "tag-generated",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "sectionMapping": null,
     "image": "",
+    "productCount": 5,
     "productHandles": [
       "ami-akta-dhowa-tulsi-pata-tshirt",
       "kal-ana-tshirt",
       "ami-akta-dhowa-tulsi-pata-funky",
       "ami-akta-dhowa-tulsi-pata-tshirt",
       "kal-ana-tshirt"
-    ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Funny",
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
-    "handle": "funny",
-    "description": "Curated selection of our funny products",
-    "order": 59,
-    "productCount": 5,
-    "isSystem": false
+    ]
   },
   {
     "id": "tag-1778700075663-20-455",
+    "name": "Best",
     "handle": "best",
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
-    "productCount": 4,
-    "isSystem": false,
     "description": "Curated selection of our best products",
-    "order": 60,
-    "source": "tag-generated",
+    "isSystem": false,
     "productHandles": [
       "dragon-samurai-main-epic-imp",
       "samurai-dragon-2nd-tshirt",
       "dragon-samurai-main-epic-imp",
       "samurai-dragon-2nd-tshirt"
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Best",
-    "image": ""
+    "productCount": 4,
+    "sectionMapping": null,
+    "image": "",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "source": "tag-generated",
+    "order": 60,
+    "updatedAt": "2026-05-30T12:21:07.462Z"
   },
   {
     "id": "tag-1778700075663-21-941",
-    "productCount": 4,
-    "isSystem": false,
-    "order": 61,
-    "description": "Curated selection of our 549 products",
-    "handle": "549",
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
     "name": "549",
+    "handle": "549",
+    "description": "Curated selection of our 549 products",
+    "isSystem": false,
     "productHandles": [
       "guy-sitting-between-sun-and-moon-circuler-tshirt",
       "paisa-design-stylish-genz-tshirt",
       "paisa-design-stylish-genz-tshirt",
       "guy-sitting-between-sun-and-moon-circuler-tshirt"
     ],
+    "productCount": 4,
+    "sectionMapping": null,
     "image": "",
-    "source": "tag-generated"
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "source": "tag-generated",
+    "order": 61,
+    "updatedAt": "2026-05-30T12:21:07.462Z"
   },
   {
     "id": "tag-1778700075663-22-530",
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
     "handle": "1099",
-    "description": "Curated selection of our 1099 products",
-    "order": 62,
-    "productCount": 2,
+    "name": "1099",
     "isSystem": false,
+    "description": "Curated selection of our 1099 products",
     "source": "tag-generated",
-    "image": "",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "order": 62,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "productCount": 2,
     "productHandles": [
       "grey-hoodie-trident-design",
       "grey-hoodie-trident-design"
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "1099"
+    "sectionMapping": null,
+    "image": ""
   },
   {
     "id": "tag-1778700075663-23-769",
+    "isSystem": false,
+    "description": "Curated selection of our hoodie products",
+    "handle": "hoodie",
+    "name": "Hoodie",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 63,
     "source": "tag-generated",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "sectionMapping": null,
+    "image": "",
+    "productCount": 2,
     "productHandles": [
       "grey-hoodie-trident-design",
       "grey-hoodie-trident-design"
-    ],
-    "name": "Hoodie",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "image": "",
-    "handle": "hoodie",
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
-    "productCount": 2,
-    "isSystem": false,
-    "description": "Curated selection of our hoodie products",
-    "order": 63
-  },
-  {
-    "id": "tag-1778700075663-24-425",
-    "source": "tag-generated",
-    "productHandles": [
-      "paisa-design-stylish-genz-tshirt",
-      "paisa-design-stylish-genz-tshirt"
-    ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Stylish",
-    "image": "",
-    "handle": "stylish",
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
-    "productCount": 2,
-    "isSystem": false,
-    "description": "Curated selection of our stylish products",
-    "order": 64
-  },
-  {
-    "id": "tag-1778700075663-25-4",
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null,
-    "handle": "typography",
-    "description": "Curated selection of our typography products",
-    "order": 65,
-    "productCount": 2,
-    "isSystem": false,
-    "source": "tag-generated",
-    "image": "",
-    "productHandles": [
-      "paisa-design-stylish-genz-tshirt",
-      "paisa-design-stylish-genz-tshirt"
-    ],
-    "name": "Typography",
-    "updatedAt": "2026-05-29T22:32:39.892Z"
-  },
-  {
-    "id": "tag-1778700075663-26-767",
-    "sectionMapping": null,
-    "createdAt": "2026-05-13T19:21:15.663Z",
-    "handle": "499",
-    "order": 66,
-    "description": "Curated selection of our 499 products",
-    "isSystem": false,
-    "productCount": 1,
-    "source": "tag-generated",
-    "image": "",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "499",
-    "productHandles": [
-      "stylish-buttefly-tshirt"
     ]
   },
   {
-    "id": "tag-1778700075663-27-906",
-    "description": "Curated selection of our 699 products",
-    "order": 67,
-    "productCount": 1,
-    "isSystem": false,
-    "createdAt": "2026-05-13T19:21:15.663Z",
+    "id": "tag-1778700075663-24-425",
     "sectionMapping": null,
-    "handle": "699",
     "image": "",
+    "productCount": 2,
+    "productHandles": [
+      "paisa-design-stylish-genz-tshirt",
+      "paisa-design-stylish-genz-tshirt"
+    ],
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 64,
+    "source": "tag-generated",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "isSystem": false,
+    "description": "Curated selection of our stylish products",
+    "handle": "stylish",
+    "name": "Stylish"
+  },
+  {
+    "id": "tag-1778700075663-25-4",
+    "name": "Typography",
+    "handle": "typography",
+    "description": "Curated selection of our typography products",
+    "isSystem": false,
+    "productHandles": [
+      "paisa-design-stylish-genz-tshirt",
+      "paisa-design-stylish-genz-tshirt"
+    ],
+    "productCount": 2,
+    "image": "",
+    "sectionMapping": null,
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "source": "tag-generated",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 65
+  },
+  {
+    "id": "tag-1778700075663-26-767",
+    "name": "499",
+    "handle": "499",
+    "description": "Curated selection of our 499 products",
+    "isSystem": false,
+    "productHandles": [
+      "stylish-buttefly-tshirt"
+    ],
+    "productCount": 1,
+    "sectionMapping": null,
+    "image": "",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "source": "tag-generated",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 66
+  },
+  {
+    "id": "tag-1778700075663-27-906",
+    "productCount": 1,
     "productHandles": [
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
+    "sectionMapping": null,
+    "image": "",
+    "source": "tag-generated",
+    "createdAt": "2026-05-13T19:21:15.663Z",
+    "order": 67,
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "handle": "699",
     "name": "699",
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "source": "tag-generated"
+    "isSystem": false,
+    "description": "Curated selection of our 699 products"
   },
   {
     "id": "tag-1778700075663-28-535",
     "productHandles": [
       "oversized-illuminaty-skull-triangle-design"
     ],
-    "updatedAt": "2026-05-29T22:32:39.892Z",
-    "name": "Unisex",
-    "image": "",
-    "source": "tag-generated",
     "productCount": 1,
-    "isSystem": false,
-    "description": "Curated selection of our unisex products",
-    "order": 68,
-    "handle": "unisex",
+    "image": "",
+    "sectionMapping": null,
     "createdAt": "2026-05-13T19:21:15.663Z",
-    "sectionMapping": null
+    "source": "tag-generated",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 68,
+    "name": "Unisex",
+    "handle": "unisex",
+    "description": "Curated selection of our unisex products",
+    "isSystem": false
   },
   {
     "id": "men",
+    "productHandles": [],
+    "productCount": 0,
+    "image": "",
+    "createdAt": "2026-05-29T22:44:24.540Z",
+    "source": "generated",
+    "filters": {
+      "minPrice": 0,
+      "category": "Men",
+      "maxPrice": null,
+      "type": "",
+      "tags": []
+    },
+    "updatedAt": "2026-05-30T12:21:07.462Z",
+    "order": 66,
     "name": "Men",
     "handle": "men",
     "description": "Men & Unisex Streetwear",
-    "image": "",
-    "isSystem": false,
-    "source": "generated",
-    "order": 66,
-    "filters": {
-      "tags": [],
-      "category": "Men",
-      "type": "",
-      "minPrice": 0,
-      "maxPrice": null
-    },
-    "productHandles": [
-      "oversized-cute-simple-bunny-tshirt",
-      "cute-blessed-tshirt-for-girls",
-      "japaneese-text-tshirt-cool-front-elevez",
-      "1779147469445",
-      "ami-akta-dhowa-tulsi-pata-tshirt",
-      "1765149944844",
-      "1765149958744",
-      "kal-ana-tshirt",
-      "navy-blue-premium-tshirt",
-      "grey-melange-tshirt",
-      "coffee-brown-premium-tshirt",
-      "dragon-samurai-main-epic-imp",
-      "guy-sitting-between-sun-and-moon-circuler-tshirt",
-      "grey-hoodie-trident-design",
-      "samurai-dragon-2nd-tshirt",
-      "youre-aldready-under-my-genjutsu",
-      "skull-triangle-oversized-tshirt",
-      "3",
-      "4",
-      "5",
-      "paisa-design-stylish-genz-tshirt",
-      "stylish-buttefly-tshirt",
-      "oversized-unisex-peace-simple-bird-tshirt",
-      "oversized-illuminaty-skull-triangle-design",
-      "ami-akta-dhowa-tulsi-pata-funky",
-      "oversized-cute-bunny-tshirt-for-women"
-    ],
-    "productCount": 26,
-    "updatedAt": "2026-05-29T22:44:24.539Z",
-    "createdAt": "2026-05-29T22:44:24.540Z"
+    "isSystem": false
   },
   {
     "id": "women",
-    "name": "Women",
     "handle": "women",
-    "description": "Women & Unisex Streetwear",
-    "image": "",
+    "name": "Women",
     "isSystem": false,
+    "description": "Women & Unisex Streetwear",
+    "productCount": 0,
+    "productHandles": [],
+    "image": "",
     "source": "generated",
+    "createdAt": "2026-05-29T22:44:24.540Z",
+    "updatedAt": "2026-05-30T12:21:07.462Z",
     "order": 67,
     "filters": {
-      "tags": [],
-      "category": "Women",
-      "type": "",
       "minPrice": 0,
-      "maxPrice": null
-    },
-    "productHandles": [
-      "oversized-cute-simple-bunny-tshirt",
-      "cute-blessed-tshirt-for-girls",
-      "japaneese-text-tshirt-cool-front-elevez",
-      "1779147469445",
-      "cute-butterfly-croptop-for-women",
-      "ami-akta-dhowa-tulsi-pata-tshirt",
-      "1765149944844",
-      "1765149958744",
-      "kal-ana-tshirt",
-      "navy-blue-premium-tshirt",
-      "2",
-      "grey-melange-tshirt",
-      "coffee-brown-premium-tshirt",
-      "dragon-samurai-main-epic-imp",
-      "guy-sitting-between-sun-and-moon-circuler-tshirt",
-      "grey-hoodie-trident-design",
-      "samurai-dragon-2nd-tshirt",
-      "youre-aldready-under-my-genjutsu",
-      "skull-triangle-oversized-tshirt",
-      "3",
-      "4",
-      "5",
-      "paisa-design-stylish-genz-tshirt",
-      "stylish-buttefly-tshirt",
-      "oversized-unisex-peace-simple-bird-tshirt",
-      "oversized-illuminaty-skull-triangle-design",
-      "ami-akta-dhowa-tulsi-pata-funky",
-      "oversized-cute-bunny-tshirt-for-women"
-    ],
-    "productCount": 28,
-    "updatedAt": "2026-05-29T22:44:24.540Z",
-    "createdAt": "2026-05-29T22:44:24.540Z"
+      "type": "",
+      "category": "Women",
+      "maxPrice": null,
+      "tags": []
+    }
   }
 ];
 
@@ -5812,7 +5825,8 @@ export const AVAILABLE_TAGS = [
 export const AVAILABLE_CATEGORIES = [
   "Men",
   "Women",
-  "Unisex"
+  "Unisex",
+  "Topwear"
 ];
 
 // Available Types (Custom)
@@ -5881,6 +5895,10 @@ export const AVAILABLE_COLORS = [
   {
     "name": "Lavender",
     "code": "#000000"
+  },
+  {
+    "name": "Navy Blue",
+    "code": "#142136"
   }
 ];
 

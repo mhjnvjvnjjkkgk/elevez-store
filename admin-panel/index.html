@@ -430,9 +430,16 @@
           <button type="button" class="btn-add-color" onclick="openColorPicker()">+ Add Custom Color</button>
           <div class="color-picker-popup" id="colorPickerPopup">
             <input type="text" id="colorNameInput" placeholder="Color name (e.g., Neon Green)">
-            <input type="color" id="colorCodeInput" value="#00ff88">
-            <button type="button" class="btn btn-primary" onclick="addCustomColor()">Add</button>
-            <button type="button" class="btn btn-secondary" onclick="closeColorPicker()">Cancel</button>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center; justify-content: center; width: 100%;">
+              <input type="color" id="colorCodeInput" value="#00ff88" style="width: 50px; height: 38px; padding: 0; cursor: pointer; border: 1px solid var(--border); border-radius: 6px; background: transparent;">
+              <button type="button" class="btn btn-secondary" onclick="openEyedropperModal()" style="display: flex; align-items: center; justify-content: center; gap: 6px; flex: 1; padding: 8px 12px; font-size: 13px; font-weight: 600;">
+                <span>👁️‍🗨️</span> Pick from Image
+              </button>
+            </div>
+            <div style="display: flex; gap: 8px; width: 100%;">
+              <button type="button" class="btn btn-primary" onclick="addCustomColor()" style="flex: 1; padding: 8px;">Add</button>
+              <button type="button" class="btn btn-secondary" onclick="closeColorPicker()" style="flex: 1; padding: 8px;">Cancel</button>
+            </div>
           </div>
           <div class="selected-colors-list" id="selectedColorsList"></div>
         </div>
@@ -738,6 +745,92 @@
           <button type="submit" class="btn btn-primary" id="saveGlobalColorBtn">Save Color</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Eyedropper Color Picker Modal -->
+  <div class="modal" id="eyedropperModal" style="display: none; z-index: 1100;">
+    <div class="modal-backdrop" onclick="closeEyedropperModal()"></div>
+    <div class="modal-content" style="max-width: 900px; width: 90%; height: 80vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h3>Mockup Color Eyedropper</h3>
+        <button class="close-modal" onclick="closeEyedropperModal()">×</button>
+      </div>
+      <div class="modal-body" style="flex: 1; display: flex; overflow: hidden; padding: 20px; gap: 20px;">
+        
+        <!-- Left Side: Source Options & Thumbnails -->
+        <div style="width: 250px; display: flex; flex-direction: column; gap: 15px; border-right: 1px solid var(--border); padding-right: 20px; overflow-y: auto;">
+          
+          <div>
+            <h4 style="margin: 0 0 8px 0; font-size: 13px; font-weight: 700; color: var(--primary);">Product Images</h4>
+            <div id="eyedropperMockupsGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+              <!-- Filled dynamically with state.productForm.images -->
+            </div>
+            <p id="eyedropperNoImagesMsg" style="color: var(--text-muted); font-size: 11px; margin-top: 4px; display: none;">No images uploaded for this product yet.</p>
+          </div>
+          
+          <div style="border-top: 1px solid var(--border); padding-top: 15px;">
+            <h4 style="margin: 0 0 8px 0; font-size: 13px; font-weight: 700; color: var(--primary);">Custom Image</h4>
+            
+            <!-- File upload area -->
+            <label class="file-upload-dropzone" style="padding: 15px; border: 2px dashed var(--border); border-radius: 8px; text-align: center; cursor: pointer; display: block; background: rgba(255,255,255,0.02); transition: all 0.2s;">
+              <span style="font-size: 24px; display: block; margin-bottom: 4px;">📤</span>
+              <span style="font-size: 11px; font-weight: 600; display: block; color: var(--text-muted);">Choose File</span>
+              <input type="file" id="eyedropperCustomFileInput" accept="image/*" style="display: none;" onchange="handleEyedropperCustomFile(event)">
+            </label>
+            
+            <!-- Paste area -->
+            <div id="eyedropperPasteArea" tabindex="0" style="margin-top: 10px; padding: 15px; border: 2px dashed var(--border); border-radius: 8px; text-align: center; background: rgba(255,255,255,0.02); font-size: 11px; color: var(--text-muted); cursor: pointer; transition: all 0.2s;">
+              📋 Click here & paste (Ctrl+V) image
+            </div>
+          </div>
+
+          <!-- Native Screen Picker option (supported browsers) -->
+          <div style="border-top: 1px solid var(--border); padding-top: 15px; display: none;" id="eyedropperNativeOption">
+            <h4 style="margin: 0 0 8px 0; font-size: 13px; font-weight: 700; color: var(--primary);">Screen EyeDropper</h4>
+            <button type="button" class="btn btn-secondary" onclick="useNativeEyeDropper()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; font-size: 12px; border-color: var(--primary);">
+              <span>🧪</span> Pick from Screen
+            </button>
+          </div>
+          
+          <!-- Instructions -->
+          <div style="border-top: 1px solid var(--border); padding-top: 15px; font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+            <strong>💡 Instructions:</strong><br>
+            1. Select a product image or upload/paste your own.<br>
+            2. Move cursor over image to zoom and see Hex values.<br>
+            3. Click to select the color.
+          </div>
+        </div>
+        
+        <!-- Right Side: Canvas & Real-time Info -->
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px; overflow: hidden; position: relative;">
+          
+          <!-- Selected info bar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div id="eyedropperColorPreview" style="width: 24px; height: 24px; border-radius: 4px; border: 1px solid #fff; background: transparent;"></div>
+              <span id="eyedropperColorHex" style="font-family: monospace; font-weight: 700; color: #fff;">No color selected</span>
+              <span id="eyedropperSuggestedName" style="color: var(--text-muted); font-size: 12px;"></span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">Hover & Click to Pick</div>
+          </div>
+          
+          <!-- Interactive canvas area -->
+          <div id="eyedropperCanvasContainer" style="flex: 1; border: 1px solid var(--border); border-radius: 8px; overflow: auto; display: flex; align-items: center; justify-content: center; background: #000; position: relative;">
+            <canvas id="eyedropperCanvas" style="cursor: crosshair; max-width: 100%; max-height: 100%; display: block;"></canvas>
+            
+            <!-- Magnifying Glass Overlay -->
+            <div id="eyedropperLens" style="position: absolute; width: 120px; height: 120px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; display: none; overflow: hidden; background: #000; z-index: 10;">
+              <canvas id="eyedropperLensCanvas" width="120" height="120" style="display: block; width: 100%; height: 100%; image-rendering: pixelated;"></canvas>
+              <!-- Center target dot -->
+              <div style="position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; margin-top: -2px; margin-left: -2px; border: 1px solid #fff; background: #ff0000; border-radius: 50%; pointer-events: none;"></div>
+            </div>
+            
+            <p id="eyedropperSelectPrompt" style="color: var(--text-muted); text-align: center; padding: 20px;">Please select or upload an image to start picking colors.</p>
+          </div>
+        </div>
+        
+      </div>
     </div>
   </div>
 

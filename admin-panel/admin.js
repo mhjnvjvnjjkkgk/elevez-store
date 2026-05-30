@@ -309,6 +309,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Check for data issues on startup
   checkDataIntegrity();
 
+  // Setup Eyedropper custom mouse events
+  setupEyedropperInteraction();
+
   // Initialize Firebase real-time order sync
   console.log('🔥 Initializing Firebase order sync...');
   if (typeof startAutoSync === 'function') {
@@ -2586,6 +2589,332 @@ window.addCustomColor = () => {
   closeColorPicker();
 
   showSyncStatus(`Color "${name}" added`, 'success');
+};
+
+// --- Eyedropper Color Picker Modal Logic ---
+
+// Dictionary of standard colors for suggestion
+const EYE_COLOR_PALETTE = [
+  { name: 'Black', r: 0, g: 0, b: 0 },
+  { name: 'White', r: 255, g: 255, b: 255 },
+  { name: 'Red', r: 255, g: 0, b: 0 },
+  { name: 'Lime', r: 0, g: 255, b: 0 },
+  { name: 'Blue', r: 0, g: 0, b: 255 },
+  { name: 'Yellow', r: 255, g: 255, b: 0 },
+  { name: 'Cyan', r: 0, g: 255, b: 255 },
+  { name: 'Magenta', r: 255, g: 0, b: 255 },
+  { name: 'Silver', r: 192, g: 192, b: 192 },
+  { name: 'Gray', r: 128, g: 128, b: 128 },
+  { name: 'Maroon', r: 128, g: 0, b: 0 },
+  { name: 'Olive', r: 128, g: 128, b: 0 },
+  { name: 'Green', r: 0, g: 128, b: 0 },
+  { name: 'Purple', r: 128, g: 0, b: 128 },
+  { name: 'Teal', r: 0, g: 128, b: 128 },
+  { name: 'Navy', r: 0, g: 0, b: 128 },
+  { name: 'Orange', r: 255, g: 165, b: 0 },
+  { name: 'Brown', r: 165, g: 42, b: 42 },
+  { name: 'Gold', r: 255, g: 215, b: 0 },
+  { name: 'Beige', r: 245, g: 245, b: 220 },
+  { name: 'Pink', r: 255, g: 192, b: 203 },
+  { name: 'Violet', r: 238, g: 130, b: 238 },
+  { name: 'Indigo', r: 75, g: 0, b: 130 },
+  { name: 'Crimson', r: 220, g: 20, b: 60 },
+  { name: 'Plum', r: 221, g: 160, b: 221 },
+  { name: 'Lavender', r: 230, g: 230, b: 250 },
+  { name: 'Turquoise', r: 64, g: 224, b: 208 },
+  { name: 'Orchid', r: 218, g: 112, b: 214 },
+  { name: 'Coral', r: 255, g: 127, b: 80 },
+  { name: 'Salmon', r: 250, g: 128, b: 114 },
+  { name: 'Khaki', r: 240, g: 230, b: 140 },
+  { name: 'Tan', r: 210, g: 180, b: 140 },
+  { name: 'Chocolate', r: 210, g: 105, b: 30 },
+  { name: 'Sienna', r: 160, g: 82, b: 45 },
+  { name: 'Wheat', r: 245, g: 222, b: 179 },
+  { name: 'Mint', r: 189, g: 252, b: 201 },
+  { name: 'Navy Blue', r: 20, g: 30, b: 80 },
+  { name: 'Charcoal', r: 34, g: 34, b: 34 },
+  { name: 'Burgundy', r: 128, g: 0, b: 32 },
+  { name: 'Peach', r: 255, g: 229, b: 180 },
+  { name: 'Olive Green', r: 85, g: 107, b: 47 },
+  { name: 'Sky Blue', r: 135, g: 206, b: 235 },
+  { name: 'Emerald', r: 80, g: 200, b: 120 },
+  { name: 'Mustard', r: 255, g: 219, b: 88 },
+  { name: 'Cream', r: 255, g: 253, b: 208 }
+];
+
+function getClosestColorName(r, g, b) {
+  let closest = EYE_COLOR_PALETTE[0];
+  let minDistance = Infinity;
+  for (const color of EYE_COLOR_PALETTE) {
+    const distance = Math.pow(r - color.r, 2) + Math.pow(g - color.g, 2) + Math.pow(b - color.b, 2);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closest = color;
+    }
+  }
+  return closest.name;
+}
+
+let eyedropperImageObj = null;
+
+// Opens the Eyedropper modal
+window.openEyedropperModal = () => {
+  const modal = document.getElementById('eyedropperModal');
+  modal.style.display = 'flex';
+  
+  // Render product mockup list
+  const mockupsGrid = document.getElementById('eyedropperMockupsGrid');
+  const noImagesMsg = document.getElementById('eyedropperNoImagesMsg');
+  mockupsGrid.innerHTML = '';
+  
+  // Show native screen eyedropper option if supported
+  const nativeOption = document.getElementById('eyedropperNativeOption');
+  if (window.EyeDropper) {
+    nativeOption.style.display = 'block';
+  } else {
+    nativeOption.style.display = 'none';
+  }
+  
+  const images = state.productForm?.images || [];
+  if (images.length > 0) {
+    noImagesMsg.style.display = 'none';
+    images.forEach((imgSrc, idx) => {
+      const thumb = document.createElement('div');
+      thumb.className = 'eyedropper-thumb-item';
+      thumb.onclick = () => {
+        document.querySelectorAll('.eyedropper-thumb-item').forEach(el => el.classList.remove('active'));
+        thumb.classList.add('active');
+        window.loadEyedropperImage(imgSrc);
+      };
+      thumb.innerHTML = `<img src="${imgSrc}" alt="Mockup ${idx + 1}">`;
+      mockupsGrid.appendChild(thumb);
+    });
+    
+    // Auto-load first mockup image if available
+    mockupsGrid.children[0].click();
+  } else {
+    noImagesMsg.style.display = 'block';
+    // Clear canvas and prompt
+    const canvas = document.getElementById('eyedropperCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    document.getElementById('eyedropperSelectPrompt').style.display = 'block';
+    document.getElementById('eyedropperLens').style.display = 'none';
+    document.getElementById('eyedropperCanvasContainer').classList.remove('eyedropper-checkerboard');
+  }
+  
+  // Initialize Paste Listener
+  setupEyedropperPasteListener();
+};
+
+window.closeEyedropperModal = () => {
+  document.getElementById('eyedropperModal').style.display = 'none';
+  removeEyedropperPasteListener();
+};
+
+// Loads an image (base64 or URL) into the canvas
+window.loadEyedropperImage = (src) => {
+  const canvas = document.getElementById('eyedropperCanvas');
+  const ctx = canvas.getContext('2d');
+  const prompt = document.getElementById('eyedropperSelectPrompt');
+  const container = document.getElementById('eyedropperCanvasContainer');
+  
+  prompt.style.display = 'none';
+  container.classList.add('eyedropper-checkerboard');
+  
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.onload = () => {
+    // Set canvas dimensions
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    
+    // Draw image
+    ctx.drawImage(img, 0, 0);
+    eyedropperImageObj = img;
+    
+    console.log(`👁️‍🗨️ Loaded eyedropper image: ${canvas.width}x${canvas.height}`);
+    
+    // Reset lens display
+    document.getElementById('eyedropperLens').style.display = 'none';
+  };
+  img.src = src;
+};
+
+// Custom image file selection
+window.handleEyedropperCustomFile = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      // Clear active thumbnails highlight
+      document.querySelectorAll('.eyedropper-thumb-item').forEach(el => el.classList.remove('active'));
+      window.loadEyedropperImage(event.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+// Clipboard Paste event handler
+function onEyedropperPaste(e) {
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  
+  for (const item of items) {
+    if (item.type.indexOf('image') !== -1) {
+      const blob = item.getAsFile();
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        // Clear active thumbnails highlight
+        document.querySelectorAll('.eyedropper-thumb-item').forEach(el => el.classList.remove('active'));
+        window.loadEyedropperImage(event.target.result);
+        
+        // Show success status
+        showSyncStatus('📋 Image pasted from clipboard', 'success');
+      };
+      reader.readAsDataURL(blob);
+      e.preventDefault();
+      break;
+    }
+  }
+}
+
+function setupEyedropperPasteListener() {
+  const pasteArea = document.getElementById('eyedropperPasteArea');
+  pasteArea.addEventListener('paste', onEyedropperPaste);
+  
+  // Make sure we can paste globally if modal is focused
+  window.addEventListener('paste', onEyedropperPaste);
+}
+
+function removeEyedropperPasteListener() {
+  const pasteArea = document.getElementById('eyedropperPasteArea');
+  if (pasteArea) {
+    pasteArea.removeEventListener('paste', onEyedropperPaste);
+  }
+  window.removeEventListener('paste', onEyedropperPaste);
+}
+
+// Native screen color picker integration
+window.useNativeEyeDropper = async () => {
+  if (!window.EyeDropper) {
+    alert('❌ Native Screen EyeDropper is not supported in this browser. Please use the image canvas color picker instead.');
+    return;
+  }
+  const eyeDropper = new window.EyeDropper();
+  try {
+    const result = await eyeDropper.open();
+    const hex = result.sRGBHex.toUpperCase();
+    
+    // Try to parse RGB to get a suggested name
+    let r = 0, g = 255, b = 136; // Default fallback
+    if (hex.match(/^#[0-9A-Fa-f]{6}$/)) {
+      r = parseInt(hex.slice(1, 3), 16);
+      g = parseInt(hex.slice(3, 5), 16);
+      b = parseInt(hex.slice(5, 7), 16);
+    }
+    const name = getClosestColorName(r, g, b);
+    
+    document.getElementById('colorCodeInput').value = hex;
+    document.getElementById('colorNameInput').value = name;
+    window.closeEyedropperModal();
+    showSyncStatus(`Picked screen color: ${name} (${hex})`, 'success');
+  } catch (e) {
+    console.log('Native eyedropper cancelled or failed', e);
+  }
+};
+
+// Coordinate extraction and zoom logic
+window.setupEyedropperInteraction = () => {
+  const canvas = document.getElementById('eyedropperCanvas');
+  const lens = document.getElementById('eyedropperLens');
+  const lensCanvas = document.getElementById('eyedropperLensCanvas');
+  const container = document.getElementById('eyedropperCanvasContainer');
+  
+  if (!canvas || !lens || !lensCanvas || !container) return;
+  
+  canvas.addEventListener('mousemove', (e) => {
+    if (!eyedropperImageObj) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const x = Math.floor((e.clientX - rect.left) * scaleX);
+    const y = Math.floor((e.clientY - rect.top) * scaleY);
+    
+    if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
+      lens.style.display = 'none';
+      return;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    const pixel = ctx.getImageData(x, y, 1, 1).data;
+    const r = pixel[0], g = pixel[1], b = pixel[2];
+    const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    
+    // Update real-time preview
+    document.getElementById('eyedropperColorPreview').style.backgroundColor = hex;
+    document.getElementById('eyedropperColorHex').textContent = hex;
+    
+    const name = getClosestColorName(r, g, b);
+    document.getElementById('eyedropperSuggestedName').textContent = `(Suggested Name: ${name})`;
+    
+    // Positioning the floating Magnifying Lens circular overlay
+    const containerRect = container.getBoundingClientRect();
+    const lensX = e.clientX - containerRect.left - lens.offsetWidth / 2 + 25;
+    const lensY = e.clientY - containerRect.top - lens.offsetHeight - 15;
+    
+    lens.style.left = `${Math.max(10, Math.min(containerRect.width - lens.offsetWidth - 10, lensX))}px`;
+    lens.style.top = `${Math.max(10, Math.min(containerRect.height - lens.offsetHeight - 10, lensY))}px`;
+    lens.style.display = 'block';
+    
+    // Draw the zoomed pixel block onto the lens canvas
+    const lensCtx = lensCanvas.getContext('2d');
+    lensCtx.clearRect(0, 0, lensCanvas.width, lensCanvas.height);
+    lensCtx.imageSmoothingEnabled = false;
+    
+    // Source rect size is 9x9 pixels
+    lensCtx.drawImage(
+      canvas,
+      x - 4, y - 4, 9, 9,
+      0, 0, lensCanvas.width, lensCanvas.height
+    );
+  });
+  
+  canvas.addEventListener('mouseleave', () => {
+    lens.style.display = 'none';
+  });
+  
+  canvas.addEventListener('click', (e) => {
+    if (!eyedropperImageObj) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const x = Math.floor((e.clientX - rect.left) * scaleX);
+    const y = Math.floor((e.clientY - rect.top) * scaleY);
+    
+    if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
+    
+    const ctx = canvas.getContext('2d');
+    const pixel = ctx.getImageData(x, y, 1, 1).data;
+    const r = pixel[0], g = pixel[1], b = pixel[2];
+    const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    
+    const name = getClosestColorName(r, g, b);
+    
+    // Populate form
+    document.getElementById('colorCodeInput').value = hex;
+    document.getElementById('colorNameInput').value = name;
+    
+    // Close modal
+    window.closeEyedropperModal();
+    
+    // Show confirmation status
+    showSyncStatus(`Picked color: ${name} (${hex})`, 'success');
+  });
 };
 
 // Product Submit
