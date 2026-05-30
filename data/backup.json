@@ -3489,7 +3489,7 @@
       "qid": "SHOP-7915859968139",
       "inStock": true,
       "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-      "updatedAt": "2026-05-30T12:21:44.863Z",
+      "updatedAt": "2026-05-30T12:27:22.655Z",
       "category": "Topwear",
       "rating": 4,
       "sku": "UOsMRnHs-Lv-XS-oversizedbirdflowertshirt-Fr-ca",
@@ -3507,9 +3507,7 @@
         "female",
         "oversized"
       ],
-      "colors": [
-        "Lavender"
-      ],
+      "colors": [],
       "images": [
         "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_7lss1o7lss1o7lss.png?v=1760955431",
         "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_lk9jwqlk9jwqlk9j.png?v=1760955807",
@@ -4183,7 +4181,7 @@
       "name": "All products!",
       "handle": "all-products",
       "order": 0,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
       "sectionMapping": null,
@@ -4252,7 +4250,7 @@
       "image": "",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 1
     },
     {
@@ -4266,7 +4264,7 @@
         "oversized-cute-simple-bunny-tshirt"
       ],
       "productCount": 4,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 2,
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
@@ -4279,7 +4277,7 @@
       "id": "1778682078130-3",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 3,
       "productHandles": [
         "oversized-cute-simple-bunny-tshirt",
@@ -4302,7 +4300,7 @@
       "id": "1778682078130-4",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 4,
       "productHandles": [
         "oversized-cute-simple-bunny-tshirt",
@@ -4327,7 +4325,7 @@
       "description": "Products in the Women collection",
       "handle": "women",
       "name": "Women",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 5,
       "source": "generated",
       "createdAt": "2026-05-13T14:21:18.130Z",
@@ -4360,7 +4358,7 @@
         "youre-aldready-under-my-genjutsu"
       ],
       "order": 6,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "source": "generated",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "isSystem": false,
@@ -4373,7 +4371,7 @@
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
       "order": 7,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "productHandles": [
         "cute-blessed-tshirt-for-girls",
         "japaneese-text-tshirt-cool-front-elevez",
@@ -4435,7 +4433,7 @@
       "image": "",
       "source": "generated",
       "createdAt": "2026-05-13T14:21:18.130Z",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 8
     },
     {
@@ -4463,7 +4461,7 @@
       ],
       "productCount": 13,
       "order": 9,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated"
     },
@@ -4483,7 +4481,7 @@
         "kal-ana-tshirt"
       ],
       "productCount": 5,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 10,
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated"
@@ -4495,7 +4493,7 @@
       "name": "old money",
       "handle": "old-money",
       "order": 11,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
       "image": "",
@@ -4515,7 +4513,7 @@
       "source": "generated",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "order": 12,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "productCount": 2,
       "productHandles": [
         "paisa-design-stylish-genz-tshirt",
@@ -4532,7 +4530,7 @@
       "id": "shopify-frontpage",
       "shopifyId": "gid://shopify/Collection/306335416459",
       "order": 0,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "source": "shopify",
       "createdAt": "2026-05-13T14:21:25.042Z",
       "sectionMapping": null,
@@ -4558,7 +4556,7 @@
       "createdAt": "2026-05-13T14:21:25.042Z",
       "shopifyId": "gid://shopify/Collection/307465158795",
       "order": 1,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "productCount": 28,
       "productHandles": [
         null,
@@ -4610,7 +4608,7 @@
       ],
       "productCount": 4,
       "order": 2,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "shopifyId": "gid://shopify/Collection/307502022795",
       "createdAt": "2026-05-13T14:21:25.042Z",
       "source": "shopify"
@@ -4630,7 +4628,7 @@
       "source": "shopify",
       "shopifyId": "gid://shopify/Collection/307502973067",
       "order": 3,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "importedAt": "2025-12-28T18:56:29.286Z",
       "name": "Women",
       "handle": "women",
@@ -4642,7 +4640,7 @@
       "source": "shopify",
       "createdAt": "2026-05-13T14:21:25.043Z",
       "shopifyId": "gid://shopify/Collection/307639484555",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 4,
       "productCount": 5,
       "productHandles": [
@@ -4670,7 +4668,7 @@
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify",
       "shopifyId": "gid://shopify/Collection/307639615627",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 5,
       "productHandles": [
         "skull-triangle-oversized-tshirt",
@@ -4694,7 +4692,7 @@
         "oversized-unisex-peace-simple-bird-tshirt"
       ],
       "order": 6,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "shopifyId": "gid://shopify/Collection/307639681163",
       "source": "shopify",
       "createdAt": "2026-05-13T14:21:25.043Z",
@@ -4725,7 +4723,7 @@
       "productCount": 7,
       "shopifyId": "gid://shopify/Collection/307639713931",
       "order": 7,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify"
     },
@@ -4738,7 +4736,7 @@
       "importedAt": "2025-12-28T18:56:29.286Z",
       "shopifyId": "gid://shopify/Collection/307662028939",
       "order": 8,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify",
       "sectionMapping": null,
@@ -4764,7 +4762,7 @@
       "sectionMapping": null,
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 9,
       "shopifyId": "gid://shopify/Collection/307744080011",
       "importedAt": "2025-12-28T18:56:29.286Z",
@@ -4783,7 +4781,7 @@
       "source": "shopify",
       "createdAt": "2026-05-13T14:21:25.043Z",
       "order": 10,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "shopifyId": "gid://shopify/Collection/307744112779",
       "productCount": 3,
       "productHandles": [
@@ -4824,14 +4822,14 @@
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify",
       "order": 11,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "shopifyId": "gid://shopify/Collection/307999441035"
     },
     {
       "id": "shopify-oversized-tshirt",
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 12,
       "shopifyId": "gid://shopify/Collection/307999473803",
       "productHandles": [
@@ -4854,7 +4852,7 @@
       "id": "1766960993446-0",
       "createdAt": "2025-12-28T22:29:53.446Z",
       "source": "generated",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 0,
       "productHandles": [
         "oversized-cute-simple-bunny-tshirt",
@@ -4893,7 +4891,7 @@
       "createdAt": "2025-12-28T22:29:53.446Z",
       "source": "generated",
       "order": 1,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "productHandles": [
         "oversized-cute-simple-bunny-tshirt",
         "oversized-unisex-peace-simple-bird-tshirt",
@@ -4926,11 +4924,11 @@
       "source": "generated",
       "createdAt": "2025-12-28T22:29:53.446Z",
       "order": 2,
-      "updatedAt": "2026-05-30T12:21:44.934Z"
+      "updatedAt": "2026-05-30T12:27:22.747Z"
     },
     {
       "id": "1766960993446-3",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 3,
       "createdAt": "2025-12-28T22:29:53.446Z",
       "source": "generated",
@@ -4976,7 +4974,7 @@
         "oversized-unisex-peace-simple-bird-tshirt"
       ],
       "order": 0,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z"
     },
@@ -4988,7 +4986,7 @@
       "description": "Products in the Best Sellers collection",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 1,
       "productCount": 4,
       "productHandles": [
@@ -5013,7 +5011,7 @@
         "kal-ana-tshirt"
       ],
       "productCount": 2,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 10,
       "createdAt": "2026-05-10T20:49:56.513Z",
       "source": "generated"
@@ -5031,7 +5029,7 @@
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
       "order": 11,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "handle": "old-money",
       "name": "old money",
       "isSystem": false,
@@ -5045,7 +5043,7 @@
       "description": "Products in the Home page collection",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 12,
       "productCount": 1,
       "productHandles": [
@@ -5067,7 +5065,7 @@
         "oversized-unisex-peace-simple-bird-tshirt"
       ],
       "productCount": 2,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 2,
       "createdAt": "2026-05-10T20:49:56.513Z",
       "source": "generated"
@@ -5076,7 +5074,7 @@
       "id": "1778446196513-3",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 3,
       "productCount": 3,
       "productHandles": [
@@ -5105,7 +5103,7 @@
         "oversized-unisex-peace-simple-bird-tshirt"
       ],
       "productCount": 3,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 4,
       "createdAt": "2026-05-10T20:49:56.513Z",
       "source": "generated"
@@ -5119,7 +5117,7 @@
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
       "order": 5,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "productCount": 3,
       "productHandles": [
         "cute-blessed-tshirt-for-girls",
@@ -5134,7 +5132,7 @@
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
       "order": 6,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "productCount": 5,
       "productHandles": [
         "cute-blessed-tshirt-for-girls",
@@ -5176,7 +5174,7 @@
         "stylish-buttefly-tshirt"
       ],
       "order": 7,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z"
     },
@@ -5188,7 +5186,7 @@
       "description": "Products in the Under 600 collection",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 8,
       "productCount": 5,
       "productHandles": [
@@ -5208,7 +5206,7 @@
       "name": "Below 400",
       "handle": "below-400",
       "order": 9,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "createdAt": "2026-05-10T20:49:56.513Z",
       "source": "generated",
       "sectionMapping": null,
@@ -5229,7 +5227,7 @@
       "isSystem": false,
       "name": "Essential",
       "handle": "essential",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 43,
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
@@ -5246,7 +5244,7 @@
       "isSystem": false,
       "name": "Trending",
       "handle": "trending",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 44,
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
@@ -5263,7 +5261,7 @@
     {
       "id": "tag-1778700075663-2-741",
       "order": 45,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "sectionMapping": null,
@@ -5289,7 +5287,7 @@
       "productHandles": [
         null
       ],
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 46,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z"
@@ -5305,7 +5303,7 @@
       ],
       "productCount": 3,
       "order": 47,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "description": "Curated selection of our bestseller products",
@@ -5320,7 +5318,7 @@
       "handle": "vintage",
       "name": "Vintage",
       "order": 48,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "sectionMapping": null,
@@ -5344,7 +5342,7 @@
       "image": "",
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 49
     },
     {
@@ -5361,7 +5359,7 @@
         "oversized-illuminaty-skull-triangle-design",
         "oversized-cute-simple-bunny-tshirt"
       ],
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 50,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z"
@@ -5383,7 +5381,7 @@
       "sectionMapping": null,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 51,
       "handle": "female",
       "name": "Female",
@@ -5410,7 +5408,7 @@
         "youre-aldready-under-my-genjutsu"
       ],
       "order": 52,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z"
     },
@@ -5428,7 +5426,7 @@
       ],
       "productCount": 6,
       "order": 53,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "description": "Curated selection of our 599 products",
@@ -5441,7 +5439,7 @@
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "order": 54,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "productHandles": [
         "japaneese-text-tshirt-cool-front-elevez",
         "back-dragon-print-epic-design-front-elevez",
@@ -5461,7 +5459,7 @@
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "order": 55,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "productCount": 21,
       "productHandles": [
         "japaneese-text-tshirt-cool-front-elevez",
@@ -5505,7 +5503,7 @@
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "order": 56,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "name": "349",
       "handle": "349",
       "description": "Curated selection of our 349 products",
@@ -5520,7 +5518,7 @@
         "cute-butterfly-croptop-for-women",
         "cute-butterfly-croptop-for-women"
       ],
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 57,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
@@ -5550,7 +5548,7 @@
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "order": 58,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "name": "399",
       "handle": "399",
       "description": "Curated selection of our 399 products",
@@ -5563,7 +5561,7 @@
       "handle": "funny",
       "name": "Funny",
       "order": 59,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "sectionMapping": null,
@@ -5595,7 +5593,7 @@
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "order": 60,
-      "updatedAt": "2026-05-30T12:21:44.934Z"
+      "updatedAt": "2026-05-30T12:27:22.747Z"
     },
     {
       "id": "tag-1778700075663-21-941",
@@ -5615,7 +5613,7 @@
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "order": 61,
-      "updatedAt": "2026-05-30T12:21:44.934Z"
+      "updatedAt": "2026-05-30T12:27:22.747Z"
     },
     {
       "id": "tag-1778700075663-22-530",
@@ -5626,7 +5624,7 @@
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "order": 62,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "productCount": 2,
       "productHandles": [
         "grey-hoodie-trident-design",
@@ -5641,7 +5639,7 @@
       "description": "Curated selection of our hoodie products",
       "handle": "hoodie",
       "name": "Hoodie",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 63,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
@@ -5662,7 +5660,7 @@
         "paisa-design-stylish-genz-tshirt",
         "paisa-design-stylish-genz-tshirt"
       ],
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 64,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
@@ -5686,7 +5684,7 @@
       "sectionMapping": null,
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 65
     },
     {
@@ -5703,7 +5701,7 @@
       "image": "",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 66
     },
     {
@@ -5717,7 +5715,7 @@
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "order": 67,
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "handle": "699",
       "name": "699",
       "isSystem": false,
@@ -5733,7 +5731,7 @@
       "sectionMapping": null,
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 68,
       "name": "Unisex",
       "handle": "unisex",
@@ -5754,7 +5752,7 @@
         "type": "",
         "tags": []
       },
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 66,
       "name": "Men",
       "handle": "men",
@@ -5772,7 +5770,7 @@
       "image": "",
       "source": "generated",
       "createdAt": "2026-05-29T22:44:24.540Z",
-      "updatedAt": "2026-05-30T12:21:44.934Z",
+      "updatedAt": "2026-05-30T12:27:22.747Z",
       "order": 67,
       "filters": {
         "minPrice": 0,
@@ -5787,30 +5785,14 @@
     {
       "id": "APSEaxACueCCCX1Yguhd",
       "orderId": "ORD-1778350798392",
-      "status": "pending",
-      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
-      "fullName": "Mr Oak GAMING",
-      "createdAt": {
-        "seconds": 1778350798,
-        "nanoseconds": 392000000
-      },
-      "state": "westbengal",
       "paymentMethod": "cod",
-      "email": "lolislolpp@gmail.com",
-      "orderDate": {
-        "seconds": 1778350798,
-        "nanoseconds": 392000000
-      },
-      "shippingCost": 30,
-      "city": "kolkata",
-      "subtotal": 449,
       "items": [
         {
+          "name": "\"The Ronin Spirit\" Samurai graphic Tee",
           "color": "Standard",
           "quantity": 1,
           "size": "M",
           "price": 449,
-          "name": "\"The Ronin Spirit\" Samurai graphic Tee",
           "id": 7916022530187,
           "shopifyId": "gid://shopify/Product/7916022530187",
           "tags": [
@@ -5952,49 +5934,47 @@
           "orderedColor": "Standard"
         }
       ],
+      "subtotal": 449,
+      "email": "lolislolpp@gmail.com",
+      "fullName": "Mr Oak GAMING",
       "pincode": "700050",
-      "phone": "8017561073",
+      "status": "pending",
+      "shippingCost": 30,
       "totalAmount": 479,
+      "state": "westbengal",
+      "createdAt": {
+        "seconds": 1778350798,
+        "nanoseconds": 392000000
+      },
+      "city": "kolkata",
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "phone": "8017561073",
+      "orderDate": {
+        "seconds": 1778350798,
+        "nanoseconds": 392000000
+      },
       "address": "shayk ",
       "source": "firebase",
       "pointsEarned": 47,
       "orderCost": 180,
       "orderProfit": 269,
       "orderProfitMargin": 56.2,
-      "profitCalculatedAt": "2026-05-30T12:20:22.291Z"
+      "profitCalculatedAt": "2026-05-30T12:27:02.438Z"
     },
     {
       "id": "7FcrTn2xRBbBhIPUZZQp",
       "orderId": "ORD-1766948811513",
-      "paymentMethod": "cod",
-      "orderDate": {
-        "seconds": 1766948811,
-        "nanoseconds": 513000000
-      },
-      "email": "shayakdas6.5.0@gmail.com",
-      "status": "pending",
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
-      "state": "West Bengal",
-      "fullName": "Shayak Das",
-      "createdAt": {
-        "seconds": 1766948811,
-        "nanoseconds": 513000000
-      },
-      "totalAmount": 568.02,
-      "address": "sdasdada",
-      "shippingCost": 30,
-      "city": "koltakata",
       "subtotal": 549,
-      "phone": "80001812381",
-      "pincode": "700055",
+      "email": "shayakdas6.5.0@gmail.com",
+      "paymentMethod": "cod",
       "items": [
         {
-          "price": 549,
           "name": "\"PAISA Earn PAISA\" Graphic Gen Z T-Shirt",
-          "size": "M",
-          "id": 7915854102667,
           "color": "Black",
+          "size": "M",
           "quantity": 1,
+          "price": 549,
+          "id": 7915854102667,
           "sizes": [
             "XS",
             "S",
@@ -6455,43 +6435,48 @@
           "orderedColor": "Black"
         }
       ],
+      "pincode": "700055",
+      "status": "pending",
+      "fullName": "Shayak Das",
+      "createdAt": {
+        "seconds": 1766948811,
+        "nanoseconds": 513000000
+      },
+      "city": "koltakata",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "shippingCost": 30,
+      "state": "West Bengal",
+      "totalAmount": 568.02,
+      "address": "sdasdada",
+      "phone": "80001812381",
+      "orderDate": {
+        "seconds": 1766948811,
+        "nanoseconds": 513000000
+      },
       "source": "firebase",
       "pointsEarned": 56,
       "orderCost": 220,
       "orderProfit": 329,
       "orderProfitMargin": 57.9,
-      "profitCalculatedAt": "2026-05-30T12:20:22.291Z"
+      "profitCalculatedAt": "2026-05-30T12:27:02.438Z"
     },
     {
       "id": "2S4PVagw7A2ab4iQLhQA",
       "orderId": "ORD-1765144878816",
-      "status": "pending",
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
-      "state": "West Bengal",
-      "createdAt": {
-        "seconds": 1765144878,
-        "nanoseconds": 816000000
-      },
-      "fullName": "Shayak Das",
-      "paymentMethod": "upi",
-      "orderDate": {
-        "seconds": 1765144878,
-        "nanoseconds": 816000000
-      },
-      "email": "shayakdas6.5.0@gmail.com",
-      "shippingCost": 0,
-      "city": "koltakata",
-      "subtotal": 85,
-      "phone": "80001812381",
       "pincode": "700055",
+      "status": "pending",
+      "fullName": "Shayak Das",
+      "subtotal": 85,
+      "email": "shayakdas6.5.0@gmail.com",
+      "paymentMethod": "upi",
       "items": [
         {
           "quantity": 1,
-          "color": "Black",
-          "id": 7915861377163,
           "size": "M",
-          "price": 649,
+          "color": "Black",
           "name": "\"Dragon Blossom Oversized Tee: Embrace the Spirit of the Serpent Empress\"",
+          "price": 649,
+          "id": 7915861377163,
           "rating": 4.3,
           "category": "Topwear",
           "sku": "UOsMRnHs-Bk-XS-womenflowermain-Fr-ca",
@@ -6768,30 +6753,44 @@
           "orderedColor": "Black"
         }
       ],
-      "totalAmount": 85,
       "address": "sdasdada",
+      "phone": "80001812381",
+      "orderDate": {
+        "seconds": 1765144878,
+        "nanoseconds": 816000000
+      },
+      "createdAt": {
+        "seconds": 1765144878,
+        "nanoseconds": 816000000
+      },
+      "city": "koltakata",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "shippingCost": 0,
+      "totalAmount": 85,
+      "state": "West Bengal",
       "source": "firebase",
       "pointsEarned": 8,
       "orderCost": 260,
       "orderProfit": 389,
       "orderProfitMargin": 457.6,
-      "profitCalculatedAt": "2026-05-30T12:20:22.291Z"
+      "profitCalculatedAt": "2026-05-30T12:27:02.438Z"
     },
     {
       "id": "SuTQGC4vIytM2WrHUXzg",
       "orderId": "ORD-1764264646243",
-      "totalAmount": 45,
-      "address": "sdasdada",
-      "shippingCost": 0,
-      "city": "koltakata",
+      "pincode": "700055",
+      "status": "pending",
+      "fullName": "Shayak Das",
+      "email": "shayakdas6.5.0@gmail.com",
       "subtotal": 45,
+      "paymentMethod": "upi",
       "items": [
         {
-          "color": "Pink",
           "quantity": 1,
+          "color": "Pink",
+          "size": "M",
           "name": "Vintage Crop Top",
           "price": 45,
-          "size": "M",
           "id": 2,
           "category": "Women",
           "rating": 4.7,
@@ -6825,39 +6824,57 @@
           "orderedColor": "Pink"
         }
       ],
+      "address": "sdasdada",
       "phone": "80001812381",
-      "pincode": "700055",
-      "paymentMethod": "upi",
-      "email": "shayakdas6.5.0@gmail.com",
       "orderDate": {
         "seconds": 1764264646,
         "nanoseconds": 243000000
       },
-      "status": "pending",
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
       "createdAt": {
         "seconds": 1764264646,
         "nanoseconds": 243000000
       },
-      "fullName": "Shayak Das",
+      "city": "koltakata",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "shippingCost": 0,
+      "totalAmount": 45,
       "state": "West Bengal",
       "source": "firebase",
       "pointsEarned": 4,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2026-05-30T12:20:22.291Z"
+      "profitCalculatedAt": "2026-05-30T12:27:02.438Z"
     },
     {
       "id": "FqpUj0HsXXWIFSy1GH6m",
       "orderId": "ORD-1764031459429",
+      "createdAt": {
+        "seconds": 1764031459,
+        "nanoseconds": 429000000
+      },
+      "city": "koltakata",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "shippingCost": 0,
+      "state": "West Bengal",
+      "totalAmount": 85,
+      "address": "sdasdada",
+      "phone": "80001812381",
+      "trackingLink": "https://tracking.com/12345",
+      "orderDate": {
+        "seconds": 1764031459,
+        "nanoseconds": 429000000
+      },
+      "email": "shayakdas6.5.0@gmail.com",
+      "subtotal": 85,
+      "paymentMethod": "upi",
       "items": [
         {
           "color": "Black",
           "quantity": 1,
+          "size": "M",
           "name": "\"Dragon Blossom Oversized Tee: Embrace the Spirit of the Serpent Empress\"",
           "price": 649,
-          "size": "M",
           "id": 7915861377163,
           "rating": 4.3,
           "category": "Topwear",
@@ -7135,50 +7152,30 @@
           "orderedColor": "Black"
         }
       ],
-      "phone": "80001812381",
       "pincode": "700055",
-      "subtotal": 85,
-      "city": "koltakata",
-      "shippingCost": 0,
-      "lastUpdated": "2025-11-25T15:53:02.252Z",
-      "address": "sdasdada",
-      "totalAmount": 85,
-      "fullName": "Shayak Das",
-      "createdAt": {
-        "seconds": 1764031459,
-        "nanoseconds": 429000000
-      },
-      "state": "West Bengal",
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
-      "trackingLink": "https://tracking.com/12345",
       "status": "shipped",
-      "email": "shayakdas6.5.0@gmail.com",
-      "orderDate": {
-        "seconds": 1764031459,
-        "nanoseconds": 429000000
-      },
+      "lastUpdated": "2025-11-25T15:53:02.252Z",
       "shippedAt": "2025-11-25T15:53:02.252Z",
-      "paymentMethod": "upi",
+      "fullName": "Shayak Das",
       "source": "firebase",
       "pointsEarned": 8,
       "orderCost": 260,
       "orderProfit": 389,
       "orderProfitMargin": 457.6,
-      "profitCalculatedAt": "2026-05-30T12:20:22.292Z"
+      "profitCalculatedAt": "2026-05-30T12:27:02.438Z"
     },
     {
       "id": "mAsVn48LIsf1XLgRVy9r",
       "orderId": "ORD-1763911399446",
-      "pincode": "700055",
-      "phone": "80001812381",
+      "paymentMethod": "cod",
       "items": [
         {
-          "id": 7915861377163,
-          "name": "\"Dragon Blossom Oversized Tee: Embrace the Spirit of the Serpent Empress\"",
           "price": 649,
-          "size": "M",
+          "id": 7915861377163,
           "quantity": 1,
+          "size": "M",
           "color": "Black",
+          "name": "\"Dragon Blossom Oversized Tee: Embrace the Spirit of the Serpent Empress\"",
           "rating": 4.3,
           "category": "Topwear",
           "sku": "UOsMRnHs-Bk-XS-womenflowermain-Fr-ca",
@@ -7455,49 +7452,63 @@
           "orderedColor": "Black"
         }
       ],
+      "email": "lolislolpp@gmail.com",
       "subtotal": 85,
-      "city": "koltakata",
-      "shippingCost": 30,
-      "address": "sdasdada",
-      "totalAmount": 115,
-      "state": "West Bengal",
       "fullName": "Mr Oak GAMING",
+      "pincode": "700055",
+      "status": "pending",
+      "shippingCost": 30,
+      "state": "West Bengal",
+      "totalAmount": 115,
       "createdAt": {
         "seconds": 1763911399,
         "nanoseconds": 446000000
       },
       "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
-      "status": "pending",
+      "city": "koltakata",
+      "phone": "80001812381",
       "orderDate": {
         "seconds": 1763911399,
         "nanoseconds": 446000000
       },
-      "email": "lolislolpp@gmail.com",
-      "paymentMethod": "cod",
+      "address": "sdasdada",
       "source": "firebase",
       "pointsEarned": 11,
       "orderCost": 260,
       "orderProfit": 389,
       "orderProfitMargin": 338.3,
-      "profitCalculatedAt": "2026-05-30T12:20:22.292Z"
+      "profitCalculatedAt": "2026-05-30T12:27:02.438Z"
     },
     {
       "id": "9uhZ0XRhlS8Z4j6X4Rke",
       "orderId": "ORD-1763906412534",
-      "totalAmount": 45,
-      "address": "sdasdada",
-      "city": "koltakata",
-      "shippingCost": 0,
       "phone": "80001812381",
+      "orderDate": {
+        "seconds": 1763906412,
+        "nanoseconds": 534000000
+      },
+      "address": "sdasdada",
+      "shippingCost": 0,
+      "totalAmount": 45,
+      "state": "West Bengal",
+      "createdAt": {
+        "seconds": 1763906412,
+        "nanoseconds": 534000000
+      },
+      "city": "koltakata",
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "fullName": "Mr Oak GAMING",
       "pincode": "700055",
+      "status": "pending",
+      "paymentMethod": "upi",
       "items": [
         {
-          "size": "M",
           "price": 45,
-          "name": "Vintage Crop Top",
           "id": 2,
-          "color": "Pink",
+          "name": "Vintage Crop Top",
           "quantity": 1,
+          "size": "M",
+          "color": "Pink",
           "category": "Women",
           "rating": 4.7,
           "sizes": [
@@ -7531,26 +7542,13 @@
         }
       ],
       "subtotal": 45,
-      "paymentMethod": "upi",
-      "orderDate": {
-        "seconds": 1763906412,
-        "nanoseconds": 534000000
-      },
       "email": "lolislolpp@gmail.com",
-      "status": "pending",
-      "state": "West Bengal",
-      "createdAt": {
-        "seconds": 1763906412,
-        "nanoseconds": 534000000
-      },
-      "fullName": "Mr Oak GAMING",
-      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
       "source": "firebase",
       "pointsEarned": 4,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2026-05-30T12:20:22.292Z"
+      "profitCalculatedAt": "2026-05-30T12:27:02.438Z"
     }
   ],
   "tags": [
@@ -7648,10 +7646,6 @@
     },
     {
       "name": "Rainbow",
-      "code": "#000000"
-    },
-    {
-      "name": "Lavender",
       "code": "#000000"
     },
     {

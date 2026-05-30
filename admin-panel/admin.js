@@ -2506,13 +2506,17 @@ window.applyCrop = () => {
 // Color Selection System
 function renderColorsGrid() {
   const grid = document.getElementById('colorsGrid');
+  if (!grid) return;
   grid.innerHTML = state.availableColors.map((color, index) => {
     const isSelected = state.productForm.selectedColors.some(c => c.name === color.name);
     return `
-      <button type="button" class="color-btn ${isSelected ? 'active' : ''}" onclick="toggleColor(${index})" data-color="${color.name}">
-        <div class="color-swatch" style="background: ${color.code}; ${color.name === 'White' ? 'border: 1px solid #333;' : ''}"></div>
-        <span class="color-name">${color.name}</span>
-      </button>
+      <div class="color-btn-wrapper">
+        <button type="button" class="color-btn ${isSelected ? 'active' : ''}" onclick="toggleColor(${index})" data-color="${color.name}">
+          <div class="color-swatch" style="background: ${color.code}; ${color.name === 'White' ? 'border: 1px solid #333;' : ''}"></div>
+          <span class="color-name">${color.name}</span>
+        </button>
+        <button type="button" class="color-delete-btn" onclick="deleteAvailableColor(event, ${index})" title="Delete color">&times;</button>
+      </div>
     `;
   }).join('');
 
@@ -2532,6 +2536,37 @@ window.toggleColor = (index) => {
   }
 
   renderColorsGrid();
+};
+
+window.deleteAvailableColor = async function(event, index) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+
+  const color = state.availableColors[index];
+  if (!confirm(`Are you sure you want to delete color "${color.name}"?`)) return;
+
+  // Remove from available colors
+  state.availableColors.splice(index, 1);
+
+  // Also remove from selected colors of the product being edited
+  const selectedIndex = state.productForm.selectedColors.findIndex(c => c.name === color.name);
+  if (selectedIndex > -1) {
+    state.productForm.selectedColors.splice(selectedIndex, 1);
+  }
+
+  // Update localStorage and trigger Server save & compile
+  localStorage.setItem('elevez_colors', JSON.stringify(state.availableColors));
+  await saveData();
+
+  // Render and update UI grids
+  renderColorsGrid();
+  if (window.renderGlobalColorsGrid) {
+    window.renderGlobalColorsGrid();
+  }
+
+  showSyncStatus(`Color "${color.name}" deleted`, 'success');
 };
 
 function renderSelectedColors() {
