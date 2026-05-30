@@ -3488,7 +3488,7 @@
     "qid": "SHOP-7915859968139",
     "inStock": true,
     "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "updatedAt": "2026-05-28T11:46:34.249Z",
+    "updatedAt": "2026-05-30T12:21:44.863Z",
     "category": "Topwear",
     "rating": 4,
     "sku": "UOsMRnHs-Lv-XS-oversizedbirdflowertshirt-Fr-ca",
@@ -3506,7 +3506,6 @@
       "female",
       "oversized"
     ],
-    "isFeatured": false,
     "colors": [
       "Lavender"
     ],
@@ -3516,7 +3515,6 @@
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_nfn659nfn659nfn6.png?v=1760955846",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_smtyuvsmtyuvsmty.png?v=1760955885"
     ],
-    "isBestSeller": false,
     "cost": 280,
     "isNew": true,
     "name": "\"Peace & Roses\" Premium Oversized T-Shirt - The Serenity Streetwear Tee",
@@ -3535,7 +3533,13 @@
     "type": "tee",
     "description": "This isn't just a t-shirt; it's a wearable testament to the resilience of the human spirit. Born from an old Seoul street artist's meditation on contrasting realities, the \"Peace & Roses\" design captures a moment of tranquil defiance. The oversized, premium cotton serves as a canvas for a modern-day icon: a majestic dove in mid-flight, its wings a white-hot beacon of hope. This dove doesn't just symbolize peace; it embodies the hard-won serenity found only after navigating the noise of the urban world. Flanking the dove are two blood-red roses—symbols of passion, beauty, and the thorny commitment required to protect one's inner peace. The bold, stark white word \"PEACE\" is not a plea, but a powerful declaration.",
     "reviews": 68,
-    "descriptionHtml": "<p>This isn't just a t-shirt; it's a wearable testament to the resilience of the human spirit.</p>\n<p>Born from an old Seoul street artist's meditation on contrasting realities, the <b>\"Peace &amp; Roses\"</b> design captures a moment of tranquil defiance. The <b>oversized, premium cotton</b> serves as a canvas for a modern-day icon: a majestic <b>dove</b> in mid-flight, its wings a white-hot beacon of hope. This dove doesn't just symbolize peace; it embodies the hard-won serenity found only after navigating the noise of the urban world.</p>\n<p>Flanking the dove are two blood-red <b>roses</b>—symbols of passion, beauty, and the thorny commitment required to protect one's inner peace. The bold, stark white word <b>\"PEACE\"</b> is not a plea, but a powerful declaration.</p>"
+    "descriptionHtml": "<p>This isn't just a t-shirt; it's a wearable testament to the resilience of the human spirit.</p>\n<p>Born from an old Seoul street artist's meditation on contrasting realities, the <b>\"Peace &amp; Roses\"</b> design captures a moment of tranquil defiance. The <b>oversized, premium cotton</b> serves as a canvas for a modern-day icon: a majestic <b>dove</b> in mid-flight, its wings a white-hot beacon of hope. This dove doesn't just symbolize peace; it embodies the hard-won serenity found only after navigating the noise of the urban world.</p>\n<p>Flanking the dove are two blood-red <b>roses</b>—symbols of passion, beauty, and the thorny commitment required to protect one's inner peace. The bold, stark white word <b>\"PEACE\"</b> is not a plea, but a powerful declaration.</p>",
+    "profit": 419,
+    "profitMargin": 59.9,
+    "status": "active",
+    "showInHome": true,
+    "showInShop": true,
+    "showInCollections": true
   },
   {
     "id": 7915870158987,
