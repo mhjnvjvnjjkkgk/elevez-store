@@ -19,6 +19,8 @@ export interface LocalCollection {
     isSystem: boolean;
     source: 'shopify' | 'local';
     importedAt: string;
+    updatedAt?: string;
+    createdAt?: string;
 }
 
 const COLLECTIONS_KEY = 'elevez_collections';
@@ -34,32 +36,59 @@ let hasFetchedServer = false;
 class LocalCollectionService {
 
     /**
-     * Get active products list, choosing between localStorage and compile-time constants
+     * Get active products list, choosing between localStorage and compile-time constants using an SWR merge
      */
     getActiveProducts(): any[] {
+        let localProds: any[] = [];
         try {
             const stored = localStorage.getItem(PRODUCTS_KEY);
             if (stored) {
                 const parsed = JSON.parse(stored);
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                    return parsed;
+                    localProds = parsed;
                 }
             }
         } catch (error) {
-            console.error('Error getting active products:', error);
+            console.error('Error getting active products from localStorage:', error);
         }
 
-        return PRODUCTS;
+        const mergedMap = new Map<string, any>();
+
+        // 1. Load from compile-time PRODUCTS constants first (Guaranteed Baseline)
+        if (PRODUCTS && Array.isArray(PRODUCTS)) {
+            PRODUCTS.forEach((p: any) => {
+                if (p && p.id) {
+                    mergedMap.set(String(p.id).trim(), p);
+                }
+            });
+        }
+
+        // 2. Merge with localProds, keeping the newer one based on updatedAt
+        localProds.forEach((p: any) => {
+            if (!p || !p.id) return;
+            const key = String(p.id).trim();
+            const existing = mergedMap.get(key);
+            if (!existing) {
+                mergedMap.set(key, p);
+            } else {
+                const t1 = new Date(existing.updatedAt || existing.importedAt || existing.lastSyncedAt || 0).getTime() || 0;
+                const t2 = new Date(p.updatedAt || p.importedAt || p.lastSyncedAt || 0).getTime() || 0;
+                if (t2 > t1) {
+                    mergedMap.set(key, p);
+                }
+            }
+        });
+
+        return Array.from(mergedMap.values());
     }
 
     /**
-     * Get all collections - first tries localStorage, then server JSON file
+     * Get all collections - merges compile-time constants and localStorage, keeping the newer ones
      */
     getAllCollections(): LocalCollection[] {
         try {
             // Background revalidation: always fetch from Firestore/cloud in background
             // Ensure this only happens ONCE automatically to prevent infinite event loops
-            // Skip in dev to avoid using cached collections
             if (!isFetching && !hasFetchedServer) {
                 hasFetchedServer = true;
                 this.loadFromServer();
@@ -71,22 +100,32 @@ class LocalCollectionService {
             if (COLLECTIONS && Array.isArray(COLLECTIONS)) {
                 COLLECTIONS.forEach((c: any) => {
                     if (c && (c.id || c.name)) {
-                        const id = c.id || c.name;
+                        const id = String(c.id || c.name);
                         const handle = c.handle || id.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
                         collectionMap.set(id, { ...c, id, handle } as LocalCollection);
                     }
                 });
             }
 
-            // 2. Override/merge with localStorage (User customizations)
+            // 2. Override/merge with localStorage (User customizations, keeping the newer one)
             const stored = localStorage.getItem(COLLECTIONS_KEY);
             if (stored) {
                 const parsed = JSON.parse(stored);
                 const localCols = Array.isArray(parsed) ? parsed : (parsed.collections || []);
                 localCols.forEach((c: any) => {
                     if (c && c.id && c.id !== 'all') {
-                        const handle = c.handle || c.id.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                        collectionMap.set(c.id, { ...collectionMap.get(c.id), ...c, handle } as LocalCollection);
+                        const id = String(c.id);
+                        const handle = c.handle || id.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                        const existing = collectionMap.get(id);
+                        if (!existing) {
+                            collectionMap.set(id, { ...c, id, handle } as LocalCollection);
+                        } else {
+                            const t1 = new Date(existing.updatedAt || existing.createdAt || existing.importedAt || 0).getTime() || 0;
+                            const t2 = new Date(c.updatedAt || c.createdAt || c.importedAt || 0).getTime() || 0;
+                            if (t2 > t1) {
+                                collectionMap.set(id, { ...existing, ...c, handle } as LocalCollection);
+                            }
+                        }
                     }
                 });
             }

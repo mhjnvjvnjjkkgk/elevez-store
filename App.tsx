@@ -96,18 +96,29 @@ const getColorCode = (name: string): string => {
 
 // Global utility for resolving available sizes dynamically
 const getAvailableSizes = (): string[] => {
+  const sizeSet = new Set<string>();
+  
+  if (AVAILABLE_SIZES && Array.isArray(AVAILABLE_SIZES)) {
+    AVAILABLE_SIZES.forEach(s => sizeSet.add(s));
+  }
+
   try {
     const storedSizes = localStorage.getItem('elevez_sizes');
     if (storedSizes) {
       const parsed = JSON.parse(storedSizes);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+      if (Array.isArray(parsed)) {
+        parsed.forEach(s => {
+          if (typeof s === 'string') sizeSet.add(s);
+        });
       }
     }
   } catch (e) {
     console.warn('Error reading sizes from localStorage:', e);
   }
-  return AVAILABLE_SIZES || ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+  const allSizes = Array.from(sizeSet);
+  if (allSizes.length > 0) return allSizes;
+  return ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 };
 
 // --- Cart Context ---
@@ -701,8 +712,8 @@ const QuickViewModal = () => {
             {/* Color Selection — Shopify-style dot swatches */}
             {activeProduct.colors && activeProduct.colors.length > 0 && (
               <div className="mb-8 flex-shrink-0">
-                <h3 className="text-xs font-black uppercase text-black opacity-40 mb-4 tracking-widest">
-                  Color: <span className="text-black opacity-100">{selectedColor}</span>
+                <h3 className="text-xs font-black uppercase mb-4 tracking-widest" style={{ fontFamily: "'Space Mono', monospace" }}>
+                  <span className="text-black opacity-40">Color:</span> <span className="transition-all duration-200 text-black">{selectedColor}</span>
                 </h3>
                 <div className="flex flex-wrap gap-3">
                   {activeProduct.colors.map(color => (
@@ -2869,7 +2880,9 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
             <div className="space-y-6 mb-8">
               {product.colors && product.colors.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-black uppercase mb-3 text-black">Color: <span className="text-[#00ff88]">{selectedColor}</span></h4>
+                  <h4 className="text-xs font-black uppercase mb-3 text-black" style={{ fontFamily: "'Space Mono', monospace" }}>
+                    <span className="opacity-40">Color:</span> <span className="transition-all duration-200 text-black">{selectedColor}</span>
+                  </h4>
                   <div className="flex flex-wrap gap-3 sm:gap-4">
                     {product.colors.map(color => (
                       <button
