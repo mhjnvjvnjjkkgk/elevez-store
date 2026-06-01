@@ -195,3 +195,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .dual-range { -webkit-appearance: none; appearance: none; background: transparent; pointer-events: none; } .dual-range::-webkit-slider-thumb { -webkit-appearance: none; pointer-events: auto; width: 16px; height: 16px; background: black; border: 2px solid white; border-radius: 50%; cursor: pointer; }
+
+/* Native CSS mobile-only layout rule (independent of Tailwind CDN parsing) */
+@media (min-width: 1024px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+

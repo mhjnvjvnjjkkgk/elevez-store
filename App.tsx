@@ -124,7 +124,7 @@ const getAvailableSizes = (): string[] => {
 // --- Cart Context ---
 interface CartContextType {
   items: CartItem[];
-  addToCart: (product: Product, size: string, color: string, quantity: number) => void;
+  addToCart: (product: Product, size: string, color: string, quantity?: number, openSidebar?: boolean) => void;
   removeFromCart: (cartId: string) => void;
   clearCart: () => void;
   isCartOpen: boolean;
@@ -157,7 +157,7 @@ const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     }
   }, [items]);
 
-  const addToCart = (product: Product, size: string, color: string, quantity: number = 1) => {
+  const addToCart = (product: Product, size: string, color: string, quantity: number = 1, openSidebar: boolean = true) => {
     const cartId = `${product.id}-${size}-${color}`;
     setItems(prev => {
       const existing = prev.find(item => item.cartId === cartId);
@@ -166,7 +166,9 @@ const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       }
       return [...prev, { ...product, quantity, size, color, cartId }];
     });
-    setIsCartOpen(true);
+    if (openSidebar) {
+      setIsCartOpen(true);
+    }
   };
 
   const removeFromCart = (cartId: string) => {
@@ -490,10 +492,22 @@ const PixelBackground = () => {
 // Product Card
 const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHoverEnd: () => void }> = ({ product, onHoverStart, onHoverEnd }) => {
   const { openQuickView } = useQuickView();
+  const { addToCart } = useCart();
   const [user, setUser] = useState<any>(null);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
+  const [isAdded, setIsAdded] = useState(false);
+
+  const handleQuickAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const size = product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'M';
+    const color = product.colors && product.colors.length > 0 ? product.colors[0] : 'Black';
+    addToCart(product, size, color, 1, false);
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 1200);
+  };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (window.innerWidth < 768 || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) return;
@@ -622,18 +636,27 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
       </div>
 
       <div className="mt-2 sm:mt-4 p-2 sm:p-3 bg-white border-2 sm:border-[2px] border-black shadow-[3px_3px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]">
-        <h3 className="text-xs sm:text-sm font-black text-black uppercase font-syne line-clamp-1 leading-tight">{product.name}</h3>
+        <h3 className="text-[17px] sm:text-sm font-black text-black uppercase font-syne line-clamp-1 leading-tight">{product.name}</h3>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-1 gap-0.5 sm:gap-0">
           <div className="flex items-center gap-1 sm:gap-2">
-            <span className="font-price text-[#00ff88] font-black text-xs sm:text-base stroke-black" style={{ WebkitTextStroke: '0.3px black' }}>₹{product.price.toFixed(0)}</span>
-            <span className="font-price text-red-400 line-through text-[9px] sm:text-xs">₹{product.originalPrice.toFixed(0)}</span>
-          </div>
-          <div className="flex gap-[2px] sm:gap-1">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${i < Math.floor(product.rating) ? 'fill-black text-black' : 'text-gray-300'}`} />
-            ))}
+            <span className="font-price text-[#00ff88] font-black text-[17px] sm:text-base stroke-black" style={{ WebkitTextStroke: '0.3px black' }}>₹{product.price.toFixed(0)}</span>
+            <span className="font-price text-red-400 line-through text-[11px] sm:text-xs">₹{product.originalPrice.toFixed(0)}</span>
           </div>
         </div>
+        
+        {/* ADD TO CART Button */}
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={handleQuickAddToCart}
+          className={`w-full mt-2 py-1.5 px-3 font-black text-[10px] sm:text-xs border-[2px] border-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none ${
+            isAdded 
+              ? 'bg-black text-[#00ff88] border-[#00ff88]' 
+              : 'bg-[#00ff88] text-black hover:bg-black hover:text-[#00ff88]'
+          }`}
+        >
+          <ShoppingBag size={12} className={isAdded ? "animate-bounce" : ""} />
+          {isAdded ? "ADDED (+1)!" : "ADD TO CART"}
+        </motion.button>
       </div>
     </motion.div>
   );
@@ -832,38 +855,42 @@ const CartSidebar = () => {
                   </div>
                 </div>
               ) : (
-                items.map((item) => (
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    key={item.cartId}
-                    className="flex gap-4 sm:gap-6 bg-white p-3 sm:p-4 border-2 sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
-                  >
-                    <div className="w-20 h-28 sm:w-24 sm:h-32 border-2 sm:border-[3px] border-black overflow-hidden shrink-0 bg-white flex items-center justify-center p-1">
-                      <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain transition-transform duration-500 hover:scale-105" loading="lazy" />
-                    </div>
-                    <div className="flex-1 flex flex-col justify-between min-w-0">
-                      <div>
-                        <h3 className="font-black text-sm sm:text-lg uppercase text-black line-clamp-1 leading-none mb-1.5 sm:mb-2">{item.name}</h3>
-                        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                          <span className="bg-black text-white px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">{item.size}</span>
-                          {item.color && <span className="bg-[#00ff88] text-black px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">{item.color}</span>}
-                          <span className="bg-white text-black px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">QTY: {item.quantity}</span>
+                <AnimatePresence mode="popLayout">
+                  {items.map((item) => (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, x: -50 }}
+                      transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+                      key={item.cartId}
+                      className="flex gap-4 sm:gap-6 bg-white p-3 sm:p-4 border-2 sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+                    >
+                      <div className="w-20 h-28 sm:w-24 sm:h-32 border-2 sm:border-[3px] border-black overflow-hidden shrink-0 bg-white flex items-center justify-center p-1">
+                        <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain transition-transform duration-500 hover:scale-105" loading="lazy" />
+                      </div>
+                      <div className="flex-1 flex flex-col justify-between min-w-0">
+                        <div>
+                          <h3 className="font-black text-sm sm:text-lg uppercase text-black line-clamp-1 leading-none mb-1.5 sm:mb-2">{item.name}</h3>
+                          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                            <span className="bg-black text-white px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">{item.size}</span>
+                            {item.color && <span className="bg-[#00ff88] text-black px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">{item.color}</span>}
+                            <span className="bg-white text-black px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">QTY: {item.quantity}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="text-xl sm:text-2xl font-black text-black">
+                            ₹<GlitchText text={(item.price * item.quantity).toFixed(0)} triggerOnHover={false} />
+                          </div>
+                          <button onClick={() => removeFromCart(item.cartId)} className="w-8 h-8 sm:w-10 sm:h-10 bg-white border-2 sm:border-[3px] border-black flex items-center justify-center hover:bg-red-500 hover:text-white shadow-[2px_2px_0px_0px_#000] sm:shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
+                            <Trash2 size={14} className="sm:hidden" />
+                            <Trash2 size={18} className="hidden sm:block" />
+                          </button>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div className="text-xl sm:text-2xl font-black text-black">
-                          ₹<GlitchText text={(item.price * item.quantity).toFixed(0)} triggerOnHover={false} />
-                        </div>
-                        <button onClick={() => removeFromCart(item.cartId)} className="w-8 h-8 sm:w-10 sm:h-10 bg-white border-2 sm:border-[3px] border-black flex items-center justify-center hover:bg-red-500 hover:text-white shadow-[2px_2px_0px_0px_#000] sm:shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                          <Trash2 size={14} className="sm:hidden" />
-                          <Trash2 size={18} className="hidden sm:block" />
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               )}
             </div>
 
@@ -1146,7 +1173,7 @@ const BestSellers = () => {
           <div className="text-center">
             <button
               onClick={() => navigate('/shop/all')}
-              className="px-16 py-6 bg-black text-[#00ff88] border-[4px] border-black font-black text-2xl uppercase tracking-widest shadow-[10px_10px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all"
+              className="px-8 py-3.5 sm:px-12 sm:py-5 bg-black text-[#00ff88] border-2 sm:border-[4px] border-black font-black text-xs sm:text-lg uppercase tracking-widest shadow-[4px_4px_0px_0px_#00ff88] sm:shadow-[8px_8px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[4px] sm:hover:translate-x-[6px] hover:translate-y-[4px] sm:hover:translate-y-[6px] transition-all"
             >
               View All Products
             </button>
@@ -1381,43 +1408,7 @@ const ScrollProgressBar = () => {
   );
 };
 
-// --- Scroll to Top Button ---
-const ScrollToTop = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const toggleVisibility = () => {
-      setIsVisible(window.scrollY > 500);
-    };
-
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0 }}
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-[#00ff88] text-black flex items-center justify-center shadow-[0_0_30px_rgba(0,255,136,0.5)] hover:scale-110 transition-transform"
-          whileHover={{ y: -5 }}
-        >
-          <ArrowRight className="w-6 h-6 -rotate-90" />
-        </motion.button>
-      )}
-    </AnimatePresence>
-  );
-};
+// --- Scroll to Top Button (Removed) ---
 
 // --- Toast Notification System ---
 const Toast: React.FC<{ message: string; type?: 'success' | 'error' | 'info' }> = ({ message, type = 'success' }) => {
@@ -4572,391 +4563,337 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const Navbar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { items, setIsCartOpen } = useCart();
+// --- TOP HEADER (non-sticky, only at top of page) ---
+// Mobile: Logo | Account | MoreDots | Cart
+// Desktop: Logo | Home | Accounts | PRODUCT | Cart | Contact
+const TopHeader = () => {
+  const { items, setIsCartOpen, addToCart } = useCart();
   const { setCursorVariant } = useCursor();
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const location = useLocation();
   const currentPath = location.pathname;
+  const [moreOpen, setMoreOpen] = useState(false);
 
-  // Track scroll direction to show/hide mobile bottom navbar
-  const [isBottomNavVisible, setIsBottomNavVisible] = useState(true);
-  const lastScrollY = useRef(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
-        // Scrolling down -> hide navbar
-        setIsBottomNavVisible(false);
-      } else {
-        // Scrolling up -> show navbar
-        setIsBottomNavVisible(true);
-      }
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   // Handle quick add to cart from ProductRecommendations
-  const { addToCart } = useCart();
   useEffect(() => {
     const handleQuickAdd = (event: any) => {
       const { product, size, color, quantity } = event.detail;
       addToCart(product, size, color, quantity);
     };
-
     window.addEventListener('quickAddToCart', handleQuickAdd);
     return () => window.removeEventListener('quickAddToCart', handleQuickAdd);
   }, [addToCart]);
 
-  const mobileNavItems = [
-    { id: 'home', label: 'Home', path: '/', icon: HomeIcon, isActive: currentPath === '/' },
-    { id: 'collections', label: 'Collections', path: '/shop/all', icon: Compass, isActive: currentPath.startsWith('/shop') },
-    { id: 'rewards', label: 'Rewards', path: '/rewards', icon: Gift, isActive: currentPath === '/rewards' },
-    { id: 'contact', label: 'Contact', path: '/contact', icon: Mail, isActive: currentPath === '/contact' }
-  ];
-
   return (
-    <>
-      <motion.nav
-        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[92%] md:w-[85%] max-w-6xl"
+    <motion.header
+      className="absolute top-0 left-0 right-0 z-50 w-full"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+    >
+      {/* Liquid-glass bar */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%)',
+          backdropFilter: 'blur(28px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12)',
+        }}
+        className="w-full px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between"
       >
-        <div className="bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] rounded-full px-6 md:px-10 py-3 flex items-center justify-between transition-all duration-300">
-          
-          {/* Left Side: Logo & Home */}
-          <div className="flex items-center gap-8">
-            <Link to="/" className="text-xl md:text-2xl font-black tracking-tighter font-syne uppercase text-white hover:text-[#00ff88] transition-colors">
-              <GlitchText text={BRAND_NAME} triggerOnHover={false} />
-              <span className="text-[#00ff88]">.</span>
-            </Link>
-            
-            <div className="hidden lg:flex items-center">
-              <Magnetic>
-                <Link 
-                  to="/"
-                  onMouseEnter={() => setCursorVariant('hover')}
-                  onMouseLeave={() => setCursorVariant('default')}
-                  className={`text-xs font-black uppercase tracking-widest transition-colors relative group font-mono ${
-                    currentPath === '/' ? 'text-[#00ff88]' : 'text-white/80 hover:text-[#00ff88]'
-                  }`}
-                >
-                  Home
-                  <span className={`absolute -bottom-1 left-0 h-[2px] bg-[#00ff88] transition-all duration-300 ${
-                    currentPath === '/' ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`} />
-                </Link>
-              </Magnetic>
-            </div>
-          </div>
+        {/* LOGO */}
+        <Link
+          to="/"
+          onMouseEnter={() => setCursorVariant('hover')}
+          onMouseLeave={() => setCursorVariant('default')}
+          className="text-xl sm:text-2xl font-black tracking-tighter font-syne uppercase text-white hover:text-[#00ff88] transition-colors duration-200 whitespace-nowrap select-none"
+        >
+          <GlitchText text={BRAND_NAME} triggerOnHover={false} />
+          <span className="text-[#00ff88]">.</span>
+        </Link>
 
-          {/* Center Side: Products, Rewards, Contact */}
-          <div className="hidden lg:flex items-center gap-8">
-            {/* Products Dropdown Menu */}
-            <div 
-              className="relative py-2"
-              onMouseEnter={() => {
-                setHoveredItem('products');
-                setCursorVariant('hover');
-              }}
-              onMouseLeave={() => {
-                setHoveredItem(null);
-                setCursorVariant('default');
-              }}
-            >
-              <button 
-                className={`text-xs font-black uppercase tracking-widest transition-colors relative group font-mono flex items-center gap-1.5 ${
-                  currentPath.startsWith('/shop') ? 'text-[#00ff88]' : 'text-white/80 hover:text-[#00ff88]'
-                }`}
-              >
-                Products
-                <ChevronDown size={12} className={`transition-transform duration-300 ${hoveredItem === 'products' ? 'rotate-180 text-[#00ff88]' : ''}`} />
-                <span className={`absolute -bottom-1 left-0 h-[2px] bg-[#00ff88] transition-all duration-300 ${
-                  currentPath.startsWith('/shop') ? 'w-full' : 'w-0 group-hover:w-full'
-                }`} />
-              </button>
-
-              <AnimatePresence>
-                {hoveredItem === 'products' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 15 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-black/85 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-[0_12px_40px_rgba(0,0,0,0.8)] flex flex-col gap-3 z-50"
-                  >
-                    {[
-                      { label: 'All Products', path: '/shop/all' },
-                      { label: "Men's Collection", path: '/shop/men' },
-                      { label: "Women's Collection", path: '/shop/women' }
-                    ].map((subItem) => (
-                      <Link
-                        key={subItem.label}
-                        to={subItem.path}
-                        className="text-[11px] font-black uppercase tracking-wider text-white/70 hover:text-[#00ff88] hover:translate-x-1 transition-all duration-200"
-                      >
-                        {subItem.label}
-                      </Link>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Rewards Page Link */}
-            <Magnetic>
-              <Link 
-                to="/rewards"
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-                className={`text-xs font-black uppercase tracking-widest transition-colors relative group font-mono ${
-                  currentPath === '/rewards' ? 'text-[#00ff88]' : 'text-white/80 hover:text-[#00ff88]'
-                }`}
-              >
-                Rewards
-                <span className={`absolute -bottom-1 left-0 h-[2px] bg-[#00ff88] transition-all duration-300 ${
-                  currentPath === '/rewards' ? 'w-full' : 'w-0 group-hover:w-full'
-                }`} />
-              </Link>
-            </Magnetic>
-
-            {/* Contact Dropdown Menu */}
-            <div 
-              className="relative py-2"
-              onMouseEnter={() => {
-                setHoveredItem('contact');
-                setCursorVariant('hover');
-              }}
-              onMouseLeave={() => {
-                setHoveredItem(null);
-                setCursorVariant('default');
-              }}
-            >
-              <button 
-                className={`text-xs font-black uppercase tracking-widest transition-colors relative group font-mono flex items-center gap-1.5 ${
-                  currentPath === '/contact' ? 'text-[#00ff88]' : 'text-white/80 hover:text-[#00ff88]'
-                }`}
-              >
-                Contact
-                <ChevronDown size={12} className={`transition-transform duration-300 ${hoveredItem === 'contact' ? 'rotate-180 text-[#00ff88]' : ''}`} />
-                <span className={`absolute -bottom-1 left-0 h-[2px] bg-[#00ff88] transition-all duration-300 ${
-                  currentPath === '/contact' ? 'w-full' : 'w-0 group-hover:w-full'
-                }`} />
-              </button>
-
-              <AnimatePresence>
-                {hoveredItem === 'contact' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 15 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-52 bg-black/85 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-[0_12px_40px_rgba(0,0,0,0.8)] flex flex-col gap-3 z-50"
-                  >
-                    <a
-                      href="https://wa.me/911234567890"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[11px] font-black uppercase tracking-wider text-white/70 hover:text-[#00ff88] hover:translate-x-1 transition-all duration-200 flex items-center gap-2"
-                    >
-                      <WhatsAppIcon className="text-white/50 w-4.5 h-4.5" />
-                      WhatsApp
-                    </a>
-                    <a
-                      href="mailto:support@elevez.com"
-                      className="text-[11px] font-black uppercase tracking-wider text-white/70 hover:text-[#00ff88] hover:translate-x-1 transition-all duration-200 flex items-center gap-2"
-                    >
-                      <Mail size={14} className="text-white/50" />
-                      Email
-                    </a>
-                    <a
-                      href="https://www.instagram.com/elevezdotshop/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[11px] font-black uppercase tracking-wider text-white/70 hover:text-[#00ff88] hover:translate-x-1 transition-all duration-200 flex items-center gap-2"
-                    >
-                      <Instagram size={14} className="text-white/50" />
-                      Instagram
-                    </a>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* Right Side: Account, Cart & Mobile Trigger */}
-          <div className="flex items-center gap-4">
-            <Magnetic>
-              <Link 
-                to="/account"
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-                className={`w-10 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 flex items-center justify-center text-white transition-all ${
-                  currentPath === '/account' ? 'border-[#00ff88] text-[#00ff88] bg-[#00ff88]/5' : ''
-                }`}
-              >
-                <User size={18} />
-              </Link>
-            </Magnetic>
-
-            <Magnetic>
-              <button
-                onClick={() => setIsCartOpen(true)}
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-                className="w-10 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 flex items-center justify-center text-white transition-all relative"
-              >
-                <ShoppingBag size={18} />
-                {items.length > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-[#00ff88] border border-black text-black text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(0,255,136,0.5)]">
-                    {items.length}
-                  </span>
-                )}
-              </button>
-            </Magnetic>
-
-            <Link 
-              to="/shop/all"
-              onMouseEnter={() => setCursorVariant('hover')}
-              onMouseLeave={() => setCursorVariant('default')}
-              className="hidden sm:block bg-[#00ff88]/15 hover:bg-[#00ff88] text-[#00ff88] hover:text-black px-6 py-2 rounded-full border border-[#00ff88]/40 hover:border-transparent font-black uppercase text-[11px] tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(0,255,136,0.1)] hover:shadow-[0_0_20px_rgba(0,255,136,0.3)]"
-            >
-              Shop Now
-            </Link>
-
-            <button 
-              onMouseEnter={() => setCursorVariant('hover')}
-              onMouseLeave={() => setCursorVariant('default')}
-              className="lg:hidden w-10 h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 flex items-center justify-center text-[#00ff88] transition-all" 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* Mobile Menu Overlay with Premium Glassmorphism */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: '-100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '-100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 180 }}
-            className="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[100] flex flex-col p-10 md:hidden overflow-y-auto"
+        {/* === DESKTOP NAV (hidden on mobile) === */}
+        <nav className="hidden md:flex items-center gap-1 lg:gap-2">
+          {/* Home */}
+          <Link
+            to="/"
+            onMouseEnter={() => setCursorVariant('hover')}
+            onMouseLeave={() => setCursorVariant('default')}
+            className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest font-mono py-1.5 px-3.5 rounded-full transition-all duration-200 ${
+              currentPath === '/'
+                ? 'bg-white/10 text-[#00ff88] border border-white/15'
+                : 'text-white/70 hover:text-[#00ff88] hover:bg-white/5 border border-transparent'
+            }`}
           >
-            <div className="flex justify-between items-center mb-16">
-              <span className="text-3xl font-black font-syne uppercase text-[#00ff88] tracking-tighter">Menu</span>
-              <button 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-12 h-12 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center text-[#00ff88] transition-all"
-              >
-                <X size={24} />
-              </button>
+            <HomeIcon size={13} />
+            <span>Home</span>
+          </Link>
+
+          {/* Accounts */}
+          <Link
+            to="/account"
+            onMouseEnter={() => setCursorVariant('hover')}
+            onMouseLeave={() => setCursorVariant('default')}
+            className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest font-mono py-1.5 px-3.5 rounded-full transition-all duration-200 ${
+              currentPath === '/account'
+                ? 'bg-white/10 text-[#00ff88] border border-white/15'
+                : 'text-white/70 hover:text-[#00ff88] hover:bg-white/5 border border-transparent'
+            }`}
+          >
+            <User size={13} />
+            <span>Accounts</span>
+          </Link>
+
+          {/* PRODUCT — always highlighted */}
+          <Link
+            to="/shop/all"
+            onMouseEnter={() => setCursorVariant('hover')}
+            onMouseLeave={() => setCursorVariant('default')}
+            className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest font-mono py-1.5 px-5 rounded-full transition-all duration-200 ${
+              currentPath.startsWith('/shop')
+                ? 'bg-[#00ff88] text-black shadow-[0_0_20px_rgba(0,255,136,0.7)]'
+                : 'bg-[#00ff88]/85 text-black hover:bg-[#00ff88] shadow-[0_0_10px_rgba(0,255,136,0.35)] hover:shadow-[0_0_22px_rgba(0,255,136,0.7)] hover:scale-105'
+            }`}
+          >
+            <Compass size={13} />
+            <span>PRODUCT</span>
+          </Link>
+
+          {/* CART */}
+          <button
+            onClick={() => setIsCartOpen(true)}
+            onMouseEnter={() => setCursorVariant('hover')}
+            onMouseLeave={() => setCursorVariant('default')}
+            className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest font-mono py-1.5 px-3.5 rounded-full text-white/70 hover:text-[#00ff88] hover:bg-white/5 border border-transparent transition-all duration-200 cursor-pointer"
+          >
+            <div className="relative flex items-center">
+              <ShoppingBag size={13} />
+              {totalItems > 0 && (
+                <motion.span
+                  key={totalItems}
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: [1.5, 0.85, 1.1, 1], opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 12 }}
+                  className="absolute -top-2 -right-2.5 min-w-[16px] h-4 flex items-center justify-center text-[9px] font-black bg-[#00ff88] text-black rounded-full shadow-[0_0_8px_rgba(0,255,136,0.6)] px-0.5"
+                >
+                  {totalItems}
+                </motion.span>
+              )}
             </div>
+            <span>CART</span>
+          </button>
 
-            <nav className="flex flex-col gap-6">
-              <Link
-                to="/"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-4xl font-black uppercase font-syne text-white hover:text-[#00ff88] transition-all inline-block"
+          {/* Contact */}
+          <Link
+            to="/contact"
+            onMouseEnter={() => setCursorVariant('hover')}
+            onMouseLeave={() => setCursorVariant('default')}
+            className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest font-mono py-1.5 px-3.5 rounded-full transition-all duration-200 ${
+              currentPath === '/contact'
+                ? 'bg-white/10 text-[#00ff88] border border-white/15'
+                : 'text-white/70 hover:text-[#00ff88] hover:bg-white/5 border border-transparent'
+            }`}
+          >
+            <Mail size={13} />
+            <span>Contact</span>
+          </Link>
+        </nav>
+
+        {/* === MOBILE ACTION ICONS (hidden on desktop) === */}
+        <div className="flex md:hidden items-center gap-1">
+          {/* Account */}
+          <Link
+            to="/account"
+            onMouseEnter={() => setCursorVariant('hover')}
+            onMouseLeave={() => setCursorVariant('default')}
+            className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 ${
+              currentPath === '/account'
+                ? 'bg-white/15 text-[#00ff88]'
+                : 'text-white/70 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            <User size={18} />
+          </Link>
+
+          {/* 3-dot menu (MoreVertical) */}
+          <button
+            onClick={() => setMoreOpen(v => !v)}
+            className="flex items-center justify-center w-10 h-10 rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="5" r="1.8"/>
+              <circle cx="12" cy="12" r="1.8"/>
+              <circle cx="12" cy="19" r="1.8"/>
+            </svg>
+          </button>
+
+          {/* Cart with badge */}
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative flex items-center justify-center w-10 h-10 rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200"
+          >
+            <ShoppingBag size={18} />
+            {totalItems > 0 && (
+              <motion.span
+                key={totalItems}
+                initial={{ scale: 0.4, opacity: 0 }}
+                animate={{ scale: [1.6, 0.8, 1.1, 1], opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 11 }}
+                className="absolute top-0.5 right-0.5 min-w-[17px] h-[17px] flex items-center justify-center text-[9px] font-black bg-[#00ff88] text-black rounded-full shadow-[0_0_10px_rgba(0,255,136,0.7)] px-0.5"
               >
-                Home
-              </Link>
-              
-              {/* Products Submenu on Mobile */}
-              <div className="space-y-3">
-                <span className="text-xs font-black uppercase tracking-widest text-white/40 block font-mono">Products</span>
-                <div className="pl-4 flex flex-col gap-3 border-l-2 border-white/10">
-                  <Link to="/shop/all" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold uppercase text-white/80 hover:text-[#00ff88] transition-all">All Products</Link>
-                  <Link to="/shop/men" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold uppercase text-white/80 hover:text-[#00ff88] transition-all">Men's Collection</Link>
-                  <Link to="/shop/women" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold uppercase text-white/80 hover:text-[#00ff88] transition-all">Women's Collection</Link>
-                </div>
-              </div>
+                {totalItems}
+              </motion.span>
+            )}
+          </button>
+        </div>
+      </div>
 
+      {/* Mobile 3-dot dropdown */}
+      <AnimatePresence>
+        {moreOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.95 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="absolute top-full right-4 mt-2 z-50 md:hidden"
+            style={{
+              background: 'rgba(14,14,14,0.92)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: '16px',
+              boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
+              minWidth: '160px',
+              overflow: 'hidden',
+            }}
+          >
+            {[
+              { to: '/', label: 'Home', icon: <HomeIcon size={15}/> },
+              { to: '/shop/all', label: 'Products', icon: <Compass size={15}/> },
+              { to: '/contact', label: 'Contact', icon: <Mail size={15}/> },
+            ].map(({ to, label, icon }) => (
               <Link
-                to="/rewards"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-4xl font-black uppercase font-syne text-white hover:text-[#00ff88] transition-all inline-block"
+                key={to}
+                to={to}
+                onClick={() => setMoreOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest font-mono transition-colors ${
+                  currentPath === to || (to === '/shop/all' && currentPath.startsWith('/shop'))
+                    ? 'text-[#00ff88] bg-white/5'
+                    : 'text-white/70 hover:text-white hover:bg-white/5'
+                }`}
               >
-                Rewards
+                {icon}
+                {label}
               </Link>
-
-              {/* Contact Submenu on Mobile */}
-              <div className="space-y-3">
-                <span className="text-xs font-black uppercase tracking-widest text-white/40 block font-mono">Contact</span>
-                <div className="pl-4 flex flex-col gap-3 border-l-2 border-white/10">
-                  <a href="https://wa.me/911234567890" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold uppercase text-white/80 hover:text-[#00ff88] transition-all flex items-center gap-2">
-                    <WhatsAppIcon className="text-white/50 w-4.5 h-4.5" />
-                    WhatsApp
-                  </a>
-                  <a href="mailto:support@elevez.com" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold uppercase text-white/80 hover:text-[#00ff88] transition-all flex items-center gap-2">
-                    <Mail size={18} className="text-white/50" />
-                    Email
-                  </a>
-                  <a href="https://www.instagram.com/elevezdotshop/" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold uppercase text-white/80 hover:text-[#00ff88] transition-all flex items-center gap-2">
-                    <Instagram size={18} className="text-white/50" />
-                    Instagram
-                  </a>
-                </div>
-              </div>
-            </nav>
-
-            <div className="mt-auto pt-16 flex gap-6">
-              <Magnetic>
-                <a href="https://www.instagram.com/elevezdotshop/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-[#00ff88] hover:bg-white/10 transition-all">
-                  <Instagram size={22} />
-                </a>
-              </Magnetic>
-              <Magnetic>
-                <a href="#" className="w-12 h-12 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-[#00ff88] hover:bg-white/10 transition-all">
-                  <Twitter size={22} />
-                </a>
-              </Magnetic>
-            </div>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>
+    </motion.header>
+  );
+};
 
-      {/* Liquid Glass Mobile Bottom Navigation Bar (Myntra-Style) */}
-      {!currentPath.startsWith('/product/') && currentPath !== '/checkout' && (
-        <motion.div
-          initial={{ y: 0 }}
-          animate={{ y: isBottomNavVisible ? 0 : 100 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="lg:hidden fixed bottom-0 left-0 w-full z-[90]"
-        >
-        <div className="bg-black/85 backdrop-blur-xl border-t border-white/10 shadow-[0_-8px_32px_0_rgba(0,0,0,0.3)] rounded-t-2xl flex items-center justify-around py-2 px-6 h-18 relative">
-          {mobileNavItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.id}
-                to={item.path}
-                className="relative flex flex-col items-center justify-center w-14 h-14 transition-all duration-200"
-              >
-                {item.isActive && (
-                  <motion.div
-                    layoutId="mobileActiveTab"
-                    className="absolute inset-0 bg-[#00ff88]/20 border border-[#00ff88]/40 rounded-xl"
-                    transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                  />
-                )}
-                <div className={`relative z-10 flex flex-col items-center justify-center transition-colors duration-200 ${item.isActive ? 'text-[#00ff88]' : 'text-white/60 hover:text-white'}`}>
-                  <Icon size={20} strokeWidth={item.isActive ? 2.5 : 2} />
-                  <span className="text-[9px] font-black uppercase tracking-wider mt-0.5">{item.label}</span>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </motion.div>
-      )}
-    </>
+// --- BOTTOM TAB BAR (mobile only, scroll-aware) ---
+// Hides while scrolling, reappears when scrolling stops
+const BottomTabBar = () => {
+  const { setCursorVariant } = useCursor();
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const [visible, setVisible] = useState(true);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      // Hide as soon as scroll starts
+      if (Math.abs(currentY - lastScrollY.current) > 2) {
+        setVisible(false);
+      }
+      lastScrollY.current = currentY;
+
+      // Reappear 150ms after scrolling stops
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = setTimeout(() => {
+        setVisible(true);
+      }, 150);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    };
+  }, []);
+
+  const tabs = [
+    { to: '/', label: 'Home', icon: HomeIcon, active: currentPath === '/' },
+    { to: '/shop/all', label: 'Products', icon: Compass, active: currentPath.startsWith('/shop') },
+    { to: '/contact', label: 'Contact', icon: Mail, active: currentPath === '/contact' },
+  ];
+
+  return (
+    <motion.nav
+      className="fixed bottom-0 left-0 right-0 z-[100] md:hidden"
+      animate={{ y: visible ? 0 : '110%' }}
+      transition={{ type: 'spring', stiffness: 400, damping: 38, mass: 0.8 }}
+      style={{
+        background: 'linear-gradient(180deg, rgba(10,10,10,0.7) 0%, rgba(5,5,5,0.92) 100%)',
+        backdropFilter: 'blur(28px) saturate(160%)',
+        WebkitBackdropFilter: 'blur(28px) saturate(160%)',
+        borderTop: '1px solid rgba(255,255,255,0.09)',
+        boxShadow: '0 -8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
+        paddingBottom: 'env(safe-area-inset-bottom, 8px)',
+      }}
+    >
+      <div className="flex items-center justify-around px-2 pt-2 pb-1">
+        {tabs.map(({ to, label, icon: Icon, active }) => (
+          <Link
+            key={to}
+            to={to}
+            onMouseEnter={() => setCursorVariant('hover')}
+            onMouseLeave={() => setCursorVariant('default')}
+            className="flex flex-col items-center gap-[3px] px-5 py-1 rounded-xl transition-colors duration-150"
+          >
+            <motion.div
+              animate={{
+                scale: active ? 1.15 : 1,
+                color: active ? '#00ff88' : 'rgba(255,255,255,0.45)',
+              }}
+              transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              {active && (
+                <motion.span
+                  layoutId="bottom-tab-glow"
+                  className="absolute w-8 h-8 rounded-full"
+                  style={{ background: 'rgba(0,255,136,0.15)', filter: 'blur(8px)' }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+                />
+              )}
+              <Icon size={22} color={active ? '#00ff88' : 'rgba(255,255,255,0.45)'} strokeWidth={active ? 2.2 : 1.6} />
+            </motion.div>
+            <span
+              className="text-[9px] font-black uppercase tracking-widest font-mono"
+              style={{ color: active ? '#00ff88' : 'rgba(255,255,255,0.4)' }}
+            >
+              {label}
+            </span>
+            {active && (
+              <motion.div
+                layoutId="bottom-tab-indicator"
+                className="w-4 h-[2px] rounded-full"
+                style={{ background: '#00ff88', boxShadow: '0 0 6px rgba(0,255,136,0.8)' }}
+                transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+              />
+            )}
+          </Link>
+        ))}
+      </div>
+    </motion.nav>
   );
 };
 
@@ -5196,7 +5133,14 @@ function App() {
         <HashRouter>
           <AutoScrollToTop />
           <ClickSpark sparkColor="#00ff88" sparkRadius={25} sparkCount={10} duration={500}>
-            <div className="bg-black min-h-screen text-white selection:bg-[#00ff88] selection:text-black font-space"
+            {/* Render fixed components outside the transformed parent to keep them viewport-relative */}
+            <ScrollProgressBar />
+            <TopHeader />
+            <BottomTabBar />
+            <CartSidebar />
+            <QuickViewModal />
+
+            <div className="bg-black min-h-screen text-white selection:bg-[#00ff88] selection:text-black font-space w-full overflow-x-hidden pb-20 md:pb-0"
               style={{
                 willChange: 'auto',
                 transform: 'translateZ(0)',
@@ -5204,11 +5148,6 @@ function App() {
               }}>
               <FloatingElements />
               <div className="noise-overlay" />
-              <ScrollProgressBar />
-              <Navbar />
-              <CartSidebar />
-              <QuickViewModal />
-              <ScrollToTop />
               <main className="relative z-10">
                 <AnimatedRoutes 
                   setCursorVariant={setCursorVariant} 

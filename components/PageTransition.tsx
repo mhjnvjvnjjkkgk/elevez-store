@@ -8,10 +8,10 @@ interface PageTransitionProps {
 export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.5, ease: [0.77, 0, 0.175, 1] }}
+      initial={{ opacity: 0, filter: 'blur(8px)', y: 15, scale: 0.98 }}
+      animate={{ opacity: 1, filter: 'blur(0px)', y: 0, scale: 1 }}
+      exit={{ opacity: 0, filter: 'blur(8px)', y: -15, scale: 0.98 }}
+      transition={{ duration: 0.45, ease: [0.215, 0.61, 0.355, 1] }}
     >
       {children}
     </motion.div>
