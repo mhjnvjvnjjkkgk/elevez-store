@@ -4797,37 +4797,42 @@ const TopHeader = () => {
 };
 
 // --- BOTTOM TAB BAR (mobile only, scroll-aware) ---
-// Hides while scrolling, reappears when scrolling stops
+// Uses JS-based mobile detection instead of Tailwind md:hidden (unreliable with CDN Tailwind)
 const BottomTabBar = () => {
-  const { setCursorVariant } = useCursor();
   const location = useLocation();
   const currentPath = location.pathname;
   const [visible, setVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastScrollY = useRef(0);
 
+  // Track viewport size - hide on desktop
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Scroll-aware visibility
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
-      // Hide as soon as scroll starts
-      if (Math.abs(currentY - lastScrollY.current) > 2) {
+      if (Math.abs(currentY - lastScrollY.current) > 3) {
         setVisible(false);
       }
       lastScrollY.current = currentY;
-
-      // Reappear 150ms after scrolling stops
       if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
-      scrollTimerRef.current = setTimeout(() => {
-        setVisible(true);
-      }, 150);
+      scrollTimerRef.current = setTimeout(() => setVisible(true), 150);
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
       if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
     };
   }, []);
+
+  // Don't render on desktop
+  if (!isMobile) return null;
 
   const tabs = [
     { to: '/', label: 'Home', icon: HomeIcon, active: currentPath === '/' },
@@ -4837,56 +4842,88 @@ const BottomTabBar = () => {
 
   return (
     <motion.nav
-      className="fixed bottom-0 left-0 right-0 z-[100] md:hidden"
       animate={{ y: visible ? 0 : '110%' }}
       transition={{ type: 'spring', stiffness: 400, damping: 38, mass: 0.8 }}
       style={{
-        background: 'linear-gradient(180deg, rgba(10,10,10,0.7) 0%, rgba(5,5,5,0.92) 100%)',
-        backdropFilter: 'blur(28px) saturate(160%)',
-        WebkitBackdropFilter: 'blur(28px) saturate(160%)',
-        borderTop: '1px solid rgba(255,255,255,0.09)',
-        boxShadow: '0 -8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
-        paddingBottom: 'env(safe-area-inset-bottom, 8px)',
+        // All critical layout via inline style — never trust Tailwind CDN for these
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 9990,
+        display: 'flex',
+        flexDirection: 'column',
+        // Liquid glass
+        background: 'linear-gradient(180deg, rgba(8,8,8,0.75) 0%, rgba(4,4,4,0.95) 100%)',
+        backdropFilter: 'blur(30px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(30px) saturate(180%)',
+        borderTop: '1px solid rgba(255,255,255,0.1)',
+        boxShadow: '0 -8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)',
+        paddingBottom: 'env(safe-area-inset-bottom, 10px)',
       }}
     >
-      <div className="flex items-center justify-around px-2 pt-2 pb-1">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '10px 8px 4px' }}>
         {tabs.map(({ to, label, icon: Icon, active }) => (
           <Link
             key={to}
             to={to}
-            onMouseEnter={() => setCursorVariant('hover')}
-            onMouseLeave={() => setCursorVariant('default')}
-            className="flex flex-col items-center gap-[3px] px-5 py-1 rounded-xl transition-colors duration-150"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '3px',
+              padding: '6px 20px',
+              borderRadius: '12px',
+              textDecoration: 'none',
+              position: 'relative',
+            }}
           >
+            {/* Glow behind active icon */}
+            {active && (
+              <span style={{
+                position: 'absolute',
+                top: '4px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                background: 'rgba(0,255,136,0.18)',
+                filter: 'blur(10px)',
+                pointerEvents: 'none',
+              }} />
+            )}
             <motion.div
-              animate={{
-                scale: active ? 1.15 : 1,
-                color: active ? '#00ff88' : 'rgba(255,255,255,0.45)',
-              }}
+              animate={{ scale: active ? 1.15 : 1 }}
               transition={{ type: 'spring', stiffness: 350, damping: 22 }}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              {active && (
-                <motion.span
-                  layoutId="bottom-tab-glow"
-                  className="absolute w-8 h-8 rounded-full"
-                  style={{ background: 'rgba(0,255,136,0.15)', filter: 'blur(8px)' }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-                />
-              )}
-              <Icon size={22} color={active ? '#00ff88' : 'rgba(255,255,255,0.45)'} strokeWidth={active ? 2.2 : 1.6} />
+              <Icon
+                size={22}
+                color={active ? '#00ff88' : 'rgba(255,255,255,0.45)'}
+                strokeWidth={active ? 2.2 : 1.6}
+              />
             </motion.div>
-            <span
-              className="text-[9px] font-black uppercase tracking-widest font-mono"
-              style={{ color: active ? '#00ff88' : 'rgba(255,255,255,0.4)' }}
-            >
+            <span style={{
+              fontSize: '9px',
+              fontWeight: 900,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              fontFamily: 'monospace',
+              color: active ? '#00ff88' : 'rgba(255,255,255,0.4)',
+            }}>
               {label}
             </span>
             {active && (
               <motion.div
                 layoutId="bottom-tab-indicator"
-                className="w-4 h-[2px] rounded-full"
-                style={{ background: '#00ff88', boxShadow: '0 0 6px rgba(0,255,136,0.8)' }}
+                style={{
+                  width: '16px',
+                  height: '2px',
+                  borderRadius: '2px',
+                  background: '#00ff88',
+                  boxShadow: '0 0 8px rgba(0,255,136,0.9)',
+                  marginTop: '1px',
+                }}
                 transition={{ type: 'spring', stiffness: 350, damping: 28 }}
               />
             )}
@@ -4896,6 +4933,7 @@ const BottomTabBar = () => {
     </motion.nav>
   );
 };
+
 
 const Footer = () => (
   <footer className="bg-white border-t-[8px] border-black pt-24 pb-12 relative z-10">
