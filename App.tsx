@@ -4563,19 +4563,25 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-// --- TOP HEADER (non-sticky, only at top of page) ---
+// --- TOP HEADER (non-sticky, only at very top of page) ---
 // Mobile: Logo | Account | MoreDots | Cart
 // Desktop: Logo | Home | Accounts | PRODUCT | Cart | Contact
+// FIX: All critical CSS (position, zIndex) via inline style — Tailwind CDN unreliable
 const TopHeader = () => {
   const { items, setIsCartOpen, addToCart } = useCart();
-  const { setCursorVariant } = useCursor();
   const location = useLocation();
   const currentPath = location.pathname;
   const [moreOpen, setMoreOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Handle quick add to cart from ProductRecommendations
   useEffect(() => {
     const handleQuickAdd = (event: any) => {
       const { product, size, color, quantity } = event.detail;
@@ -4587,167 +4593,165 @@ const TopHeader = () => {
 
   return (
     <motion.header
-      className="absolute top-0 left-0 right-0 z-50 w-full"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 9980,
+        width: '100%',
+      }}
     >
       {/* Liquid-glass bar */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%)',
-          backdropFilter: 'blur(28px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12)',
-        }}
-        className="w-full px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between"
-      >
+      <div style={{
+        width: '100%',
+        padding: isMobile ? '10px 16px' : '12px 32px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+        backdropFilter: 'blur(28px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+        borderBottom: '1px solid rgba(255,255,255,0.08)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12)',
+      }}>
         {/* LOGO */}
         <Link
           to="/"
-          onMouseEnter={() => setCursorVariant('hover')}
-          onMouseLeave={() => setCursorVariant('default')}
-          className="text-xl sm:text-2xl font-black tracking-tighter font-syne uppercase text-white hover:text-[#00ff88] transition-colors duration-200 whitespace-nowrap select-none"
+          style={{
+            fontSize: isMobile ? '20px' : '24px',
+            fontWeight: 900,
+            letterSpacing: '-0.04em',
+            fontFamily: 'Anton, sans-serif',
+            textTransform: 'uppercase',
+            color: 'white',
+            textDecoration: 'none',
+            whiteSpace: 'nowrap',
+            userSelect: 'none',
+          }}
         >
           <GlitchText text={BRAND_NAME} triggerOnHover={false} />
-          <span className="text-[#00ff88]">.</span>
+          <span style={{ color: '#00ff88' }}>.</span>
         </Link>
 
-        {/* === DESKTOP NAV (hidden on mobile) === */}
-        <nav className="hidden md:flex items-center gap-1 lg:gap-2">
-          {/* Home */}
-          <Link
-            to="/"
-            onMouseEnter={() => setCursorVariant('hover')}
-            onMouseLeave={() => setCursorVariant('default')}
-            className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest font-mono py-1.5 px-3.5 rounded-full transition-all duration-200 ${
-              currentPath === '/'
-                ? 'bg-white/10 text-[#00ff88] border border-white/15'
-                : 'text-white/70 hover:text-[#00ff88] hover:bg-white/5 border border-transparent'
-            }`}
-          >
-            <HomeIcon size={13} />
-            <span>Home</span>
-          </Link>
+        {/* DESKTOP NAV */}
+        {!isMobile && (
+          <nav style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {[
+              { to: '/', label: 'Home', icon: <HomeIcon size={13} />, active: currentPath === '/' },
+              { to: '/account', label: 'Accounts', icon: <User size={13} />, active: currentPath === '/account' },
+            ].map(({ to, label, icon, active }) => (
+              <Link key={to} to={to} style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em',
+                fontFamily: 'monospace', padding: '6px 14px', borderRadius: '999px',
+                textDecoration: 'none', transition: 'all 0.2s',
+                background: active ? 'rgba(255,255,255,0.1)' : 'transparent',
+                color: active ? '#00ff88' : 'rgba(255,255,255,0.7)',
+                border: active ? '1px solid rgba(255,255,255,0.15)' : '1px solid transparent',
+              }}>
+                {icon}<span>{label}</span>
+              </Link>
+            ))}
+            {/* PRODUCT — always neon highlighted */}
+            <Link to="/shop/all" style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em',
+              fontFamily: 'monospace', padding: '6px 20px', borderRadius: '999px',
+              textDecoration: 'none', transition: 'all 0.2s',
+              background: '#00ff88', color: '#000',
+              boxShadow: currentPath.startsWith('/shop') ? '0 0 22px rgba(0,255,136,0.7)' : '0 0 12px rgba(0,255,136,0.35)',
+            }}>
+              <Compass size={13} /><span>PRODUCT</span>
+            </Link>
+            {/* CART */}
+            <button onClick={() => setIsCartOpen(true)} style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em',
+              fontFamily: 'monospace', padding: '6px 14px', borderRadius: '999px',
+              background: 'transparent', color: 'rgba(255,255,255,0.7)', border: '1px solid transparent',
+              cursor: 'pointer', transition: 'all 0.2s', position: 'relative',
+            }}>
+              <span style={{ position: 'relative', display: 'inline-flex' }}>
+                <ShoppingBag size={13} />
+                {totalItems > 0 && (
+                  <motion.span key={totalItems}
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: [1.5, 0.85, 1.1, 1], opacity: 1 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 12 }}
+                    style={{
+                      position: 'absolute', top: '-8px', right: '-10px',
+                      minWidth: '16px', height: '16px', display: 'flex', alignItems: 'center',
+                      justifyContent: 'center', fontSize: '9px', fontWeight: 900,
+                      background: '#00ff88', color: '#000', borderRadius: '999px',
+                      boxShadow: '0 0 8px rgba(0,255,136,0.6)', padding: '0 2px',
+                    }}
+                  >{totalItems}</motion.span>
+                )}
+              </span>
+              <span>CART</span>
+            </button>
+            {/* CONTACT */}
+            <Link to="/contact" style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em',
+              fontFamily: 'monospace', padding: '6px 14px', borderRadius: '999px',
+              textDecoration: 'none', transition: 'all 0.2s',
+              background: currentPath === '/contact' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              color: currentPath === '/contact' ? '#00ff88' : 'rgba(255,255,255,0.7)',
+              border: currentPath === '/contact' ? '1px solid rgba(255,255,255,0.15)' : '1px solid transparent',
+            }}>
+              <Mail size={13} /><span>Contact</span>
+            </Link>
+          </nav>
+        )}
 
-          {/* Accounts */}
-          <Link
-            to="/account"
-            onMouseEnter={() => setCursorVariant('hover')}
-            onMouseLeave={() => setCursorVariant('default')}
-            className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest font-mono py-1.5 px-3.5 rounded-full transition-all duration-200 ${
-              currentPath === '/account'
-                ? 'bg-white/10 text-[#00ff88] border border-white/15'
-                : 'text-white/70 hover:text-[#00ff88] hover:bg-white/5 border border-transparent'
-            }`}
-          >
-            <User size={13} />
-            <span>Accounts</span>
-          </Link>
-
-          {/* PRODUCT — always highlighted */}
-          <Link
-            to="/shop/all"
-            onMouseEnter={() => setCursorVariant('hover')}
-            onMouseLeave={() => setCursorVariant('default')}
-            className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest font-mono py-1.5 px-5 rounded-full transition-all duration-200 ${
-              currentPath.startsWith('/shop')
-                ? 'bg-[#00ff88] text-black shadow-[0_0_20px_rgba(0,255,136,0.7)]'
-                : 'bg-[#00ff88]/85 text-black hover:bg-[#00ff88] shadow-[0_0_10px_rgba(0,255,136,0.35)] hover:shadow-[0_0_22px_rgba(0,255,136,0.7)] hover:scale-105'
-            }`}
-          >
-            <Compass size={13} />
-            <span>PRODUCT</span>
-          </Link>
-
-          {/* CART */}
-          <button
-            onClick={() => setIsCartOpen(true)}
-            onMouseEnter={() => setCursorVariant('hover')}
-            onMouseLeave={() => setCursorVariant('default')}
-            className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest font-mono py-1.5 px-3.5 rounded-full text-white/70 hover:text-[#00ff88] hover:bg-white/5 border border-transparent transition-all duration-200 cursor-pointer"
-          >
-            <div className="relative flex items-center">
-              <ShoppingBag size={13} />
+        {/* MOBILE: Account + 3-dot + Cart icons */}
+        {isMobile && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+            <Link to="/account" style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '40px', height: '40px', borderRadius: '50%', textDecoration: 'none',
+              color: currentPath === '/account' ? '#00ff88' : 'rgba(255,255,255,0.75)',
+              background: currentPath === '/account' ? 'rgba(255,255,255,0.12)' : 'transparent',
+            }}>
+              <User size={19} />
+            </Link>
+            <button onClick={() => setMoreOpen(v => !v)} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '40px', height: '40px', borderRadius: '50%', background: 'transparent',
+              border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.75)',
+            }}>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/>
+              </svg>
+            </button>
+            <button onClick={() => setIsCartOpen(true)} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '40px', height: '40px', borderRadius: '50%', background: 'transparent',
+              border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.75)', position: 'relative',
+            }}>
+              <ShoppingBag size={19} />
               {totalItems > 0 && (
-                <motion.span
-                  key={totalItems}
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: [1.5, 0.85, 1.1, 1], opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 12 }}
-                  className="absolute -top-2 -right-2.5 min-w-[16px] h-4 flex items-center justify-center text-[9px] font-black bg-[#00ff88] text-black rounded-full shadow-[0_0_8px_rgba(0,255,136,0.6)] px-0.5"
-                >
-                  {totalItems}
-                </motion.span>
+                <motion.span key={totalItems}
+                  initial={{ scale: 0.4, opacity: 0 }}
+                  animate={{ scale: [1.6, 0.8, 1.1, 1], opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 11 }}
+                  style={{
+                    position: 'absolute', top: '2px', right: '2px',
+                    minWidth: '17px', height: '17px', display: 'flex', alignItems: 'center',
+                    justifyContent: 'center', fontSize: '9px', fontWeight: 900,
+                    background: '#00ff88', color: '#000', borderRadius: '999px',
+                    boxShadow: '0 0 10px rgba(0,255,136,0.7)', padding: '0 2px',
+                  }}
+                >{totalItems}</motion.span>
               )}
-            </div>
-            <span>CART</span>
-          </button>
-
-          {/* Contact */}
-          <Link
-            to="/contact"
-            onMouseEnter={() => setCursorVariant('hover')}
-            onMouseLeave={() => setCursorVariant('default')}
-            className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest font-mono py-1.5 px-3.5 rounded-full transition-all duration-200 ${
-              currentPath === '/contact'
-                ? 'bg-white/10 text-[#00ff88] border border-white/15'
-                : 'text-white/70 hover:text-[#00ff88] hover:bg-white/5 border border-transparent'
-            }`}
-          >
-            <Mail size={13} />
-            <span>Contact</span>
-          </Link>
-        </nav>
-
-        {/* === MOBILE ACTION ICONS (hidden on desktop) === */}
-        <div className="flex md:hidden items-center gap-1">
-          {/* Account */}
-          <Link
-            to="/account"
-            onMouseEnter={() => setCursorVariant('hover')}
-            onMouseLeave={() => setCursorVariant('default')}
-            className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 ${
-              currentPath === '/account'
-                ? 'bg-white/15 text-[#00ff88]'
-                : 'text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
-          >
-            <User size={18} />
-          </Link>
-
-          {/* 3-dot menu (MoreVertical) */}
-          <button
-            onClick={() => setMoreOpen(v => !v)}
-            className="flex items-center justify-center w-10 h-10 rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="12" cy="5" r="1.8"/>
-              <circle cx="12" cy="12" r="1.8"/>
-              <circle cx="12" cy="19" r="1.8"/>
-            </svg>
-          </button>
-
-          {/* Cart with badge */}
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="relative flex items-center justify-center w-10 h-10 rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200"
-          >
-            <ShoppingBag size={18} />
-            {totalItems > 0 && (
-              <motion.span
-                key={totalItems}
-                initial={{ scale: 0.4, opacity: 0 }}
-                animate={{ scale: [1.6, 0.8, 1.1, 1], opacity: 1 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 11 }}
-                className="absolute top-0.5 right-0.5 min-w-[17px] h-[17px] flex items-center justify-center text-[9px] font-black bg-[#00ff88] text-black rounded-full shadow-[0_0_10px_rgba(0,255,136,0.7)] px-0.5"
-              >
-                {totalItems}
-              </motion.span>
-            )}
-          </button>
-        </div>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Mobile 3-dot dropdown */}
@@ -4758,37 +4762,33 @@ const TopHeader = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.95 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="absolute top-full right-4 mt-2 z-50 md:hidden"
             style={{
-              background: 'rgba(14,14,14,0.92)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid rgba(255,255,255,0.12)',
-              borderRadius: '16px',
-              boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
-              minWidth: '160px',
-              overflow: 'hidden',
+              position: 'absolute', top: '100%', right: '16px', marginTop: '8px',
+              background: 'rgba(12,12,12,0.95)', backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: '16px', boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
+              minWidth: '160px', overflow: 'hidden', zIndex: 9990,
             }}
           >
             {[
               { to: '/', label: 'Home', icon: <HomeIcon size={15}/> },
               { to: '/shop/all', label: 'Products', icon: <Compass size={15}/> },
               { to: '/contact', label: 'Contact', icon: <Mail size={15}/> },
-            ].map(({ to, label, icon }) => (
-              <Link
-                key={to}
-                to={to}
-                onClick={() => setMoreOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-widest font-mono transition-colors ${
-                  currentPath === to || (to === '/shop/all' && currentPath.startsWith('/shop'))
-                    ? 'text-[#00ff88] bg-white/5'
-                    : 'text-white/70 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {icon}
-                {label}
-              </Link>
-            ))}
+            ].map(({ to, label, icon }) => {
+              const isActive = currentPath === to || (to === '/shop/all' && currentPath.startsWith('/shop'));
+              return (
+                <Link key={to} to={to} onClick={() => setMoreOpen(false)} style={{
+                  display: 'flex', alignItems: 'center', gap: '12px',
+                  padding: '12px 16px', textDecoration: 'none',
+                  fontSize: '13px', fontWeight: 700, textTransform: 'uppercase',
+                  letterSpacing: '0.1em', fontFamily: 'monospace',
+                  color: isActive ? '#00ff88' : 'rgba(255,255,255,0.7)',
+                  background: isActive ? 'rgba(255,255,255,0.05)' : 'transparent',
+                }}>
+                  {icon}{label}
+                </Link>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>
@@ -4796,139 +4796,148 @@ const TopHeader = () => {
   );
 };
 
-// --- BOTTOM TAB BAR (mobile only, scroll-aware) ---
-// Uses JS-based mobile detection instead of Tailwind md:hidden (unreliable with CDN Tailwind)
+// --- BOTTOM TAB BAR (mobile only) ---
+// 5 tabs: Home | Accounts | Product | Cart | Contact
+// Chrome-style scroll: hides on scroll DOWN, shows instantly on scroll UP
 const BottomTabBar = () => {
+  const { items, setIsCartOpen } = useCart();
   const location = useLocation();
   const currentPath = location.pathname;
   const [visible, setVisible] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastScrollY = useRef(0);
+  const rafRef = useRef<number | null>(null);
 
-  // Track viewport size - hide on desktop
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize, { passive: true });
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Scroll-aware visibility
+  // Chrome-style: hide on scroll DOWN, show on scroll UP
   useEffect(() => {
     const handleScroll = () => {
-      const currentY = window.scrollY;
-      if (Math.abs(currentY - lastScrollY.current) > 3) {
-        setVisible(false);
-      }
-      lastScrollY.current = currentY;
-      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
-      scrollTimerRef.current = setTimeout(() => setVisible(true), 150);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        const delta = currentY - lastScrollY.current;
+        
+        // Force visible at the very top to prevent overscroll/rubber-band hide glitches
+        if (currentY <= 15) {
+          setVisible(true);
+        } else if (delta > 4) {
+          // Scrolling DOWN → hide
+          setVisible(false);
+        } else if (delta < -4) {
+          // Scrolling UP → show immediately
+          setVisible(true);
+        }
+        
+        // Clamp last scroll position to non-negative to handle iOS bounce smoothly
+        lastScrollY.current = Math.max(0, currentY);
+      });
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
-  // Don't render on desktop
   if (!isMobile) return null;
 
+  const ACTIVE = '#00ff88';
+  const INACTIVE = 'rgba(255,255,255,0.42)';
+
+  // 5 tabs — Cart is a button (no route), Product highlighted neon
   const tabs = [
-    { to: '/', label: 'Home', icon: HomeIcon, active: currentPath === '/' },
-    { to: '/shop/all', label: 'Products', icon: Compass, active: currentPath.startsWith('/shop') },
-    { to: '/contact', label: 'Contact', icon: Mail, active: currentPath === '/contact' },
+    { key: 'home',    label: 'Home',     icon: HomeIcon,     to: '/',          active: currentPath === '/' },
+    { key: 'account', label: 'Account',  icon: User,         to: '/account',   active: currentPath === '/account' },
+    { key: 'product', label: 'Product',  icon: Compass,      to: '/shop/all',  active: currentPath.startsWith('/shop'), highlight: true },
+    { key: 'cart',    label: 'Cart',     icon: ShoppingBag,  to: null,         active: false },
+    { key: 'contact', label: 'Contact',  icon: Mail,         to: '/contact',   active: currentPath === '/contact' },
   ];
 
   return (
     <motion.nav
-      animate={{ y: visible ? 0 : '110%' }}
-      transition={{ type: 'spring', stiffness: 400, damping: 38, mass: 0.8 }}
+      animate={{ y: visible ? 0 : '115%' }}
+      transition={{ type: 'spring', stiffness: 380, damping: 36, mass: 0.7 }}
       style={{
-        // All critical layout via inline style — never trust Tailwind CDN for these
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        zIndex: 9990,
-        display: 'flex',
-        flexDirection: 'column',
-        // Liquid glass
-        background: 'linear-gradient(180deg, rgba(8,8,8,0.75) 0%, rgba(4,4,4,0.95) 100%)',
-        backdropFilter: 'blur(30px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(30px) saturate(180%)',
+        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 9990,
+        background: 'linear-gradient(180deg, rgba(8,8,8,0.78) 0%, rgba(4,4,4,0.97) 100%)',
+        backdropFilter: 'blur(32px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(32px) saturate(180%)',
         borderTop: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 -8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)',
+        boxShadow: '0 -8px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07)',
         paddingBottom: 'env(safe-area-inset-bottom, 10px)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '10px 8px 4px' }}>
-        {tabs.map(({ to, label, icon: Icon, active }) => (
-          <Link
-            key={to}
-            to={to}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '3px',
-              padding: '6px 20px',
-              borderRadius: '12px',
-              textDecoration: 'none',
-              position: 'relative',
-            }}
-          >
-            {/* Glow behind active icon */}
-            {active && (
+      <div style={{ display: 'flex', alignItems: 'stretch', justifyContent: 'space-around', padding: '8px 0 4px' }}>
+        {tabs.map(({ key, label, icon: Icon, to, active, highlight }) => {
+          const color = highlight ? ACTIVE : (active ? ACTIVE : INACTIVE);
+          const content = (
+            <>
+              {/* Glow spot behind active icon */}
+              {(active || highlight) && (
+                <span style={{
+                  position: 'absolute', top: '2px', left: '50%', transform: 'translateX(-50%)',
+                  width: '34px', height: '34px', borderRadius: '50%',
+                  background: 'rgba(0,255,136,0.2)', filter: 'blur(10px)', pointerEvents: 'none',
+                }} />
+              )}
+              <motion.div animate={{ scale: (active || highlight) ? 1.18 : 1 }}
+                transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+                style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                {/* Cart badge */}
+                {key === 'cart' && totalItems > 0 && (
+                  <motion.span key={totalItems}
+                    initial={{ scale: 0.4, opacity: 0 }}
+                    animate={{ scale: [1.6, 0.85, 1.1, 1], opacity: 1 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 11 }}
+                    style={{
+                      position: 'absolute', top: '-7px', right: '-8px',
+                      minWidth: '16px', height: '16px', display: 'flex', alignItems: 'center',
+                      justifyContent: 'center', fontSize: '8px', fontWeight: 900,
+                      background: '#00ff88', color: '#000', borderRadius: '999px',
+                      boxShadow: '0 0 8px rgba(0,255,136,0.8)', padding: '0 2px', zIndex: 2,
+                    }}
+                  >{totalItems}</motion.span>
+                )}
+                <Icon size={21} color={color} strokeWidth={(active || highlight) ? 2.2 : 1.6} />
+              </motion.div>
               <span style={{
-                position: 'absolute',
-                top: '4px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: 'rgba(0,255,136,0.18)',
-                filter: 'blur(10px)',
-                pointerEvents: 'none',
-              }} />
-            )}
-            <motion.div
-              animate={{ scale: active ? 1.15 : 1 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 22 }}
-            >
-              <Icon
-                size={22}
-                color={active ? '#00ff88' : 'rgba(255,255,255,0.45)'}
-                strokeWidth={active ? 2.2 : 1.6}
-              />
-            </motion.div>
-            <span style={{
-              fontSize: '9px',
-              fontWeight: 900,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              fontFamily: 'monospace',
-              color: active ? '#00ff88' : 'rgba(255,255,255,0.4)',
-            }}>
-              {label}
-            </span>
-            {active && (
-              <motion.div
-                layoutId="bottom-tab-indicator"
-                style={{
-                  width: '16px',
-                  height: '2px',
-                  borderRadius: '2px',
-                  background: '#00ff88',
-                  boxShadow: '0 0 8px rgba(0,255,136,0.9)',
-                  marginTop: '1px',
-                }}
-                transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-              />
-            )}
-          </Link>
-        ))}
+                fontSize: '8.5px', fontWeight: 900, textTransform: 'uppercase',
+                letterSpacing: '0.1em', fontFamily: 'monospace', color,
+                marginTop: '2px',
+              }}>{label}</span>
+              {(active || highlight) && (
+                <motion.div layoutId="tab-indicator"
+                  style={{
+                    width: '14px', height: '2px', borderRadius: '2px',
+                    background: ACTIVE, boxShadow: '0 0 8px rgba(0,255,136,0.9)',
+                    marginTop: '2px',
+                  }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                />
+              )}
+            </>
+          );
+
+          const sharedStyle: React.CSSProperties = {
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            padding: '2px 10px 4px', minWidth: '56px', position: 'relative',
+            background: 'transparent', border: 'none', cursor: 'pointer', textDecoration: 'none',
+          };
+
+          return to ? (
+            <Link key={key} to={to} style={sharedStyle}>{content}</Link>
+          ) : (
+            <button key={key} onClick={() => setIsCartOpen(true)} style={sharedStyle}>{content}</button>
+          );
+        })}
       </div>
     </motion.nav>
   );
