@@ -4624,7 +4624,7 @@ const TopHeader = () => {
           style={{
             fontSize: isMobile ? '20px' : '24px',
             fontWeight: 900,
-            letterSpacing: '-0.04em',
+            letterSpacing: '0.06em',
             fontFamily: 'Anton, sans-serif',
             textTransform: 'uppercase',
             color: 'white',
@@ -4709,9 +4709,16 @@ const TopHeader = () => {
           </nav>
         )}
 
-        {/* MOBILE: Account + 3-dot + Cart icons */}
+        {/* MOBILE: Menu (3 lines) + Account + Cart icons */}
         {isMobile && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+            <button onClick={() => setMoreOpen(v => !v)} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '40px', height: '40px', borderRadius: '50%', background: 'transparent',
+              border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.75)',
+            }}>
+              <Menu size={19} />
+            </button>
             <Link to="/account" style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               width: '40px', height: '40px', borderRadius: '50%', textDecoration: 'none',
@@ -4720,15 +4727,6 @@ const TopHeader = () => {
             }}>
               <User size={19} />
             </Link>
-            <button onClick={() => setMoreOpen(v => !v)} style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: '40px', height: '40px', borderRadius: '50%', background: 'transparent',
-              border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.75)',
-            }}>
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/>
-              </svg>
-            </button>
             <button onClick={() => setIsCartOpen(true)} style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               width: '40px', height: '40px', borderRadius: '50%', background: 'transparent',
