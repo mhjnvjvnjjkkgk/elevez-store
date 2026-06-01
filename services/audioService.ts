@@ -6,13 +6,12 @@ class AudioService {
   private isMuted: boolean = true;
 
   constructor() {
-    // Read initial muted state from localStorage
+    // Read initial muted state from localStorage, default to false (unmuted)
     try {
       const saved = localStorage.getItem('elevez_muted');
-      // Default to muted true to respect browser autoplay policies until user unmutes
-      this.isMuted = saved !== 'false';
+      this.isMuted = saved === 'true';
     } catch {
-      this.isMuted = true;
+      this.isMuted = false;
     }
   }
 
