@@ -44,6 +44,7 @@ import { PageLoader } from './components/PageLoader';
 import { DynamicAccordion } from './components/DynamicAccordion';
 import { PageTransition } from './components/PageTransition';
 import { FloatingElements } from './components/FloatingElements';
+import { LiveActivityTicker } from './components/LiveActivityTicker';
 
 const AutoScrollToTop = () => {
   const { pathname } = useLocation();
@@ -2681,6 +2682,19 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   // isLoading prevents 'Product Not Found' from flashing during SSE re-fetch
   const [isLoading, setIsLoading] = useState(true);
 
+  // Simulated live viewer fluctuations for conversion excitement
+  const [liveViewers, setLiveViewers] = useState(() => 14 + Math.floor(Math.random() * 12) + (Number(id || 0) % 5));
+  useEffect(() => {
+    const viewerInterval = setInterval(() => {
+      setLiveViewers(prev => {
+        const delta = Math.random() > 0.5 ? 1 : -1;
+        const next = prev + delta;
+        return next > 6 ? (next < 35 ? next : 32) : 9;
+      });
+    }, 8500);
+    return () => clearInterval(viewerInterval);
+  }, [id]);
+
   // Fix: Scroll to top when product page loads
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -2862,6 +2876,17 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               </div>
             </div>
 
+            {/* Live Hype / Viewing counter */}
+            <div className="flex items-center gap-2 mb-4 bg-zinc-50 border-[2px] border-black px-3 py-1.5 w-fit relative select-none shadow-[3px_3px_0px_0px_#000] font-mono">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+              </span>
+              <span className="text-[10.5px] font-black text-black uppercase tracking-wider">
+                🔥 {liveViewers} looking right now
+              </span>
+            </div>
+
             {/* Horizontal Warning Tape */}
             <div className="my-4 -mx-12 border-y-[3px] border-black bg-yellow-300 text-black py-1.5 overflow-hidden flex-shrink-0 select-none pointer-events-none">
               <InfiniteMarquee text="⚠️ STREETWEAR PROTOCOL // SS26 DROP // 100% PREMIUM COTTON // HEAVYWEIGHT 240 GSM // NO REPRINTS ⚠️" className="py-0.5 text-black text-[9px] font-black tracking-widest" />
@@ -2918,6 +2943,21 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                       {size}
                     </button>
                   ))}
+                </div>
+
+                {/* Size Stock Alert */}
+                <div className="mt-3 flex items-center gap-1.5 text-[9.5px] font-black uppercase font-mono">
+                  {selectedSize === 'S' || selectedSize === 'L' || (Number(product.id) % 3 === 0 && selectedSize === 'XL') ? (
+                    <span className="text-[#ff7e40] flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#ff7e40] animate-pulse"></span>
+                      ⚠️ only 2 items left in size {selectedSize}!
+                    </span>
+                  ) : (
+                    <span className="text-[#00ff88] flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88]"></span>
+                      in stock - ready to transmit
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -5216,6 +5256,7 @@ function App() {
               which traps position:fixed children, so these must be siblings of ClickSpark */}
           <TopHeader />
           <BottomTabBar />
+          <LiveActivityTicker />
 
           {/* Optimized Custom Cursor - Rendered OUTSIDE main container for maximum z-index */}
           <OptimizedCursor variant={cursorVariant} />
