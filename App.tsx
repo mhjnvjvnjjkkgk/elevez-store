@@ -4205,17 +4205,17 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
   // If not logged in
   if (!user && !loading) {
     return (
-      <div className="min-h-screen pt-48 pb-20 bg-white flex items-center justify-center px-6">
+      <div className="min-h-screen pt-48 pb-20 bg-white flex items-center justify-center px-4 sm:px-6">
         <div className="max-w-xl w-full">
-          <div className="bg-white border-[8px] border-black p-16 shadow-[24px_24px_0px_0px_#00ff88] text-center">
-            <div className="w-24 h-24 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center mx-auto mb-10 shadow-[8px_8px_0px_0px_#000]">
-              <User size={48} />
+          <div className="bg-white border-[6px] sm:border-[8px] border-black p-6 sm:p-16 shadow-[12px_12px_0px_0px_#00ff88] sm:shadow-[24px_24px_0px_0px_#00ff88] text-center">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-black text-[#00ff88] border-[3px] sm:border-[4px] border-black flex items-center justify-center mx-auto mb-8 shadow-[6px_6px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000]">
+              <User size={36} className="sm:w-12 sm:h-12" />
             </div>
-            <h1 className="text-6xl font-black mb-6 font-syne uppercase text-black leading-none">Access Restricted</h1>
-            <p className="text-xl font-bold text-black uppercase mb-12 opacity-70">Please sign in to view your account, orders, and wishlist.</p>
+            <h1 className="text-4xl sm:text-6xl font-black mb-6 font-syne uppercase text-black leading-none">Access Restricted</h1>
+            <p className="text-sm sm:text-xl font-bold text-black uppercase mb-8 sm:mb-12 opacity-70">Please sign in to view your account, orders, and wishlist.</p>
             <button
               onClick={handleGoogleSignIn}
-              className="w-full bg-black text-[#00ff88] py-8 px-6 border-[4px] border-black font-black flex items-center justify-center gap-6 shadow-[12px_12px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all text-2xl uppercase tracking-[0.2em]"
+              className="w-full bg-black text-[#00ff88] py-4 sm:py-6 px-4 sm:px-6 border-[3px] sm:border-[4px] border-black font-black flex items-center justify-center gap-3 sm:gap-6 shadow-[6px_6px_0px_0px_#00ff88] sm:shadow-[12px_12px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-lg sm:text-2xl uppercase tracking-[0.1em] sm:tracking-[0.2em]"
             >
               <svg className="w-8 h-8" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -4247,80 +4247,80 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
       <div className="container mx-auto px-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16 border-b-[8px] border-black pb-12">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-16 border-b-[6px] sm:border-b-[8px] border-black pb-8 sm:pb-12">
             <div>
-              <div className="inline-block bg-[#00ff88] text-black text-xs font-black uppercase tracking-[0.3em] px-4 py-2 border-[3px] border-black shadow-[4px_4px_0px_0px_#000] mb-6">
+              <div className="inline-block bg-[#00ff88] text-black text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] px-3 sm:px-4 py-1.5 sm:py-2 border-[2px] sm:border-[3px] border-black shadow-[3px_3px_0px_0px_#000] mb-4 sm:mb-6">
                 Identity Profile
               </div>
-              <h1 className="text-7xl md:text-9xl font-black font-syne uppercase text-black leading-none tracking-tighter">My <span className="text-[#00ff88]" style={{ WebkitTextStroke: '3px black' }}>Account</span></h1>
+              <h1 className="text-5xl sm:text-7xl md:text-9xl font-black font-syne uppercase text-black leading-none tracking-tighter">My <span className="text-[#00ff88]" style={{ WebkitTextStroke: '2px black' }}>Account</span></h1>
             </div>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 sm:gap-6">
               <button
                 onClick={() => loadUserData(user.uid)}
-                className="w-14 h-14 bg-white text-black border-[4px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
+                className="w-11 h-11 sm:w-14 sm:h-14 bg-white text-black border-[3px] sm:border-[4px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000] sm:shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                 title="Sync Data"
               >
-                <RefreshCw size={28} />
+                <RefreshCw size={20} className="sm:w-7 sm:h-7" />
               </button>
               <button
                 onClick={() => signOut(auth)}
-                className="bg-black text-[#00ff88] px-10 py-4 border-[4px] border-black font-black uppercase text-lg shadow-[8px_8px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all flex items-center gap-4"
+                className="bg-black text-[#00ff88] px-5 sm:px-10 py-3 sm:py-4 border-[3px] sm:border-[4px] border-black font-black uppercase text-sm sm:text-lg shadow-[4px_4px_0px_0px_#00ff88] sm:shadow-[8px_8px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center gap-2 sm:gap-4"
               >
-                <LogOut size={24} />
+                <LogOut size={16} className="sm:w-6 sm:h-6" />
                 <span>Disconnect</span>
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16">
             {/* Left Column: User Info */}
-            <div className="lg:col-span-1 space-y-12">
-              <div className="bg-white border-[6px] border-black p-10 shadow-[16px_16px_0px_0px_#000]">
-                <div className="relative inline-block mb-10">
+            <div className="lg:col-span-1 space-y-8 sm:space-y-12">
+              <div className="bg-white border-[4px] sm:border-[6px] border-black p-6 sm:p-10 shadow-[8px_8px_0px_0px_#000] sm:shadow-[16px_16px_0px_0px_#000]">
+                <div className="relative inline-block mb-6 sm:mb-10">
                   {user.photoURL ? (
                     <img 
                       src={user.photoURL} 
                       alt={user.displayName} 
                       referrerPolicy="no-referrer"
-                      className="w-32 h-32 object-cover border-[6px] border-black shadow-[8px_8px_0px_0px_#00ff88]" 
+                      className="w-24 h-24 sm:w-32 sm:h-32 object-cover border-[4px] sm:border-[6px] border-black shadow-[6px_6px_0px_0px_#00ff88] sm:shadow-[8px_8px_0px_0px_#00ff88]" 
                     />
                   ) : (
-                    <div className="w-32 h-32 bg-black text-[#00ff88] border-[6px] border-black flex items-center justify-center shadow-[8px_8px_0px_0px_#00ff88]">
-                      <User size={64} />
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 bg-black text-[#00ff88] border-[4px] sm:border-[6px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_#00ff88] sm:shadow-[8px_8px_0px_0px_#00ff88]">
+                      <User size={48} className="sm:w-16 sm:h-16" />
                     </div>
                   )}
-                  <div className="absolute -bottom-4 -right-4 bg-black text-white px-4 py-2 text-xs font-black uppercase border-[3px] border-black">Verified</div>
+                  <div className="absolute -bottom-2 sm:-bottom-4 -right-2 sm:-right-4 bg-black text-white px-2.5 sm:px-4 py-1 sm:py-2 text-[10px] sm:text-xs font-black uppercase border-[2px] sm:border-[3px] border-black">Verified</div>
                 </div>
-                <h2 className="text-3xl font-black uppercase text-black mb-2">{user.displayName}</h2>
-                <p className="text-lg font-bold text-black opacity-50 uppercase tracking-tighter mb-8">{user.email}</p>
-                <div className="space-y-4 pt-8 border-t-[4px] border-black">
+                <h2 className="text-2xl sm:text-3xl font-black uppercase text-black mb-2">{user.displayName}</h2>
+                <p className="text-sm sm:text-lg font-bold text-black opacity-50 uppercase tracking-tighter mb-6 sm:mb-8 break-all">{user.email}</p>
+                <div className="space-y-4 pt-6 sm:pt-8 border-t-[3px] sm:border-t-[4px] border-black">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-black uppercase opacity-40">Orders</span>
-                    <span className="text-xl font-black uppercase">{orders.length}</span>
+                    <span className="text-xs sm:text-sm font-black uppercase opacity-40">Orders</span>
+                    <span className="text-lg sm:text-xl font-black uppercase">{orders.length}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-black uppercase opacity-40">Wishlist</span>
-                    <span className="text-xl font-black uppercase">{wishlistProducts.length}</span>
+                    <span className="text-xs sm:text-sm font-black uppercase opacity-40">Wishlist</span>
+                    <span className="text-lg sm:text-xl font-black uppercase">{wishlistProducts.length}</span>
                   </div>
                 </div>
               </div>
 
               {/* Loyalty Teaser in Side */}
-              <div className="bg-[#00ff88] border-[6px] border-black p-10 shadow-[16px_16px_0px_0px_#000]">
-                <h3 className="text-3xl font-black uppercase text-black mb-6 leading-none font-syne">Loyalty Status</h3>
-                <div className="bg-white border-[4px] border-black p-6 mb-8 text-center relative overflow-hidden">
-                  <p className="text-5xl font-black text-black font-syne mb-1">
+              <div className="bg-[#00ff88] border-[4px] sm:border-[6px] border-black p-6 sm:p-10 shadow-[8px_8px_0px_0px_#000] sm:shadow-[16px_16px_0px_0px_#000]">
+                <h3 className="text-2xl sm:text-3xl font-black uppercase text-black mb-4 sm:mb-6 leading-none font-syne">Loyalty Status</h3>
+                <div className="bg-white border-[3px] sm:border-[4px] border-black p-4 sm:p-6 mb-6 sm:mb-8 text-center relative overflow-hidden">
+                  <p className="text-4xl sm:text-5xl font-black text-black font-syne mb-1">
                     {loyaltyProfile ? loyaltyProfile.points.toLocaleString() : '0'}
                   </p>
-                  <p className="text-xs font-black uppercase text-black opacity-60">Available Points</p>
+                  <p className="text-[10px] sm:text-xs font-black uppercase text-black opacity-60">Available Points</p>
                   {loyaltyTierInfo && (
-                    <div className="mt-4 pt-4 border-t-2 border-black/10 flex items-center justify-center gap-2">
-                      <span className="text-2xl">{loyaltyTierInfo.icon}</span>
-                      <span className="text-sm font-black uppercase text-black">{loyaltyTierInfo.name} Member</span>
+                    <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t-2 border-black/10 flex items-center justify-center gap-2">
+                      <span className="text-xl sm:text-2xl">{loyaltyTierInfo.icon}</span>
+                      <span className="text-xs sm:text-sm font-black uppercase text-black">{loyaltyTierInfo.name} Member</span>
                     </div>
                   )}
                 </div>
-                <Link to="/rewards" className="block w-full bg-black text-[#00ff88] py-4 text-center border-[3px] border-black font-black uppercase shadow-[6px_6px_0px_0px_#fff] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
+                <Link to="/rewards" className="block w-full bg-black text-[#00ff88] py-3.5 sm:py-4 text-center border-[2px] sm:border-[3px] border-black font-black uppercase text-sm sm:text-base shadow-[4px_4px_0px_0px_#fff] sm:shadow-[6px_6px_0px_0px_#fff] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
                   Portal Access
                 </Link>
               </div>
@@ -4330,18 +4330,18 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
             <div className="lg:col-span-2 space-y-16">
               {/* Past Orders */}
               <section>
-                <div className="flex items-center gap-6 mb-10">
-                  <div className="w-14 h-14 bg-black text-[#00ff88] border-[3px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000]">
-                    <Package size={32} />
+                <div className="flex items-center gap-4 sm:gap-6 mb-6 sm:mb-10">
+                  <div className="w-11 h-11 sm:w-14 sm:h-14 bg-black text-[#00ff88] border-[2px] sm:border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]">
+                    <Package size={20} className="sm:w-8 sm:h-8" />
                   </div>
-                  <h2 className="text-5xl font-black uppercase font-syne text-black">Log History</h2>
+                  <h2 className="text-3xl sm:text-5xl font-black uppercase font-syne text-black">Log History</h2>
                 </div>
 
                 {orders.length === 0 ? (
-                  <div className="bg-white border-[6px] border-black p-16 text-center shadow-[12px_12px_0px_0px_#000]">
-                    <Package size={64} className="mx-auto mb-8 text-black opacity-10" />
-                    <p className="text-2xl font-black text-black uppercase mb-10 opacity-50 italic">No operations recorded yet.</p>
-                    <Link to="/shop/all" className="inline-block bg-[#00ff88] text-black px-12 py-5 border-[4px] border-black font-black uppercase text-xl shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
+                  <div className="bg-white border-[4px] sm:border-[6px] border-black p-8 sm:p-16 text-center shadow-[6px_6px_0px_0px_#000] sm:shadow-[12px_12px_0px_0px_#000]">
+                    <Package size={48} className="mx-auto mb-6 text-black opacity-10 sm:w-16 sm:h-16" />
+                    <p className="text-lg sm:text-2xl font-black text-black uppercase mb-6 sm:mb-10 opacity-50 italic">No operations recorded yet.</p>
+                    <Link to="/shop/all" className="inline-block bg-[#00ff88] text-black px-6 sm:px-12 py-3.5 sm:py-5 border-[3px] sm:border-[4px] border-black font-black uppercase text-sm sm:text-xl shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
                       Browse Store
                     </Link>
                   </div>
@@ -4381,23 +4381,23 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                       const total = order.totalAmount ?? order.total ?? 0;
 
                       return (
-                        <div key={order.id} className="bg-white border-[4px] border-black p-8 shadow-[8px_8px_0px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                          <div className="flex flex-col md:flex-row justify-between gap-6 mb-8 border-b-[3px] border-black pb-6">
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-4">
-                                <span className="text-xs font-black uppercase opacity-40">Operation ID:</span>
-                                <span className="text-sm font-black uppercase">{order.id.slice(0, 8)}</span>
+                        <div key={order.id} className="bg-white border-[3px] sm:border-[4px] border-black p-4 sm:p-8 shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all">
+                          <div className="flex flex-col md:flex-row justify-between gap-4 sm:gap-6 mb-6 sm:mb-8 border-b-[2px] sm:border-b-[3px] border-black pb-4 sm:pb-6">
+                            <div className="space-y-1 sm:space-y-2">
+                              <div className="flex items-center gap-2 sm:gap-4">
+                                <span className="text-[10px] sm:text-xs font-black uppercase opacity-40">Operation ID:</span>
+                                <span className="text-xs sm:text-sm font-black uppercase">{order.id.slice(0, 8)}</span>
                               </div>
-                              <div className="text-2xl font-black uppercase font-syne text-black">
+                              <div className="text-xl sm:text-2xl font-black uppercase font-syne text-black">
                                 {orderDateStr}
                               </div>
                             </div>
-                            <div className="flex items-center gap-6">
-                              <div className="text-right">
-                                <p className="text-xs font-black uppercase opacity-40">Value</p>
-                                <p className="text-3xl font-black text-black">₹{total.toFixed(0)}</p>
+                            <div className="flex items-center justify-between md:justify-start gap-4 sm:gap-6">
+                              <div className="text-left md:text-right">
+                                <p className="text-[10px] sm:text-xs font-black uppercase opacity-40">Value</p>
+                                <p className="text-xl sm:text-3xl font-black text-black">₹{total.toFixed(0)}</p>
                               </div>
-                              <div className={`${status.bg} ${status.text} px-4 py-2 border-[2px] border-black font-black uppercase text-xs shadow-[4px_4px_0px_0px_#000]`}>
+                              <div className={`${status.bg} ${status.text} px-2.5 sm:px-4 py-1.5 sm:py-2 border-[1.5px] sm:border-[2px] border-black font-black uppercase text-[10px] sm:text-xs shadow-[2px_2px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]`}>
                                 {order.status || 'pending'}
                               </div>
                             </div>
@@ -4460,9 +4460,9 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                               setSelectedOrder(modalOrder);
                               setShowOrderModal(true);
                             }}
-                            className="w-full mt-6 bg-black text-[#00ff88] py-4 border-[3px] border-black font-black uppercase shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center justify-center gap-3"
+                            className="w-full mt-4 sm:mt-6 bg-black text-[#00ff88] py-3 sm:py-4 border-[2px] sm:border-[3px] border-black font-black uppercase text-xs sm:text-base shadow-[3px_3px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center justify-center gap-2 sm:gap-3 cursor-pointer"
                           >
-                            <Eye size={20} />
+                            <Eye size={16} className="sm:w-5 sm:h-5" />
                             Full Report
                           </button>
                         </div>
@@ -4474,25 +4474,25 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
 
               {/* Wishlist */}
               <section>
-                <div className="flex items-center gap-6 mb-10">
-                  <div className="w-14 h-14 bg-black text-[#00ff88] border-[3px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000]">
-                    <Heart size={32} />
+                <div className="flex items-center gap-4 sm:gap-6 mb-6 sm:mb-10">
+                  <div className="w-11 h-11 sm:w-14 sm:h-14 bg-black text-[#00ff88] border-[2px] sm:border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]">
+                    <Heart size={20} className="sm:w-8 sm:h-8" />
                   </div>
-                  <h2 className="text-5xl font-black uppercase font-syne text-black">Saved Items</h2>
+                  <h2 className="text-3xl sm:text-5xl font-black uppercase font-syne text-black">Saved Items</h2>
                 </div>
 
                 {wishlistProducts.length === 0 ? (
-                  <div className="bg-white border-[6px] border-black p-16 text-center shadow-[12px_12px_0px_0px_#000]">
-                    <Heart size={64} className="mx-auto mb-8 text-black opacity-10" />
-                    <p className="text-2xl font-black text-black uppercase mb-10 opacity-50 italic">No assets saved.</p>
-                    <Link to="/shop/all" className="inline-block bg-[#00ff88] text-black px-12 py-5 border-[4px] border-black font-black uppercase text-xl shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
+                  <div className="bg-white border-[4px] sm:border-[6px] border-black p-8 sm:p-16 text-center shadow-[6px_6px_0px_0px_#000] sm:shadow-[12px_12px_0px_0px_#000]">
+                    <Heart size={48} className="mx-auto mb-6 text-black opacity-10 sm:w-16 sm:h-16" />
+                    <p className="text-lg sm:text-2xl font-black text-black uppercase mb-6 sm:mb-10 opacity-50 italic">No assets saved.</p>
+                    <Link to="/shop/all" className="inline-block bg-[#00ff88] text-black px-6 sm:px-12 py-3.5 sm:py-5 border-[3px] sm:border-[4px] border-black font-black uppercase text-sm sm:text-xl shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
                       Browse All
                     </Link>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 md:gap-8">
                     {wishlistProducts.map((product) => (
-                      <div key={product.id} className="bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_#000] overflow-hidden group">
+                      <div key={product.id} className="bg-white border-[2px] sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] overflow-hidden group">
                         <div className="relative aspect-[3/4] overflow-hidden bg-black">
                           <img
                             src={product.image}
@@ -4501,17 +4501,17 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                           />
                           <button
                             onClick={() => toggleWishlist(product.id)}
-                            className="absolute top-4 right-4 w-12 h-12 bg-[#00ff88] text-black border-[3px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+                            className="absolute top-2 sm:top-4 right-2 sm:right-4 w-8 h-8 sm:w-12 sm:h-12 bg-[#00ff88] text-black border-[2px] sm:border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer"
                           >
-                            <X size={24} />
+                            <X size={16} className="sm:w-6 sm:h-6" />
                           </button>
                         </div>
-                        <div className="p-6">
-                          <h3 className="font-black uppercase text-black mb-1 line-clamp-1 text-sm">{product.name}</h3>
-                          <p className="text-xl font-black text-[#00ff88] mb-6" style={{ WebkitTextStroke: '1px black' }}>₹{product.price}</p>
+                        <div className="p-3 sm:p-6">
+                          <h3 className="font-black uppercase text-black mb-1 line-clamp-1 text-[11px] sm:text-sm">{product.name}</h3>
+                          <p className="text-sm sm:text-xl font-black text-[#00ff88] mb-3 sm:mb-6" style={{ WebkitTextStroke: '0.5px black' }}>₹{product.price}</p>
                           <Link
                             to={`/product/${product.id}`}
-                            className="block w-full bg-black text-[#00ff88] py-3 text-center border-[2px] border-black font-black uppercase text-xs shadow-[4px_4px_0px_0px_#fff] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                            className="block w-full bg-black text-[#00ff88] py-2 sm:py-3 text-center border-[1.5px] sm:border-[2px] border-black font-black uppercase text-[10px] sm:text-xs shadow-[2px_2px_0px_0px_#fff] sm:shadow-[4px_4px_0px_0px_#fff] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
                           >
                             View
                           </Link>
