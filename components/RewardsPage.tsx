@@ -13,6 +13,8 @@ import { TiersBenefitsSection } from './rewards/TiersBenefitsSection';
 import { RedeemRewardsSection } from './rewards/RedeemRewardsSection';
 import { ClaimPointsSection } from './rewards/ClaimPointsSection';
 import { PointsHistorySection } from './rewards/PointsHistorySection';
+import { LuckySpinWheel } from './rewards/LuckySpinWheel';
+import { ScratchCard } from './rewards/ScratchCard';
 
 // Interactive Text Component for Animated Heading
 const InteractiveText = ({ text, className = "" }: { text: string, className?: string }) => (
@@ -170,6 +172,29 @@ export const RewardsPage: React.FC = () => {
       {/* Main Content sections */}
       <div className="space-y-32">
         <HowItWorksSection />
+        
+        {/* Interactive Arcade Zone */}
+        <section className="relative px-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <div className="inline-block bg-black text-[#ff007f] text-xs font-black uppercase tracking-[0.2em] px-6 py-2 border-[3px] border-black shadow-[4px_4px_0_0_#000] mb-4">
+                Syndicate Interactive Zone
+              </div>
+              <h2 className="text-4xl md:text-6xl font-black uppercase text-black font-syne tracking-tight">
+                ARCADE <span className="text-[#ff007f]">CABINETS</span>
+              </h2>
+              <p className="text-sm font-bold text-zinc-500 uppercase mt-4 max-w-xl mx-auto">
+                Play daily minigames to double your points or earn secret codes. Spins and scratches sync in real-time to your profile.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start justify-center max-w-5xl mx-auto">
+              <LuckySpinWheel />
+              <ScratchCard />
+            </div>
+          </div>
+        </section>
+
         <TiersBenefitsSection thresholds={tierThresholds} />
         <ClaimPointsSection earningRate={earningRate} />
         <RedeemRewardsSection />

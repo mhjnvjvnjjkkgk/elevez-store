@@ -7,6 +7,58 @@ export const ACCENT_COLOR = "#00ff88";
 // Last update: 30/5/2026, 6:06:05 pm
 export const PRODUCTS: Product[] = [
   {
+    "id": 1122334455,
+    "reviews": 182,
+    "isBestSeller": true,
+    "category": "Accessories",
+    "isFeatured": true,
+    "importedAt": "2026-06-01T12:00:00.000Z",
+    "isNew": true,
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fnf96ufnf96ufnf9.png?v=1761044221",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_edywhedywhedywhe.png?v=1761328771",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_6bn3mz6bn3mz6bn3.png?v=1761328771"
+    ],
+    "originalPrice": 799,
+    "sku": "ELVZ-HYPERBOX-OS",
+    "name": "ELEVEZ HYPERBOX (MYSTERY DROP)",
+    "rating": 4.95,
+    "tags": [
+      "299",
+      "mystery",
+      "hype"
+    ],
+    "updatedAt": "2026-06-01T12:00:00.000Z",
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fnf96ufnf96ufnf9.png?v=1761044221",
+    "source": "custom",
+    "type": "mystery",
+    "description": "Unbox the ultimate hype. The Elevez Hyperbox contains a randomized selection of curated premium streetwear accessories, holographic stickers, keychains, or high-end apparel blanks. Every drop is unique. Are you feeling lucky?",
+    "qid": "SHOP-HYPERBOX-001",
+    "stock": 15,
+    "variants": [
+      {
+        "compareAtPrice": 799,
+        "price": 299,
+        "title": "Standard Hyperbox",
+        "id": "variant-hyperbox",
+        "options": [
+          { "value": "OS", "name": "size" }
+        ],
+        "availableForSale": true,
+        "sku": "ELVZ-HYPERBOX-OS"
+      }
+    ],
+    "inStock": true,
+    "colors": ["Neon Green", "Cyber Pink"],
+    "sizes": ["OS"],
+    "collections": [
+      "All products!",
+      "Best Sellers",
+      "Below 500"
+    ],
+    "price": 299
+  },
+  {
     "id": 7915861377163,
     "reviews": 47,
     "isBestSeller": true,

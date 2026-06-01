@@ -45,6 +45,8 @@ import { DynamicAccordion } from './components/DynamicAccordion';
 import { PageTransition } from './components/PageTransition';
 import { FloatingElements } from './components/FloatingElements';
 import { LiveActivityTicker } from './components/LiveActivityTicker';
+import { audioService } from './services/audioService';
+import { MuteToggleButton } from './components/MuteToggleButton';
 
 const AutoScrollToTop = () => {
   const { pathname } = useLocation();
@@ -159,6 +161,7 @@ const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   }, [items]);
 
   const addToCart = (product: Product, size: string, color: string, quantity: number = 1, openSidebar: boolean = true) => {
+    audioService.playCoin(); // Play synthesized coin sound
     const cartId = `${product.id}-${size}-${color}`;
     setItems(prev => {
       const existing = prev.find(item => item.cartId === cartId);
@@ -173,6 +176,7 @@ const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   };
 
   const removeFromCart = (cartId: string) => {
+    audioService.playSwipe(); // Play synthesized swipe sound
     setItems(prev => prev.filter(item => item.cartId !== cartId));
   };
 
@@ -583,7 +587,10 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         <Link
           to={`/product/${product.id}`}
           className="absolute inset-0 w-full h-full z-10"
-          onMouseEnter={onHoverStart}
+          onMouseEnter={() => {
+            audioService.playTick(); // satisfying micro-feedback
+            onHoverStart();
+          }}
         >
           <img
             src={product.image}
@@ -2669,6 +2676,80 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   );
 };
 
+const MysteryUnboxPreview = () => {
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [rolledItem, setRolledItem] = useState<any>(null);
+  const [currentIdx, setCurrentIdx] = useState(0);
+
+  const items = [
+    { name: "Obsidian Cyber Hoodie", rarity: "LEGENDARY", color: "#FF007F", img: "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_edywhedywhedywhe.png?v=1761328771" },
+    { name: "Neotokyo Kanji Tee", rarity: "RARE", color: "#39ff14", img: "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fnf96ufnf96ufnf9.png?v=1761044221" },
+    { name: "Monarch Butterfly Crop", rarity: "EPIC", color: "#00ffff", img: "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_u9g2euu9g2euu9g2.png?v=1761748319" },
+    { name: "Dragon Blossom Tee", rarity: "EPIC", color: "#00ff88", img: "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1e3bze1e3bze1e3b.png?v=1761748465" },
+    { name: "Holographic Slap Sticker", rarity: "COMMON", color: "#888888", img: "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_v37f2av37f2av37f.png?v=1760956530" },
+    { name: "Elite pin", rarity: "COMMON", color: "#888888", img: "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_c75ddc75ddc75ddc.png?v=1760956639" }
+  ];
+
+  const handleStartSpin = () => {
+    if (isSpinning) return;
+    setIsSpinning(true);
+    setRolledItem(null);
+    let count = 0;
+    const totalSpins = 20 + Math.floor(Math.random() * 10);
+    const intervalTime = 90;
+
+    audioService.playSwipe();
+
+    const spinInterval = setInterval(() => {
+      setCurrentIdx(prev => (prev + 1) % items.length);
+      audioService.playWheelTick();
+      count++;
+
+      if (count >= totalSpins) {
+        clearInterval(spinInterval);
+        setIsSpinning(false);
+        const finalIdx = Math.floor(Math.random() * items.length);
+        setCurrentIdx(finalIdx);
+        setRolledItem(items[finalIdx]);
+        audioService.playUnlock();
+      }
+    }, intervalTime);
+  };
+
+  return (
+    <div className="border-[3px] border-black bg-zinc-950 p-4 text-white font-mono my-4 shadow-[4px_4px_0_0_#ff7e40]">
+      <div className="text-xs uppercase text-[#ff7e40] font-black mb-3 tracking-wider flex items-center gap-1.5">
+        <span>📦</span> UNBOX PREVIEW SIMULATOR
+      </div>
+      <div className="relative h-20 bg-zinc-900 border-2 border-black overflow-hidden flex items-center justify-center">
+        <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-[#00ff88] z-10" />
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center justify-center w-48 text-center shrink-0">
+            <img src={items[currentIdx].img} alt="" className="w-10 h-10 object-cover border border-white mb-1" />
+            <span className="text-[9px] font-black uppercase text-white truncate w-full px-2">{items[currentIdx].name}</span>
+            <span style={{ color: items[currentIdx].color }} className="text-[8px] font-black tracking-widest uppercase">{items[currentIdx].rarity}</span>
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={handleStartSpin}
+        disabled={isSpinning}
+        className="w-full mt-3 py-2 bg-[#ff7e40] text-black border-2 border-black font-black uppercase text-xs tracking-wider shadow-[2px_2px_0_0_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all cursor-pointer"
+      >
+        {isSpinning ? "ROLLING..." : "SIMULATE LOOT ROLL"}
+      </button>
+
+      {rolledItem && (
+        <div className="mt-3 text-center text-[10.5px] font-black uppercase text-[#00ff88] border border-[#00ff88]/30 bg-[#00ff88]/10 p-2 rounded">
+          🎉 ROLLED: {rolledItem.name} ({rolledItem.rarity})
+        </div>
+      )}
+    </div>
+  );
+};
+
 const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const { id } = useParams();
   const { addToCart, setIsCartOpen } = useCart();
@@ -2787,7 +2868,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
           <ArrowLeft size={16} /> Back to Archives
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start pb-20 lg:pb-0">
+        <div className={`grid grid-cols-1 lg:grid-cols-12 gap-16 items-start pb-20 lg:pb-0 ${product.type === 'mystery' ? 'border-[4px] border-dashed border-[#ff7e40] p-4 sm:p-6 shadow-[8px_8px_0_0_#000]' : ''}`}>
           {/* Left Column - sticky, full image with borders always in view */}
           <div className="lg:col-span-6 lg:sticky lg:top-28">
           <div className="bg-white border-[4px] sm:border-[8px] border-black p-2 sm:p-6 md:p-8 shadow-[8px_8px_0px_0px_#000] sm:shadow-[16px_16px_0px_0px_#000] relative flex flex-col h-auto w-full">
@@ -2982,6 +3063,8 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                 { title: "Shipping Signals", content: "Dispatched within 24-48 hours. Express shipping available. Real-time tracking enabled." }
               ]} />
             </div>
+
+            {product.type === 'mystery' && <MysteryUnboxPreview />}
 
             {/* Desktop Buttons */}
             <div className="hidden lg:flex flex-col gap-4 mb-8">
@@ -4613,6 +4696,20 @@ const TopHeader = () => {
   const currentPath = location.pathname;
   const [moreOpen, setMoreOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [logoClicks, setLogoClicks] = useState<number[]>([]);
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    const now = Date.now();
+    const newClicks = [...logoClicks.filter(t => now - t < 3000), now];
+    setLogoClicks(newClicks);
+    if (newClicks.length >= 5) {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('dopamine_overdrive_trigger'));
+      setLogoClicks([]);
+    } else {
+      audioService.playTick();
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -4661,6 +4758,7 @@ const TopHeader = () => {
         {/* LOGO */}
         <Link
           to="/"
+          onClick={handleLogoClick}
           style={{
             fontSize: isMobile ? '20px' : '24px',
             fontWeight: 900,
@@ -5136,6 +5234,49 @@ const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => vo
 function App() {
   const { cursorVariant, setCursorVariant } = useCursor();
   const [isRewardsModalOpen, setIsRewardsModalOpen] = useState(false);
+  const [konamiProgress, setKonamiProgress] = useState<string[]>([]);
+  const [showKonamiOverlay, setShowKonamiOverlay] = useState(false);
+  const [dopamineOverdrive, setDopamineOverdrive] = useState(false);
+
+  // Dopamine Overdrive listener
+  useEffect(() => {
+    const handleTrigger = () => {
+      setDopamineOverdrive(true);
+      audioService.playUnlock();
+      setTimeout(() => setDopamineOverdrive(false), 15000); // 15 seconds of extreme overdrive!
+    };
+    window.addEventListener('dopamine_overdrive_trigger', handleTrigger);
+    return () => window.removeEventListener('dopamine_overdrive_trigger', handleTrigger);
+  }, []);
+
+  // Konami Code Detector
+  useEffect(() => {
+    const konamiCode = [
+      'ArrowUp', 'ArrowUp',
+      'ArrowDown', 'ArrowDown',
+      'ArrowLeft', 'ArrowRight',
+      'ArrowLeft', 'ArrowRight',
+      'b', 'a'
+    ];
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const nextProgress = [...konamiProgress, e.key].slice(-10);
+      setKonamiProgress(nextProgress);
+
+      const isMatch = nextProgress.length === 10 && nextProgress.every((key, index) => key === konamiCode[index]);
+      if (isMatch) {
+        setShowKonamiOverlay(true);
+        audioService.playSuccess();
+        setTimeout(() => setShowKonamiOverlay(false), 6000);
+        try {
+          navigator.clipboard.writeText('KONAMI50');
+        } catch {}
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [konamiProgress]);
 
   // Initialize Firebase sync and SWR revalidation on app load
   useEffect(() => {
@@ -5217,13 +5358,34 @@ function App() {
       <QuickViewProvider>
         <HashRouter>
           <AutoScrollToTop />
-          <ClickSpark sparkColor="#00ff88" sparkRadius={25} sparkCount={10} duration={500}>
+          {showKonamiOverlay && (
+            <div className="fixed inset-0 z-[9999] bg-black/95 border-[10px] border-[#00ff88] flex flex-col items-center justify-center font-mono text-center pointer-events-none select-none">
+              <div className="text-5xl md:text-7xl font-black text-[#00ff88] mb-4 animate-pulse">CODE INJECTED</div>
+              <div className="text-lg md:text-xl font-black text-white uppercase tracking-widest">
+                🎟️ UNLOCKED 50% OFF CODE: <span className="bg-[#00ff88] text-black px-4 py-1">KONAMI50</span>
+              </div>
+              <div className="text-xs text-zinc-500 mt-6 uppercase">(Copied to clipboard!)</div>
+            </div>
+          )}
+          
+          {dopamineOverdrive && (
+            <div className="fixed inset-x-0 top-0 z-[9990] bg-[#ff007f] text-black py-2 text-center font-black uppercase text-[10px] tracking-widest border-b-[3px] border-black animate-pulse">
+              🚀 DOPAMINE OVERDRIVE ACTIVATED // EXTREME SPARKS ON CLICK 🚀
+            </div>
+          )}
+
+          <ClickSpark 
+            sparkColor={dopamineOverdrive ? "#ff007f" : "#00ff88"} 
+            sparkRadius={dopamineOverdrive ? 45 : 25} 
+            sparkCount={dopamineOverdrive ? 24 : 10} 
+            duration={dopamineOverdrive ? 300 : 500}
+          >
             {/* Render fixed components outside the transformed parent to keep them viewport-relative */}
             <ScrollProgressBar />
             <CartSidebar />
             <QuickViewModal />
 
-            <div className="bg-black min-h-screen text-white selection:bg-[#00ff88] selection:text-black font-space w-full overflow-x-hidden pb-20 md:pb-0"
+            <div className={`bg-black min-h-screen text-white selection:bg-[#00ff88] selection:text-black font-space w-full overflow-x-hidden pb-20 md:pb-0 ${dopamineOverdrive ? 'border-[8px] border-[#ff007f] shadow-[0_0_30px_rgba(255,0,127,0.5)]' : ''}`}
               style={{
                 willChange: 'auto',
                 transform: 'translateZ(0)',
@@ -5257,6 +5419,7 @@ function App() {
           <TopHeader />
           <BottomTabBar />
           <LiveActivityTicker />
+          <MuteToggleButton />
 
           {/* Optimized Custom Cursor - Rendered OUTSIDE main container for maximum z-index */}
           <OptimizedCursor variant={cursorVariant} />
