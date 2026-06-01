@@ -5135,8 +5135,6 @@ function App() {
           <ClickSpark sparkColor="#00ff88" sparkRadius={25} sparkCount={10} duration={500}>
             {/* Render fixed components outside the transformed parent to keep them viewport-relative */}
             <ScrollProgressBar />
-            <TopHeader />
-            <BottomTabBar />
             <CartSidebar />
             <QuickViewModal />
 
@@ -5168,6 +5166,11 @@ function App() {
               <ExitIntentPopup />
             </div>
           </ClickSpark>
+
+          {/* TopHeader and BottomTabBar rendered OUTSIDE ClickSpark - ClickSpark has position:relative
+              which traps position:fixed children, so these must be siblings of ClickSpark */}
+          <TopHeader />
+          <BottomTabBar />
 
           {/* Optimized Custom Cursor - Rendered OUTSIDE main container for maximum z-index */}
           <OptimizedCursor variant={cursorVariant} />
