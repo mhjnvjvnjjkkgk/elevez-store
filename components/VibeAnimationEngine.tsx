@@ -201,6 +201,105 @@ export const VibeAnimationEngine: React.FC<VibeAnimationEngineProps> = ({ vibe, 
 
     initParticles(canvas.width, canvas.height);
 
+    let lastScrollY = window.scrollY;
+    let scrollVelocity = 0;
+
+    const spawnParticle = (vibeType: string, customY?: number): Particle => {
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+      const centerX = canvasWidth / 2;
+      const centerY = canvasHeight / 2;
+      const yPos = customY !== undefined ? customY : canvasHeight + 10;
+      
+      const p: Particle = {
+        x: Math.random() * canvasWidth,
+        y: yPos,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: -1.5 - Math.random() * 2,
+        size: 10 + Math.random() * 15,
+        color: '#ffffff',
+        alpha: 0.8,
+        life: 0,
+        maxLife: 150 + Math.random() * 150,
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.05
+      };
+
+      if (vibeType === 'CUTE') {
+        p.color = Math.random() > 0.5 ? '#ff69b4' : '#ff1493';
+        p.vx = (Math.random() - 0.5) * 1.5;
+        p.vy = -1.0 - Math.random() * 2;
+        p.size = 12 + Math.random() * 16;
+        p.extra = {
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.02 + Math.random() * 0.03,
+          amplitude: 20 + Math.random() * 30
+        };
+      } else if (vibeType === 'BEAUTIFUL') {
+        p.y = Math.random() * canvasHeight;
+        p.vx = (Math.random() - 0.5) * 0.5;
+        p.vy = (Math.random() - 0.5) * 0.5 - 0.2;
+        p.size = 8 + Math.random() * 12;
+        p.color = Math.random() > 0.5 ? '#ffd700' : '#fff8dc';
+        p.extra = {
+          pulseSpeed: 0.03 + Math.random() * 0.04,
+          pulsePhase: Math.random() * Math.PI * 2
+        };
+      } else if (vibeType === 'FUNKY') {
+        p.x = centerX + (Math.random() - 0.5) * 150;
+        p.y = centerY + (Math.random() - 0.5) * 150;
+        p.vx = (Math.random() - 0.5) * 8;
+        p.vy = (Math.random() - 0.5) * 8;
+        p.size = 15 + Math.random() * 25;
+        p.color = Math.random() > 0.6 ? '#00ff88' : (Math.random() > 0.3 ? '#ff007f' : '#00bfff');
+        const shapes = ['circle', 'triangle', 'square', 'ring'];
+        p.extra = {
+          shape: shapes[Math.floor(Math.random() * shapes.length)],
+          lineWidth: 3 + Math.random() * 2
+        };
+      } else if (vibeType === 'ANIME') {
+        p.x = centerX;
+        p.y = centerY;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 10 + Math.random() * 15;
+        p.vx = Math.cos(angle) * speed;
+        p.vy = Math.sin(angle) * speed;
+        p.size = 3 + Math.random() * 5;
+        p.color = Math.random() > 0.75 ? '#000000' : (Math.random() > 0.5 ? '#ffffff' : (Math.random() > 0.25 ? '#ff0055' : '#ffff00'));
+        p.extra = {
+          type: Math.random() > 0.5 ? 'line' : 'star',
+          length: 40 + Math.random() * 80
+        };
+      } else if (vibeType === 'COLORFUL') {
+        p.x = Math.random() * canvasWidth;
+        p.y = yPos;
+        p.vx = (Math.random() - 0.5) * 4;
+        p.vy = -Math.random() * 4 - 2;
+        p.size = 6 + Math.random() * 10;
+        const colors = ['#ff0055', '#00ff66', '#0099ff', '#ffcc00', '#ff00ff', '#9900ff', '#ff6600'];
+        p.color = colors[Math.floor(Math.random() * colors.length)];
+        p.extra = {
+          gravity: 0.15,
+          scaleX: 1.0,
+          scaleYSpeed: 0.05 + Math.random() * 0.08,
+          scaleYPhase: Math.random() * Math.PI
+        };
+      } else if (vibeType === 'OLD_MONEY') {
+        p.x = Math.random() * canvasWidth;
+        p.y = -20;
+        p.vx = (Math.random() - 0.5) * 0.8;
+        p.vy = 1.5 + Math.random() * 2;
+        p.size = 14 + Math.random() * 10;
+        p.color = '#ffd700';
+        p.extra = {
+          scaleX: 1.0,
+          spinSpeed: 0.05 + Math.random() * 0.08,
+          isDiamond: Math.random() > 0.6
+        };
+      }
+      return p;
+    };
+
     const drawHeart = (c: CanvasRenderingContext2D, x: number, y: number, size: number, color: string, alpha: number) => {
       c.save();
       c.globalAlpha = alpha;
@@ -298,6 +397,17 @@ export const VibeAnimationEngine: React.FC<VibeAnimationEngineProps> = ({ vibe, 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const particles = particlesRef.current;
 
+      const currentScrollY = window.scrollY;
+      const rawVelocity = currentScrollY - lastScrollY;
+      lastScrollY = currentScrollY;
+      scrollVelocity = scrollVelocity * 0.85 + rawVelocity * 0.15;
+
+      // Spawn extra interactive particles on rapid scroll
+      if (Math.abs(scrollVelocity) > 6 && particles.length < 150 && vibe) {
+        const spawnY = scrollVelocity > 0 ? -15 : canvas.height + 15;
+        particles.push(spawnParticle(vibe, spawnY));
+      }
+
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.life++;
@@ -306,6 +416,10 @@ export const VibeAnimationEngine: React.FC<VibeAnimationEngineProps> = ({ vibe, 
           particles.splice(i, 1);
           continue;
         }
+
+        // Apply scroll-speed dynamic parallax and horizontal drift
+        p.y -= scrollVelocity * 0.45;
+        p.x -= scrollVelocity * 0.12;
 
         // Apply physics based on Vibe
         if (vibe === 'CUTE') {

@@ -52,6 +52,7 @@ import { VibeAnimationEngine } from './components/VibeAnimationEngine';
 import { ImageReveal } from './components/ImageReveal';
 import { GlitchText } from './components/GlitchText';
 import { GlitchImage } from './components/GlitchImage';
+import { ScrollVelocityContainer } from './components/ScrollVelocityContainer';
 import { NewsletterSyndicate } from './components/NewsletterSyndicate';
 import { PageLoader } from './components/PageLoader';
 import { DynamicAccordion } from './components/DynamicAccordion';
@@ -1489,12 +1490,13 @@ const BestSellers = () => {
           {/* Products Grid - Displayed immediately after header text */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-8 mb-16 relative z-10">
             {bestSellers.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onHoverStart={() => {}}
-                onHoverEnd={() => {}}
-              />
+              <ScrollVelocityContainer key={product.id} skewMax={4} blurMax={1.5}>
+                <ProductCard
+                  product={product}
+                  onHoverStart={() => {}}
+                  onHoverEnd={() => {}}
+                />
+              </ScrollVelocityContainer>
             ))}
           </div>
 
@@ -2125,12 +2127,13 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         </div>
 
         {/* Main Hero Box with Scroll Parallax */}
-        <motion.div 
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          style={{ y: heroTextY }}
-          className="relative z-10 text-center w-[95%] max-w-[1400px] mx-auto p-4 sm:p-12 lg:p-20 bg-white border-[3px] sm:border-[8px] border-black shadow-[8px_8px_0px_0px_#000] sm:shadow-[24px_24px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] sm:hover:shadow-[32px_32px_0px_0px_#00ff88] transition-all duration-500 flex flex-col justify-center min-h-[60vh] overflow-visible"
-        >
+        <ScrollVelocityContainer skewMax={3} blurMax={1.5}>
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            style={{ y: heroTextY }}
+            className="relative z-10 text-center w-[95%] max-w-[1400px] mx-auto p-4 sm:p-12 lg:p-20 bg-white border-[3px] sm:border-[8px] border-black shadow-[8px_8px_0px_0px_#000] sm:shadow-[24px_24px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] sm:hover:shadow-[32px_32px_0px_0px_#00ff88] transition-all duration-500 flex flex-col justify-center min-h-[60vh] overflow-visible"
+          >
           {/* Left High-Fashion Model */}
           <motion.div
             style={{ x: leftModelSpringX, y: leftModelSpringY, rotate: leftModelSpringRotate }}
@@ -2288,6 +2291,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             </div>
           </motion.div>
         </motion.div>
+        </ScrollVelocityContainer>
       </section>
 
       {/* Symmetrical X-Shaped Crossing Marquees */}
@@ -2438,11 +2442,13 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.4, delay: (index % 8) * 0.06 }}
               >
-                <ProductCard
-                  product={product}
-                  onHoverStart={() => setCursorVariant('hover')}
-                  onHoverEnd={() => setCursorVariant('default')}
-                />
+                <ScrollVelocityContainer skewMax={4} blurMax={1.5}>
+                  <ProductCard
+                    product={product}
+                    onHoverStart={() => setCursorVariant('hover')}
+                    onHoverEnd={() => setCursorVariant('default')}
+                  />
+                </ScrollVelocityContainer>
               </motion.div>
             ))}
           </div>
@@ -3065,11 +3071,13 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.4 }}
                   >
-                    <ProductCard
-                      product={product}
-                      onHoverStart={() => setCursorVariant('hover')}
-                      onHoverEnd={() => setCursorVariant('default')}
-                    />
+                    <ScrollVelocityContainer skewMax={4} blurMax={1.5}>
+                      <ProductCard
+                        product={product}
+                        onHoverStart={() => setCursorVariant('hover')}
+                        onHoverEnd={() => setCursorVariant('default')}
+                      />
+                    </ScrollVelocityContainer>
                   </motion.div>
                 ))}
               </AnimatePresence>
