@@ -30,7 +30,9 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "649",
       "female",
-      "oversized"
+      "oversized",
+      "BEAUTIFUL",
+      "ANIME"
     ],
     "updatedAt": "2026-05-30T12:27:14.904Z",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1e3bze1e3bze1e3b.png?v=1761748465",
@@ -287,7 +289,9 @@ export const PRODUCTS: Product[] = [
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_zeptcbzeptcbzept.png?v=1761752100",
     "tags": [
       "449",
-      "female"
+      "female",
+      "BEAUTIFUL",
+      "CUTE"
     ],
     "updatedAt": "2026-05-30T12:27:14.904Z",
     "description": "The \"Blessed Ascent\" Tee: Crafted from premium, soft-touch cotton, this black tee offers a relaxed fit that drapes beautifully. The striking graphic features an exquisitely detailed, ornate golden cross, symbolizing faith and heritage, from which a majestic white dove takes flight – an emblem of peace, new beginnings, and spiritual uplift. The word \"BLESSED\" is subtly integrated into the background, adding a profound layer of meaning to this powerful visual. Perfect for layering or making a standalone statement, this tee is a versatile addition to any wardrobe, blending spiritual symbolism with cutting-edge streetwear aesthetics.",
@@ -554,7 +558,9 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "599",
       "back design",
-      "male"
+      "male",
+      "ANIME",
+      "FUNKY"
     ],
     "description": "Unleash your inner resilience. The K-Street Samurai tee isn't just a shirt—it's a wearable statement of disciplined strength fused with the raw, vibrant energy of modern Korean street culture. Crafted from heavy-duty, premium 180gsm cotton, this t-shirt is built for comfort, durability, and a clean, structured drape. The centerpiece is the bold, disruptive design on the back: a powerful Kanji symbol rendered in stark white and grey, signifying \"Health\" or \"Vigor\". This classical stroke is violently overlaid and encircled by an aggressive, blood-red graffiti and splatter motif, creating a powerful contrast between ancient focus and contemporary chaos. This shirt is for the one who walks the line—who embraces luxury and quality while navigating the grit of the everyday. Pair it with your best accessories and step out; the K-Street Samurai is your armor for the urban jungle.",
     "source": "shopify",
@@ -581,7 +587,9 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "599",
       "back design",
-      "male"
+      "male",
+      "ANIME",
+      "BEAUTIFUL"
     ],
     "updatedAt": "2026-05-30T12:27:14.904Z",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_agh1k8agh1k8agh1.png?v=1761329197",
@@ -636,7 +644,9 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "349",
       "croptop",
-      "female"
+      "female",
+      "CUTE",
+      "BEAUTIFUL"
     ],
     "updatedAt": "2026-05-30T12:27:14.904Z",
     "description": "The \"Monarch Shadow\" design is more than just a graphic—it’s a symbol of transformation and bold beauty. This striking grayscale butterfly, centered on our premium, super-soft crop top, represents the captivating duality of nature: delicate wings that carry immense power, and ephemeral beauty that leaves a lasting impression. Legend has it that this specific butterfly, seen only in moments of intense sunlight, guides its wearers toward their most authentic, confident selves. The detailed, high-quality print captures every minute scale of the wings, creating a stunning, realistic effect that pops against the fabric.",
@@ -912,7 +922,8 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "399",
       "funny",
-      "male"
+      "male",
+      "FUNKY"
     ],
     "description": "Embrace the meme, the mystery, and the message with our \"Ami Akta Dhowa Tulsi Pata\" Tshirt Every leaf of Tulsi, or Holy Basil, is considered sacred—a symbol of purity, devotion, and life itself. But what happens when that leaf is taken, gently washed, and held up to the world? It becomes an emblem of absolute, undeniable innocence The \"Ami Akta Dhowa Tulsi Pata\" tee is more than just a piece of clothing; it's a statement born from modern South Asian internet culture and deeply rooted in tradition. The phrase, which literally means \"I am a washed Holy Basil leaf,\" is an ironic declaration of purity. It’s what you say when you want to signal that you’re untouched, untainted, and completely blameless... even if the situation suggests otherwise.",
     "type": "tee",
@@ -1071,7 +1082,9 @@ export const PRODUCTS: Product[] = [
       "XXL"
     ],
     "tags": [
-      "ALL"
+      "ALL",
+      "OLD MONEY",
+      "FUNKY"
     ],
     "colors": [
       "Black"
@@ -1113,7 +1126,9 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "TRENDING",
       "BESTSELLER",
-      "ALL"
+      "ALL",
+      "FUNKY",
+      "COLORFUL"
     ],
     "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
     "showInHome": true,
@@ -1258,7 +1273,8 @@ export const PRODUCTS: Product[] = [
     "updatedAt": "2026-05-30T12:27:14.905Z",
     "tags": [
       "399",
-      "funny"
+      "funny",
+      "FUNKY"
     ]
   },
   {
@@ -1457,7 +1473,8 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "399",
       "male",
-      "old money"
+      "old money",
+      "OLD MONEY"
     ],
     "description": "Embrace the essence of enduring style with the Elevéz Heritage Navy Tee. This isn't just a T-shirt; it's a staple of sophisticated simplicity, designed for those who appreciate understated luxury and impeccable quality. Crafted from premium 180 GSM cotton, this tee offers a substantial yet breathable feel, drapes elegantly, and maintains its shape and color wash after wash. The rich navy hue provides a versatile foundation for any discerning wardrobe, while the subtle Elevéz logo, meticulously placed on the left chest, signifies a commitment to quiet confidence and timeless design. This tee speaks volumes without saying a word, embodying the refined taste of classic elegance. Key Features: Timeless Elegance: A rich navy color and minimalist design for enduring style. Premium Comfort & Quality: Made from substantial 180 GSM cotton for a luxurious feel and lasting wear. Subtle Sophistication: Discreet Elevéz logo on the left chest signifies exclusivity and taste. Versatile Wardrobe Essential: Perfect for elevated casual wear or layering under blazers and fine knits. Invest in a piece that transcends trends and becomes a cornerstone of your distinguished style.",
     "showInHome": true,
@@ -1502,7 +1519,9 @@ export const PRODUCTS: Product[] = [
     "updatedAt": "2026-05-30T12:27:14.905Z",
     "tags": [
       "VINTAGE",
-      "TRENDING"
+      "TRENDING",
+      "OLD MONEY",
+      "BEAUTIFUL"
     ],
     "colors": [
       "Pink",
@@ -1630,7 +1649,8 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "399",
       "male",
-      "old money"
+      "old money",
+      "OLD MONEY"
     ],
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_mk1cf9mk1cf9mk1c.png?v=1761054296",
     "rating": 5,
@@ -1663,7 +1683,8 @@ export const PRODUCTS: Product[] = [
     "updatedAt": "2026-05-30T12:27:14.905Z",
     "tags": [
       "399",
-      "old money"
+      "old money",
+      "OLD MONEY"
     ],
     "importedAt": "2025-12-28T18:56:30.855Z",
     "isFeatured": false,
@@ -1799,7 +1820,9 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "449",
       "best",
-      "male"
+      "male",
+      "ANIME",
+      "BEAUTIFUL"
     ],
     "updatedAt": "2026-05-30T12:27:14.905Z",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_icts81icts81icts.png?v=1761063305",
@@ -2058,7 +2081,9 @@ export const PRODUCTS: Product[] = [
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sgt3bosgt3bosgt3.png?v=1761061548",
     "tags": [
       "549",
-      "male"
+      "male",
+      "ANIME",
+      "BEAUTIFUL"
     ],
     "updatedAt": "2026-05-30T12:27:14.905Z",
     "description": "This garment tells the tale of the Sentinel of the Split Gate, a warrior whose very essence is a fusion of primal fury and disciplined honor. It represents the internal struggle and the ultimate balance found on the path of the sword. On the left, the fierce crimson half is fueled by the Dragon's Fire—raw, untamed power, and the shadow of destruction. This side is the Ronin, a mercenary of necessity, swift and unforgiving, acting on pure, battle-hardened instinct. On the right, the tranquil white light embodies the Spirit of Bushido—discipline, clarity, and noble purpose. This is the Samurai, guided by a strict code of honor, whose mastery is not just in killing, but in knowing when not to. The dividing line, crossed by the blade, is the balance Kenshin must maintain. To wear this shirt is to carry the knowledge that true strength lies not in choosing one side, but in mastering the duality of both—harnessing the dragon's power without being consumed by its flame. Choose your strength. Master your balance.",
@@ -2228,7 +2253,9 @@ export const PRODUCTS: Product[] = [
     "updatedAt": "2026-05-30T12:27:14.905Z",
     "tags": [
       "1099",
-      "hoodie"
+      "hoodie",
+      "BEAUTIFUL",
+      "OLD MONEY"
     ],
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ihtljwihtljwihtl.png?v=1761125938",
     "type": "tee",
@@ -2246,7 +2273,9 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "449",
       "best",
-      "male"
+      "male",
+      "ANIME",
+      "BEAUTIFUL"
     ],
     "updatedAt": "2026-05-30T12:27:14.905Z",
     "isFeatured": false,
@@ -2462,7 +2491,8 @@ export const PRODUCTS: Product[] = [
     "updatedAt": "2026-05-30T12:27:14.905Z",
     "tags": [
       "449",
-      "male"
+      "male",
+      "ANIME"
     ],
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_1.png?v=1761154062",
     "category": "Topwear",
@@ -2492,7 +2522,9 @@ export const PRODUCTS: Product[] = [
     "updatedAt": "2026-05-30T12:27:14.905Z",
     "tags": [
       "599",
-      "oversized"
+      "oversized",
+      "FUNKY",
+      "ANIME"
     ],
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fvti68fvti68fvti.png?v=1761741294",
     "category": "Topwear",
@@ -2626,7 +2658,9 @@ export const PRODUCTS: Product[] = [
     "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
     "tags": [
       "ESSENTIAL",
-      "BESTSELLER"
+      "BESTSELLER",
+      "FUNKY",
+      "COLORFUL"
     ],
     "colors": [
       "Black",
@@ -2643,7 +2677,9 @@ export const PRODUCTS: Product[] = [
     "id": 4,
     "tags": [
       "PREMIUM",
-      "NEW"
+      "NEW",
+      "OLD MONEY",
+      "BEAUTIFUL"
     ],
     "colors": [
       "Black",
@@ -3155,7 +3191,9 @@ export const PRODUCTS: Product[] = [
       "549",
       "male",
       "stylish",
-      "typography"
+      "typography",
+      "FUNKY",
+      "COLORFUL"
     ],
     "updatedAt": "2026-05-30T12:27:14.905Z",
     "description": "Crafted from premium, ultra-soft fabric, this tee promises unparalleled comfort for all-day wear. Whether you're hustling at the office, meeting friends, or just relaxing, you'll feel great in its breathable and lightweight embrace. The eye-catching design features the word \"PAISA\" (money) repeated in a striking purple hue, with \"Earn\" elegantly scripted in a vibrant orange, creating a dynamic visual that's both modern and inspiring. This creative graphic is a conversation starter, showcasing your drive and unique fashion sense. Key Features: Creative & Stylish Design: A unique graphic that blends ambition with modern aesthetics. Supreme Comfort: Made from high-quality, soft-touch fabric for an exceptional feel. Versatile Wear: Perfect for casual outings, business casual, or as a statement piece. Durable Print: Designed to maintain its vibrant colors wash after wash. Wear your aspirations. Earn your style. The \"Earn PAISA\" t-shirt is more than just an item of clothing—it's a lifestyle statement.",
@@ -3352,7 +3390,9 @@ export const PRODUCTS: Product[] = [
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_gonw9sgonw9sgonw.png?v=1760954859",
     "tags": [
       "499",
-      "male"
+      "male",
+      "BEAUTIFUL",
+      "CUTE"
     ],
     "updatedAt": "2026-05-30T12:27:14.905Z",
     "rating": 4.6,
@@ -3511,7 +3551,9 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "699",
       "female",
-      "oversized"
+      "oversized",
+      "BEAUTIFUL",
+      "CUTE"
     ],
     "colors": [
       "Lavender"
@@ -3574,7 +3616,8 @@ export const PRODUCTS: Product[] = [
     "tags": [
       "649",
       "oversized",
-      "unisex"
+      "unisex",
+      "FUNKY"
     ],
     "updatedAt": "2026-05-30T12:27:14.906Z",
     "description": "This is more than a piece of fabric; it's a mantra for the motivated soul. The \"Memento Mori, Memento Vivere\" Tee is designed for those who understand that true liberation lies in embracing the duality of existence. The skull, surrounded by delicate life, is a quiet reminder (Memento Mori) of the ultimate certainty. It is not a symbol of fear, but a boundary—a horizon that makes every second before it precious. This awareness, in turn, fuels the vibrant flora and the transforming butterfly, compelling you to seize the present moment (Memento Vivere). Wear this oversized tee as a daily pledge to live boldly, to chase beauty without hesitation, and to make every breath count. It’s an elegant, stark reminder: Because time is finite, life is infinite in its possibility.",
@@ -4034,7 +4077,8 @@ export const PRODUCTS: Product[] = [
     "description": "In a village full of gossip and busybodies, there was an old saying passed down through generations of weavers: \"Nijer Chorkae Tel De.\" The \"Chorka\" is the spinning wheel—a device that requires constant care and oiling to turn smoothly and produce fine thread. If a weaver neglects their own wheel to watch and criticize how another's is turning, their thread breaks, and their work stops. This T-shirt is for the Focused Few—the ones who understand that the most productive work is done when you keep your eyes on your own craft. It's a humorous yet powerful mantra for modern life, a reminder to:",
     "tags": [
       "399",
-      "funny"
+      "funny",
+      "FUNKY"
     ],
     "updatedAt": "2026-05-30T12:27:14.906Z",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fwo9vgfwo9vgfwo9.png?v=1761047723",
@@ -4068,7 +4112,9 @@ export const PRODUCTS: Product[] = [
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_4.png?v=1761748282",
     "tags": [
       "female",
-      "oversized"
+      "oversized",
+      "CUTE",
+      "BEAUTIFUL"
     ],
     "updatedAt": "2026-05-30T12:27:14.906Z",
     "qid": "SHOP-7963996455051",

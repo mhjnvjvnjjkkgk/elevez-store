@@ -48,6 +48,7 @@ import { ShowcaseSection } from './components/ShowcaseSection';
 import { HoverRevealGallery } from './components/HoverRevealGallery';
 import { Magnetic } from './components/Magnetic';
 import { ParallaxReveal } from './components/ParallaxReveal';
+import { VibeAnimationEngine } from './components/VibeAnimationEngine';
 import { ImageReveal } from './components/ImageReveal';
 import { GlitchText } from './components/GlitchText';
 import { NewsletterSyndicate } from './components/NewsletterSyndicate';
@@ -3148,6 +3149,45 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   const swipeStartY = useRef<number | null>(null);
   const [dragOffsetX, setDragOffsetX] = useState(0); // Live drag translation for touch feedback
 
+  // Vibe Drawer and Animation States
+  const [isVibeDrawerOpen, setIsVibeDrawerOpen] = useState(false);
+  const [activeVibe, setActiveVibe] = useState<string | null>(null);
+  const [animTrigger, setAnimTrigger] = useState(0);
+  
+  // Track page-level touch start/move/end to detect swipe-right globally on the ProductDetail page
+  const pageSwipeStartX = useRef<number | null>(null);
+  const pageSwipeStartY = useRef<number | null>(null);
+
+  const handlePageTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    pageSwipeStartX.current = touch.clientX;
+    pageSwipeStartY.current = touch.clientY;
+  };
+
+  const handlePageTouchEnd = (e: React.TouchEvent) => {
+    if (pageSwipeStartX.current === null || pageSwipeStartY.current === null) return;
+    const touch = e.changedTouches[0];
+    const diffX = touch.clientX - pageSwipeStartX.current;
+    const diffY = touch.clientY - pageSwipeStartY.current;
+
+    // Detect left-to-right swipe (Swipe Right) with a threshold of 75px
+    if (diffX > 75 && Math.abs(diffX) > Math.abs(diffY)) {
+      setIsVibeDrawerOpen(true);
+      audioService.playSwipe();
+    }
+
+    pageSwipeStartX.current = null;
+    pageSwipeStartY.current = null;
+  };
+
+  // Pre-filter recommended products for the current selected vibe inside the drawer
+  const vibeProducts = products.filter(p => {
+    if (!activeVibe) return false;
+    if (p.id === product?.id) return false;
+    const searchVibe = activeVibe === 'OLD_MONEY' ? 'OLD MONEY' : activeVibe;
+    return p.tags?.includes(searchVibe) || p.tags?.includes(activeVibe);
+  });
+
   const productImages = product?.images && product.images.length > 0 ? product.images.slice(0, 5) : (product ? [product.image] : []);
 
   // Sync activeImage whenever activeImageIndex or productImages changes
@@ -3167,6 +3207,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   }, [isHolding, productImages.length]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
     setIsHolding(true);
     const touch = e.touches[0];
     swipeStartX.current = touch.clientX;
@@ -3188,6 +3229,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   };
 
   const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
     setIsHolding(false);
     if (swipeStartX.current === null) return;
     const touch = e.changedTouches[0];
@@ -3219,6 +3261,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setIsHolding(true);
     swipeStartX.current = e.clientX;
     swipeStartY.current = e.clientY;
@@ -3355,7 +3398,157 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   if (!product) return <div className="min-h-screen flex items-center justify-center font-black uppercase text-4xl">Product Not Found</div>;
 
   return (
-    <div className="min-h-screen pt-48 pb-20 bg-white">
+    <div 
+      onTouchStart={handlePageTouchStart}
+      onTouchEnd={handlePageTouchEnd}
+      className="min-h-screen pt-48 pb-20 bg-white relative overflow-x-hidden"
+    >
+      {/* Vibe Animation Overlay */}
+      <VibeAnimationEngine vibe={activeVibe} trigger={animTrigger} />
+
+      {/* Floating Vibes Badge (visible only when drawer is closed) */}
+      <AnimatePresence>
+        {!isVibeDrawerOpen && (
+          <motion.button
+            key="vibe-floating-badge"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            whileHover={{ scale: 1.05, backgroundColor: '#00ff88', color: '#000' }}
+            onClick={() => setIsVibeDrawerOpen(true)}
+            className="fixed left-0 top-[40%] -translate-y-1/2 z-[9985] bg-black text-[#00ff88] border-[3px] border-l-0 border-black px-3 py-6 font-black uppercase text-xs tracking-widest [writing-mode:vertical-lr] rotate-180 flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[2px] transition-all cursor-pointer rounded-r-lg"
+            onMouseEnter={() => setCursorVariant('hover')}
+            onMouseLeave={() => setCursorVariant('default')}
+          >
+            <span>➔ SWIPE FOR VIBES</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Vibe Drawer Side Panel */}
+      <AnimatePresence>
+        {isVibeDrawerOpen && (
+          <>
+            {/* Backdrop Overlay */}
+            <motion.div
+              key="vibe-drawer-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsVibeDrawerOpen(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[9988]"
+            />
+
+            {/* Sliding Panel */}
+            <motion.div
+              key="vibe-drawer-panel"
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="fixed left-0 top-0 h-full w-80 md:w-[24rem] bg-white border-r-[6px] border-black z-[9990] flex flex-col p-6 shadow-[8px_0_0_0_#000] overflow-y-auto"
+            >
+              {/* Drawer Header */}
+              <div className="flex justify-between items-center pb-4 border-b-[4px] border-black mb-6">
+                <span className="font-black font-syne text-xl uppercase text-black tracking-tight flex items-center gap-2">
+                  <Compass size={20} className="text-[#00ff88]" /> What's Your Vibe?
+                </span>
+                <button
+                  onClick={() => setIsVibeDrawerOpen(false)}
+                  className="bg-black text-[#00ff88] p-1.5 border-[2px] border-black font-black uppercase text-xs shadow-[2px_2px_0px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none cursor-pointer flex items-center justify-center"
+                  onMouseEnter={() => setCursorVariant('hover')}
+                  onMouseLeave={() => setCursorVariant('default')}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Drawer Body - Vibes List */}
+              <div className="space-y-4 mb-8">
+                <p className="text-[10px] font-black text-black/50 uppercase tracking-widest leading-none mb-2 text-left">Select to trigger animations & recommendations</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: 'CUTE', label: 'CUTE 🧸', activeColor: 'bg-[#ff69b4] text-white hover:bg-[#ff1493]' },
+                    { id: 'FUNKY', label: 'FUNKY ⚡', activeColor: 'bg-[#00ff88] text-black hover:bg-[#00cc77]' },
+                    { id: 'BEAUTIFUL', label: 'BEAUTIFUL ✨', activeColor: 'bg-[#ffd700] text-black hover:bg-[#e6c200]' },
+                    { id: 'ANIME', label: 'ANIME 🌸', activeColor: 'bg-black text-[#ffff00] border-[#ffff00] hover:bg-zinc-900' },
+                    { id: 'COLORFUL', label: 'COLORFUL 🌈', activeColor: 'bg-gradient-to-r from-red-500 via-green-500 to-blue-500 text-white font-black' },
+                    { id: 'OLD_MONEY', label: 'OLD MONEY ☕', activeColor: 'bg-[#1b263b] text-[#e0e1dd] hover:bg-[#0d1b2a]' },
+                  ].map(v => (
+                    <button
+                      key={v.id}
+                      onClick={() => {
+                        setActiveVibe(v.id);
+                        setAnimTrigger(prev => prev + 1);
+                        audioService.playClick();
+                      }}
+                      className={`border-[3px] border-black px-3 py-4 font-black uppercase text-[11px] tracking-wider transition-all cursor-pointer ${
+                        activeVibe === v.id
+                          ? `${v.activeColor} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.15)] scale-[0.98]`
+                          : 'bg-white text-black hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_#000] active:translate-y-0 active:shadow-none'
+                      }`}
+                      onMouseEnter={() => setCursorVariant('hover')}
+                      onMouseLeave={() => setCursorVariant('default')}
+                    >
+                      {v.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Drawer Body - Products List */}
+              <div className="flex-1 flex flex-col min-h-0">
+                <div className="border-t-[4px] border-black pt-4 mb-4">
+                  <h4 className="text-xs font-black uppercase text-black mb-3 tracking-widest flex items-center gap-1.5">
+                    <Package size={14} /> Matching Items ({vibeProducts.length})
+                  </h4>
+                  {!activeVibe && (
+                    <div className="text-center py-10 border-2 border-black border-dashed bg-gray-50 p-4">
+                      <p className="text-[11px] font-black uppercase text-black/40 tracking-wider">Select a vibe above to unlock its vault</p>
+                    </div>
+                  )}
+                  {activeVibe && vibeProducts.length === 0 && (
+                    <div className="text-center py-10 border-2 border-black border-dashed bg-gray-50 p-4">
+                      <p className="text-[11px] font-black uppercase text-black/40 tracking-wider">No matching items currently in stock</p>
+                    </div>
+                  )}
+                </div>
+
+                {activeVibe && vibeProducts.length > 0 && (
+                  <div className="flex-1 overflow-y-auto space-y-3 pr-1 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-black [&::-webkit-scrollbar-track]:bg-gray-100">
+                    {vibeProducts.map(p => (
+                      <div
+                        key={p.id}
+                        onClick={() => {
+                          navigate(`/product/${p.shopifyHandle || p.handle || p.id}`);
+                          setIsVibeDrawerOpen(false);
+                        }}
+                        className="flex items-center gap-3 border-[3px] border-black p-2 hover:bg-gray-50 transition-all cursor-pointer group hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_#000]"
+                        onMouseEnter={() => setCursorVariant('hover')}
+                        onMouseLeave={() => setCursorVariant('default')}
+                      >
+                        <div className="w-16 h-16 shrink-0 border-2 border-black overflow-hidden bg-gray-100">
+                          <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                        </div>
+                        <div className="flex-1 min-w-0 flex flex-col text-left">
+                          <span className="text-[11px] font-black uppercase text-black truncate leading-tight mb-1">{p.name}</span>
+                          <span className="text-xs font-black text-black/60">₹{p.price}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Drawer Footer */}
+              <div className="mt-auto pt-4 border-t-[4px] border-black text-center">
+                <span className="text-[9px] font-black text-black/40 uppercase tracking-widest leading-none">ELEVEZ IDENTITY SYSTEM</span>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       <ProductSchema product={product} url={window.location.href} />
       <div className="container mx-auto px-6">
         <Link to="/shop/all" className="inline-flex items-center gap-3 bg-black text-[#00ff88] px-6 py-2 border-[3px] border-black font-black uppercase text-sm shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] mb-12 transition-all">
