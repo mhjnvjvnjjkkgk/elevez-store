@@ -3099,6 +3099,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState('');
   const [product, setProduct] = useState<any>(null);
+  const [products, setProducts] = useState<any[]>([]);
   // isLoading prevents 'Product Not Found' from flashing during SSE re-fetch
   const [isLoading, setIsLoading] = useState(true);
 
@@ -3322,7 +3323,8 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   useEffect(() => {
     setIsLoading(true);
     const handleStoreUpdate = () => {
-      const products = localCollectionService.getActiveProducts();
+      const activeProds = localCollectionService.getActiveProducts();
+      setProducts(activeProds);
       const cleanId = String(id).trim();
 
       const findInList = (list: any[]) => {
@@ -3356,10 +3358,10 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
         });
       };
 
-      // Try localStorage first (always fresh after SSE re-fetch)
-      let found = findInList(products);
-      // Safety net: fall back to compile-time PRODUCTS if localStorage is empty/loading
-      if (!found && products.length === 0) {
+      // Try active products list
+      let found = findInList(activeProds);
+      // Safety net: fall back to compile-time PRODUCTS if not found
+      if (!found) {
         found = findInList(PRODUCTS);
       }
 
