@@ -2681,7 +2681,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             Complete Collection
           </div>
           <h1 className="text-6xl md:text-[8rem] font-black uppercase mb-4 font-syne tracking-tighter text-black leading-[0.9]">
-            {category === 'men' ? "Men's Gear" : category === 'women' ? "Women's Style" : "The Archives"}
+            {category === 'men' ? "Men's Gear" : category === 'women' ? "Women's Style" : "THE COLLECTION"}
           </h1>
           <p className="text-black font-black uppercase text-xl mt-4">Discover all {filteredProducts.length} pieces of pure identity.</p>
         </motion.div>
@@ -2701,7 +2701,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={20} />
                   <input
                     type="text"
-                    placeholder="SEARCH ARCHIVES..."
+                    placeholder="SEARCH COLLECTION..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-white border-[4px] border-black px-12 py-4 text-black font-black placeholder-gray-400 focus:shadow-[6px_6px_0px_0px_#00ff88] outline-none transition-all uppercase"
@@ -2836,13 +2836,13 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
           {/* Product Grid */}
           <div className="flex-1 w-full">
-            {/* Mobile Search and Filter Bar */}
-            <div className="lg:hidden flex gap-3 mb-8 w-full">
+            {/* Mobile Search and Filter Bar — sticky once scrolled past hero */}
+            <div className="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b-[3px] border-black -mx-6 px-6 py-3 mb-8 flex gap-3 w-[calc(100%+3rem)] shadow-[0_4px_0px_0px_rgba(0,0,0,0.08)]">
               <div className="relative flex-1">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={18} />
                 <input
                   type="text"
-                  placeholder="SEARCH..."
+                  placeholder="SEARCH COLLECTION..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-white border-[3px] border-black px-10 py-3 text-black font-black placeholder-gray-400 focus:shadow-[4px_4px_0px_0px_#00ff88] outline-none transition-all uppercase text-xs"
@@ -2850,7 +2850,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               </div>
               <button
                 onClick={() => setIsMobileFilterOpen(true)}
-                className="bg-black text-[#00ff88] border-[3px] border-black font-black uppercase text-xs px-5 py-3 shadow-[4px_4px_0px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center gap-2"
+                className="bg-black text-[#00ff88] border-[3px] border-black font-black uppercase text-xs px-5 py-3 shadow-[4px_4px_0px_0px_#00ff88] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center gap-2 shrink-0"
               >
                 <SlidersHorizontal size={14} /> FILTERS
               </button>
@@ -2879,7 +2879,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
             {filteredProducts.length === 0 && (
               <div className="text-center py-24 border-[6px] border-black border-dashed bg-gray-50">
-                <p className="text-4xl font-black text-black uppercase mb-8">Nothing Found In The Archives</p>
+                <p className="text-4xl font-black text-black uppercase mb-8">Nothing Found In The Collection</p>
                 <button 
                   onClick={() => { setFilter('All'); setSearchQuery(''); setSelectedCollection('all'); setPriceRange([0, 5000]); }} 
                   className="bg-black text-[#00ff88] px-12 py-4 border-[4px] border-black font-black uppercase tracking-widest shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
