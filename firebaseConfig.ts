@@ -1,6 +1,6 @@
 // Firebase configuration for Elevez
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
 
@@ -26,9 +26,13 @@ console.log('Firebase Config:', {
 const app = initializeApp(firebaseConfig);
 console.log('Firebase App initialized successfully');
 
-// Initialize Firestore
-const db = getFirestore(app);
-console.log('Firestore initialized');
+// Initialize Firestore with Native Multi-Tab Caching
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager()
+  })
+});
+console.log('Firestore initialized with native multi-tab persistent local cache');
 
 // Initialize Firebase Authentication
 const auth = getAuth(app);

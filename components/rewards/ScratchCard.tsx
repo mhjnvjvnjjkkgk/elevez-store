@@ -180,6 +180,9 @@ export const ScratchCard: React.FC = () => {
   const handleTouchEnd = () => setIsScratching(false);
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isScratching || hasRevealed || e.touches.length === 0) return;
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     const touch = e.touches[0];
     scratch(touch.clientX, touch.clientY);
   };

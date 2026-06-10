@@ -24,9 +24,15 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const sparksRef = useRef<Array<{ x: number; y: number; angle: number; startTime: number }>>([]);
     const startTimeRef = useRef<number | null>(null);
+    const loopActiveRef = useRef(false);
+    const drawRef = useRef<((timestamp: number) => void) | null>(null);
 
     // Resize canvas to window size (since it's position:fixed)
     useEffect(() => {
+        // Skip entirely on mobile/touch — no mouse cursor, no effect needed
+        const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+        if (isTouchDevice) return;
+
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -100,17 +106,35 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
                 return true;
             });
 
-            animationId = requestAnimationFrame(draw);
+            if (sparksRef.current.length > 0) {
+                animationId = requestAnimationFrame(draw);
+            } else {
+                loopActiveRef.current = false;
+                startTimeRef.current = null;
+            }
         };
 
-        animationId = requestAnimationFrame(draw);
+        drawRef.current = draw;
+
+        // In case sparks are active during prop updates, ensure loop continues
+        if (sparksRef.current.length > 0 && !loopActiveRef.current) {
+            loopActiveRef.current = true;
+            animationId = requestAnimationFrame(draw);
+        }
 
         return () => {
-            cancelAnimationFrame(animationId);
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            drawRef.current = null;
         };
     }, [sparkColor, sparkSize, sparkRadius, sparkCount, duration, easeFunc, extraScale]);
 
     const handleClick = (e: React.MouseEvent) => {
+        // Skip on touch devices
+        const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+        if (isTouchDevice) return;
+
         // Use clientX/clientY directly since canvas is position:fixed to viewport
         const x = e.clientX;
         const y = e.clientY;
@@ -124,6 +148,12 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
         }));
 
         sparksRef.current.push(...newSparks);
+
+        // Wake up drawing loop if it is currently idle
+        if (!loopActiveRef.current && drawRef.current) {
+            loopActiveRef.current = true;
+            requestAnimationFrame(drawRef.current);
+        }
     };
 
     return (

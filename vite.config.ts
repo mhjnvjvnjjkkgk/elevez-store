@@ -34,10 +34,27 @@ export default defineConfig(({ mode }) => {
         }
       },
       build: {
-        assetsInlineLimit: 0,
+        assetsInlineLimit: 4096, // Inline assets under 4KB to save HTTP requests
         rollupOptions: {
           output: {
-            assetFileNames: 'assets/[name].[hash][extname]'
+            assetFileNames: 'assets/[name].[hash][extname]',
+            manualChunks(id) {
+              if (id.includes('node_modules')) {
+                if (id.includes('firebase')) {
+                  return 'vendor-firebase';
+                }
+                if (id.includes('framer-motion')) {
+                  return 'vendor-framer';
+                }
+                if (id.includes('gsap')) {
+                  return 'vendor-gsap';
+                }
+                if (id.includes('lucide-react')) {
+                  return 'vendor-lucide';
+                }
+                return 'vendor-core'; // react, react-dom, react-router-dom, etc.
+              }
+            }
           }
         }
       }

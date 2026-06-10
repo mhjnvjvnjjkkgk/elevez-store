@@ -66,7 +66,7 @@ export const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
       >
         <div className="mb-12" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 -mx-4 px-4 no-scrollbar touch-scroll md:grid md:grid-cols-2 md:overflow-visible md:mx-0 md:px-0 lg:grid-cols-4">
           <AnimatePresence>
             {recommendations.map((product, index) => (
               <motion.div
@@ -75,7 +75,7 @@ export const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="group"
+                className="group w-[80vw] max-w-[280px] shrink-0 snap-center md:w-auto md:max-w-none md:shrink"
               >
                 <Link to={`/product/${product.id}`}>
                   <div className="relative overflow-hidden rounded-2xl bg-zinc-900 border border-white/10 hover:border-[#00ff88]/50 transition-all duration-300 aspect-[4/5]">

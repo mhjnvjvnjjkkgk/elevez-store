@@ -203,3 +203,34 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Hide scrollbars (Chrome, Safari, Firefox, Edge) while preserving scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE/Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+/* iOS momentum scrolling for touch-scroll containers */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Min tap target helper for accessibility */
+.tap-target {
+  min-width: 48px;
+  min-height: 48px;
+}
+
+/* Cart timer widget urgency pulse animation */
+@keyframes pulse {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.75; transform: scale(1.06); }
+}
+
+/* Cart timer widget slide-in from right edge */
+@keyframes slide-in-right {
+  from { transform: translateX(100%) translateY(-50%); opacity: 0; }
+  to   { transform: translateX(0) translateY(-50%); opacity: 1; }
+}

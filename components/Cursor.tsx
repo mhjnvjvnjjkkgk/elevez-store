@@ -5,7 +5,13 @@ export const Cursor: React.FC = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
+    const isMobileDevice = window.matchMedia('(max-width: 768px)').matches || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    setIsMobile(isMobileDevice);
+    if (isMobileDevice) return;
+
     const updatePosition = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY });
     };
@@ -39,19 +45,21 @@ export const Cursor: React.FC = () => {
   return (
     <>
       <div className="noise-overlay" />
-      <motion.div
-        className={`custom-cursor ${isHovering ? 'hovering' : ''}`}
-        animate={{
-          x: position.x,
-          y: position.y,
-        }}
-        transition={{
-          type: 'spring',
-          stiffness: 500,
-          damping: 28,
-          mass: 0.5,
-        }}
-      />
+      {!isMobile && (
+        <motion.div
+          className={`custom-cursor ${isHovering ? 'hovering' : ''}`}
+          animate={{
+            x: position.x,
+            y: position.y,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 500,
+            damping: 28,
+            mass: 0.5,
+          }}
+        />
+      )}
     </>
   );
 };

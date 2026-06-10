@@ -58,6 +58,11 @@
           <span class="nav-text">Users Management</span>
           <span class="nav-badge" style="background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);">LIVE</span>
         </button>
+        <button class="nav-item" data-view="spin-leads">
+          <span class="nav-icon">📞</span>
+          <span class="nav-text">Spin Leads</span>
+          <span class="nav-badge" style="background: linear-gradient(135deg, #00ff88 0%, #00dd77 100%);">LIVE</span>
+        </button>
         <button class="nav-item" data-view="colors-management">
           <span class="nav-icon">🎨</span>
           <span class="nav-text">Colors Management</span>
@@ -219,6 +224,27 @@
         <iframe src="users-management.html"
           style="width: 100%; height: calc(100vh - 100px); border: none; border-radius: 12px;"
           title="Users Management"></iframe>
+      </div>
+
+      <!-- Spin Leads View -->
+      <div class="view" id="spin-leads-view">
+        <div class="view-header">
+          <h2>Captured Spin Leads</h2>
+          <div class="header-actions">
+            <input type="text" class="search-input" id="spinLeadsSearch" placeholder="🔍 Search by phone, status or prize..." onkeyup="filterSpinLeads()">
+            <button class="btn btn-secondary" onclick="exportSpinLeadsCSV()" style="background: #00ff88; color: #000; font-weight: 600;">📥 Export CSV</button>
+            <button class="btn btn-primary" onclick="loadSpinLeads()">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 20px;">
+          <div class="card-title">📞 Spin Leads List</div>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+            Captured phone numbers from the spin-wheel widget, including timestamp, status, and prizes won.
+          </p>
+          <div id="spinLeadsContainer" style="overflow-x: auto;">
+            <p style="text-align: center; color: var(--text-muted); padding: 40px;">Loading spin leads...</p>
+          </div>
+        </div>
       </div>
 
       <!-- Colors Management View -->
@@ -1573,6 +1599,169 @@
         }
       }, 3000);
     });
+  </script>
+
+  <!-- Spin Leads Management Script -->
+  <script type="module">
+    import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getFirestore, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    };
+
+    const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let allSpinLeads = [];
+
+    // Load spin leads from Firestore
+    async function loadSpinLeads() {
+      const container = document.getElementById('spinLeadsContainer');
+      container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Loading spin leads...</p>';
+
+      try {
+        const q = query(collection(db, 'spinLeads'), orderBy('timestamp', 'desc'));
+        const snapshot = await getDocs(q);
+        allSpinLeads = [];
+        
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          allSpinLeads.push({
+            id: doc.id,
+            phoneNumber: data.phoneNumber || data.phone || 'N/A',
+            timestamp: data.timestamp || data.createdAt || null,
+            status: data.status || 'captured',
+            prizeWon: data.prize || data.prizeWon || 'None'
+          });
+        });
+
+        renderSpinLeads(allSpinLeads);
+      } catch (error) {
+        console.error('Error loading spin leads:', error);
+        container.innerHTML = `<p style="text-align: center; color: #ff4444; padding: 40px;">Error: ${error.message}</p>`;
+      }
+    }
+
+    // Render spin leads inside the table container
+    function renderSpinLeads(leads) {
+      const container = document.getElementById('spinLeadsContainer');
+      if (leads.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">No spin leads found</p>';
+        return;
+      }
+
+      container.innerHTML = `
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Phone Number</th>
+              <th>Timestamp</th>
+              <th>Status</th>
+              <th>Prize Won</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${leads.map(lead => {
+              let formattedTime = 'N/A';
+              if (lead.timestamp) {
+                try {
+                  if (typeof lead.timestamp.toDate === 'function') {
+                    formattedTime = lead.timestamp.toDate().toLocaleString();
+                  } else if (lead.timestamp.seconds) {
+                    formattedTime = new Date(lead.timestamp.seconds * 1000).toLocaleString();
+                  } else {
+                    formattedTime = new Date(lead.timestamp).toLocaleString();
+                  }
+                } catch (e) {
+                  formattedTime = String(lead.timestamp);
+                }
+              }
+              
+              const isClaimed = lead.status.toLowerCase() === 'completed' || lead.status.toLowerCase() === 'won';
+              const statusColor = isClaimed ? '#00ff88' : '#ffaa00';
+              return `
+                <tr>
+                  <td><strong style="color: var(--primary);">${lead.phoneNumber}</strong></td>
+                  <td>${formattedTime}</td>
+                  <td>
+                    <span style="background: rgba(${isClaimed ? '0,255,136' : '255,170,0'},0.15); color: ${statusColor}; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase;">
+                      ${lead.status}
+                    </span>
+                  </td>
+                  <td><span style="font-weight: 600;">${lead.prizeWon}</span></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // Filter spin leads via search box
+    function filterSpinLeads() {
+      const queryText = document.getElementById('spinLeadsSearch').value.toLowerCase();
+      const filtered = allSpinLeads.filter(lead => 
+        lead.phoneNumber.toLowerCase().includes(queryText) ||
+        lead.status.toLowerCase().includes(queryText) ||
+        (lead.prizeWon && lead.prizeWon.toLowerCase().includes(queryText))
+      );
+      renderSpinLeads(filtered);
+    }
+
+    // Export current leads to CSV file
+    function exportSpinLeadsCSV() {
+      if (allSpinLeads.length === 0) {
+        alert('No data to export');
+        return;
+      }
+
+      const headers = ['Phone Number', 'Timestamp', 'Status', 'Prize Won'];
+      const rows = allSpinLeads.map(lead => {
+        let timeStr = '';
+        if (lead.timestamp) {
+          try {
+            if (typeof lead.timestamp.toDate === 'function') {
+              timeStr = lead.timestamp.toDate().toISOString();
+            } else if (lead.timestamp.seconds) {
+              timeStr = new Date(lead.timestamp.seconds * 1000).toISOString();
+            } else {
+              timeStr = new Date(lead.timestamp).toISOString();
+            }
+          } catch (e) {
+            timeStr = String(lead.timestamp);
+          }
+        }
+        return [
+          `"${lead.phoneNumber}"`,
+          `"${timeStr}"`,
+          `"${lead.status}"`,
+          `"${lead.prizeWon}"`
+        ];
+      });
+
+      const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `spin_leads_${new Date().toISOString().slice(0,10)}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Expose helpers globally
+    window.loadSpinLeads = loadSpinLeads;
+    window.filterSpinLeads = filterSpinLeads;
+    window.exportSpinLeadsCSV = exportSpinLeadsCSV;
   </script>
 
   <!-- Sync & Deploy Manager -->

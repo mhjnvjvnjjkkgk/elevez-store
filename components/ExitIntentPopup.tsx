@@ -23,6 +23,12 @@ export const ExitIntentPopup: React.FC<ExitIntentPopupProps> = ({ onClose }) => 
   }, []);
 
   useEffect(() => {
+    // Disable entirely on mobile devices
+    const isMobileDevice = window.matchMedia('(max-width: 768px)').matches || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    if (isMobileDevice) {
+      return;
+    }
+
     const handleMouseLeave = (e: MouseEvent) => {
       // Only trigger if mouse is leaving from top of page
       if (e.clientY <= 0 && !isVisible && !submitted) {
@@ -31,7 +37,10 @@ export const ExitIntentPopup: React.FC<ExitIntentPopupProps> = ({ onClose }) => 
     };
 
     document.addEventListener('mouseleave', handleMouseLeave);
-    return () => document.removeEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      document.removeEventListener('mouseleave', handleMouseLeave);
+    };
   }, [isVisible, submitted]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -127,7 +136,7 @@ export const ExitIntentPopup: React.FC<ExitIntentPopupProps> = ({ onClose }) => 
               isolation: 'isolate'
             }}
           >
-            <div className="bg-zinc-950 border border-[#00ff88]/30 rounded-3xl p-8 relative overflow-hidden shadow-[0_0_50px_rgba(0,255,136,0.15)]">
+            <div className="bg-zinc-950 border-[6px] border-black rounded-none p-8 relative overflow-hidden shadow-[16px_16px_0px_0px_#ff007f]">
               {/* Background Glow */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#00ff88]/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/5 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
@@ -163,7 +172,7 @@ export const ExitIntentPopup: React.FC<ExitIntentPopupProps> = ({ onClose }) => 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email address"
-                      className="w-full px-4 py-3.5 bg-black/50 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:border-[#00ff88] focus:ring-1 focus:ring-[#00ff88] outline-none transition-all"
+                      className="w-full px-4 py-3.5 bg-black/50 border-[3px] border-black rounded-none text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88] shadow-[2px_2px_0px_0px_#000] focus:shadow-[4px_4px_0px_0px_#00ff88] transition-all"
                       required
                     />
 
@@ -171,7 +180,7 @@ export const ExitIntentPopup: React.FC<ExitIntentPopupProps> = ({ onClose }) => 
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       type="submit"
-                      className="w-full bg-[#00ff88] text-black font-bold py-3.5 rounded-xl uppercase tracking-widest hover:bg-white hover:text-black transition-all shadow-[0_0_20px_rgba(0,255,136,0.2)] hover:shadow-[0_0_30px_rgba(0,255,136,0.4)]"
+                      className="w-full bg-[#00ff88] text-black font-black py-3.5 border-[3px] border-black rounded-none uppercase tracking-widest hover:bg-white hover:text-black transition-all shadow-[4px_4px_0_0_#fff] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
                     >
                       Unlock My Discount
                     </motion.button>
@@ -202,7 +211,7 @@ export const ExitIntentPopup: React.FC<ExitIntentPopupProps> = ({ onClose }) => 
                   {/* Discount Code Display */}
                   <div
                     onClick={handleCopyCode}
-                    className="bg-black/50 border border-[#00ff88]/30 rounded-xl p-4 mb-6 cursor-pointer group hover:border-[#00ff88] transition-colors relative"
+                    className="bg-zinc-900 border-[3px] border-black border-dashed rounded-none p-4 mb-6 cursor-pointer group hover:border-[#00ff88] transition-colors relative shadow-[4px_4px_0px_0px_#000]"
                   >
                     <div className="flex items-center justify-between gap-4">
                       <code className="text-2xl font-black text-[#00ff88] tracking-widest font-mono">

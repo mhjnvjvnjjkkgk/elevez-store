@@ -92,6 +92,54 @@ class AudioService {
     osc.stop(this.ctx.currentTime + 0.03);
   }
 
+  // 3. Rising synth sweep — plays when spin is initiated
+  public playWheelStart() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(80, now);
+    osc.frequency.exponentialRampToValueAtTime(440, now + 0.4);
+
+    gain.gain.setValueAtTime(0.0, now);
+    gain.gain.linearRampToValueAtTime(0.08, now + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.5);
+  }
+
+  // 4. Short negative blip (try again / dismiss)
+  public playClick() {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(150, this.ctx.currentTime + 0.1);
+
+    gain.gain.setValueAtTime(0.07, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.12);
+  }
+
   // 3. Double-tone Retro Coin Sound (satisfied add to cart)
   public playCoin() {
     if (this.isMuted) return;

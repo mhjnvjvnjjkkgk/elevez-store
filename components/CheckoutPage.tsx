@@ -10,6 +10,7 @@ import { checkoutDiscountService } from '../services/checkoutDiscountService';
 import { userPointsService } from '../services/userPointsService';
 import { firebaseSyncService } from '../services/firebaseSyncService';
 import { loyaltyRulesService } from '../services/loyaltyRulesService';
+import { useSEO } from '../hooks/useSEO';
 
 type CheckoutStep = 'cart' | 'shipping' | 'payment' | 'confirmation';
 
@@ -20,11 +21,51 @@ interface CheckoutPageProps {
 }
 
 export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal, onCheckoutComplete }) => {
+  useSEO({
+    title: 'Checkout - Complete Order',
+    description: 'Secure checkout page. Claim your custom streetwear collections and apply loyalty rewards.',
+  });
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('cart');
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Cart reservation countdown state (10 mins)
+  const [timeLeft, setTimeLeft] = useState<number>(600);
+
+  useEffect(() => {
+    const savedTime = sessionStorage.getItem('elevez_cart_reservation_time');
+    const now = Date.now();
+    
+    if (savedTime) {
+      const elapsed = Math.floor((now - parseInt(savedTime)) / 1000);
+      const remaining = Math.max(600 - elapsed, 0);
+      setTimeLeft(remaining);
+    } else {
+      sessionStorage.setItem('elevez_cart_reservation_time', now.toString());
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const isLowTime = timeLeft < 120;
 
   // Checkout state
   const [shippingAddress, setShippingAddress] = useState<Partial<Address>>({
@@ -51,6 +92,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
   // Points preview state
   const [pointsPreview, setPointsPreview] = useState(0);
   const [userTier, setUserTier] = useState<string>('bronze');
+  const [userTotalPoints, setUserTotalPoints] = useState<number>(0);
   const [tierMultiplier, setTierMultiplier] = useState(1.0);
   const [redemptionOptions, setRedemptionOptions] = useState<any[]>([]);
 
@@ -71,9 +113,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
       if (!user) return;
 
       try {
-        // Get user's current points and tier
         const userPoints = await userPointsService.getUserPoints(user.uid);
         if (userPoints) {
+          setUserTotalPoints(userPoints.totalPoints);
           const tier = await loyaltyRulesService.calculateTier(userPoints.totalPoints);
           setUserTier(tier.id);
           setTierMultiplier(tier.benefits.earningMultiplier);
@@ -360,78 +402,112 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
     >
       <h2 className="text-2xl font-bold">Shipping Address</h2>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input
           type="text"
+          name="given-name"
+          autoComplete="given-name"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder="First Name"
           value={shippingAddress.firstName || ''}
           onChange={(e) => setShippingAddress({ ...shippingAddress, firstName: e.target.value })}
-          className="col-span-1 bg-zinc-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
+          className="col-span-1 bg-zinc-900 border border-white/10 rounded-lg px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
         />
         <input
           type="text"
+          name="family-name"
+          autoComplete="family-name"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder="Last Name"
           value={shippingAddress.lastName || ''}
           onChange={(e) => setShippingAddress({ ...shippingAddress, lastName: e.target.value })}
-          className="col-span-1 bg-zinc-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
+          className="col-span-1 bg-zinc-900 border border-white/10 rounded-lg px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
         />
       </div>
 
       <input
         type="email"
+        name="email"
+        autoComplete="email"
+        autoCorrect="off"
+        spellCheck={false}
         placeholder="Email"
         value={shippingAddress.email || ''}
         onChange={(e) => setShippingAddress({ ...shippingAddress, email: e.target.value })}
-        className="w-full bg-zinc-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
+        className="w-full bg-zinc-900 border border-white/10 rounded-lg px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
       />
 
       <input
         type="tel"
+        name="tel"
+        autoComplete="tel"
         placeholder="Phone Number"
         value={shippingAddress.phone || ''}
         onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}
-        className="w-full bg-zinc-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
+        className="w-full bg-zinc-900 border border-white/10 rounded-lg px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
       />
 
       <input
         type="text"
+        name="street-address"
+        autoComplete="street-address"
+        autoCorrect="off"
+        spellCheck={false}
         placeholder="Street Address"
         value={shippingAddress.street || ''}
         onChange={(e) => setShippingAddress({ ...shippingAddress, street: e.target.value })}
-        className="w-full bg-zinc-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
+        className="w-full bg-zinc-900 border border-white/10 rounded-lg px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
       />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input
           type="text"
+          name="address-level2"
+          autoComplete="address-level2"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder="City"
           value={shippingAddress.city || ''}
           onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
-          className="bg-zinc-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
+          className="bg-zinc-900 border border-white/10 rounded-lg px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
         />
         <input
           type="text"
+          name="address-level1"
+          autoComplete="address-level1"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder="State"
           value={shippingAddress.state || ''}
           onChange={(e) => setShippingAddress({ ...shippingAddress, state: e.target.value })}
-          className="bg-zinc-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
+          className="bg-zinc-900 border border-white/10 rounded-lg px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input
           type="text"
+          name="postal-code"
+          autoComplete="postal-code"
+          inputMode="numeric"
+          pattern="[0-9]*"
           placeholder="Zip Code"
           value={shippingAddress.zipCode || ''}
           onChange={(e) => setShippingAddress({ ...shippingAddress, zipCode: e.target.value })}
-          className="bg-zinc-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
+          className="bg-zinc-900 border border-white/10 rounded-lg px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
         />
         <input
           type="text"
+          name="country"
+          autoComplete="country-name"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder="Country"
           value={shippingAddress.country || ''}
           onChange={(e) => setShippingAddress({ ...shippingAddress, country: e.target.value })}
-          className="bg-zinc-900 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
+          className="bg-zinc-900 border border-white/10 rounded-lg px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#00ff88]"
         />
       </div>
 
@@ -599,10 +675,25 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
         {/* Step Indicator */}
         {renderStepIndicator()}
 
+        {/* Cart Reservation Banner */}
+        {timeLeft > 0 && currentStep !== 'confirmation' && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`border-[3px] border-black p-3 text-center uppercase font-mono font-black text-xs tracking-wider flex items-center justify-center gap-2 mb-6 shadow-[4px_4px_0_0_#ff007f] transition-colors duration-500 ${
+              isLowTime ? 'bg-red-500 text-white animate-pulse' : 'bg-zinc-950 text-white'
+            }`}
+          >
+            <span className={`inline-block w-2.5 h-2.5 rounded-full ${isLowTime ? 'bg-white' : 'bg-[#00ff88]'} animate-ping`} />
+            <span>⚠️ Exclusive reservation active. Checkout lock expires in: </span>
+            <span className="font-mono text-sm bg-black px-2 py-0.5 border border-white/20 text-[#00ff88]">{formatTime(timeLeft)}</span>
+          </motion.div>
+        )}
+
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-8 gap-6 lg:gap-8">
           {/* Left Column - Form */}
-          <div className="lg:col-span-2.5 xl:col-span-2.5">
+          <div className="lg:col-span-5">
             <AnimatePresence mode="wait">
               {currentStep === 'cart' && renderCartReview()}
               {currentStep === 'shipping' && renderShippingForm()}
@@ -612,8 +703,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
           </div>
 
           {/* Right Column - Order Summary */}
-          <div className="lg:col-span-1.5 xl:col-span-1.5">
-            <div className="sticky top-28 bg-zinc-900/80 backdrop-blur-sm border border-white/10 rounded-lg p-4 sm:p-6 space-y-4 max-h-[calc(100vh-120px)] overflow-y-auto">
+          <div className="lg:col-span-3">
+            <div className="sticky top-28 bg-zinc-900/80 backdrop-blur-sm border border-white/10 rounded-lg p-4 sm:p-6 space-y-4 max-h-none overflow-visible lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto">
               <h3 className="font-bold text-lg">Order Summary</h3>
 
               <div className="space-y-2 text-sm">
@@ -642,18 +733,41 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
                 <span className="text-[#00ff88]">₹{total.toFixed(2)}</span>
               </div>
 
-              {/* Points Preview */}
+              {/* Points Preview & Tier Visualizer */}
               {pointsPreview > 0 && (
-                <div className="bg-[#00ff88]/10 border border-[#00ff88]/30 rounded-lg p-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300">You'll earn:</span>
-                    <span className="text-[#00ff88] font-bold">{pointsPreview} points</span>
+                <div className="bg-black border border-white/10 rounded-lg overflow-hidden">
+                  <div className="bg-[#00ff88]/10 p-3 text-sm">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-gray-300 font-bold">You'll earn:</span>
+                      <span className="text-[#00ff88] font-black font-mono text-base">+{pointsPreview} pts</span>
+                    </div>
+                    {tierMultiplier > 1.0 && (
+                      <p className="text-[10px] text-gray-400 font-black uppercase tracking-wider mb-2">
+                        Includes {tierMultiplier}x tier bonus!
+                      </p>
+                    )}
+                    
+                    {/* Visualizer Bar */}
+                    <div className="mt-3">
+                      <div className="flex justify-between text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1.5">
+                        <span>Current: {userTotalPoints}</span>
+                        <span className="text-[#00ff88]">Projected: {userTotalPoints + pointsPreview}</span>
+                      </div>
+                      <div className="h-2 w-full bg-zinc-900 border border-white/10 relative overflow-hidden flex">
+                        {/* Current Points Segment */}
+                        <div 
+                          className="h-full bg-gray-600 transition-all duration-1000"
+                          style={{ width: `${Math.min(100, (userTotalPoints / 5000) * 100)}%` }}
+                        />
+                        {/* Projected Points from this order */}
+                        <div 
+                          className="h-full bg-[#00ff88] animate-pulse transition-all duration-1000"
+                          style={{ width: `${Math.min(100, (pointsPreview / 5000) * 100)}%` }}
+                        />
+                      </div>
+                      <p className="text-[9px] text-gray-500 text-center mt-2 italic font-medium">Points added to vault upon delivery confirmation.</p>
+                    </div>
                   </div>
-                  {tierMultiplier > 1.0 && (
-                    <p className="text-xs text-gray-400 mt-1">
-                      Includes {tierMultiplier}x tier bonus! 🎉
-                    </p>
-                  )}
                 </div>
               )}
 
@@ -672,36 +786,38 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, cartTotal
                 </div>
               )}
 
-              {/* Navigation Buttons */}
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4">
-                {currentStep !== 'cart' && currentStep !== 'confirmation' && (
-                  <button
-                    onClick={handlePrevStep}
-                    className="flex-1 flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-colors text-sm sm:text-base"
-                  >
-                    <ChevronLeft size={18} />
-                    <span className="hidden sm:inline">Back</span>
-                  </button>
-                )}
-                {currentStep !== 'confirmation' && (
-                  <button
-                    onClick={handleNextStep}
-                    disabled={loading}
-                    className="flex-1 flex items-center justify-center gap-2 bg-[#00ff88] hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-colors text-sm sm:text-base"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader size={18} className="animate-spin" />
-                        <span className="hidden sm:inline">Processing...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>{currentStep === 'payment' ? 'Place Order' : 'Continue'}</span>
-                        <ChevronRight size={18} />
-                      </>
-                    )}
-                  </button>
-                )}
+              {/* Navigation Buttons - Sticky Bottom on Mobile */}
+              <div className="fixed bottom-0 left-0 right-0 p-4 bg-zinc-950/90 backdrop-blur-md border-t-2 border-black/50 z-50 lg:static lg:p-0 lg:bg-transparent lg:backdrop-blur-none lg:border-none lg:z-auto lg:pt-4">
+                <div className="flex flex-row gap-2 sm:gap-3 max-w-7xl mx-auto">
+                  {currentStep !== 'cart' && currentStep !== 'confirmation' && (
+                    <button
+                      onClick={handlePrevStep}
+                      className="flex-1 flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white py-3 sm:py-3 px-3 sm:px-4 rounded-none border-[3px] border-black shadow-[4px_4px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all text-sm sm:text-base font-black uppercase tracking-wider"
+                    >
+                      <ChevronLeft size={18} />
+                      <span className="hidden sm:inline">Back</span>
+                    </button>
+                  )}
+                  {currentStep !== 'confirmation' && (
+                    <button
+                      onClick={handleNextStep}
+                      disabled={loading}
+                      className="flex-[2] flex items-center justify-center gap-2 bg-[#00ff88] hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed text-black py-3 sm:py-3 px-3 sm:px-4 rounded-none border-[3px] border-black shadow-[4px_4px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all text-sm sm:text-base font-black uppercase tracking-wider"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader size={18} className="animate-spin" />
+                          <span>Processing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>{currentStep === 'payment' ? 'Pay & Finalize' : 'Continue'}</span>
+                          <ChevronRight size={18} />
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Error Message */}

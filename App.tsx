@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect, useRef, createContext, useContext, useLayoutEffect } from 'react';
-import { HashRouter, Routes, Route, Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { createPortal } from 'react-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useSEO } from './hooks/useSEO';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, useInView } from 'framer-motion';
-import { Terminal, Package, Shield, Truck, Zap, Star, X, ShoppingBag, Menu, Camera, Sparkles, Filter, ChevronDown, ChevronUp, Share2, Heart, Maximize2, Gift, User, Mail, MapPin, Instagram, Twitter, ArrowRight, ArrowLeft, Award, ShieldCheck, Timer, Play, SlidersHorizontal, Search, Check, Minus, Plus, RefreshCw, CreditCard, Banknote, LogOut, Eye, Trash2, ChevronRight, Lock, Home as HomeIcon, Compass } from 'lucide-react';
+import { Terminal, Package, Shield, Truck, Zap, Star, X, ShoppingBag, ShoppingCart, Menu, Camera, Sparkles, Filter, ChevronDown, ChevronUp, Share2, Heart, Maximize2, Gift, User, Mail, MapPin, Instagram, Twitter, ArrowRight, ArrowLeft, Award, ShieldCheck, Timer, Play, SlidersHorizontal, Search, Check, Minus, Plus, RefreshCw, CreditCard, Banknote, LogOut, Eye, Trash2, ChevronRight, Lock, Home as HomeIcon, Compass } from 'lucide-react';
 import ScrollReveal from './components/ScrollReveal';
 import ClickSpark from './components/ClickSpark';
 import gsap from 'gsap';
@@ -17,6 +19,15 @@ import { auth } from './firebaseConfig';
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
 import { BuilderComponent, useBuilderContent } from './BuilderComponent';
 import { RewardsPage } from './components/RewardsPage';
+import { HomeLuckySpinWheel } from './components/rewards/HomeLuckySpinWheel';
+import { HowItWorksSection } from './components/rewards/HowItWorksSection';
+import { TiersBenefitsSection } from './components/rewards/TiersBenefitsSection';
+import { RedeemRewardsSection } from './components/rewards/RedeemRewardsSection';
+import { ClaimPointsSection } from './components/rewards/ClaimPointsSection';
+import { PointsHistorySection } from './components/rewards/PointsHistorySection';
+import { LuckySpinWheel } from './components/rewards/LuckySpinWheel';
+import { ScratchCard } from './components/rewards/ScratchCard';
+import { loyaltyRulesService } from './services/loyaltyRulesService';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { OrderDetail } from './components/OrderDetail';
 import { FloatingRewardsButton, RewardsModal } from './components/RewardsModal';
@@ -132,6 +143,9 @@ interface CartContextType {
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
   cartTotal: number;
+  secondsLeft: number;
+  expired: boolean;
+  isTimerVisible: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -149,6 +163,63 @@ const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     }
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Cart Expiry Timer states
+  const DURATION = 600; // 10 minutes in seconds
+  const [secondsLeft, setSecondsLeft] = useState(DURATION);
+  const [expired, setExpired] = useState(false);
+  const [isTimerVisible, setIsTimerVisible] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+
+  const hasItems = items.reduce((sum, i) => sum + i.quantity, 0) > 0;
+
+  // Use a ref to track if the timer has been started (avoids dep array issues with state)
+  const timerStartedRef = useRef(false);
+
+  useEffect(() => {
+    if (!hasItems) {
+      // Reset everything when cart is emptied
+      timerStartedRef.current = false;
+      setIsTimerVisible(false);
+      setExpired(false);
+      setSecondsLeft(DURATION);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
+
+    // Only start a fresh timer once — when items first appear
+    if (!timerStartedRef.current) {
+      timerStartedRef.current = true;
+      setIsTimerVisible(true);
+      setExpired(false);
+      setSecondsLeft(DURATION);
+      startTimeRef.current = Date.now();
+
+      // Clear any stale interval first
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+
+      intervalRef.current = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - (startTimeRef.current ?? Date.now())) / 1000);
+        const remaining = Math.max(0, DURATION - elapsed);
+        setSecondsLeft(remaining);
+        if (remaining === 0) {
+          clearInterval(intervalRef.current!);
+          intervalRef.current = null;
+          setExpired(true);
+        }
+      }, 1000);
+    }
+
+    // No cleanup here — we intentionally keep the interval alive across re-renders
+    // It will be cleared when hasItems becomes false (cart emptied)
+  }, [hasItems]); // Only re-run when cart goes empty/non-empty
 
   // Save to localStorage whenever items change
   useEffect(() => {
@@ -186,7 +257,7 @@ const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const cartTotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   return (
-    <CartContext.Provider value={{ items, addToCart, removeFromCart, clearCart, isCartOpen, setIsCartOpen, cartTotal }}>
+    <CartContext.Provider value={{ items, addToCart, removeFromCart, clearCart, isCartOpen, setIsCartOpen, cartTotal, secondsLeft, expired, isTimerVisible }}>
       {children}
     </CartContext.Provider>
   );
@@ -628,7 +699,7 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
         </div>
 
         {/* Quick View Overlay Button */}
-        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 z-30">
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 z-30 hidden md:block">
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -643,11 +714,11 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
       </div>
 
       <div className="mt-2 sm:mt-4 p-2 sm:p-3 bg-white border-2 sm:border-[2px] border-black shadow-[3px_3px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]">
-        <h3 className="text-[17px] sm:text-sm font-black text-black uppercase font-syne line-clamp-1 leading-tight">{product.name}</h3>
+        <h3 className="text-xs sm:text-sm font-black text-black uppercase font-syne line-clamp-1 leading-tight">{product.name}</h3>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-1 gap-0.5 sm:gap-0">
           <div className="flex items-center gap-1 sm:gap-2">
-            <span className="font-price text-[#00ff88] font-black text-[17px] sm:text-base stroke-black" style={{ WebkitTextStroke: '0.3px black' }}>₹{product.price.toFixed(0)}</span>
-            <span className="font-price text-red-400 line-through text-[11px] sm:text-xs">₹{product.originalPrice.toFixed(0)}</span>
+            <span className="font-price text-[#00ff88] font-black text-sm sm:text-base stroke-black" style={{ WebkitTextStroke: '0.3px black' }}>₹{product.price.toFixed(0)}</span>
+            <span className="font-price text-red-400 line-through text-[10px] sm:text-xs">₹{product.originalPrice.toFixed(0)}</span>
           </div>
         </div>
         
@@ -812,10 +883,251 @@ const QuickViewModal = () => {
   );
 };
 
+// Free Shipping Tracker - Compact redesign
+const FreeShippingTracker: React.FC<{ cartTotal: number }> = ({ cartTotal }) => {
+  const threshold = 650;
+  const progress = Math.min(100, (cartTotal / threshold) * 100);
+  const isUnlocked = cartTotal >= threshold;
+  const remaining = Math.max(0, threshold - cartTotal);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      style={{
+        padding: '8px 12px',
+        background: isUnlocked ? '#00ff88' : '#f4f4f4',
+        border: '2px solid #000',
+        boxShadow: '3px 3px 0px 0px #000',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Shimmer on unlock */}
+      {isUnlocked && (
+        <motion.div
+          animate={{ x: ['-100%', '200%'] }}
+          transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut', repeatDelay: 1.2 }}
+          style={{
+            position: 'absolute', top: 0, left: 0, width: '35%', height: '100%',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+
+      {/* Top row: label + badge */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <motion.span
+            animate={isUnlocked ? { rotate: [0, -12, 12, 0] } : { y: [0, -1.5, 0] }}
+            transition={isUnlocked
+              ? { duration: 0.5, repeat: Infinity, repeatDelay: 2.5 }
+              : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ fontSize: '13px', lineHeight: 1, display: 'inline-block' }}
+          >
+            {isUnlocked ? '🎉' : '🚚'}
+          </motion.span>
+          <span style={{
+            fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+            fontWeight: 700,
+            fontSize: '10px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            color: '#000',
+          }}>
+            {isUnlocked ? 'Free Shipping — Unlocked!' : 'Free Shipping'}
+          </span>
+        </div>
+        <motion.span
+          key={remaining}
+          initial={{ scale: 1.3 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.3, type: 'spring' }}
+          style={{
+            fontFamily: "'Courier New', monospace",
+            fontWeight: 700,
+            fontSize: '9px',
+            color: isUnlocked ? '#000' : '#fff',
+            background: isUnlocked ? 'rgba(0,0,0,0.14)' : '#000',
+            padding: '1px 6px',
+            letterSpacing: '0.04em',
+          }}
+        >
+          {isUnlocked ? '✓ FREE' : `₹${remaining.toFixed(0)} to go`}
+        </motion.span>
+      </div>
+
+      {/* Thin progress bar */}
+      <div style={{
+        height: '6px',
+        background: isUnlocked ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.1)',
+        border: '1.5px solid rgba(0,0,0,0.25)',
+        position: 'relative',
+        overflow: 'visible',
+      }}>
+        <motion.div
+          initial={{ width: '0%' }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.9, ease: [0.34, 1.56, 0.64, 1] }}
+          style={{
+            position: 'absolute', top: 0, left: 0, height: '100%',
+            background: isUnlocked
+              ? 'rgba(0,0,0,0.3)'
+              : 'linear-gradient(90deg, #00cc55, #00ff88)',
+            boxShadow: isUnlocked ? 'none' : '0 0 6px rgba(0,255,136,0.6)',
+          }}
+        />
+        {/* Pulse dot at tip */}
+        {!isUnlocked && progress > 3 && (
+          <motion.div
+            animate={{ scale: [1, 1.6, 1], opacity: [1, 0.5, 1] }}
+            transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+            style={{
+              position: 'absolute', top: '50%', left: `${progress}%`,
+              transform: 'translate(-50%, -50%)',
+              width: '8px', height: '8px',
+              borderRadius: '50%',
+              background: '#00ff88',
+              border: '1.5px solid #000',
+              zIndex: 2,
+            }}
+          />
+        )}
+      </div>
+
+      {/* Micro sub-label */}
+      <div style={{ marginTop: '4px' }}>
+        {!isUnlocked ? (
+          <span style={{
+            fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+            fontSize: '8.5px',
+            fontWeight: 500,
+            color: 'rgba(0,0,0,0.4)',
+            letterSpacing: '0.02em',
+          }}>
+            Add <strong style={{ color: '#000', fontWeight: 800 }}>₹{remaining.toFixed(0)}</strong> more for free delivery
+          </span>
+        ) : (
+          <motion.span
+            animate={{ opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 1.8, repeat: Infinity }}
+            style={{
+              fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+              fontSize: '8.5px', fontWeight: 600,
+              color: 'rgba(0,0,0,0.55)', letterSpacing: '0.02em',
+            }}
+          >
+            🎁 Your order qualifies for free delivery
+          </motion.span>
+        )}
+      </div>
+    </motion.div>
+  );
+};
+
+// Animated Checkout Button
+const CheckoutButton: React.FC<{ onClick: () => void }> = ({ onClick }) => {
+  const [isPressed, setIsPressed] = useState(false);
+
+  return (
+    <motion.button
+      onClick={() => { setIsPressed(true); setTimeout(() => { setIsPressed(false); onClick(); }, 200); }}
+      animate={isPressed ? { scale: 0.95, y: 3, boxShadow: '2px 2px 0px 0px #000' } : {
+        scale: [1, 1.01, 1, 1.01, 1],
+        boxShadow: [
+          '6px 6px 0px 0px #000, 0 0 0px 0px rgba(0,255,136,0)',
+          '6px 6px 0px 0px #000, 0 0 20px 4px rgba(0,255,136,0.5)',
+          '6px 6px 0px 0px #000, 0 0 0px 0px rgba(0,255,136,0)',
+          '6px 6px 0px 0px #000, 0 0 0px 0px rgba(0,255,136,0)',
+          '6px 6px 0px 0px #000, 0 0 0px 0px rgba(0,255,136,0)',
+        ],
+      }}
+      transition={isPressed ? { duration: 0.1 } : {
+        duration: 3,
+        repeat: Infinity,
+        repeatDelay: 1.5,
+        ease: 'easeInOut',
+      }}
+      whileHover={{
+        scale: 1.02,
+        boxShadow: '8px 8px 0px 0px #000, 0 0 24px 6px rgba(0,255,136,0.7)',
+        transition: { duration: 0.15 },
+      }}
+      whileTap={{ scale: 0.96, y: 4, boxShadow: '2px 2px 0px 0px #000' }}
+      style={{
+        width: '100%',
+        background: 'linear-gradient(135deg, #00ff88 0%, #00e676 50%, #69ff47 100%)',
+        color: '#000',
+        fontWeight: 900,
+        paddingTop: '14px',
+        paddingBottom: '14px',
+        border: '3px solid #000',
+        textTransform: 'uppercase',
+        letterSpacing: '0.2em',
+        fontSize: '16px',
+        cursor: 'pointer',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Shimmer sweep */}
+      <motion.div
+        animate={{ x: ['-100%', '200%'] }}
+        transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut', repeatDelay: 1 }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '35%',
+          height: '100%',
+          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)',
+          pointerEvents: 'none',
+        }}
+      />
+      <span style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+        <motion.span
+          animate={{ x: [0, 4, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1 }}
+        >
+          →
+        </motion.span>
+        Checkout Now
+        <motion.span
+          animate={{ x: [0, 4, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1, delay: 0.1 }}
+        >
+          →
+        </motion.span>
+      </span>
+    </motion.button>
+  );
+};
+
 // Cart Sidebar
 const CartSidebar = () => {
-  const { isCartOpen, setIsCartOpen, items, removeFromCart, cartTotal } = useCart();
+  const { isCartOpen, setIsCartOpen, items, removeFromCart, cartTotal, secondsLeft, expired, isTimerVisible } = useCart();
   const navigate = useNavigate();
+
+  // Prevent mobile scroll deformation when sidebar is open
+  useEffect(() => {
+    if (isCartOpen) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      const originalOverscroll = window.getComputedStyle(document.body).overscrollBehavior;
+      document.body.style.overflow = 'hidden';
+      document.body.style.overscrollBehavior = 'none';
+      return () => {
+        document.body.style.overflow = originalStyle;
+        document.body.style.overscrollBehavior = originalOverscroll;
+      };
+    }
+  }, [isCartOpen]);
+
+  const mins = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
+  const urgency = secondsLeft < 60; // last minute
 
   return (
     <AnimatePresence>
@@ -826,73 +1138,161 @@ const CartSidebar = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsCartOpen(false)}
-            className="fixed inset-0 bg-white/40 z-[60]"
+            className="fixed inset-0 bg-black/30 z-[60] backdrop-blur-[2px]"
+            style={{ touchAction: 'none' }}
           />
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-screen w-full sm:w-[450px] bg-white border-l-4 sm:border-l-[6px] border-black z-[70] flex flex-col shadow-[-8px_0px_0px_0px_rgba(0,0,0,0.05)] sm:shadow-[-16px_0px_0px_0px_rgba(0,0,0,0.1)] overflow-hidden"
+            transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              height: '100dvh',
+              width: '100%',
+              maxWidth: '420px',
+              background: '#fff',
+              borderLeft: '4px solid #000',
+              zIndex: 70,
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              boxShadow: '-12px 0 40px rgba(0,0,0,0.18)',
+            }}
           >
-            <div className="p-4 sm:p-8 border-b-4 sm:border-b-[6px] border-black flex items-center justify-between flex-shrink-0 bg-white relative">
-              <VelocityHeader text="Your Cart" className="!text-2xl sm:!text-4xl" />
-              <div className="flex items-center gap-2 sm:gap-4">
-                <span className="bg-black text-[#00ff88] px-2 py-0.5 sm:px-3 sm:py-1 font-black text-[10px] sm:text-xs border-[2px] border-black">{items.length}</span>
-                <button 
-                  onClick={() => setIsCartOpen(false)} 
-                  className="p-1.5 sm:p-2 bg-white border-2 sm:border-[3px] border-black shadow-[2px_2px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex-shrink-0"
+            {/* HEADER - fixed, never scrolls */}
+            <div style={{ padding: '12px 18px', borderBottom: '3px solid #000', display: 'flex', flexDirection: 'column', gap: '6px', flexShrink: 0, background: '#fff' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 900, fontSize: '20px', textTransform: 'uppercase', letterSpacing: '-0.02em' }}>Your Cart</span>
+                  <motion.span
+                    animate={{ scale: [1, 1.15, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                    style={{ background: '#000', color: '#00ff88', padding: '1px 8px', fontWeight: 900, fontSize: '11px', border: '2px solid #000' }}
+                  >
+                    {items.length}
+                  </motion.span>
+                </div>
+                <button
+                  onClick={() => setIsCartOpen(false)}
+                  style={{ width: '38px', height: '38px', background: '#fff', border: '2.5px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '3px 3px 0px 0px #000', transition: 'all 0.15s' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translate(2px,2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; (e.currentTarget as HTMLButtonElement).style.boxShadow = '3px 3px 0px 0px #000'; }}
                 >
-                  <X size={18} className="text-black sm:hidden" />
-                  <X size={24} className="text-black hidden sm:block" />
+                  <X size={16} />
                 </button>
               </div>
+
+              {/* Expiry Timer just below Your Cart text */}
+              {isTimerVisible && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '11px',
+                    fontWeight: 900,
+                    fontFamily: 'monospace',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  <Timer size={12} style={{ color: expired ? '#00cc66' : urgency ? '#ff0000' : '#ff7e40' }} />
+                  <span>
+                    {expired ? (
+                      <span style={{ color: '#00cc66' }}>Cart saved securely</span>
+                    ) : (
+                      <>
+                        Expires in:{' '}
+                        <motion.span
+                          animate={urgency ? { scale: [1, 1.05, 1], color: ['#ff0000', '#ff8888', '#ff0000'] } : {}}
+                          transition={{ duration: 0.8, repeat: Infinity }}
+                          style={{
+                            color: urgency ? '#ff0000' : '#ff7e40',
+                            padding: '1px 4px',
+                            background: '#fafafa',
+                            border: '1px solid #000',
+                          }}
+                        >
+                          {timeStr}
+                        </motion.span>
+                      </>
+                    )}
+                  </span>
+                </motion.div>
+              )}
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-4 sm:space-y-8 bg-white">
+            {/* ITEMS AREA - scrollable, takes remaining space */}
+            <div style={{ 
+              flex: 1, 
+              overflowY: 'auto', 
+              padding: items.length === 0 ? '0' : '12px 16px', 
+              minHeight: 0,
+              overscrollBehavior: 'contain',
+              touchAction: 'pan-y',
+              WebkitOverflowScrolling: 'touch'
+            }}>
               {items.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-black gap-6 sm:gap-8">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 border-[3px] sm:border-[4px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000]">
-                    <ShoppingBag size={36} className="opacity-20 sm:hidden" />
-                    <ShoppingBag size={48} className="opacity-20 hidden sm:block" />
-                  </div>
-                  <div className="text-center animate-fade-in">
-                    <p className="text-xl sm:text-2xl font-black uppercase mb-3 sm:mb-4 italic">The Vault is Empty</p>
-                    <button onClick={() => setIsCartOpen(false)} className="bg-black text-[#00ff88] px-6 py-2.5 sm:px-8 sm:py-3 border-2 sm:border-[3px] border-black font-black uppercase text-xs sm:text-sm shadow-[4px_4px_0px_0px_#000] sm:shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">Begin Selection</button>
+                <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
+                  <motion.div
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                    style={{ width: '80px', height: '80px', background: '#f5f5f5', border: '3px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '5px 5px 0px 0px #000' }}
+                  >
+                    <ShoppingBag size={36} style={{ opacity: 0.2 }} />
+                  </motion.div>
+                  <div style={{ textAlign: 'center' }}>
+                    <p style={{ fontWeight: 900, fontSize: '18px', textTransform: 'uppercase', fontStyle: 'italic', marginBottom: '12px' }}>The Vault is Empty</p>
+                    <button
+                      onClick={() => setIsCartOpen(false)}
+                      style={{ background: '#000', color: '#00ff88', padding: '10px 24px', border: '2px solid #000', fontWeight: 900, textTransform: 'uppercase', fontSize: '12px', cursor: 'pointer', boxShadow: '4px 4px 0px 0px #000', transition: 'all 0.15s' }}
+                    >
+                      Begin Selection
+                    </button>
                   </div>
                 </div>
               ) : (
                 <AnimatePresence mode="popLayout">
-                  {items.map((item) => (
+                  {items.map((item, index) => (
                     <motion.div
                       layout
-                      initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                      initial={{ opacity: 0, scale: 0.88, y: 16 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9, x: -50 }}
-                      transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+                      exit={{ opacity: 0, scale: 0.82, x: -40 }}
+                      whileHover={{ scale: 1.015, boxShadow: '5px 5px 0px 0px #000' }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ type: 'spring', damping: 22, stiffness: 220, delay: index * 0.04 }}
                       key={item.cartId}
-                      className="flex gap-4 sm:gap-6 bg-white p-3 sm:p-4 border-2 sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+                      style={{ display: 'flex', gap: '12px', background: '#fff', padding: '10px', border: '2.5px solid #000', boxShadow: '3px 3px 0px 0px #000', marginBottom: '10px', cursor: 'pointer' }}
                     >
-                      <div className="w-20 h-28 sm:w-24 sm:h-32 border-2 sm:border-[3px] border-black overflow-hidden shrink-0 bg-white flex items-center justify-center p-1">
-                        <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain transition-transform duration-500 hover:scale-105" loading="lazy" />
+                      {/* Image */}
+                      <div style={{ width: '64px', height: '80px', border: '2px solid #000', overflow: 'hidden', flexShrink: 0, background: '#fafafa', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px' }}>
+                        <img src={item.image} alt={item.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} loading="lazy" />
                       </div>
-                      <div className="flex-1 flex flex-col justify-between min-w-0">
+                      {/* Info */}
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: 0 }}>
                         <div>
-                          <h3 className="font-black text-sm sm:text-lg uppercase text-black line-clamp-1 leading-none mb-1.5 sm:mb-2">{item.name}</h3>
-                          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                            <span className="bg-black text-white px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">{item.size}</span>
-                            {item.color && <span className="bg-[#00ff88] text-black px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">{item.color}</span>}
-                            <span className="bg-white text-black px-1.5 py-0.5 text-[8px] sm:text-[10px] font-black uppercase border-[1px] border-black">QTY: {item.quantity}</span>
+                          <h3 style={{ fontWeight: 900, fontSize: '12px', textTransform: 'uppercase', color: '#000', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '5px' }}>{item.name}</h3>
+                          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                            <span style={{ background: '#000', color: '#fff', padding: '1px 5px', fontSize: '9px', fontWeight: 900, textTransform: 'uppercase' }}>{item.size}</span>
+                            {item.color && <span style={{ background: '#00ff88', color: '#000', padding: '1px 5px', fontSize: '9px', fontWeight: 900, textTransform: 'uppercase', border: '1px solid #000' }}>{item.color}</span>}
+                            <span style={{ background: '#fff', color: '#000', padding: '1px 5px', fontSize: '9px', fontWeight: 900, textTransform: 'uppercase', border: '1px solid #000' }}>×{item.quantity}</span>
                           </div>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <div className="text-xl sm:text-2xl font-black text-black">
-                            ₹<GlitchText text={(item.price * item.quantity).toFixed(0)} triggerOnHover={false} />
-                          </div>
-                          <button onClick={() => removeFromCart(item.cartId)} className="w-8 h-8 sm:w-10 sm:h-10 bg-white border-2 sm:border-[3px] border-black flex items-center justify-center hover:bg-red-500 hover:text-white shadow-[2px_2px_0px_0px_#000] sm:shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                            <Trash2 size={14} className="sm:hidden" />
-                            <Trash2 size={18} className="hidden sm:block" />
-                          </button>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <span style={{ fontWeight: 900, fontSize: '15px', color: '#000' }}>₹{(item.price * item.quantity).toFixed(0)}</span>
+                          <motion.button
+                            whileHover={{ scale: 1.1, backgroundColor: '#ef4444', color: '#fff' }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => removeFromCart(item.cartId)}
+                            style={{ width: '32px', height: '32px', background: '#fff', border: '2px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '2px 2px 0px 0px #000', transition: 'background 0.15s, color 0.15s' }}
+                          >
+                            <Trash2 size={13} />
+                          </motion.button>
                         </div>
                       </div>
                     </motion.div>
@@ -901,28 +1301,29 @@ const CartSidebar = () => {
               )}
             </div>
 
+            {/* FOOTER - fixed at bottom, always visible - redesigned to be smaller */}
             {items.length > 0 && (
-              <div className="p-4 sm:p-8 border-t-4 sm:border-t-[6px] border-black bg-white flex-shrink-0">
-                <div className="space-y-2 sm:space-y-4 mb-4 sm:mb-8">
-                  <div className="flex justify-between items-end">
-                    <span className="text-[10px] sm:text-sm font-black uppercase opacity-40 tracking-[0.2em]">Subtotal</span>
-                    <div className="text-2xl sm:text-4xl font-black text-black font-syne uppercase tracking-tighter">
-                      ₹<GlitchText text={cartTotal.toFixed(0)} triggerOnHover={false} />
-                    </div>
-                  </div>
-                  <p className="text-[8px] sm:text-[10px] font-black uppercase text-black opacity-30 italic leading-none">Logistics and taxes calculated during mission briefing.</p>
-                </div>
-                <Magnetic>
-                  <button
-                    onClick={() => {
-                      setIsCartOpen(false);
-                      navigate('/checkout');
-                    }}
-                    className="w-full bg-[#00ff88] text-black font-black py-4 sm:py-6 border-2 sm:border-[4px] border-black uppercase tracking-[0.2em] shadow-[6px_6px_0px_0px_#000] sm:shadow-[10px_10px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] sm:hover:translate-x-[6px] sm:hover:translate-y-[6px] transition-all text-xl sm:text-2xl"
+              <div style={{ flexShrink: 0, borderTop: '3px solid #000', background: '#fff', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {/* Subtotal row */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontWeight: 900, fontSize: '10px', textTransform: 'uppercase', opacity: 0.45, letterSpacing: '0.15em' }}>Subtotal</span>
+                  <motion.span
+                    key={cartTotal}
+                    initial={{ scale: 1.2, color: '#00aa44' }}
+                    animate={{ scale: 1, color: '#000' }}
+                    transition={{ duration: 0.3 }}
+                    style={{ fontWeight: 900, fontSize: '20px', color: '#000', letterSpacing: '-0.03em' }}
                   >
-                    Checkout Now
-                  </button>
-                </Magnetic>
+                    ₹{cartTotal.toFixed(0)}
+                  </motion.span>
+                </div>
+                <p style={{ fontWeight: 900, fontSize: '7.5px', textTransform: 'uppercase', color: '#000', opacity: 0.3, fontStyle: 'italic', margin: 0, lineHeight: 1.15 }}>Logistics and taxes calculated during mission briefing.</p>
+
+                {/* Free Shipping Tracker — right above checkout */}
+                <FreeShippingTracker cartTotal={cartTotal} />
+
+                {/* Checkout button */}
+                <CheckoutButton onClick={() => { setIsCartOpen(false); navigate('/checkout'); }} />
               </div>
             )}
           </motion.div>
@@ -1075,7 +1476,7 @@ const BestSellers = () => {
 
           {/* Background Caution Tape Marquees (Crossed behind the grid) */}
           <div className="absolute inset-x-0 top-[35%] h-[250px] pointer-events-none z-0 overflow-hidden hidden lg:block opacity-[0.06]">
-            <div className="absolute top-10 inset-x-0 rotate-[-3deg] border-y-[4px] border-black bg-[#00ff88]">
+            <div className="absolute top-10 inset-x-0 rotate-[-3deg] border-y-[4px] border-black bg-[#00ff88] ">
               <InfiniteMarquee text="HIGH DEMAND // SOLD OUT SOON // BEST SELLERS // SHOP NOW //" className="py-2 text-black text-sm font-black" />
             </div>
             <div className="absolute top-28 inset-x-0 rotate-[3deg] border-y-[4px] border-black bg-white">
@@ -1685,10 +2086,15 @@ const DualPriceSlider = ({
 };
 
 const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
+  useSEO({
+    title: 'Elevez | Elevate Your Style',
+    description: 'Redefining streetwear for the digital age. Quality meets virtual aesthetics. Designed in the Metaverse, worn in reality.',
+  });
   const navigate = useNavigate();
   const { scrollY } = useScroll();
   const [collectionFilter, setCollectionFilter] = useState<string>('All');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
+  const [vaultDisplayCount, setVaultDisplayCount] = useState<number>(8); // Load more: start with 8
 
   // Dynamic products state — updates instantly when admin saves changes
   const [allProducts, setAllProducts] = useState<any[]>(() => {
@@ -1756,14 +2162,19 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
     const lowerType = (p.type || '').toLowerCase();
     
-    if (collectionFilter === 'All') return p.isBestSeller;
+    // 'All' shows every eligible product — NOT just best sellers
+    if (collectionFilter === 'All') return true;
     if (collectionFilter === 'HOODIES') return lowerType.includes('hoodie');
     if (collectionFilter === 'T-SHIRTS') return lowerType.includes('t-shirt') || lowerType.includes('tee');
     if (collectionFilter === 'CROP TOPS') return lowerType.includes('crop top');
     if (collectionFilter === 'OVERSIZED TSHIRTS') return lowerType.includes('oversized');
     
-    return p.isBestSeller;
+    return true;
   });
+
+  // Products visible in the vault grid (paginated, reset when filter changes)
+  const vaultProducts = filteredProducts.slice(0, vaultDisplayCount);
+  const hasMoreVaultProducts = vaultDisplayCount < filteredProducts.length;
 
   return (
     <div className="w-full overflow-hidden relative bg-white">
@@ -1811,6 +2222,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             <img 
               src="/models/model_left.png" 
               alt="Elevez Left Model" 
+              loading="eager"
               className="w-full h-full object-contain filter drop-shadow-[6px_6px_0px_rgba(0,0,0,1)] hover:drop-shadow-[0_0_20px_#00ff88] transition-all duration-300"
             />
           </motion.div>
@@ -1828,6 +2240,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             <img 
               src="/models/model_right.png" 
               alt="Elevez Right Model" 
+              loading="eager"
               className="w-full h-full object-contain filter drop-shadow-[-6px_6px_0px_rgba(0,0,0,1)] hover:drop-shadow-[0_0_20px_#00ff88] transition-all duration-300"
             />
             
@@ -1944,7 +2357,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
               <Magnetic>
                 <button
-                  onClick={() => navigate('/rewards')}
+                  onClick={() => navigate('/account?tab=earn-redeem')}
                   className="w-full sm:w-auto px-6 py-3 sm:px-12 sm:py-6 bg-white border-2 sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-black font-black text-sm sm:text-xl tracking-widest uppercase"
                 >
                   Join Rewards
@@ -1958,7 +2371,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       {/* Symmetrical X-Shaped Crossing Marquees */}
       <div className="relative w-full h-40 sm:h-80 z-40 flex items-center justify-center -my-8 sm:-my-16 pointer-events-none select-none">
         <div className="absolute w-[150%] transform -rotate-[4deg] z-10">
-          <InfiniteMarquee text="NEW DROPS // LIMITED EDITION // PREMIUM STREETWEAR // FREE SHIPPING ON ORDERS OVER ₹999 // JOIN THE REWARDS PROGRAM" className="py-2 sm:py-4 shadow-[0_4px_0_0_#000] sm:shadow-[0_8px_0_0_#000]" />
+          <InfiniteMarquee text="NEW DROPS // LIMITED EDITION // PREMIUM STREETWEAR // FREE SHIPPING ON ORDERS OVER ₹650 // JOIN THE REWARDS PROGRAM" className="py-2 sm:py-4 shadow-[0_4px_0_0_#000] sm:shadow-[0_8px_0_0_#000]" />
         </div>
         <div className="absolute w-[150%] transform rotate-[4deg] z-20">
           <InfiniteMarquee text="EXCELLENCE IN EVERY DETAIL // CUSTOM STITCHED // SS26 RUNWAY // ELEVEZ LABS" className="py-2 sm:py-4 shadow-[0_4px_0_0_#000] sm:shadow-[0_8px_0_0_#000]" direction="right" />
@@ -2009,6 +2422,9 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
       {/* Best Sellers Section */}
       <BestSellers />
+
+      {/* Lucky Spin Wheel Phone Number Capture */}
+      <HomeLuckySpinWheel />
 
 
       {/* The Vault - Dynamic Category Divider & Grid */}
@@ -2071,7 +2487,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             {['All', 'HOODIES', 'T-SHIRTS', 'CROP TOPS', 'OVERSIZED TSHIRTS'].map((filter, i) => (
               <button
                 key={filter}
-                onClick={() => setCollectionFilter(filter)}
+                onClick={() => { setCollectionFilter(filter); setVaultDisplayCount(8); }}
                 onMouseEnter={() => setCursorVariant('hover')}
                 onMouseLeave={() => setCursorVariant('default')}
                 className={`px-3 py-2 sm:px-6 sm:py-4 md:px-10 md:py-6 border-2 sm:border-[4px] border-black text-[11px] sm:text-lg md:text-2xl font-black uppercase tracking-wider sm:tracking-widest transition-all ${collectionFilter === filter ? 'bg-black text-[#00ff88] shadow-[4px_4px_0px_0px_#00ff88] sm:shadow-[8px_8px_0px_0px_#00ff88] translate-x-[2px] translate-y-[2px] sm:translate-x-1 sm:translate-y-1' : 'bg-white text-black hover:bg-[#00ff88] hover:translate-x-[2px] hover:translate-y-[2px] sm:hover:translate-x-[4px] sm:hover:translate-y-[4px] hover:shadow-[4px_4px_0px_0px_#000] sm:hover:shadow-[6px_6px_0px_0px_#000]'}`}
@@ -2092,13 +2508,13 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
           {/* Dynamic Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-8">
-            {filteredProducts.map((product, index) => (
+            {vaultProducts.map((product, index) => (
               <motion.div
                 key={product.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
+                transition={{ duration: 0.4, delay: (index % 8) * 0.06 }}
               >
                 <ProductCard
                   product={product}
@@ -2108,7 +2524,31 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               </motion.div>
             ))}
           </div>
-          
+
+          {/* Load More Button */}
+          {hasMoreVaultProducts && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center mt-10 sm:mt-16 gap-3"
+            >
+              <p className="text-xs sm:text-sm font-black uppercase tracking-widest text-black/40">
+                Showing {vaultProducts.length} of {filteredProducts.length} items
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.04, boxShadow: '8px 8px 0px 0px #00ff88' }}
+                whileTap={{ scale: 0.96, y: 3, boxShadow: '2px 2px 0px 0px #000' }}
+                onClick={() => setVaultDisplayCount(prev => prev + 8)}
+                onMouseEnter={() => setCursorVariant('hover')}
+                onMouseLeave={() => setCursorVariant('default')}
+                className="bg-black text-[#00ff88] border-[4px] border-black px-10 py-4 sm:px-16 sm:py-5 font-black uppercase tracking-widest text-sm sm:text-lg shadow-[6px_6px_0px_0px_#00ff88] transition-all flex items-center gap-3 cursor-pointer"
+              >
+                <RefreshCw size={18} />
+                LOAD MORE
+              </motion.button>
+            </motion.div>
+          )}
+
           {filteredProducts.length === 0 && (
             <div className="text-center py-20 border-[4px] border-black border-dashed">
               <h3 className="text-3xl font-black uppercase">Data Not Found</h3>
@@ -2175,6 +2615,10 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
 const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const { category } = useParams<{ category?: string }>();
+  useSEO({
+    title: `Shop ${category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Streetwear'} - Elevez`,
+    description: `Explore our custom ${category || 'streetwear'} collection. Oversized fits, limited hoodie designs, graphic tees.`,
+  });
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const tagFilter = searchParams.get('tag');
@@ -2675,18 +3119,208 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   );
 };
 
+const ProductSchema = ({ product, url }: { product: any; url: string }) => {
+  const schema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "image": product.image,
+    "description": product.description || `Buy the premium ${product.name} at Elevez. High quality limited streetwear.`,
+    "sku": `ELVZ-${product.id}`,
+    "brand": {
+      "@type": "Brand",
+      "name": "Elevez"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": url,
+      "priceCurrency": "INR",
+      "price": product.price,
+      "priceValidUntil": "2027-12-31",
+      "itemCondition": "https://schema.org/NewCondition",
+      "availability": "https://schema.org/InStock",
+      "seller": {
+        "@type": "Organization",
+        "name": "Elevez"
+      }
+    }
+  };
+
+  return (
+    <script type="application/ld+json">
+      {JSON.stringify(schema)}
+    </script>
+  );
+};
+
 const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const { id } = useParams();
-  const { addToCart, setIsCartOpen } = useCart();
+  const { items, addToCart, setIsCartOpen, isCartOpen } = useCart();
   const navigate = useNavigate();
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState('');
   const [product, setProduct] = useState<any>(null);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   // isLoading prevents 'Product Not Found' from flashing during SSE re-fetch
   const [isLoading, setIsLoading] = useState(true);
+
+  // Scroll visibility state for mobile Add to Cart bar
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    let scrollTimer: NodeJS.Timeout;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // If scrolling down significantly, hide it. If scrolling up, show it.
+      if (currentScrollY > lastScrollY && currentScrollY > 100 && currentScrollY - lastScrollY > 5) {
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY && lastScrollY - currentScrollY > 5) {
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+
+      // Re-appear when standing still for 1.5 seconds
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        setIsVisible(true);
+      }, 1500);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimer);
+    };
+  }, [lastScrollY]);
+
+  // Set Dynamic SEO Metadata unconditionally at the top level
+  useSEO({
+    title: product ? `${product.name} - Streetwear Apparel` : 'Product Details',
+    description: product ? `Shop ${product.name} for ₹${product?.price || ''}. Premium streetwear, oversized cuts, limited edition drops.` : 'Browse our custom streetwear apparel line.',
+    ogImage: product?.image,
+    ogType: 'product'
+  });
+
+  // States and refs for interactive image swipe slider & automatic slideshow
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isHolding, setIsHolding] = useState(false);
+  const swipeStartX = useRef<number | null>(null);
+  const swipeStartY = useRef<number | null>(null);
+  const [dragOffsetX, setDragOffsetX] = useState(0); // Live drag translation for touch feedback
+
+  const productImages = product?.images && product.images.length > 0 ? product.images.slice(0, 5) : (product ? [product.image] : []);
+
+  // Sync activeImage whenever activeImageIndex or productImages changes
+  useEffect(() => {
+    if (productImages && productImages[activeImageIndex]) {
+      setActiveImage(productImages[activeImageIndex]);
+    }
+  }, [activeImageIndex, productImages]);
+
+  // Slideshow interval (automatically transitions to next unless holding)
+  useEffect(() => {
+    if (isHolding || productImages.length <= 1) return;
+    const intervalId = setInterval(() => {
+      setActiveImageIndex(prev => (prev + 1) % productImages.length);
+    }, 3000);
+    return () => clearInterval(intervalId);
+  }, [isHolding, productImages.length]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsHolding(true);
+    const touch = e.touches[0];
+    swipeStartX.current = touch.clientX;
+    swipeStartY.current = touch.clientY;
+    setDragOffsetX(0);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (swipeStartX.current === null || swipeStartY.current === null) return;
+    const touch = e.touches[0];
+    const diffX = touch.clientX - swipeStartX.current;
+    const diffY = touch.clientY - swipeStartY.current;
+    // Only track horizontal swipes (prevent fighting with vertical scroll)
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      if (e.cancelable) e.preventDefault();
+      // Rubber-band effect: limit drag to ±80px with resistance
+      setDragOffsetX(diffX * 0.6);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    setIsHolding(false);
+    if (swipeStartX.current === null) return;
+    const touch = e.changedTouches[0];
+    const diffX = touch.clientX - swipeStartX.current;
+    const diffY = touch.clientY - swipeStartY.current!;
+
+    if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX > 0) {
+        // Swipe Right -> Prev Image
+        setActiveImageIndex(prev => (prev - 1 + productImages.length) % productImages.length);
+      } else {
+        // Swipe Left -> Next Image
+        setActiveImageIndex(prev => (prev + 1) % productImages.length);
+      }
+    } else {
+      // Tap margins navigation
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = touch.clientX - rect.left;
+      const width = rect.width;
+      if (clickX < width * 0.35) {
+        setActiveImageIndex(prev => (prev - 1 + productImages.length) % productImages.length);
+      } else if (clickX > width * 0.65) {
+        setActiveImageIndex(prev => (prev + 1) % productImages.length);
+      }
+    }
+    setDragOffsetX(0); // Reset live drag offset after swipe resolves
+    swipeStartX.current = null;
+    swipeStartY.current = null;
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsHolding(true);
+    swipeStartX.current = e.clientX;
+    swipeStartY.current = e.clientY;
+  };
+
+  const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsHolding(false);
+    if (swipeStartX.current === null) return;
+    const diffX = e.clientX - swipeStartX.current;
+    const diffY = e.clientY - swipeStartY.current!;
+
+    if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX > 0) {
+        setActiveImageIndex(prev => (prev - 1 + productImages.length) % productImages.length);
+      } else {
+        setActiveImageIndex(prev => (prev + 1) % productImages.length);
+      }
+    } else {
+      // Tap margins navigation
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const width = rect.width;
+      if (clickX < width * 0.35) {
+        setActiveImageIndex(prev => (prev - 1 + productImages.length) % productImages.length);
+      } else if (clickX > width * 0.65) {
+        setActiveImageIndex(prev => (prev + 1) % productImages.length);
+      }
+    }
+    swipeStartX.current = null;
+    swipeStartY.current = null;
+  };
+
+  const handleMouseLeaveImage = () => {
+    setIsHolding(false);
+    swipeStartX.current = null;
+    swipeStartY.current = null;
+    setCursorVariant('default');
+  };
 
   // Simulated live viewer fluctuations for conversion excitement
   const [liveViewers, setLiveViewers] = useState(() => 14 + Math.floor(Math.random() * 12) + (Number(id || 0) % 5));
@@ -2753,6 +3387,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
       if (found) {
         setProduct(found);
         setActiveImage(found.image);
+        setActiveImageIndex(0);
         if (found.colors && found.colors.length > 0) {
           setSelectedColor(prev => found.colors.includes(prev) ? prev : found.colors[0]);
         }
@@ -2783,11 +3418,9 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   );
   if (!product) return <div className="min-h-screen flex items-center justify-center font-black uppercase text-4xl">Product Not Found</div>;
 
-  const productImages = product.images && product.images.length > 0 ? product.images.slice(0, 5) : [product.image];
-
-
   return (
     <div className="min-h-screen pt-48 pb-20 bg-white">
+      <ProductSchema product={product} url={window.location.href} />
       <div className="container mx-auto px-6">
         <Link to="/shop/all" className="inline-flex items-center gap-3 bg-black text-[#00ff88] px-6 py-2 border-[3px] border-black font-black uppercase text-sm shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] mb-12 transition-all">
           <ArrowLeft size={16} /> Back to Archives
@@ -2816,26 +3449,55 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               </motion.span>
             </motion.div>
 
+            {/* Main Interactive Swipe / Tap Container */}
             <div 
-              onClick={() => setIsLightboxOpen(true)}
-              className="relative w-full h-auto border-[4px] border-black bg-white mb-4 group overflow-hidden cursor-zoom-in"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseLeaveImage}
+              className="relative w-full h-auto border-[4px] border-black bg-white mb-4 group overflow-hidden select-none cursor-pointer aspect-[4/5] sm:aspect-auto"
               onMouseEnter={() => setCursorVariant('hover')}
-              onMouseLeave={() => setCursorVariant('default')}
             >
-              <img
-                src={activeImage}
-                alt={product.name}
-                className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute top-6 left-6 bg-black text-[#00ff88] px-4 py-1 border-[3px] border-black font-black uppercase text-xs shadow-[4px_4px_0px_0px_#000]">
+              <div 
+                className="flex w-full h-full"
+                style={{
+                  transform: `translateX(calc(-${activeImageIndex * 100}% + ${dragOffsetX}px))`,
+                  transition: dragOffsetX === 0 ? 'transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
+                }}
+              >
+                {productImages.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img}
+                    alt={`${product.name} - View ${idx + 1}`}
+                    loading={idx === 0 ? "eager" : "lazy"}
+                    className="w-full h-full shrink-0 object-cover block pointer-events-none"
+                  />
+                ))}
+              </div>
+              <div className="absolute top-6 left-6 bg-black text-[#00ff88] px-4 py-1 border-[3px] border-black font-black uppercase text-xs shadow-[4px_4px_0px_0px_#000] z-10">
                 {product.type}
+              </div>
+
+              {/* Navigation Indicator chevrons */}
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
+                <div className="bg-white text-black border-[3px] border-black p-2 shadow-[2px_2px_0px_0px_#000] flex items-center justify-center">
+                  <ArrowLeft size={16} />
+                </div>
+              </div>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
+                <div className="bg-white text-black border-[3px] border-black p-2 shadow-[2px_2px_0px_0px_#000] flex items-center justify-center">
+                  <ArrowRight size={16} />
+                </div>
               </div>
 
               {/* cyber-neobrutalist decrypt image trigger */}
               <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
-                <div className="bg-black text-[#00ff88] px-5 py-3 border-[3px] border-[#00ff88] font-black uppercase tracking-wider text-xs flex items-center gap-2 shadow-[4px_4px_0px_0px_#000] pointer-events-auto">
-                  <Maximize2 size={16} />
-                  DECRYPT IMAGE
+                <div className="bg-black text-[#00ff88] px-4 py-2 border-[3px] border-[#00ff88] font-black uppercase tracking-wider text-[10px] flex items-center gap-1.5 shadow-[4px_4px_0px_0px_#000] pointer-events-auto">
+                  <Maximize2 size={12} />
+                  DECRYPT IMAGE (CENTER)
                 </div>
               </div>
             </div>
@@ -2844,8 +3506,11 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               {productImages.map((img, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setActiveImage(img)}
-                  className={`aspect-square border-[3px] border-black transition-all ${activeImage === img ? 'bg-[#00ff88] shadow-[4px_4px_0px_0px_#000] scale-105' : 'bg-white hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_#000]'}`}
+                  onClick={() => {
+                    setActiveImage(img);
+                    setActiveImageIndex(idx);
+                  }}
+                  className={`aspect-square border-[3px] border-black transition-all ${activeImageIndex === idx ? 'bg-[#00ff88] shadow-[4px_4px_0px_0px_#000] scale-105' : 'bg-white hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_#000]'}`}
                 >
                   <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
                 </button>
@@ -2944,7 +3609,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`w-8 h-8 sm:w-10 sm:h-10 border-[2px] sm:border-[3px] border-black font-black text-xs sm:text-sm transition-all ${selectedSize === size ? 'bg-[#00ff88] text-black shadow-[3px_3px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_#000]'}`}
+                      className={`w-12 h-12 md:w-10 md:h-10 border-[2px] sm:border-[3px] border-black font-black text-xs sm:text-sm transition-all ${selectedSize === size ? 'bg-[#00ff88] text-black shadow-[3px_3px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_#000]'}`}
                     >
                       {size}
                     </button>
@@ -2982,11 +3647,14 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
             </div>
 
             <div className="mb-6">
-              <DynamicAccordion items={[
-                { title: "Product Architecture", content: product.description || "Designed for maximum utility and urban aesthetics. Built with high-grade GSM fabric for durability and comfort." },
-                { title: "Material Protocol", content: "100% Premium Cotton // 240 GSM // Pre-shrunk // Bio-washed // Sustainably sourced." },
-                { title: "Shipping Signals", content: "Dispatched within 24-48 hours. Express shipping available. Real-time tracking enabled." }
-              ]} />
+              <DynamicAccordion 
+                compact={true}
+                items={[
+                  { title: "Product Architecture", content: product.description || "Designed for maximum utility and urban aesthetics. Built with high-grade GSM fabric for durability and comfort." },
+                  { title: "Material Protocol", content: "100% Premium Cotton // 240 GSM // Pre-shrunk // Bio-washed // Sustainably sourced." },
+                  { title: "Shipping Signals", content: "Dispatched within 24-48 hours. Express shipping available. Real-time tracking enabled." }
+                ]} 
+              />
             </div>
 
 
@@ -3019,30 +3687,76 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
               </button>
             </div>
 
-            {/* Mobile Sticky Action Bar */}
-            <div className="lg:hidden fixed bottom-0 left-0 w-full z-50 bg-white border-t-[4px] border-black flex h-14 shadow-[0_-4px_10px_rgba(0,0,0,0.1)]">
-              <button
-                onClick={() => {
-                  addToCart(product, selectedSize, selectedColor || 'Standard', quantity);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="flex-1 bg-black text-[#00ff88] font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 border-r-[4px] border-black hover:bg-gray-900 active:bg-gray-800 transition-colors"
-              >
-                <ShoppingBag size={14} /> ADD TO CART
-              </button>
-              <button
-                onClick={() => {
-                  addToCart(product, selectedSize, selectedColor || 'Standard', quantity);
-                  setTimeout(() => {
-                    navigate('/checkout');
-                    window.scrollTo(0, 0);
-                  }, 300);
-                }}
-                className="flex-1 bg-[#00ff88] text-black font-black text-[12px] uppercase tracking-widest flex items-center justify-center hover:bg-[#00cc6a] active:bg-[#00b35c] transition-colors"
-              >
-                BUY NOW
-              </button>
-            </div>
+            {/* Mobile Sticky Add to Cart (Portal) */}
+            {createPortal(
+              <AnimatePresence>
+                {isVisible && !isCartOpen && (
+                  <motion.div
+                    initial={{ y: 100, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 100, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    style={{
+                      position: 'fixed',
+                      bottom: 0,
+                      left: 0,
+                      width: '100%',
+                      zIndex: 200,
+                      backgroundColor: 'white',
+                      borderTop: '3px solid #000000',
+                      boxShadow: '0 -4px 10px rgba(0,0,0,0.15)',
+                      paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)',
+                    }}
+                    className="lg:hidden flex items-center justify-between px-4 py-3 gap-3"
+                  >
+                    {/* Cart Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.9, rotate: -5 }}
+                      onClick={() => setIsCartOpen(true)}
+                      className="w-12 h-12 bg-white text-black border-[3px] border-black rounded-xl flex items-center justify-center relative shadow-[3px_3px_0px_0px_#000] cursor-pointer z-10"
+                    >
+                      <motion.div
+                        animate={{ y: [0, -3, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        <ShoppingCart size={20} />
+                      </motion.div>
+                      {items.reduce((sum, item) => sum + item.quantity, 0) > 0 && (
+                        <span className="absolute -top-1.5 -right-1.5 bg-[#ff007f] text-white border-[2.5px] border-black text-[9px] font-black w-6 h-6 rounded-full flex items-center justify-center shadow-[1px_1px_0px_0px_#000] z-20">
+                          {items.reduce((sum, item) => sum + item.quantity, 0)}
+                        </span>
+                      )}
+                    </motion.button>
+
+                    {/* Add to Cart Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        addToCart(product, selectedSize, selectedColor || 'Standard', quantity);
+                      }}
+                      className="flex-1 bg-[#ff007f] text-white font-black text-xs sm:text-sm py-3 px-4 border-[3px] border-black rounded-xl uppercase tracking-widest shadow-[3px_3px_0px_0px_#000] flex items-center justify-center gap-2 cursor-pointer overflow-hidden relative z-10"
+                    >
+                      {/* Shiny Sweep Animation */}
+                      <motion.div 
+                         className="absolute inset-0 bg-white/30 skew-x-[-20deg] w-12"
+                         animate={{ x: ['-300%', '800%'] }}
+                         transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 1 }}
+                      />
+                      <motion.div
+                        animate={{ scale: [1, 1.15, 1] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        <Plus size={16} />
+                      </motion.div>
+                      ADD TO CART
+                    </motion.button>
+                  </motion.div>
+                )}
+              </AnimatePresence>,
+              document.body
+            )}
 
             {/* Service Grid */}
             <div className="grid grid-cols-3 gap-4 pt-6 border-t-[3px] border-black">
@@ -3083,46 +3797,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
         </div>
       </div>
 
-      {/* cyber-neobrutalist decrypt image (lightbox) overlay */}
-      <AnimatePresence>
-        {isLightboxOpen && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/95 backdrop-blur-sm"
-              onClick={() => setIsLightboxOpen(false)}
-            />
 
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative max-w-5xl w-full flex flex-col items-center justify-center z-10"
-            >
-              {/* Close Button */}
-              <button
-                onClick={() => setIsLightboxOpen(false)}
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-                className="absolute -top-16 right-0 bg-[#00ff88] text-black px-6 py-3 border-[3px] border-black font-black uppercase text-sm shadow-[4px_4px_0px_0px_#000] hover:bg-white transition-all flex items-center gap-2"
-              >
-                <X size={16} /> CLOSE_VIEW
-              </button>
-
-              <div className="bg-white border-[8px] border-black p-4 shadow-[24px_24px_0px_0px_#00ff88] max-h-[80vh] flex items-center justify-center overflow-hidden relative">
-                <img
-                  src={activeImage}
-                  alt={product.name}
-                  className="max-w-full max-h-[75vh] object-contain select-none"
-                />
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
@@ -3185,9 +3860,9 @@ const About = () => {
           <div className="inline-block bg-black text-[#00ff88] text-sm font-black uppercase tracking-[0.3em] px-8 py-3 border-[4px] border-black shadow-[8px_8px_0px_0px_#000] mb-12">
             The Movement
           </div>
-          <h1 className="text-7xl md:text-[12rem] font-black font-syne mb-12 text-black uppercase leading-[0.85] tracking-tighter">
+          <h2 className="text-7xl md:text-[12rem] font-black font-syne mb-12 text-black uppercase leading-[0.85] tracking-tighter">
             OUR <span className="text-[#00ff88]" style={{ WebkitTextStroke: '4px black' }}>STORY</span>
-          </h1>
+          </h2>
           <p className="text-2xl md:text-4xl text-black font-black uppercase leading-tight max-w-4xl mx-auto italic border-l-[12px] border-black pl-12 text-left">
             Elevez was born in the digital void. We are not just a clothing brand; we are a movement against the static.
           </p>
@@ -3398,7 +4073,7 @@ const About = () => {
               Shop Now
             </Link>
             <Link
-              to="/rewards"
+              to="/account?tab=earn-redeem"
               className="w-full sm:w-auto px-12 py-6 bg-white text-black font-black border-[4px] border-black uppercase tracking-[0.2em] shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-xl"
             >
               Join Rewards
@@ -3501,7 +4176,11 @@ const Checkout = () => {
   const [mapPreview, setMapPreview] = useState<string | null>(null);
   const [googleMapsError, setGoogleMapsError] = useState(false);
 
-  const shippingCost = formData.paymentMethod === 'cod' ? 30 : 0;
+  // Enforce shipping threshold of 650. COD adds an extra 30.
+  const baseShippingCost = cartTotal >= 650 ? 0 : 50;
+  const codFee = formData.paymentMethod === 'cod' ? 30 : 0;
+  const shippingCost = baseShippingCost + codFee;
+  
   const discountAmount = discountApplied ? (cartTotal * discountPercentage) / 100 : 0;
   const totalAmount = cartTotal + shippingCost - discountAmount;
 
@@ -4003,11 +4682,15 @@ const Checkout = () => {
                     <span>Subtotal</span>
                     <span>₹{cartTotal.toFixed(0)}</span>
                   </div>
-                  <div className="flex justify-between font-bold uppercase text-sm text-black">
-                    <span>Shipping</span>
-                    <span className={shippingCost === 0 ? 'text-green-600 font-black' : ''}>
-                      {shippingCost === 0 ? 'FREE' : `₹${shippingCost.toFixed(0)}`}
-                    </span>
+                  <div className="flex justify-between items-center py-2 border-b-2 border-dashed border-gray-200">
+                    <span className="font-bold uppercase text-black opacity-60">Shipping</span>
+                    <div className="flex flex-col items-end">
+                      <span className={shippingCost === 0 ? 'text-green-600 font-black' : 'font-black text-black'}>
+                        {shippingCost === 0 ? 'FREE' : `₹${shippingCost.toFixed(0)}`}
+                      </span>
+                      {cartTotal < 650 && <span className="text-[10px] uppercase text-zinc-500">Free over ₹650</span>}
+                      {formData.paymentMethod === 'cod' && <span className="text-[10px] uppercase text-zinc-500">(Includes ₹30 COD)</span>}
+                    </div>
                   </div>
                   {discountApplied && (
                     <div className="flex justify-between text-green-600 font-black uppercase text-sm">
@@ -4047,7 +4730,18 @@ const Checkout = () => {
 
 // Account Page Component
 const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> = ({ setCursorVariant }) => {
+  useSEO({
+    title: 'My Account - Loyalty Rewards',
+    description: 'Manage your profile, view orders, check your syndicate loyalty points, and redeem custom discount codes.',
+  });
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'dashboard';
+
+  // Normalize tab
+  const normalizedTab = ['dashboard', 'orders', 'wishlist', 'rewards', 'earn-redeem', 'arcade'].includes(activeTab) ? activeTab : 'dashboard';
+  const displayTab = normalizedTab === 'rewards' ? 'earn-redeem' : normalizedTab;
+
   const [user, setUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
@@ -4057,6 +4751,35 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
   const [showOrderModal, setShowOrderModal] = useState(false);
   const { addToCart } = useCart();
   const { profile: loyaltyProfile, tierInfo: loyaltyTierInfo } = useLoyalty();
+
+  // Dynamic rules state for Earn & Redeem tab
+  const [dynamicRules, setDynamicRules] = useState<any>(null);
+  const [earningRate, setEarningRate] = useState<number>(0.1);
+  const [tierThresholds, setTierThresholds] = useState<any[]>([]);
+
+  // Load dynamic rules
+  useEffect(() => {
+    const loadRules = async () => {
+      try {
+        const rules = await loyaltyRulesService.getRules();
+        setDynamicRules(rules);
+        setEarningRate(rules?.pointsEarning?.pointsPerDollar ?? 0.1);
+        setTierThresholds(rules?.tiers || []);
+      } catch (error) {
+        console.error('❌ Error loading loyalty rules:', error);
+      }
+    };
+
+    loadRules();
+
+    const unsubscribe = loyaltyRulesService.onRulesChange((rules) => {
+      setDynamicRules(rules);
+      setEarningRate(rules?.pointsEarning?.pointsPerDollar ?? 0.1);
+      setTierThresholds(rules?.tiers || []);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // Check authentication
   useEffect(() => {
@@ -4119,7 +4842,6 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
       const cleanup = userDataLoaderService.setupRealtimeListeners(userId, {
         onPointsUpdate: (points) => {
           console.log('🔄 Real-time points update:', points.points);
-          // Points will auto-update in loyalty components via their own listeners
         },
         onOrdersUpdate: (orders) => {
           console.log('🔄 Real-time orders update:', orders.length);
@@ -4134,7 +4856,6 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
         }
       });
 
-      // Cleanup on unmount
       return cleanup;
     } catch (error) {
       console.error('❌ Error loading user data:', error);
@@ -4161,9 +4882,6 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
       await loadUserData(result.user.uid);
     } catch (error: any) {
       console.error('Error signing in:', error);
-      console.error('Error code:', error.code);
-      console.error('Error message:', error.message);
-
       let errorMessage = 'Failed to sign in. ';
       if (error.code === 'auth/popup-blocked') {
         errorMessage += 'Please allow popups for this site.';
@@ -4174,7 +4892,6 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
       } else {
         errorMessage += error.message || 'Please try again.';
       }
-
       alert(errorMessage);
     }
   };
@@ -4242,9 +4959,24 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
     );
   }
 
+  const tabs = [
+    { id: 'dashboard', label: 'Dashboard', icon: User },
+    { id: 'orders', label: 'Log History', icon: Package },
+    { id: 'wishlist', label: 'Saved Items', icon: Heart },
+    { id: 'earn-redeem', label: 'Earn & Redeem', icon: Gift },
+    { id: 'arcade', label: 'Arcade Zone', icon: Sparkles }
+  ];
+
+  const {
+    tierInfo: loyaltyTierInfoFull,
+    nextTier: loyaltyNextTier,
+    pointsToNextTier: loyaltyPointsToNextTier,
+    tierProgress: loyaltyTierProgress,
+  } = useLoyalty();
+
   return (
     <div className="min-h-screen pt-48 pb-20 bg-white">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-16 border-b-[6px] sm:border-b-[8px] border-black pb-8 sm:pb-12">
@@ -4257,14 +4989,14 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
             <div className="flex items-center gap-4 sm:gap-6">
               <button
                 onClick={() => loadUserData(user.uid)}
-                className="w-11 h-11 sm:w-14 sm:h-14 bg-white text-black border-[3px] sm:border-[4px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000] sm:shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                className="w-11 h-11 sm:w-14 sm:h-14 bg-white text-black border-[3px] sm:border-[4px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000] sm:shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer"
                 title="Sync Data"
               >
                 <RefreshCw size={20} className="sm:w-7 sm:h-7" />
               </button>
               <button
                 onClick={() => signOut(auth)}
-                className="bg-black text-[#00ff88] px-5 sm:px-10 py-3 sm:py-4 border-[3px] sm:border-[4px] border-black font-black uppercase text-sm sm:text-lg shadow-[4px_4px_0px_0px_#00ff88] sm:shadow-[8px_8px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center gap-2 sm:gap-4"
+                className="bg-black text-[#00ff88] px-5 sm:px-10 py-3 sm:py-4 border-[3px] sm:border-[4px] border-black font-black uppercase text-sm sm:text-lg shadow-[4px_4px_0px_0px_#00ff88] sm:shadow-[8px_8px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center gap-2 sm:gap-4 cursor-pointer"
               >
                 <LogOut size={16} className="sm:w-6 sm:h-6" />
                 <span>Disconnect</span>
@@ -4272,81 +5004,141 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16">
-            {/* Left Column: User Info */}
-            <div className="lg:col-span-1 space-y-8 sm:space-y-12">
-              <div className="bg-white border-[4px] sm:border-[6px] border-black p-6 sm:p-10 shadow-[8px_8px_0px_0px_#000] sm:shadow-[16px_16px_0px_0px_#000]">
-                <div className="relative inline-block mb-6 sm:mb-10">
-                  {user.photoURL ? (
-                    <img 
-                      src={user.photoURL} 
-                      alt={user.displayName} 
-                      referrerPolicy="no-referrer"
-                      className="w-24 h-24 sm:w-32 sm:h-32 object-cover border-[4px] sm:border-[6px] border-black shadow-[6px_6px_0px_0px_#00ff88] sm:shadow-[8px_8px_0px_0px_#00ff88]" 
-                    />
-                  ) : (
-                    <div className="w-24 h-24 sm:w-32 sm:h-32 bg-black text-[#00ff88] border-[4px] sm:border-[6px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_#00ff88] sm:shadow-[8px_8px_0px_0px_#00ff88]">
-                      <User size={48} className="sm:w-16 sm:h-16" />
+          {/* Responsive Tabs Selector */}
+          <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 mb-10 snap-x no-scrollbar touch-scroll border-b-[3px] border-black/10">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = displayTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setSearchParams({ tab: tab.id })}
+                  className={`shrink-0 snap-center flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3.5 border-[2.5px] sm:border-[3px] border-black font-black uppercase text-[10px] sm:text-xs tracking-wider transition-all cursor-pointer shadow-[3px_3px_0px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none ${
+                    isActive
+                      ? 'bg-[#00ff88] text-black'
+                      : 'bg-white text-black hover:bg-zinc-50'
+                  }`}
+                >
+                  <Icon size={14} className="sm:w-[16px] sm:h-[16px]" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Tab Contents */}
+          <div className="min-h-[400px]">
+            {displayTab === 'dashboard' && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12">
+                {/* Left side: Profile details */}
+                <div className="lg:col-span-1 space-y-8">
+                  <div className="bg-white border-[3px] sm:border-[4px] border-black p-6 sm:p-10 shadow-[6px_6px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000]">
+                    <div className="relative inline-block mb-6 sm:mb-10">
+                      {user.photoURL ? (
+                        <img 
+                          src={user.photoURL} 
+                          alt={user.displayName} 
+                          referrerPolicy="no-referrer"
+                          className="w-24 h-24 sm:w-32 sm:h-32 object-cover border-[3px] sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#00ff88] sm:shadow-[6px_6px_0px_0px_#00ff88]" 
+                        />
+                      ) : (
+                        <div className="w-24 h-24 sm:w-32 sm:h-32 bg-black text-[#00ff88] border-[3px] sm:border-[4px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#00ff88] sm:shadow-[6px_6px_0px_0px_#00ff88]">
+                          <User size={48} className="sm:w-16 sm:h-16" />
+                        </div>
+                      )}
+                      <div className="absolute -bottom-2 sm:-bottom-4 -right-2 sm:-right-4 bg-black text-white px-2 sm:px-3 py-0.5 sm:py-1.5 text-[8px] sm:text-[10px] font-black uppercase border-[2px] border-black">Verified</div>
                     </div>
-                  )}
-                  <div className="absolute -bottom-2 sm:-bottom-4 -right-2 sm:-right-4 bg-black text-white px-2.5 sm:px-4 py-1 sm:py-2 text-[10px] sm:text-xs font-black uppercase border-[2px] sm:border-[3px] border-black">Verified</div>
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-black uppercase text-black mb-2">{user.displayName}</h2>
-                <p className="text-sm sm:text-lg font-bold text-black opacity-50 uppercase tracking-tighter mb-6 sm:mb-8 break-all">{user.email}</p>
-                <div className="space-y-4 pt-6 sm:pt-8 border-t-[3px] sm:border-t-[4px] border-black">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs sm:text-sm font-black uppercase opacity-40">Orders</span>
-                    <span className="text-lg sm:text-xl font-black uppercase">{orders.length}</span>
+                    <h2 className="text-xl sm:text-3xl font-black uppercase text-black mb-2">{user.displayName}</h2>
+                    <p className="text-xs sm:text-base font-bold text-black opacity-50 uppercase tracking-tighter mb-6 sm:mb-8 break-all">{user.email}</p>
+                    <div className="space-y-4 pt-6 border-t-[2px] sm:border-t-[3px] border-black">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] sm:text-xs font-black uppercase opacity-40">Orders</span>
+                        <span className="text-sm sm:text-lg font-black uppercase">{orders.length}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] sm:text-xs font-black uppercase opacity-40">Wishlist</span>
+                        <span className="text-sm sm:text-lg font-black uppercase">{wishlistProducts.length}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs sm:text-sm font-black uppercase opacity-40">Wishlist</span>
-                    <span className="text-lg sm:text-xl font-black uppercase">{wishlistProducts.length}</span>
+                </div>
+
+                {/* Right side: Loyalty Status Summary */}
+                <div className="lg:col-span-2 space-y-8">
+                  <div className="bg-[#00ff88] border-[3px] sm:border-[4px] border-black p-6 sm:p-10 shadow-[6px_6px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] h-full flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-2xl sm:text-4xl font-black uppercase text-black leading-none font-syne">Loyalty Status</h3>
+                        <span className="text-4xl bg-black p-3 text-white border-[2.5px] border-black shadow-[4px_4px_0px_0px_#fff] shrink-0">
+                          {loyaltyTierInfo ? loyaltyTierInfo.icon : '⭐'}
+                        </span>
+                      </div>
+                      
+                      <div className="bg-white border-[3px] border-black p-6 mb-6 text-left relative overflow-hidden">
+                        <p className="text-sm font-black uppercase text-black opacity-50 mb-2">Available Balance</p>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-5xl sm:text-7xl font-black text-black font-syne leading-none">
+                            {loyaltyProfile ? loyaltyProfile.points.toLocaleString() : '0'}
+                          </span>
+                          <span className="text-base sm:text-lg font-black text-black uppercase">PTS</span>
+                        </div>
+                        {loyaltyTierInfo && (
+                          <div className="mt-4 pt-4 border-t-2 border-black/10">
+                            <span className="text-xs sm:text-sm font-black uppercase text-black">Member Tier: {loyaltyTierInfo.name}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {loyaltyNextTier && (
+                        <div className="mt-6">
+                          <div className="flex justify-between items-center text-xs sm:text-sm font-black uppercase text-black mb-2">
+                            <span>Progress to {loyaltyNextTier.name}</span>
+                            <span>{loyaltyPointsToNextTier} PTS TO GO</span>
+                          </div>
+                          <div className="h-8 border-[3px] border-black bg-white relative overflow-hidden shadow-[2px_2px_0px_0px_#000]">
+                            <motion.div 
+                              initial={{ width: 0 }}
+                              animate={{ width: `${loyaltyTierProgress}%` }}
+                              className="absolute inset-0 bg-[#ff007f] border-r-[3px] border-black"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center mix-blend-difference">
+                              <span className="text-[10px] font-black uppercase text-white tracking-widest">{loyaltyTierProgress.toFixed(0)}% COMPLETE</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <button 
+                      onClick={() => setSearchParams({ tab: 'earn-redeem' })}
+                      className="mt-8 block w-full bg-black text-[#00ff88] py-4 text-center border-[2px] sm:border-[3px] border-black font-black uppercase text-xs sm:text-sm tracking-wider shadow-[4px_4px_0px_0px_#fff] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer"
+                    >
+                      Earn & Redeem Guide
+                    </button>
                   </div>
                 </div>
               </div>
+            )}
 
-              {/* Loyalty Teaser in Side */}
-              <div className="bg-[#00ff88] border-[4px] sm:border-[6px] border-black p-6 sm:p-10 shadow-[8px_8px_0px_0px_#000] sm:shadow-[16px_16px_0px_0px_#000]">
-                <h3 className="text-2xl sm:text-3xl font-black uppercase text-black mb-4 sm:mb-6 leading-none font-syne">Loyalty Status</h3>
-                <div className="bg-white border-[3px] sm:border-[4px] border-black p-4 sm:p-6 mb-6 sm:mb-8 text-center relative overflow-hidden">
-                  <p className="text-4xl sm:text-5xl font-black text-black font-syne mb-1">
-                    {loyaltyProfile ? loyaltyProfile.points.toLocaleString() : '0'}
-                  </p>
-                  <p className="text-[10px] sm:text-xs font-black uppercase text-black opacity-60">Available Points</p>
-                  {loyaltyTierInfo && (
-                    <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t-2 border-black/10 flex items-center justify-center gap-2">
-                      <span className="text-xl sm:text-2xl">{loyaltyTierInfo.icon}</span>
-                      <span className="text-xs sm:text-sm font-black uppercase text-black">{loyaltyTierInfo.name} Member</span>
-                    </div>
-                  )}
-                </div>
-                <Link to="/rewards" className="block w-full bg-black text-[#00ff88] py-3.5 sm:py-4 text-center border-[2px] sm:border-[3px] border-black font-black uppercase text-sm sm:text-base shadow-[4px_4px_0px_0px_#fff] sm:shadow-[6px_6px_0px_0px_#fff] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
-                  Portal Access
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Column: History & Wishlist */}
-            <div className="lg:col-span-2 space-y-16">
-              {/* Past Orders */}
+            {displayTab === 'orders' && (
               <section>
-                <div className="flex items-center gap-4 sm:gap-6 mb-6 sm:mb-10">
-                  <div className="w-11 h-11 sm:w-14 sm:h-14 bg-black text-[#00ff88] border-[2px] sm:border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]">
-                    <Package size={20} className="sm:w-8 sm:h-8" />
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-10 h-10 bg-black text-[#00ff88] border-[2px] sm:border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0px_0px_#000]">
+                    <Package size={18} />
                   </div>
-                  <h2 className="text-3xl sm:text-5xl font-black uppercase font-syne text-black">Log History</h2>
+                  <h2 className="text-2xl sm:text-4xl font-black uppercase font-syne text-black">Log History</h2>
                 </div>
 
                 {orders.length === 0 ? (
-                  <div className="bg-white border-[4px] sm:border-[6px] border-black p-8 sm:p-16 text-center shadow-[6px_6px_0px_0px_#000] sm:shadow-[12px_12px_0px_0px_#000]">
-                    <Package size={48} className="mx-auto mb-6 text-black opacity-10 sm:w-16 sm:h-16" />
-                    <p className="text-lg sm:text-2xl font-black text-black uppercase mb-6 sm:mb-10 opacity-50 italic">No operations recorded yet.</p>
-                    <Link to="/shop/all" className="inline-block bg-[#00ff88] text-black px-6 sm:px-12 py-3.5 sm:py-5 border-[3px] sm:border-[4px] border-black font-black uppercase text-sm sm:text-xl shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+                  <div className="bg-white border-[3px] sm:border-[4px] border-black p-8 sm:p-16 text-center shadow-[6px_6px_0px_0px_#000]">
+                    <Package size={48} className="mx-auto mb-4 text-black opacity-10" />
+                    <p className="text-sm sm:text-lg font-black text-black uppercase mb-6 opacity-50 italic">No operations recorded yet.</p>
+                    <Link to="/shop/all" className="inline-block bg-[#00ff88] text-black px-6 py-3 border-[2.5px] border-black font-black uppercase text-xs sm:text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
                       Browse Store
                     </Link>
                   </div>
                 ) : (
-                  <div className="space-y-8">
+                  <div className="space-y-6 max-w-4xl">
                     {[...orders]
                       .sort((a, b) => {
                         const getDate = (orderObj: any) => {
@@ -4361,138 +5153,138 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                       .map((order) => {
                         if (!order || !order.id) return null;
                       
-                      let orderDateStr = 'N/A';
-                      try {
-                        if (order.orderDate || order.createdAt) {
-                          const dateValue = order.orderDate || order.createdAt;
-                          const date = typeof dateValue === 'string' ? new Date(dateValue) : (dateValue.seconds ? new Date(dateValue.seconds * 1000) : new Date(dateValue));
-                          orderDateStr = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
-                        }
-                      } catch (e) {}
+                        let orderDateStr = 'N/A';
+                        try {
+                          if (order.orderDate || order.createdAt) {
+                            const dateValue = order.orderDate || order.createdAt;
+                            const date = typeof dateValue === 'string' ? new Date(dateValue) : (dateValue.seconds ? new Date(dateValue.seconds * 1000) : new Date(dateValue));
+                            orderDateStr = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                          }
+                        } catch (e) {}
 
-                      const getStatusStyle = (status: string) => {
-                        const s = (status || 'pending').toLowerCase();
-                        if (s === 'delivered') return { bg: 'bg-[#00ff88]', text: 'text-black', icon: 'DONE' };
-                        if (s === 'shipped') return { bg: 'bg-blue-400', text: 'text-black', icon: 'MOVE' };
-                        return { bg: 'bg-yellow-400', text: 'text-black', icon: 'SYNC' };
-                      };
+                        const getStatusStyle = (status: string) => {
+                          const s = (status || 'pending').toLowerCase();
+                          if (s === 'delivered') return { bg: 'bg-[#00ff88]', text: 'text-black', icon: 'DONE' };
+                          if (s === 'shipped') return { bg: 'bg-blue-400', text: 'text-black', icon: 'MOVE' };
+                          return { bg: 'bg-yellow-400', text: 'text-black', icon: 'SYNC' };
+                        };
 
-                      const status = getStatusStyle(order.status);
-                      const total = order.totalAmount ?? order.total ?? 0;
+                        const status = getStatusStyle(order.status);
+                        const total = order.totalAmount ?? order.total ?? 0;
 
-                      return (
-                        <div key={order.id} className="bg-white border-[3px] sm:border-[4px] border-black p-4 sm:p-8 shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all">
-                          <div className="flex flex-col md:flex-row justify-between gap-4 sm:gap-6 mb-6 sm:mb-8 border-b-[2px] sm:border-b-[3px] border-black pb-4 sm:pb-6">
-                            <div className="space-y-1 sm:space-y-2">
-                              <div className="flex items-center gap-2 sm:gap-4">
-                                <span className="text-[10px] sm:text-xs font-black uppercase opacity-40">Operation ID:</span>
-                                <span className="text-xs sm:text-sm font-black uppercase">{order.id.slice(0, 8)}</span>
-                              </div>
-                              <div className="text-xl sm:text-2xl font-black uppercase font-syne text-black">
-                                {orderDateStr}
-                              </div>
-                            </div>
-                            <div className="flex items-center justify-between md:justify-start gap-4 sm:gap-6">
-                              <div className="text-left md:text-right">
-                                <p className="text-[10px] sm:text-xs font-black uppercase opacity-40">Value</p>
-                                <p className="text-xl sm:text-3xl font-black text-black">₹{total.toFixed(0)}</p>
-                              </div>
-                              <div className={`${status.bg} ${status.text} px-2.5 sm:px-4 py-1.5 sm:py-2 border-[1.5px] sm:border-[2px] border-black font-black uppercase text-[10px] sm:text-xs shadow-[2px_2px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]`}>
-                                {order.status || 'pending'}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
-                            {(order.items || []).slice(0, 4).map((item: any, i: number) => {
-                              const fallbackImage = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
-                              return (
-                                <div key={i} className="w-20 h-24 border-[2px] border-black shrink-0 relative group">
-                                  <img src={fallbackImage} className="w-full h-full object-cover transition-all" />
-                                  <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[10px] text-white font-black uppercase text-center p-1">
-                                    {item.quantity}x {item.size}
-                                  </div>
+                        return (
+                          <div key={order.id} className="bg-white border-[3px] border-black p-4 sm:p-6 shadow-[4px_4px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all">
+                            <div className="flex flex-col sm:flex-row justify-between gap-4 mb-4 border-b-[2px] border-black pb-4">
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[9px] font-black uppercase opacity-40">Operation ID:</span>
+                                  <span className="text-xs font-black uppercase">{order.id.slice(0, 8)}</span>
                                 </div>
-                              );
-                            })}
-                          </div>
+                                <div className="text-lg sm:text-xl font-black uppercase font-syne text-black">
+                                  {orderDateStr}
+                                </div>
+                              </div>
+                              <div className="flex items-center justify-between sm:justify-end gap-4">
+                                <div className="text-left sm:text-right">
+                                  <p className="text-[9px] font-black uppercase opacity-40">Value</p>
+                                  <p className="text-lg sm:text-xl font-black text-black">₹{total.toFixed(0)}</p>
+                                </div>
+                                <div className={`${status.bg} ${status.text} px-2.5 py-1 border-[1.5px] border-black font-black uppercase text-[9px] shadow-[2px_2px_0px_0px_#000]`}>
+                                  {order.status || 'pending'}
+                                </div>
+                              </div>
+                            </div>
 
-                          <button 
-                            onClick={() => {
-                              // Modal logic...
-                              const modalOrder = {
-                                id: order.id,
-                                orderNumber: order.id.slice(-8).toUpperCase(),
-                                date: order.createdAt?.toDate?.().toISOString() || new Date().toISOString(),
-                                status: (order.status || 'processing') as any,
-                                items: (order.items || []).map((item: any) => ({
-                                  id: item.id || item.name,
-                                  name: item.name,
-                                  image: item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '',
-                                  price: item.price,
-                                  quantity: item.quantity,
-                                  size: item.size,
-                                  color: item.color
-                                })),
-                                subtotal: total,
-                                shipping: order.shippingCost || 0,
-                                tax: 0,
-                                discount: order.discount || 0,
-                                total: total,
-                                customer: {
-                                  name: user.displayName,
-                                  email: user.email,
-                                  phone: order.phone || 'N/A'
-                                },
-                                shippingAddress: {
-                                  street: order.address || 'N/A',
-                                  city: order.city || 'N/A',
-                                  state: order.state || 'N/A',
-                                  zip: order.pincode || 'N/A',
-                                  country: 'India'
-                                },
-                                payment: {
-                                  method: order.paymentMethod || 'UPI',
-                                  status: 'paid'
-                                },
-                                timeline: []
-                              };
-                              setSelectedOrder(modalOrder);
-                              setShowOrderModal(true);
-                            }}
-                            className="w-full mt-4 sm:mt-6 bg-black text-[#00ff88] py-3 sm:py-4 border-[2px] sm:border-[3px] border-black font-black uppercase text-xs sm:text-base shadow-[3px_3px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center justify-center gap-2 sm:gap-3 cursor-pointer"
-                          >
-                            <Eye size={16} className="sm:w-5 sm:h-5" />
-                            Full Report
-                          </button>
-                        </div>
-                      );
-                    })}
+                            <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar">
+                              {(order.items || []).slice(0, 4).map((item: any, i: number) => {
+                                const fallbackImage = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
+                                return (
+                                  <div key={i} className="w-16 h-20 border-[2px] border-black shrink-0 relative group">
+                                    <img src={fallbackImage} alt={item.name || "Order item thumbnail"} loading="lazy" className="w-full h-full object-cover transition-all" />
+                                    <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[8px] text-white font-black uppercase text-center p-1">
+                                      {item.quantity}x {item.size}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+
+                            <button 
+                              onClick={() => {
+                                const modalOrder = {
+                                  id: order.id,
+                                  orderNumber: order.id.slice(-8).toUpperCase(),
+                                  date: order.createdAt?.toDate?.().toISOString() || new Date().toISOString(),
+                                  status: (order.status || 'processing') as any,
+                                  items: (order.items || []).map((item: any) => ({
+                                    id: item.id || item.name,
+                                    name: item.name,
+                                    image: item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '',
+                                    price: item.price,
+                                    quantity: item.quantity,
+                                    size: item.size,
+                                    color: item.color
+                                  })),
+                                  subtotal: total,
+                                  shipping: order.shippingCost || 0,
+                                  tax: 0,
+                                  discount: order.discount || 0,
+                                  total: total,
+                                  customer: {
+                                    name: user.displayName,
+                                    email: user.email,
+                                    phone: order.phone || 'N/A'
+                                  },
+                                  shippingAddress: {
+                                    street: order.address || 'N/A',
+                                    city: order.city || 'N/A',
+                                    state: order.state || 'N/A',
+                                    zip: order.pincode || 'N/A',
+                                    country: 'India'
+                                  },
+                                  payment: {
+                                    method: order.paymentMethod || 'UPI',
+                                    status: 'paid'
+                                  },
+                                  timeline: []
+                                };
+                                setSelectedOrder(modalOrder);
+                                setShowOrderModal(true);
+                              }}
+                              className="w-full mt-4 bg-black text-[#00ff88] py-2.5 border-[2px] border-black font-black uppercase text-[10px] sm:text-xs shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            >
+                              <Eye size={12} />
+                              Full Report
+                            </button>
+                          </div>
+                        );
+                      })}
                   </div>
                 )}
               </section>
+            )}
 
-              {/* Wishlist */}
+            {displayTab === 'wishlist' && (
               <section>
-                <div className="flex items-center gap-4 sm:gap-6 mb-6 sm:mb-10">
-                  <div className="w-11 h-11 sm:w-14 sm:h-14 bg-black text-[#00ff88] border-[2px] sm:border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000]">
-                    <Heart size={20} className="sm:w-8 sm:h-8" />
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-10 h-10 bg-black text-[#00ff88] border-[2px] sm:border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0px_0px_#000]">
+                    <Heart size={18} />
                   </div>
-                  <h2 className="text-3xl sm:text-5xl font-black uppercase font-syne text-black">Saved Items</h2>
+                  <h2 className="text-2xl sm:text-4xl font-black uppercase font-syne text-black">Saved Items</h2>
                 </div>
 
                 {wishlistProducts.length === 0 ? (
-                  <div className="bg-white border-[4px] sm:border-[6px] border-black p-8 sm:p-16 text-center shadow-[6px_6px_0px_0px_#000] sm:shadow-[12px_12px_0px_0px_#000]">
-                    <Heart size={48} className="mx-auto mb-6 text-black opacity-10 sm:w-16 sm:h-16" />
-                    <p className="text-lg sm:text-2xl font-black text-black uppercase mb-6 sm:mb-10 opacity-50 italic">No assets saved.</p>
-                    <Link to="/shop/all" className="inline-block bg-[#00ff88] text-black px-6 sm:px-12 py-3.5 sm:py-5 border-[3px] sm:border-[4px] border-black font-black uppercase text-sm sm:text-xl shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+                  <div className="bg-white border-[3px] sm:border-[4px] border-black p-8 sm:p-16 text-center shadow-[6px_6px_0px_0px_#000]">
+                    <Heart size={48} className="mx-auto mb-4 text-black opacity-10" />
+                    <p className="text-sm sm:text-lg font-black text-black uppercase mb-6 opacity-50 italic">No assets saved.</p>
+                    <Link to="/shop/all" className="inline-block bg-[#00ff88] text-black px-6 py-3 border-[2.5px] border-black font-black uppercase text-xs sm:text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
                       Browse All
                     </Link>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 md:gap-8">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {wishlistProducts.map((product) => (
-                      <div key={product.id} className="bg-white border-[2px] sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] overflow-hidden group">
+                      <div key={product.id} className="bg-white border-[2.5px] border-black shadow-[3px_3px_0px_0px_#000] overflow-hidden group">
                         <div className="relative aspect-[3/4] overflow-hidden bg-black">
                           <img
                             src={product.image}
@@ -4501,17 +5293,18 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                           />
                           <button
                             onClick={() => toggleWishlist(product.id)}
-                            className="absolute top-2 sm:top-4 right-2 sm:right-4 w-8 h-8 sm:w-12 sm:h-12 bg-[#00ff88] text-black border-[2px] sm:border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0px_0px_#000] sm:shadow-[4px_4px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer"
+                            className="absolute top-2 right-2 w-8 h-8 bg-white border-[2px] border-black text-[#ff007f] flex items-center justify-center shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                           >
-                            <X size={16} className="sm:w-6 sm:h-6" />
+                            <Heart size={14} fill="currentColor" />
                           </button>
                         </div>
-                        <div className="p-3 sm:p-6">
-                          <h3 className="font-black uppercase text-black mb-1 line-clamp-1 text-[11px] sm:text-sm">{product.name}</h3>
-                          <p className="text-sm sm:text-xl font-black text-[#00ff88] mb-3 sm:mb-6" style={{ WebkitTextStroke: '0.5px black' }}>₹{product.price}</p>
+                        <div className="p-3 border-t-[2.5px] border-black">
+                          <h3 className="font-black text-xs sm:text-sm text-black truncate uppercase tracking-tighter mb-1">{product.name}</h3>
+                          <p className="text-[10px] sm:text-xs font-bold text-zinc-500 uppercase mb-2">{product.category}</p>
+                          <p className="text-xs sm:text-sm font-black text-[#ff007f] mb-3">₹{product.price}</p>
                           <Link
                             to={`/product/${product.id}`}
-                            className="block w-full bg-black text-[#00ff88] py-2 sm:py-3 text-center border-[1.5px] sm:border-[2px] border-black font-black uppercase text-[10px] sm:text-xs shadow-[2px_2px_0px_0px_#fff] sm:shadow-[4px_4px_0px_0px_#fff] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+                            className="block w-full bg-black text-[#00ff88] py-2 text-center border-[2px] border-black font-black uppercase text-[10px] tracking-wider shadow-[2px_2px_0px_0px_#fff] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
                           >
                             View
                           </Link>
@@ -4521,7 +5314,42 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                   </div>
                 )}
               </section>
-            </div>
+            )}
+
+            {displayTab === 'earn-redeem' && (
+              <div className="space-y-16">
+                <HowItWorksSection />
+                <TiersBenefitsSection thresholds={tierThresholds} />
+                <ClaimPointsSection earningRate={earningRate} />
+                <RedeemRewardsSection />
+                <PointsHistorySection />
+              </div>
+            )}
+
+            {displayTab === 'arcade' && (
+              <div className="space-y-12 max-w-5xl mx-auto">
+                <div className="text-center mb-8">
+                  <div className="inline-block bg-black text-[#ff007f] text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 border-[2.5px] border-black shadow-[3px_3px_0_0_#000] mb-3">
+                    Arcade Cabinets
+                  </div>
+                  <h2 className="text-2xl sm:text-4xl font-black uppercase text-black font-syne tracking-tight">
+                    ARCADE <span className="text-[#ff007f]">ZONE</span>
+                  </h2>
+                  <p className="text-xs font-bold text-zinc-500 uppercase mt-2 max-w-md mx-auto">
+                    Play daily minigames to double your points or earn secret codes. Spins and scratches sync in real-time to your profile.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start justify-center">
+                  <div className="bg-white border-[3px] border-black p-4 shadow-[4px_4px_0px_0px_#000]">
+                    <LuckySpinWheel />
+                  </div>
+                  <div className="bg-white border-[3px] border-black p-4 shadow-[4px_4px_0px_0px_#000]">
+                    <ScratchCard />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -4857,11 +5685,76 @@ const TopHeader = () => {
   );
 };
 
+// --- CART TIMER WIDGET (floating pill, right edge) ---
+const CartTimerWidget = () => {
+  const { setIsCartOpen, isCartOpen, secondsLeft, expired, isTimerVisible } = useCart();
+
+  if (!isTimerVisible || isCartOpen) return null;
+
+  const mins = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
+  const urgency = secondsLeft < 60; // last minute
+  const veryUrgent = secondsLeft < 30;
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        right: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 9998,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+      }}
+    >
+      <button
+        onClick={() => setIsCartOpen(!isCartOpen)}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '2px',
+          background: expired ? '#00ff88' : veryUrgent ? '#ff0000' : urgency ? '#ff7e40' : '#111111',
+          color: expired ? '#000' : '#fff',
+          border: `2px solid ${expired ? '#00ff88' : veryUrgent ? '#ff0000' : '#ffffff22'}`,
+          borderRight: 'none',
+          borderRadius: '8px 0 0 8px',
+          padding: '8px 6px',
+          cursor: 'pointer',
+          boxShadow: veryUrgent ? '0 0 16px rgba(255,0,0,0.6)' : urgency ? '0 0 12px rgba(255,126,64,0.5)' : '0 4px 16px rgba(0,0,0,0.4)',
+          animation: veryUrgent ? 'pulse 0.6s ease-in-out infinite alternate' : urgency ? 'pulse 1.2s ease-in-out infinite alternate' : 'none',
+          minWidth: '44px',
+          transition: 'background 0.4s, box-shadow 0.4s',
+        }}
+        aria-label="Cart timer — click to open cart"
+      >
+        <ShoppingCart size={16} />
+        {expired ? (
+          <span style={{ fontSize: '8px', fontWeight: 900, fontFamily: 'monospace', letterSpacing: '0.05em', textAlign: 'center', lineHeight: 1.2 }}>CART{"\n"}SAVED ✓</span>
+        ) : (
+          <span style={{
+            fontSize: '9px',
+            fontWeight: 900,
+            fontFamily: 'monospace',
+            letterSpacing: '0.03em',
+            color: veryUrgent ? '#fff' : urgency ? '#fff' : '#aaa',
+          }}>{timeStr}</span>
+        )}
+      </button>
+    </div>
+  );
+};
+
+
 // --- BOTTOM TAB BAR (mobile only) ---
 // 5 tabs: Home | Accounts | Product | Cart | Contact
 // Chrome-style scroll: hides on scroll DOWN, shows instantly on scroll UP
 const BottomTabBar = () => {
-  const { items, setIsCartOpen } = useCart();
+  const { items, setIsCartOpen, isCartOpen } = useCart();
   const location = useLocation();
   const currentPath = location.pathname;
   const [visible, setVisible] = useState(true);
@@ -4908,6 +5801,9 @@ const BottomTabBar = () => {
   }, []);
 
   if (!isMobile) return null;
+  if (currentPath.startsWith('/product/')) return null;
+  // Hide when cart sidebar is open
+  if (isCartOpen) return null;
 
   const ACTIVE = '#00ff88';
   const INACTIVE = 'rgba(255,255,255,0.42)';
@@ -5138,6 +6034,21 @@ const OptimizedCursor = ({ variant }: { variant: CursorVariant }) => {
   );
 };
 
+const RewardsRedirect = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate('/account?tab=earn-redeem', { replace: true });
+  }, [navigate]);
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-20 h-20 border-[6px] border-black border-t-[#00ff88] animate-spin mx-auto mb-6 shadow-[6px_6px_0px_0px_#000]"></div>
+        <p className="text-lg font-black text-black uppercase tracking-widest animate-pulse">Redirecting to Rewards...</p>
+      </div>
+    </div>
+  );
+};
+
 const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const location = useLocation();
   return (
@@ -5145,10 +6056,10 @@ const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => vo
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Home setCursorVariant={setCursorVariant} /></PageTransition>} />
         <Route path="/shop/:category" element={<PageTransition><Shop setCursorVariant={setCursorVariant} /></PageTransition>} />
-        <Route path="/product/:id" element={<PageTransition><ProductDetail setCursorVariant={setCursorVariant} /></PageTransition>} />
+        <Route path="/product/:id" element={<ProductDetail setCursorVariant={setCursorVariant} />} />
         <Route path="/checkout" element={<PageTransition><Checkout /></PageTransition>} />
         <Route path="/account" element={<PageTransition><Account setCursorVariant={setCursorVariant} /></PageTransition>} />
-        <Route path="/rewards" element={<PageTransition><ErrorBoundary><RewardsPage /></ErrorBoundary></PageTransition>} />
+        <Route path="/rewards" element={<PageTransition><ErrorBoundary><RewardsRedirect /></ErrorBoundary></PageTransition>} />
         <Route path="/order/:orderId" element={<PageTransition><OrderDetail /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
       </Routes>
@@ -5281,7 +6192,7 @@ function App() {
     <CartProvider>
       <PageLoader />
       <QuickViewProvider>
-        <HashRouter>
+        <BrowserRouter>
           <AutoScrollToTop />
           {showKonamiOverlay && (
             <div className="fixed inset-0 z-[9999] bg-black/95 border-[10px] border-[#00ff88] flex flex-col items-center justify-center font-mono text-center pointer-events-none select-none">
@@ -5328,7 +6239,6 @@ function App() {
               <Footer />
 
               {/* Floating Rewards Button & Modal */}
-              <FloatingRewardsButton onClick={() => setIsRewardsModalOpen(true)} />
               <RewardsModal isOpen={isRewardsModalOpen} onClose={() => setIsRewardsModalOpen(false)} />
 
               {/* Loyalty Rules Notification Banner */}
@@ -5343,11 +6253,12 @@ function App() {
               which traps position:fixed children, so these must be siblings of ClickSpark */}
           <TopHeader />
           <BottomTabBar />
+          <CartTimerWidget />
           <LiveActivityTicker />
 
           {/* Optimized Custom Cursor - Rendered OUTSIDE main container for maximum z-index */}
           <OptimizedCursor variant={cursorVariant} />
-        </HashRouter>
+        </BrowserRouter>
       </QuickViewProvider>
     </CartProvider>
   );

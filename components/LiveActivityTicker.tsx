@@ -13,7 +13,7 @@ interface TickerEvent {
 }
 
 const BUYER_NAMES = ["A***k", "M***h", "S***y", "J***n", "T***o", "K***v", "D***e", "R***x", "Z***a", "N***o", "Y***i", "C***o"];
-const LOCATIONS = ["Neo-Tokyo", "Sector 7", "New York", "London", "Berlin", "Seoul", "Mumbai", "Los Angeles", "Paris", "Sydney", "Singapore", "Amsterdam"];
+const LOCATIONS = ["Mumbai, MH", "Bengaluru, KA", "New Delhi, DL", "Kolkata, WB", "Chennai, TN", "Hyderabad, TG", "Ahmedabad, GJ", "Pune, MH", "Jaipur, RJ", "Lucknow, UP", "Chandigarh, CH", "Kochi, KL", "Indore, MP", "Guwahati, AS", "Patna, BR", "Bhubaneswar, OR"];
 
 export const LiveActivityTicker: React.FC = () => {
   const [currentEvent, setCurrentEvent] = useState<TickerEvent | null>(null);
@@ -52,15 +52,15 @@ export const LiveActivityTicker: React.FC = () => {
   };
 
   useEffect(() => {
-    // Generate initial event after 4 seconds
+    // Generate initial event after 12 seconds
     const initialTimer = setTimeout(() => {
       generateRandomEvent();
-    }, 4000);
+    }, 12000);
 
-    // Set interval to trigger new events every 15 seconds
+    // Set interval to trigger new events every 35 seconds
     intervalRef.current = setInterval(() => {
       generateRandomEvent();
-    }, 15000);
+    }, 35000);
 
     return () => {
       clearTimeout(initialTimer);
@@ -86,28 +86,9 @@ export const LiveActivityTicker: React.FC = () => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 350, damping: 25 }}
-          style={{
-            position: 'fixed',
-            // Float above bottom tab bar on mobile (offset bottom)
-            bottom: 'var(--ticker-bottom, 24px)',
-            left: 'var(--ticker-left, 24px)',
-            zIndex: 9950,
-          }}
-          className="flex items-center gap-4 bg-black border-[3px] border-black p-3 pr-8 shadow-[4px_4px_0_0_#00ff88] max-w-[340px] text-white overflow-hidden relative select-none font-mono"
+          style={{ zIndex: 9950 }}
+          className="fixed bottom-[80px] md:bottom-6 left-4 md:left-6 flex items-center gap-4 bg-black border-[3px] border-black p-3 pr-8 shadow-[4px_4px_0_0_#00ff88] max-w-[340px] text-white overflow-hidden select-none font-mono"
         >
-          {/* Responsive CSS variables injected inline */}
-          <style>{`
-            :root {
-              --ticker-bottom: 76px;
-              --ticker-left: 16px;
-            }
-            @media (min-width: 768px) {
-              :root {
-                --ticker-bottom: 24px;
-                --ticker-left: 24px;
-              }
-            }
-          `}</style>
 
           {/* Product Thumbnail */}
           <div className="w-11 h-11 shrink-0 border-2 border-white bg-zinc-900 overflow-hidden">

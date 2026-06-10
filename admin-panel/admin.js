@@ -1345,6 +1345,11 @@ function renderCurrentView() {
         window.loadUserPoints();
       }
       break;
+    case 'spin-leads':
+      if (typeof window.loadSpinLeads === 'function') {
+        window.loadSpinLeads();
+      }
+      break;
     case 'colors-management':
       if (typeof window.renderGlobalColorsGrid === 'function') {
         window.renderGlobalColorsGrid();

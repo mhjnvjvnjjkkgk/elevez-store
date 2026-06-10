@@ -281,8 +281,8 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
         <div className="bg-white border-[6px] border-black p-12 md:p-20 shadow-[20px_20px_0px_0px_#000]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-6xl md:text-8xl font-black font-syne text-black mb-6 uppercase leading-[0.9]">{title}</h2>
-              <p className="text-2xl text-black font-black uppercase mb-8 tracking-tight">{subtitle}</p>
+              <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black font-syne text-black mb-4 sm:mb-6 uppercase leading-[0.9]">{title}</h2>
+              <p className="text-base sm:text-xl md:text-2xl text-black font-black uppercase mb-6 sm:mb-8 tracking-tight">{subtitle}</p>
               <ul className="space-y-4 text-black font-bold uppercase tracking-widest">
                 <li className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-black text-[#00ff88] flex items-center justify-center">✓</div>
@@ -305,14 +305,14 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ENTER YOUR EMAIL"
-                className="w-full bg-white border-[4px] border-black px-8 py-6 text-black placeholder-gray-400 font-black focus:shadow-[8px_8px_0px_0px_#00ff88] outline-none transition-all text-2xl uppercase"
+                className="w-full bg-white border-[4px] border-black px-4 py-3.5 sm:px-6 sm:py-5 md:px-8 md:py-6 text-black placeholder-gray-400 font-black focus:shadow-[8px_8px_0px_0px_#00ff88] outline-none transition-all text-base sm:text-lg md:text-2xl uppercase"
                 disabled={status === 'loading'}
               />
               
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="w-full bg-black text-[#00ff88] px-8 py-6 border-[4px] border-black font-black uppercase tracking-[0.2em] hover:bg-[#00ff88] hover:text-black transition-all disabled:opacity-50 text-2xl shadow-[10px_10px_0px_0px_#000]"
+                className="w-full bg-black text-[#00ff88] px-4 py-3.5 sm:px-6 sm:py-5 md:px-8 md:py-6 border-[4px] border-black font-black uppercase tracking-[0.2em] hover:bg-[#00ff88] hover:text-black transition-all disabled:opacity-50 text-base sm:text-lg md:text-2xl shadow-[10px_10px_0px_0px_#000]"
               >
                 {status === 'loading' ? 'Subscribing...' : 'Subscribe Now'}
               </button>
