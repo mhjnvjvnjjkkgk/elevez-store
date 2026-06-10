@@ -51,6 +51,7 @@ import { ParallaxReveal } from './components/ParallaxReveal';
 import { VibeAnimationEngine } from './components/VibeAnimationEngine';
 import { ImageReveal } from './components/ImageReveal';
 import { GlitchText } from './components/GlitchText';
+import { GlitchImage } from './components/GlitchImage';
 import { NewsletterSyndicate } from './components/NewsletterSyndicate';
 import { PageLoader } from './components/PageLoader';
 import { DynamicAccordion } from './components/DynamicAccordion';
@@ -5638,19 +5639,19 @@ const TopHeader = () => {
           to="/"
           onClick={handleLogoClick}
           style={{
-            fontSize: isMobile ? '20px' : '24px',
-            fontWeight: 900,
-            letterSpacing: '0.06em',
-            fontFamily: 'Anton, sans-serif',
-            textTransform: 'uppercase',
-            color: 'white',
+            display: 'inline-flex',
+            alignItems: 'center',
+            height: isMobile ? '32px' : '40px',
             textDecoration: 'none',
-            whiteSpace: 'nowrap',
             userSelect: 'none',
           }}
         >
-          <GlitchText text={BRAND_NAME} triggerOnHover={false} />
-          <span style={{ color: '#00ff88' }}>.</span>
+          <GlitchImage 
+            src="/logo.png" 
+            alt={BRAND_NAME} 
+            imgClassName="h-8 md:h-10 w-auto object-contain invert"
+            triggerOnHover={false} 
+          />
         </Link>
 
         {/* DESKTOP NAV */}
@@ -6032,10 +6033,14 @@ const Footer = () => (
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
         <div className="space-y-8">
-          <h3 className="text-5xl font-black font-syne text-black tracking-tighter uppercase">
-            <GlitchText text={BRAND_NAME} triggerOnHover={false} />
-            <span className="text-[#00ff88]">.</span>
-          </h3>
+          <Link to="/" className="inline-block">
+            <GlitchImage 
+              src="/logo.png" 
+              alt={BRAND_NAME} 
+              imgClassName="h-12 w-auto object-contain"
+              triggerOnHover={false} 
+            />
+          </Link>
           <p className="text-black font-bold text-sm leading-relaxed uppercase tracking-widest opacity-60">
             Redefining streetwear for the digital age. Quality meets virtual aesthetics. Designed in the Metaverse, worn in reality.
           </p>
