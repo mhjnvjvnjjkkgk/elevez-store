@@ -4170,6 +4170,7 @@ const Checkout = () => {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
+  const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
   
   const [newAddressForm, setNewAddressForm] = useState({
     label: 'Home',
@@ -4322,8 +4323,9 @@ const Checkout = () => {
 
   // Enforce shipping threshold of 650. COD adds an extra 30.
   const baseShippingCost = cartTotal >= 650 ? 0 : 50;
+  const expressFee = shippingMethod === 'express' ? 50 : 0;
   const codFee = formData.paymentMethod === 'cod' ? 30 : 0;
-  const shippingCost = baseShippingCost + codFee;
+  const shippingCost = baseShippingCost + expressFee + codFee;
   
   const discountAmount = discountApplied ? (cartTotal * discountPercentage) / 100 : 0;
   const totalAmount = cartTotal + shippingCost - discountAmount;
@@ -4627,8 +4629,12 @@ const Checkout = () => {
             <div className="flex items-center gap-3">
               <Timer className="w-5 h-5 animate-bounce text-black" />
               <div>
-                <p className="text-xs font-black uppercase text-black leading-none">Delivering in 6 mins</p>
-                <p className="text-[10px] font-bold uppercase text-black/60">Fastest courier route active</p>
+                <p className="text-xs font-black uppercase text-black leading-none">
+                  {shippingMethod === 'express' ? 'Delivering in 2 days (Express)' : 'Delivering in 3 days'}
+                </p>
+                <p className="text-[10px] font-bold uppercase text-black/60">
+                  {shippingMethod === 'express' ? 'Express priority delivery active' : 'Standard courier route active'}
+                </p>
               </div>
             </div>
             <span className="bg-black text-[#00ff88] text-[9px] font-black px-2 py-0.5 border border-black uppercase">
@@ -4727,8 +4733,24 @@ const Checkout = () => {
                   </div>
                   <div className="flex justify-between text-xs font-bold uppercase text-black/60">
                     <span>Delivery Fee</span>
-                    <span className="text-green-600 font-black">FREE</span>
+                    {baseShippingCost > 0 ? (
+                      <span className="text-black font-bold">₹{baseShippingCost}</span>
+                    ) : (
+                      <span className="text-green-600 font-black">FREE</span>
+                    )}
                   </div>
+                  {shippingMethod === 'express' && (
+                    <div className="flex justify-between text-xs font-bold uppercase text-black/60">
+                      <span>Express Shipping Upgrade</span>
+                      <span className="text-black font-bold">₹50</span>
+                    </div>
+                  )}
+                  {formData.paymentMethod === 'cod' && (
+                    <div className="flex justify-between text-xs font-bold uppercase text-black/60">
+                      <span>Cash On Delivery Fee</span>
+                      <span className="text-black font-bold">₹30</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-xs font-bold uppercase text-black/60">
                     <span>Handling Fee</span>
                     <span className="text-green-600 font-black">FREE</span>
@@ -4757,10 +4779,6 @@ const Checkout = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    if (!user) {
-                      handleGoogleSignIn();
-                      return;
-                    }
                     setActiveStep('shipping');
                   }}
                   className="w-full bg-[#00ff88] text-black border-[3px] border-black font-black uppercase text-xs md:text-sm py-4 shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
@@ -4815,6 +4833,48 @@ const Checkout = () => {
                       </button>
                     </div>
                   )}
+                </div>
+
+                {/* Shipping Method Option */}
+                <div className="bg-white border-[4px] border-black p-4 md:p-6 shadow-[6px_6px_0px_0px_#000] space-y-3">
+                  <h3 className="text-sm font-black uppercase text-black border-b-[2px] border-black pb-2 font-syne">Shipping Method</h3>
+                  <div className="space-y-2">
+                    <label className={`flex items-center justify-between p-3 border-[2.5px] border-black cursor-pointer transition-all ${shippingMethod === 'standard' ? 'bg-[#00ff88]/20 shadow-[3px_3px_0px_0px_#000] translate-x-[-2px] translate-y-[-2px]' : 'bg-white hover:bg-gray-50'}`}>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="radio"
+                          name="shippingMethod"
+                          value="standard"
+                          checked={shippingMethod === 'standard'}
+                          onChange={() => setShippingMethod('standard')}
+                          className="w-4 h-4 accent-black shrink-0 cursor-pointer"
+                        />
+                        <div>
+                          <p className="text-xs font-black uppercase text-black leading-none">Standard Delivery</p>
+                          <p className="text-[9px] font-bold uppercase text-black/50 mt-1">Delivered in 3 days all over India</p>
+                        </div>
+                      </div>
+                      <span className="text-xs font-black uppercase text-green-600">FREE</span>
+                    </label>
+
+                    <label className={`flex items-center justify-between p-3 border-[2.5px] border-black cursor-pointer transition-all ${shippingMethod === 'express' ? 'bg-[#00ff88]/20 shadow-[3px_3px_0px_0px_#000] translate-x-[-2px] translate-y-[-2px]' : 'bg-white hover:bg-gray-50'}`}>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="radio"
+                          name="shippingMethod"
+                          value="express"
+                          checked={shippingMethod === 'express'}
+                          onChange={() => setShippingMethod('express')}
+                          className="w-4 h-4 accent-black shrink-0 cursor-pointer"
+                        />
+                        <div>
+                          <p className="text-xs font-black uppercase text-black leading-none">Express Shipping</p>
+                          <p className="text-[9px] font-bold uppercase text-black/50 mt-1">Delivered in 2 days (1 day less)</p>
+                        </div>
+                      </div>
+                      <span className="text-xs font-black text-black">₹50 Extra</span>
+                    </label>
+                  </div>
                 </div>
 
                 {/* Instant sign-in fallback check */}
@@ -6363,70 +6423,74 @@ const BottomTabBar = () => {
   );
 };
 
+const Footer = () => {
+  const location = useLocation();
+  if (location.pathname === '/checkout') return null;
 
-const Footer = () => (
-  <footer className="bg-white border-t-[8px] border-black pt-24 pb-12 relative z-10">
-    <div className="container mx-auto px-6">
+  return (
+    <footer className="bg-white border-t-[8px] border-black pt-24 pb-12 relative z-10">
+      <div className="container mx-auto px-6">
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
-        <div className="space-y-8">
-          <Link to="/" className="inline-block">
-            <GlitchImage 
-              src="/logo.png?v=5" 
-              alt={BRAND_NAME} 
-              imgClassName="h-16 w-auto object-contain invert"
-              triggerOnHover={false} 
-            />
-          </Link>
-          <p className="text-black font-bold text-sm leading-relaxed uppercase tracking-widest opacity-60">
-            Redefining streetwear for the digital age. Quality meets virtual aesthetics. Designed in the Metaverse, worn in reality.
-          </p>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+          <div className="space-y-8">
+            <Link to="/" className="inline-block">
+              <GlitchImage 
+                src="/logo.png?v=5" 
+                alt={BRAND_NAME} 
+                imgClassName="h-16 w-auto object-contain invert"
+                triggerOnHover={false} 
+              />
+            </Link>
+            <p className="text-black font-bold text-sm leading-relaxed uppercase tracking-widest opacity-60">
+              Redefining streetwear for the digital age. Quality meets virtual aesthetics. Designed in the Metaverse, worn in reality.
+            </p>
+          </div>
+          <div>
+            <h4 className="text-lg font-black uppercase mb-8 text-black border-b-[4px] border-black inline-block">Inventory</h4>
+            <ul className="space-y-4 text-black font-black uppercase tracking-widest text-sm">
+              <li><Link to="/shop/men" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Men</Link></li>
+              <li><Link to="/shop/women" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Women</Link></li>
+              <li><Link to="/shop/all" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />All Products</Link></li>
+              <li><Link to="/shop/all?type=Hoodie" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Hoodies</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-lg font-black uppercase mb-8 text-black border-b-[4px] border-black inline-block">Channels</h4>
+            <ul className="space-y-4 text-black font-black uppercase tracking-widest text-sm">
+              <li><Link to="/contact" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Contact Us</Link></li>
+              <li><Link to="#" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Shipping</Link></li>
+              <li><Link to="#" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Returns</Link></li>
+              <li><Link to="#" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />FAQ</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-lg font-black uppercase mb-8 text-black border-b-[4px] border-black inline-block">Signals</h4>
+            <div className="flex gap-4">
+              <Magnetic>
+                <a href="https://www.instagram.com/elevezdotshop/" target="_blank" rel="noopener noreferrer" className="w-16 h-16 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
+                  <Instagram size={32} />
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href="#" className="w-16 h-16 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
+                  <Twitter size={32} />
+                </a>
+              </Magnetic>
+            </div>
+          </div>
         </div>
-        <div>
-          <h4 className="text-lg font-black uppercase mb-8 text-black border-b-[4px] border-black inline-block">Inventory</h4>
-          <ul className="space-y-4 text-black font-black uppercase tracking-widest text-sm">
-            <li><Link to="/shop/men" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Men</Link></li>
-            <li><Link to="/shop/women" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Women</Link></li>
-            <li><Link to="/shop/all" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />All Products</Link></li>
-            <li><Link to="/shop/all?type=Hoodie" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Hoodies</Link></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-lg font-black uppercase mb-8 text-black border-b-[4px] border-black inline-block">Channels</h4>
-          <ul className="space-y-4 text-black font-black uppercase tracking-widest text-sm">
-            <li><Link to="/contact" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Contact Us</Link></li>
-            <li><Link to="#" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Shipping</Link></li>
-            <li><Link to="#" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />Returns</Link></li>
-            <li><Link to="#" className="hover:text-[#00ff88] transition-colors flex items-center gap-2 group"><div className="w-0 group-hover:w-4 h-0.5 bg-[#00ff88] transition-all" />FAQ</Link></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-lg font-black uppercase mb-8 text-black border-b-[4px] border-black inline-block">Signals</h4>
-          <div className="flex gap-4">
-            <Magnetic>
-              <a href="https://www.instagram.com/elevezdotshop/" target="_blank" rel="noopener noreferrer" className="w-16 h-16 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
-                <Instagram size={32} />
-              </a>
-            </Magnetic>
-            <Magnetic>
-              <a href="#" className="w-16 h-16 bg-black text-[#00ff88] border-[4px] border-black flex items-center justify-center shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
-                <Twitter size={32} />
-              </a>
-            </Magnetic>
+
+        <div className="border-t-[4px] border-black pt-12 flex flex-col md:flex-row justify-between items-center text-black font-black uppercase text-xs tracking-widest">
+          <p>&copy; 2024 {BRAND_NAME}. All rights reserved.</p>
+          <div className="flex gap-12 mt-6 md:mt-0">
+            <a href="#" className="hover:text-[#00ff88] transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-[#00ff88] transition-colors">Terms of Service</a>
           </div>
         </div>
       </div>
-
-      <div className="border-t-[4px] border-black pt-12 flex flex-col md:flex-row justify-between items-center text-black font-black uppercase text-xs tracking-widest">
-        <p>&copy; 2024 {BRAND_NAME}. All rights reserved.</p>
-        <div className="flex gap-12 mt-6 md:mt-0">
-          <a href="#" className="hover:text-[#00ff88] transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-[#00ff88] transition-colors">Terms of Service</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-);
+    </footer>
+  );
+};
 
 // Simple Custom Cursor - Always Visible, Perfectly Synced, ALWAYS ON TOP
 // Simple Custom Cursor - Always Visible, Perfectly Synced, ALWAYS ON TOP
