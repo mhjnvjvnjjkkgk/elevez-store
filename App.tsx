@@ -2650,9 +2650,9 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     const diffY = touch.clientY - pageSwipeStartY.current;
 
     // Detect horizontal swipes (wider than tall)
-    if (Math.abs(diffX) > Math.abs(diffY) * 1.4) {
+    if (Math.abs(diffX) > Math.abs(diffY) * 1.2) {
       // Right-to-left swipe (Swipe Left) -> Open filters
-      if (diffX < -55) {
+      if (diffX < -35) {
         if (!isMobileFilterOpen) {
           setIsMobileFilterOpen(true);
           audioService.playSwipe();
@@ -2662,7 +2662,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         pageSwipeStartY.current = null;
       }
       // Left-to-right swipe (Swipe Right) -> Close filters
-      else if (diffX > 55) {
+      else if (diffX > 35) {
         if (isMobileFilterOpen) {
           setIsMobileFilterOpen(false);
           audioService.playSwipe();
@@ -2787,6 +2787,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       onTouchMove={handlePageTouchMove}
       onTouchEnd={handlePageTouchEnd}
       onTouchCancel={handlePageTouchEnd}
+      style={{ touchAction: 'pan-y' }}
       className="min-h-screen pt-48 pb-20 px-6 bg-white relative"
     >
       {/* Vibe Animation Overlay */}
