@@ -5942,7 +5942,7 @@ const Footer = () => (
             <GlitchImage 
               src="/logo.png?v=3" 
               alt={BRAND_NAME} 
-              imgClassName="h-16 w-auto object-contain"
+              imgClassName="h-16 w-auto object-contain invert"
               triggerOnHover={false} 
             />
           </Link>
