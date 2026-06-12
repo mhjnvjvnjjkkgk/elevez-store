@@ -5567,7 +5567,7 @@ const TopHeader = () => {
           <GlitchImage 
             src="/logo.png?v=5" 
             alt={BRAND_NAME} 
-            imgClassName="h-14 md:h-22 w-auto object-contain"
+            imgClassName="h-10 md:h-16 w-auto object-contain"
             triggerOnHover={false} 
           />
         </Link>
@@ -5591,14 +5591,16 @@ const TopHeader = () => {
                 {icon}<span>{label}</span>
               </Link>
             ))}
-            {/* PRODUCT — always neon highlighted */}
+            {/* PRODUCT */}
             <Link to="/shop/all" style={{
               display: 'flex', alignItems: 'center', gap: '6px',
               fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em',
               fontFamily: 'monospace', padding: '6px 20px', borderRadius: '999px',
               textDecoration: 'none', transition: 'all 0.2s',
-              background: '#00ff88', color: '#000',
-              boxShadow: currentPath.startsWith('/shop') ? '0 0 22px rgba(0,255,136,0.7)' : '0 0 12px rgba(0,255,136,0.35)',
+              background: currentPath.startsWith('/shop') ? '#00ff88' : 'transparent',
+              color: currentPath.startsWith('/shop') ? '#000' : 'rgba(255,255,255,0.7)',
+              border: currentPath.startsWith('/shop') ? '1px solid rgba(255,255,255,0.15)' : '1px solid transparent',
+              boxShadow: currentPath.startsWith('/shop') ? '0 0 22px rgba(0,255,136,0.7)' : 'none',
             }}>
               <Compass size={13} /><span>PRODUCT</span>
             </Link>
@@ -5856,7 +5858,7 @@ const BottomTabBar = () => {
   const tabs = [
     { key: 'home',    label: 'Home',     icon: HomeIcon,     to: '/',          active: currentPath === '/' },
     { key: 'account', label: 'Account',  icon: User,         to: '/account',   active: currentPath === '/account' },
-    { key: 'product', label: 'Product',  icon: Compass,      to: '/shop/all',  active: currentPath.startsWith('/shop'), highlight: true },
+    { key: 'product', label: 'Product',  icon: Compass,      to: '/shop/all',  active: currentPath.startsWith('/shop'), highlight: currentPath.startsWith('/shop') },
     { key: 'cart',    label: 'Cart',     icon: ShoppingBag,  to: null,         active: currentPath === '/checkout' },
     { key: 'contact', label: 'Contact',  icon: Mail,         to: '/contact',   active: currentPath === '/contact' },
   ];
