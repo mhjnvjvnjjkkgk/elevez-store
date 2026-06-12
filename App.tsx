@@ -4154,6 +4154,98 @@ const Checkout = () => {
   const [activeStep, setActiveStep] = useState<'cart' | 'shipping' | 'payment'>('cart');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([
+    {
+      id: 'default-home',
+      label: 'Home',
+      fullName: 'Harihar Nagar',
+      phone: '9876543210',
+      address: 'Harihar Nagar Lane, 2nd Floor, Krishna Kunja Apartment, 50',
+      city: 'Dum Dum',
+      state: 'West Bengal',
+      pincode: '700074'
+    }
+  ]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('default-home');
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
+  const [detectingLocation, setDetectingLocation] = useState(false);
+  
+  const [newAddressForm, setNewAddressForm] = useState({
+    label: 'Home',
+    fullName: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    pincode: ''
+  });
+
+  const activeAddress = savedAddresses.find(addr => addr.id === selectedAddressId);
+  
+  useEffect(() => {
+    if (activeAddress) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: activeAddress.fullName || prev.fullName,
+        phone: activeAddress.phone || prev.phone,
+        address: activeAddress.address || prev.address,
+        city: activeAddress.city || prev.city,
+        state: activeAddress.state || prev.state,
+        pincode: activeAddress.pincode || prev.pincode
+      }));
+    }
+  }, [selectedAddressId, savedAddresses]);
+
+  // Geolocation and Reverse Geocoding via Nominatim API
+  const handleAutoChooseLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+    setDetectingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          if (!res.ok) throw new Error('Failed to fetch address');
+          const data = await res.json();
+          
+          const addrDetails = data.address || {};
+          const road = addrDetails.road || '';
+          const suburb = addrDetails.suburb || addrDetails.neighbourhood || '';
+          const city = addrDetails.city || addrDetails.town || addrDetails.village || '';
+          const state = addrDetails.state || '';
+          const pincode = addrDetails.postcode || '';
+          
+          const constructedAddress = [road, suburb].filter(Boolean).join(', ');
+          
+          setNewAddressForm(prev => ({
+            ...prev,
+            address: constructedAddress || data.display_name || '',
+            city: city,
+            state: state,
+            pincode: pincode
+          }));
+          
+          setIsAddingNewAddress(true); // Switch to manual form so they can confirm details
+        } catch (error) {
+          console.error('Error reverse geocoding:', error);
+          alert('Could not detect address automatically. Please enter it manually.');
+        } finally {
+          setDetectingLocation(false);
+        }
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        alert('Permission denied or error acquiring location.');
+        setDetectingLocation(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
@@ -4269,10 +4361,9 @@ const Checkout = () => {
   // Dynamic helper functions for the mobile sticky footer action bar
   const getStickyActionLabel = () => {
     if (!user) return 'SIGN IN TO PLACE ORDER';
-    if (activeStep === 'cart') return 'PROCEED TO SHIPPING';
+    if (activeStep === 'cart') return `PROCEED TO ADDRESS • ₹${totalAmount.toFixed(0)}`;
     if (activeStep === 'shipping') {
-      const isAddressFilled = formData.fullName && formData.phone && formData.address && formData.pincode && formData.city && formData.state;
-      return isAddressFilled ? 'PROCEED TO PAYMENT' : 'ENTER ADDRESS DETAILS';
+      return selectedAddressId ? `PROCEED TO PAYMENT • ₹${totalAmount.toFixed(0)}` : 'ADD DELIVERY LOCATION';
     }
     return isSubmitting ? 'PROCESSING...' : `PLACE ORDER • ₹${totalAmount.toFixed(0)}`;
   };
@@ -4284,23 +4375,14 @@ const Checkout = () => {
     }
     if (activeStep === 'cart') {
       setActiveStep('shipping');
-      setTimeout(() => {
-        const el = document.getElementById('step-shipping');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
       return;
     }
     if (activeStep === 'shipping') {
-      const isAddressFilled = formData.fullName && formData.phone && formData.address && formData.pincode && formData.city && formData.state;
-      if (!isAddressFilled) {
-        alert('Please fill in all shipping details marked with *');
+      if (!selectedAddressId) {
+        setIsAddressModalOpen(true);
         return;
       }
       setActiveStep('payment');
-      setTimeout(() => {
-        const el = document.getElementById('step-payment');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
       return;
     }
     // Submit the form
@@ -4490,418 +4572,590 @@ const Checkout = () => {
   return (
     <div className="min-h-screen pt-24 md:pt-48 pb-32 bg-white">
       <div className="container mx-auto px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 md:gap-6 mb-6 md:mb-12">
+        <div className="max-w-2xl mx-auto">
+          {/* Header */}
+          <div className="flex items-center gap-3 md:gap-6 mb-6 md:mb-8">
             <button onClick={() => navigate(-1)} className="w-8 h-8 md:w-12 md:h-12 bg-black text-[#00ff88] flex items-center justify-center border-[2px] md:border-[3px] border-black shadow-[2px_2px_0px_0px_#000] md:shadow-[4px_4px_0px_0px_#000] hover:translate-x-[1px] md:hover:translate-x-[2px] hover:translate-y-[1px] md:hover:translate-y-[2px] hover:shadow-none transition-all" type="button">
               <ArrowLeft className="w-4 h-4 md:w-6 md:h-6" />
             </button>
-            <h1 className="text-3xl md:text-8xl font-black font-syne uppercase text-black leading-none">Checkout</h1>
+            <h1 className="text-3xl md:text-6xl font-black font-syne uppercase text-black leading-none">Checkout</h1>
+          </div>
+
+          {/* Multipage Progress Wizard Header */}
+          <div className="grid grid-cols-3 gap-2 mb-8 border-[3px] border-black p-1.5 shadow-[4px_4px_0px_0px_#000] bg-black">
+            <button
+              type="button"
+              onClick={() => setActiveStep('cart')}
+              className={`py-2 px-1 text-center font-black uppercase text-[9px] md:text-xs tracking-wider transition-all border-[2px] border-black ${activeStep === 'cart' ? 'bg-[#00ff88] text-black shadow-[2px_2px_0px_0px_#000]' : 'bg-zinc-800 text-zinc-400 border-transparent'}`}
+            >
+              01. Cart & Savings
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (!user) {
+                  handleGoogleSignIn();
+                  return;
+                }
+                setActiveStep('shipping');
+              }}
+              className={`py-2 px-1 text-center font-black uppercase text-[9px] md:text-xs tracking-wider transition-all border-[2px] border-black ${activeStep === 'shipping' ? 'bg-[#00ff88] text-black shadow-[2px_2px_0px_0px_#000]' : 'bg-zinc-800 text-zinc-400 border-transparent'}`}
+            >
+              02. Address
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (!user) {
+                  handleGoogleSignIn();
+                  return;
+                }
+                if (!selectedAddressId) {
+                  alert('Please select or add a delivery address first.');
+                  return;
+                }
+                setActiveStep('payment');
+              }}
+              className={`py-2 px-1 text-center font-black uppercase text-[9px] md:text-xs tracking-wider transition-all border-[2px] border-black ${activeStep === 'payment' ? 'bg-[#00ff88] text-black shadow-[2px_2px_0px_0px_#000]' : 'bg-zinc-800 text-zinc-400 border-transparent'}`}
+            >
+              03. Payment
+            </button>
+          </div>
+
+          {/* Step Banner */}
+          <div className="mb-6 p-4 bg-yellow-100 border-[3px] border-black shadow-[3px_3px_0px_0px_#000] flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Timer className="w-5 h-5 animate-bounce text-black" />
+              <div>
+                <p className="text-xs font-black uppercase text-black leading-none">Delivering in 6 mins</p>
+                <p className="text-[10px] font-bold uppercase text-black/60">Fastest courier route active</p>
+              </div>
+            </div>
+            <span className="bg-black text-[#00ff88] text-[9px] font-black px-2 py-0.5 border border-black uppercase">
+              {items.length} items
+            </span>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             
-            {/* STEP 1: CART ITEMS & BILL DETAILS */}
-            <div id="step-cart" className="bg-white border-[4px] md:border-[6px] border-black shadow-[6px_6px_0px_0px_#000] md:shadow-[12px_12px_0px_0px_#000]">
-              <button
-                type="button"
-                onClick={() => setActiveStep('cart')}
-                className="w-full flex items-center justify-between p-4 md:p-6 bg-black text-[#00ff88] font-black uppercase text-sm md:text-xl tracking-wider text-left border-none outline-none"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="bg-[#00ff88] text-black px-2 py-0.5 text-xs font-black">01</span>
-                  <span>Cart Items & Bill Details</span>
-                </div>
-                {activeStep === 'cart' ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-              </button>
-
-              {activeStep === 'cart' ? (
-                <div className="p-4 md:p-8 space-y-6">
-                  <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar border-b-[2px] border-black pb-6">
+            {/* STEP 1: CART & SAVINGS DETAILS */}
+            {activeStep === 'cart' && (
+              <div className="space-y-6">
+                <div className="bg-white border-[4px] border-black p-4 md:p-6 shadow-[6px_6px_0px_0px_#000] space-y-4">
+                  <h3 className="text-lg font-black uppercase font-syne text-black border-b-[2px] border-black pb-2">Cart Review</h3>
+                  
+                  <div className="space-y-4 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
                     {items.map((item) => (
-                      <div key={item.cartId} className="flex gap-4 items-center">
-                        <div className="w-16 h-20 md:w-20 md:h-24 border-[2px] md:border-[3px] border-black shrink-0 overflow-hidden">
-                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      <div key={item.cartId} className="flex gap-4 items-center justify-between pb-4 border-b border-dashed border-black/10 last:border-0 last:pb-0">
+                        <div className="flex gap-3 items-center">
+                          <div className="w-14 h-16 border-[2px] border-black overflow-hidden shrink-0">
+                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                          </div>
+                          <div>
+                            <h4 className="font-black text-xs uppercase text-black leading-tight mb-0.5">{item.name}</h4>
+                            <p className="text-[9px] font-bold uppercase text-black opacity-60">SIZE: {item.size} • COLOR: {item.color}</p>
+                            <p className="text-black font-black text-xs mt-0.5 uppercase">₹{item.price.toFixed(0)}</p>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-black text-xs md:text-sm uppercase text-black leading-tight mb-1">{item.name}</h4>
-                          <p className="text-[9px] md:text-[10px] font-bold uppercase text-black opacity-60">SIZE: {item.size} • COLOR: {item.color} • QTY: {item.quantity}</p>
-                          <p className="text-black font-black mt-1 text-sm md:text-lg uppercase">₹{(item.price * item.quantity).toFixed(0)}</p>
+
+                        {/* Neobrutalist Quantity Adjustment Box */}
+                        <div className="flex items-center border-[2.5px] border-black shadow-[2px_2px_0px_0px_#000]">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (item.quantity > 1) {
+                                addToCart(item, item.size, item.color, -1, false);
+                              } else {
+                                removeFromCart(item.cartId);
+                              }
+                            }}
+                            className="w-7 h-7 bg-white text-black font-black flex items-center justify-center border-none outline-none hover:bg-red-500 hover:text-white transition-colors"
+                          >
+                            -
+                          </button>
+                          <span className="w-7 text-center font-black text-xs text-black">{item.quantity}</span>
+                          <button
+                            type="button"
+                            onClick={() => addToCart(item, item.size, item.color, 1, false)}
+                            className="w-7 h-7 bg-white text-black font-black flex items-center justify-center border-none outline-none hover:bg-[#00ff88] transition-colors"
+                          >
+                            +
+                          </button>
                         </div>
                       </div>
                     ))}
                   </div>
+                </div>
 
-                  <div className="p-3 md:p-6 bg-gray-100 border-[2.5px] border-black shadow-[3px_3px_0px_0px_#000]">
-                    <label className="text-[10px] md:text-xs font-black uppercase text-black mb-1.5 md:mb-3 block">Promo Code</label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={discountCode}
-                        onChange={(e) => {
-                          setDiscountCode(e.target.value.toUpperCase());
-                          setDiscountMessage('');
-                        }}
-                        placeholder="CODE"
-                        className="flex-1 bg-white border-[2px] md:border-[3px] border-black px-3 py-1.5 md:px-4 md:py-2 font-black uppercase focus:bg-[#00ff88] transition-colors outline-none text-sm md:text-base"
-                        disabled={discountApplied}
-                      />
-                      <button
-                        type="button"
-                        onClick={handleApplyDiscount}
-                        disabled={discountApplied}
-                        className="px-4 py-1.5 md:px-6 md:py-2 bg-black text-[#00ff88] border-[2px] md:border-[3px] border-black font-black uppercase text-[10px] md:text-xs hover:bg-[#00ff88] hover:text-black transition-all"
-                      >
-                        {discountApplied ? '✓' : 'GO'}
-                      </button>
+                {/* Promo Code Box */}
+                <div className="bg-white border-[4px] border-black p-4 md:p-6 shadow-[6px_6px_0px_0px_#000]">
+                  <h3 className="text-xs font-black uppercase text-black mb-3">Coupons & Offers</h3>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={discountCode}
+                      onChange={(e) => {
+                        setDiscountCode(e.target.value.toUpperCase());
+                        setDiscountMessage('');
+                      }}
+                      placeholder="ENTER PROMO CODE"
+                      className="flex-1 bg-white border-[2.5px] border-black px-3 py-2 font-black uppercase focus:bg-[#00ff88] transition-colors outline-none text-xs"
+                      disabled={discountApplied}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyDiscount}
+                      disabled={discountApplied}
+                      className="px-5 py-2 bg-black text-[#00ff88] border-[2.5px] border-black font-black uppercase text-xs hover:bg-[#00ff88] hover:text-black transition-all shadow-[2px_2px_0px_0px_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+                    >
+                      {discountApplied ? '✓' : 'APPLY'}
+                    </button>
+                  </div>
+                  {discountMessage && (
+                    <p className={`text-[9px] font-black uppercase mt-2 ${discountApplied ? 'text-green-600' : 'text-red-500'}`}>
+                      {discountMessage}
+                    </p>
+                  )}
+                </div>
+
+                {/* Bill details */}
+                <div className="bg-white border-[4px] border-black p-4 md:p-6 shadow-[6px_6px_0px_0px_#000] space-y-3">
+                  <h3 className="text-lg font-black uppercase font-syne text-black border-b-[2px] border-black pb-2">Bill Summary</h3>
+                  <div className="flex justify-between text-xs font-bold uppercase text-black/60">
+                    <span>Item Total</span>
+                    <span>₹{cartTotal.toFixed(0)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs font-bold uppercase text-black/60">
+                    <span>Delivery Fee</span>
+                    <span className="text-green-600 font-black">FREE</span>
+                  </div>
+                  <div className="flex justify-between text-xs font-bold uppercase text-black/60">
+                    <span>Handling Fee</span>
+                    <span className="text-green-600 font-black">FREE</span>
+                  </div>
+                  {discountApplied && (
+                    <div className="flex justify-between text-xs font-black uppercase text-green-600">
+                      <span>Discount Applied ({discountPercentage}%)</span>
+                      <span>-₹{discountAmount.toFixed(0)}</span>
                     </div>
-                    {discountMessage && (
-                      <p className={`text-[9px] md:text-[10px] font-black uppercase mt-2 ${discountApplied ? 'text-green-600' : 'text-red-500'}`}>
-                        {discountMessage}
-                      </p>
-                    )}
+                  )}
+                  <div className="flex justify-between text-lg font-black pt-3 border-t-[2.5px] border-black text-black font-syne uppercase">
+                    <span>To Pay</span>
+                    <span>₹{totalAmount.toFixed(0)}</span>
+                  </div>
+                </div>
+
+                {/* Savings box */}
+                <div className="p-4 bg-green-50 border-[3px] border-green-600 shadow-[3px_3px_0px_0px_#059669] text-green-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-green-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-sm">SAVED</span>
+                    <span className="text-[10px] font-black uppercase">Yay! You saved money on this order!</span>
+                  </div>
+                  <span className="text-xs font-black">₹{discountApplied ? (discountAmount + 80).toFixed(0) : '80'}</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!user) {
+                      handleGoogleSignIn();
+                      return;
+                    }
+                    setActiveStep('shipping');
+                  }}
+                  className="w-full bg-[#00ff88] text-black border-[3px] border-black font-black uppercase text-xs md:text-sm py-4 shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                >
+                  Proceed to Delivery Address
+                </button>
+              </div>
+            )}
+
+            {/* STEP 2: DELIVERY ADDRESS SELECTION */}
+            {activeStep === 'shipping' && (
+              <div className="space-y-6">
+                
+                {/* Active address summary */}
+                <div className="bg-white border-[4px] border-black p-4 md:p-6 shadow-[6px_6px_0px_0px_#000] space-y-4">
+                  <div className="flex justify-between items-center border-b-[2px] border-black pb-2">
+                    <h3 className="text-lg font-black uppercase font-syne text-black">Delivery Location</h3>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingNewAddress(false);
+                        setIsAddressModalOpen(true);
+                      }}
+                      className="bg-black text-[#00ff88] border-[2px] border-black px-3 py-1 font-black text-[9px] uppercase hover:bg-[#00ff88] hover:text-black transition-all"
+                    >
+                      Choose / Switch
+                    </button>
                   </div>
 
-                  <div className="space-y-3 pt-4 border-t-[2px] border-black">
-                    <div className="flex justify-between font-bold uppercase text-xs md:text-sm text-black">
-                      <span>Subtotal</span>
-                      <span>₹{cartTotal.toFixed(0)}</span>
-                    </div>
-                    <div className="flex justify-between items-center py-1 border-b border-dashed border-gray-300">
-                      <span className="font-bold uppercase text-black opacity-60 text-xs md:text-sm">Shipping</span>
-                      <div className="flex flex-col items-end">
-                        <span className={shippingCost === 0 ? 'text-green-600 font-black text-xs md:text-sm' : 'font-black text-black text-xs md:text-sm'}>
-                          {shippingCost === 0 ? 'FREE' : `₹${shippingCost.toFixed(0)}`}
-                        </span>
-                        {cartTotal < 650 && <span className="text-[9px] md:text-[10px] uppercase text-zinc-500 font-medium">Free over ₹650</span>}
-                        {formData.paymentMethod === 'cod' && <span className="text-[9px] md:text-[10px] uppercase text-zinc-500 font-medium">(Includes ₹30 COD)</span>}
+                  {activeAddress ? (
+                    <div className="p-4 bg-[#00ff88]/10 border-[2.5px] border-black shadow-[3px_3px_0px_0px_#000]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <MapPin size={16} className="text-black" />
+                        <span className="font-black text-xs uppercase bg-black text-[#00ff88] px-2 py-0.5">{activeAddress.label}</span>
                       </div>
-                    </div>
-                    {discountApplied && (
-                      <div className="flex justify-between text-green-600 font-black uppercase text-xs md:text-sm">
-                        <span>Discount ({discountPercentage}%)</span>
-                        <span>-₹{discountAmount.toFixed(0)}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-xl md:text-3xl font-black pt-4 border-t-[3px] border-black text-black font-syne uppercase">
-                      <span>Total Bill</span>
-                      <span>₹{totalAmount.toFixed(0)}</span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveStep('shipping')}
-                    className="w-full bg-[#00ff88] text-black border-[3px] border-black font-black uppercase text-xs md:text-base py-3.5 shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
-                  >
-                    Proceed to Delivery Address
-                  </button>
-                </div>
-              ) : (
-                <div className="p-4 bg-gray-50 flex items-center justify-between text-xs md:text-sm text-black font-bold uppercase">
-                  <div>
-                    <span className="opacity-60">{items.length} items in Cart • Bill: </span>
-                    <span className="font-black text-black">₹{totalAmount.toFixed(0)}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setActiveStep('cart')}
-                    className="text-[#00ff88] bg-black px-3 py-1 font-black text-[10px] uppercase hover:bg-[#00ff88] hover:text-black transition-colors"
-                  >
-                    Edit
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* STEP 2: SHIPPING / DELIVERY DETAILS */}
-            <div id="step-shipping" className="bg-white border-[4px] md:border-[6px] border-black shadow-[6px_6px_0px_0px_#000] md:shadow-[12px_12px_0px_0px_#000]">
-              <button
-                type="button"
-                onClick={() => setActiveStep('shipping')}
-                className="w-full flex items-center justify-between p-4 md:p-6 bg-black text-[#00ff88] font-black uppercase text-sm md:text-xl tracking-wider text-left border-none outline-none"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="bg-[#00ff88] text-black px-2 py-0.5 text-xs font-black">02</span>
-                  <span>Delivery Address</span>
-                </div>
-                {activeStep === 'shipping' ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-              </button>
-
-              {activeStep === 'shipping' ? (
-                <div className="p-4 md:p-8 space-y-6">
-                  {!user ? (
-                    <div className="bg-gray-100 border-[3px] border-black p-4 shadow-[4px_4px_0px_0px_#000] mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-black text-[#00ff88] border-[2px] border-black flex items-center justify-center">
-                          <Lock className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-black uppercase text-black leading-tight">Instant Sign-in</h4>
-                          <p className="text-[10px] text-black/60 font-bold uppercase">Sign in to earn loyalty points and sync orders</p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleGoogleSignIn}
-                        className="bg-black text-[#00ff88] border-[2px] border-black px-4 py-2 font-black uppercase text-[10px] shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all flex items-center gap-2"
-                      >
-                        <svg className="w-4 h-4" viewBox="0 0 24 24">
-                          <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                          <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                          <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                          <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                        </svg>
-                        Sign in with Google
-                      </button>
+                      <p className="text-sm font-black uppercase text-black">{activeAddress.fullName}</p>
+                      <p className="text-xs font-bold uppercase text-black/70 mt-1">{activeAddress.address}, {activeAddress.city}, {activeAddress.state} - {activeAddress.pincode}</p>
+                      <p className="text-xs font-black uppercase text-black mt-2">PHONE: {activeAddress.phone}</p>
                     </div>
                   ) : (
-                    <div className="bg-gray-100 border-[3px] border-black p-4 shadow-[4px_4px_0px_0px_#000] mb-6 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-[#00ff88] border-[2px] border-black flex items-center justify-center shadow-[1px_1px_0px_0px_#000]">
-                          <User className="w-4 h-4 text-black" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] md:text-xs font-black uppercase text-black">Logged as {user.displayName}</p>
-                          <p className="text-[9px] text-black/50 font-bold uppercase">{user.email}</p>
-                        </div>
-                      </div>
+                    <div className="p-6 text-center bg-gray-50 border-[2px] border-dashed border-black/30">
+                      <p className="text-xs font-black uppercase text-black/50 mb-3">No delivery address selected</p>
                       <button
                         type="button"
-                        onClick={() => signOut(auth)}
-                        className="bg-red-500 text-white border-[2px] border-black px-3 py-1 font-black uppercase text-[9px] shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+                        onClick={() => {
+                          setIsAddingNewAddress(false);
+                          setIsAddressModalOpen(true);
+                        }}
+                        className="bg-black text-[#00ff88] px-4 py-2 border-[2px] border-black font-black uppercase text-xs shadow-[2px_2px_0px_0px_#000]"
                       >
-                        Sign Out
+                        Add Delivery Address
                       </button>
                     </div>
                   )}
+                </div>
 
+                {/* Instant sign-in fallback check */}
+                {!user && (
+                  <div className="bg-gray-100 border-[3px] border-black p-4 shadow-[4px_4px_0px_0px_#000] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <h4 className="text-xs font-black uppercase text-black">Sign in with Google</h4>
+                      <p className="text-[9px] text-black/60 font-bold uppercase">Keep your delivery details synced</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleGoogleSignIn}
+                      className="bg-black text-[#00ff88] border-[2px] border-black px-4 py-2 font-black uppercase text-[10px] shadow-[2px_2px_0px_0px_#000]"
+                    >
+                      Sign In
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!selectedAddressId) {
+                      alert('Please configure your delivery location.');
+                      return;
+                    }
+                    setActiveStep('payment');
+                  }}
+                  className="w-full bg-[#00ff88] text-black border-[3px] border-black font-black uppercase text-xs md:text-sm py-4 shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                >
+                  Proceed to Payment Selection
+                </button>
+              </div>
+            )}
+
+            {/* STEP 3: PAYMENT METHOD SELECTION */}
+            {activeStep === 'payment' && (
+              <div className="space-y-6">
+                
+                {/* To Pay Header */}
+                <div className="bg-white border-[4px] border-black p-4 md:p-6 shadow-[6px_6px_0px_0px_#000] space-y-4">
+                  <div className="flex justify-between items-center border-b-[2px] border-black pb-2">
+                    <h3 className="text-lg font-black uppercase font-syne text-black">Payment Selection</h3>
+                    <div className="text-right">
+                      <p className="text-[10px] font-bold uppercase text-black/50">TO PAY</p>
+                      <p className="text-lg font-black text-black">₹{totalAmount.toFixed(0)}</p>
+                    </div>
+                  </div>
+
+                  {/* Payment selections list matching Zepto */}
                   <div className="space-y-4">
+                    
+                    {/* Recommended UPI options */}
                     <div>
-                      <label className="block text-xs font-black uppercase text-black mb-1.5">Full Name *</label>
-                      <input
-                        type="text"
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full bg-white border-[2.5px] border-black p-3 text-sm text-black font-black uppercase focus:shadow-[3px_3px_0px_0px_#00ff88] outline-none transition-all placeholder-gray-400"
-                        placeholder="RECIPIENT NAME"
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-black uppercase text-black mb-1.5">Email *</label>
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full bg-white border-[2.5px] border-black p-3 text-sm text-black font-black uppercase focus:shadow-[3px_3px_0px_0px_#00ff88] outline-none transition-all placeholder-gray-400"
-                          placeholder="EMAIL ADDRESS"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-black uppercase text-black mb-1.5">Phone Number *</label>
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                          required
-                          inputMode="numeric"
-                          className="w-full bg-white border-[2.5px] border-black p-3 text-sm text-black font-black uppercase focus:shadow-[3px_3px_0px_0px_#00ff88] outline-none transition-all placeholder-gray-400"
-                          placeholder="10-DIGIT MOBILE NUMBER"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-black uppercase text-black mb-1.5">Delivery Address *</label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          name="address"
-                          value={formData.address}
-                          onChange={handleInputChange}
-                          required
-                          className="flex-1 bg-white border-[2.5px] border-black p-3 text-sm text-black font-black uppercase focus:shadow-[3px_3px_0px_0px_#00ff88] outline-none transition-all placeholder-gray-400"
-                          placeholder="HOUSE NO, BUILDING NAME, STREET ADDRESS"
-                        />
+                      <span className="text-[10px] font-black uppercase text-black/50 block mb-2">Recommended UPI</span>
+                      <div className="grid grid-cols-2 gap-3">
                         <button
                           type="button"
-                          onClick={generateMapPreview}
-                          className="bg-black text-[#00ff88] px-4 border-[2px] border-black font-black uppercase text-xs shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, paymentMethod: 'upi' }));
+                            handleSubmit(new Event('submit') as any);
+                          }}
+                          className="flex items-center justify-center gap-2 p-3 bg-white border-[2.5px] border-black font-black uppercase text-xs shadow-[2.5px_2.5px_0px_0px_#000] hover:bg-[#00ff88] transition-colors"
                         >
-                          Map
+                          Google Pay
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, paymentMethod: 'upi' }));
+                            handleSubmit(new Event('submit') as any);
+                          }}
+                          className="flex items-center justify-center gap-2 p-3 bg-white border-[2.5px] border-black font-black uppercase text-xs shadow-[2.5px_2.5px_0px_0px_#000] hover:bg-[#00ff88] transition-colors"
+                        >
+                          PhonePe
                         </button>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-xs font-black uppercase text-black mb-1.5">City *</label>
+
+                    {/* Pay by Card */}
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-black/50 block mb-2">Credit & Debit Cards</span>
+                      <label className={`flex items-start gap-4 p-4 border-[2.5px] border-black cursor-pointer transition-all ${formData.paymentMethod === 'card' ? 'bg-[#00ff88] shadow-[4px_4px_0px_0px_#000]' : 'bg-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000]'}`}>
                         <input
-                          type="text"
-                          name="city"
-                          value={formData.city}
+                          type="radio"
+                          name="paymentMethod"
+                          value="card"
+                          checked={formData.paymentMethod === 'card'}
                           onChange={handleInputChange}
-                          required
-                          className="w-full bg-white border-[2.5px] border-black p-3 text-sm text-black font-black uppercase focus:shadow-[3px_3px_0px_0px_#00ff88] outline-none transition-all placeholder-gray-400"
-                          placeholder="CITY"
+                          className="mt-1 w-5 h-5 accent-black shrink-0"
                         />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-black uppercase text-black mb-1.5">State *</label>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-black text-xs uppercase text-black leading-none">Pay via Credit or Debit Card</p>
+                          </div>
+                          <p className="text-[9px] font-bold uppercase text-black opacity-60">Visa, Mastercard, RuPay cards supported</p>
+                        </div>
+                      </label>
+                    </div>
+
+                    {/* Cash on Delivery */}
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-black/50 block mb-2">Cash on Delivery</span>
+                      <label className={`flex items-start gap-4 p-4 border-[2.5px] border-black cursor-pointer transition-all ${formData.paymentMethod === 'cod' ? 'bg-[#00ff88] shadow-[4px_4px_0px_0px_#000]' : 'bg-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000]'}`}>
                         <input
-                          type="text"
-                          name="state"
-                          value={formData.state}
+                          type="radio"
+                          name="paymentMethod"
+                          value="cod"
+                          checked={formData.paymentMethod === 'cod'}
                           onChange={handleInputChange}
-                          required
-                          className="w-full bg-white border-[2.5px] border-black p-3 text-sm text-black font-black uppercase focus:shadow-[3px_3px_0px_0px_#00ff88] outline-none transition-all placeholder-gray-400"
-                          placeholder="STATE"
+                          className="mt-1 w-5 h-5 accent-black shrink-0"
                         />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-black uppercase text-black mb-1.5">Pincode *</label>
-                        <input
-                          type="text"
-                          name="pincode"
-                          value={formData.pincode}
-                          onChange={handleInputChange}
-                          required
-                          inputMode="numeric"
-                          className="w-full bg-white border-[2.5px] border-black p-3 text-sm text-black font-black uppercase focus:shadow-[3px_3px_0px_0px_#00ff88] outline-none transition-all placeholder-gray-400"
-                          placeholder="6-DIGIT PINCODE"
-                        />
-                      </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-black text-xs uppercase text-black leading-none">Cash on Delivery (COD)</p>
+                          </div>
+                          <p className="text-[9px] font-bold uppercase text-black opacity-60">Pay by cash or UPI on delivery (Includes +₹30 handling fee)</p>
+                        </div>
+                      </label>
                     </div>
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const isAddressFilled = formData.fullName && formData.phone && formData.address && formData.pincode && formData.city && formData.state;
-                      if (!isAddressFilled) {
-                        alert('Please fill in all shipping details marked with *');
-                        return;
-                      }
-                      setActiveStep('payment');
-                    }}
-                    className="w-full bg-[#00ff88] text-black border-[3px] border-black font-black uppercase text-xs md:text-base py-3.5 shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
-                  >
-                    Proceed to Payment Options
-                  </button>
                 </div>
-              ) : (
-                <div className="p-4 bg-gray-50 flex items-center justify-between text-xs md:text-sm text-black font-bold uppercase">
-                  <div>
-                    <span className="opacity-60">Deliver to: </span>
-                    <span className="font-black text-black">
-                      {formData.fullName ? `${formData.fullName} (${formData.city || ''} ${formData.pincode || ''})` : 'Not configured'}
-                    </span>
+
+                {user && (
+                  <div className="p-3.5 bg-[#00ff88] border-[3.5px] border-black shadow-[4px_4px_0px_0px_#000] flex items-center justify-between">
+                    <span className="text-xs font-black uppercase text-black opacity-80">Syndicate Points Gained:</span>
+                    <span className="font-mono font-black text-black text-base">+{Math.floor(totalAmount / 10)} PTS</span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setActiveStep('shipping')}
-                    className="text-[#00ff88] bg-black px-3 py-1 font-black text-[10px] uppercase hover:bg-[#00ff88] hover:text-black transition-colors"
-                  >
-                    Edit
-                  </button>
-                </div>
-              )}
-            </div>
+                )}
 
-            {/* STEP 3: PAYMENT METHOD */}
-            <div id="step-payment" className="bg-white border-[4px] md:border-[6px] border-black shadow-[6px_6px_0px_0px_#000] md:shadow-[12px_12px_0px_0px_#000]">
-              <button
-                type="button"
-                onClick={() => setActiveStep('payment')}
-                className="w-full flex items-center justify-between p-4 md:p-6 bg-black text-[#00ff88] font-black uppercase text-sm md:text-xl tracking-wider text-left border-none outline-none"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="bg-[#00ff88] text-black px-2 py-0.5 text-xs font-black">03</span>
-                  <span>Payment Options</span>
-                </div>
-                {activeStep === 'payment' ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-              </button>
-
-              {activeStep === 'payment' ? (
-                <div className="p-4 md:p-8 space-y-6">
-                  <div className="space-y-4">
-                    <label className={`flex items-start gap-4 p-4 border-[2.5px] border-black cursor-pointer transition-all ${formData.paymentMethod === 'upi' ? 'bg-[#00ff88] shadow-[4px_4px_0px_0px_#000]' : 'bg-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000]'}`}>
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="upi"
-                        checked={formData.paymentMethod === 'upi'}
-                        onChange={handleInputChange}
-                        className="mt-1 w-5 h-5 accent-black shrink-0"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-black text-sm md:text-lg uppercase text-black leading-none">Instant UPI & Cards</p>
-                          <span className="bg-black text-[#00ff88] text-[8px] font-black px-2 py-0.5 border border-black uppercase shrink-0">PhonePe Safe</span>
-                        </div>
-                        <p className="text-[10px] md:text-xs font-bold uppercase text-black opacity-60">Pay instantly using any UPI App (GPay, PhonePe, Paytm) or Credit/Debit Card</p>
-                      </div>
-                    </label>
-
-                    <label className={`flex items-start gap-4 p-4 border-[2.5px] border-black cursor-pointer transition-all ${formData.paymentMethod === 'cod' ? 'bg-[#00ff88] shadow-[4px_4px_0px_0px_#000]' : 'bg-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000]'}`}>
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="cod"
-                        checked={formData.paymentMethod === 'cod'}
-                        onChange={handleInputChange}
-                        className="mt-1 w-5 h-5 accent-black shrink-0"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-black text-sm md:text-lg uppercase text-black leading-none">Cash on Delivery (COD)</p>
-                        </div>
-                        <p className="text-[10px] md:text-xs font-bold uppercase text-black opacity-60">Pay by cash or UPI when order is delivered (Includes +₹30 COD courier handling fee)</p>
-                      </div>
-                    </label>
-                  </div>
-
-                  {user && (
-                    <div className="p-3 bg-[#00ff88] border-[2px] border-black shadow-[3px_3px_0px_0px_#000] flex items-center justify-between">
-                      <span className="text-[9px] md:text-xs font-black uppercase text-black opacity-80">Syndicate Points Earned:</span>
-                      <span className="font-mono font-black text-black text-sm md:text-lg">+{Math.floor(totalAmount / 10)} PTS</span>
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className={`w-full font-black text-sm md:text-xl py-4 border-[3px] border-black transition-all uppercase tracking-widest ${isSubmitting ? 'bg-gray-400 text-black cursor-not-allowed' : 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]'}`}
-                  >
-                    {isSubmitting ? 'PROCESSING...' : (!user ? 'SIGN IN WITH GOOGLE & PLACE ORDER' : `PAY & PLACE ORDER • ₹${totalAmount.toFixed(0)}`)}
-                  </button>
-                </div>
-              ) : (
-                <div className="p-4 bg-gray-50 flex items-center justify-between text-xs md:text-sm text-black font-bold uppercase">
-                  <div>
-                    <span className="opacity-60">Method: </span>
-                    <span className="font-black text-black">
-                      {formData.paymentMethod === 'cod' ? 'Cash on Delivery (+₹30)' : 'UPI / PhonePe Merchant Gateway'}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setActiveStep('payment')}
-                    className="text-[#00ff88] bg-black px-3 py-1 font-black text-[10px] uppercase hover:bg-[#00ff88] hover:text-black transition-colors"
-                  >
-                    Edit
-                  </button>
-                </div>
-              )}
-            </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`w-full font-black text-sm md:text-xl py-4 border-[3px] border-black transition-all uppercase tracking-widest ${isSubmitting ? 'bg-gray-400 text-black cursor-not-allowed' : 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]'}`}
+                >
+                  {isSubmitting ? 'PROCESSING...' : (!user ? 'SIGN IN WITH GOOGLE & PLACE ORDER' : `PAY & PLACE ORDER • ₹${totalAmount.toFixed(0)}`)}
+                </button>
+              </div>
+            )}
 
           </form>
         </div>
       </div>
 
+      {/* ADDRESS SELECTION / DRAWER POPUP */}
+      {isAddressModalOpen && (
+        <div className="fixed inset-0 bg-black/60 z-[9996] flex items-center justify-center p-4">
+          <div className="bg-white border-[4px] border-black p-6 w-full max-w-lg shadow-[8px_8px_0px_0px_#000] relative max-h-[90vh] overflow-y-auto">
+            {/* Close button */}
+            <button
+              onClick={() => setIsAddressModalOpen(false)}
+              className="absolute top-4 right-4 w-8 h-8 bg-black text-[#00ff88] border-[2px] border-black flex items-center justify-center shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all"
+              type="button"
+            >
+              <X size={16} />
+            </button>
+
+            <h3 className="text-xl font-black font-syne uppercase text-black mb-6">Select Address</h3>
+
+            {!isAddingNewAddress ? (
+              <div className="space-y-6">
+                
+                {/* Auto choose location button */}
+                <button
+                  type="button"
+                  onClick={handleAutoChooseLocation}
+                  disabled={detectingLocation}
+                  className="w-full bg-[#00ff88] text-black border-[3px] border-black font-black uppercase py-3.5 shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center justify-center gap-2"
+                >
+                  {detectingLocation ? 'DETECTING LOCATION...' : 'USE CURRENT LOCATION'}
+                </button>
+
+                {/* Saved addresses list */}
+                <div className="space-y-3">
+                  <span className="text-[10px] font-black uppercase text-black/50">Saved Locations</span>
+                  {savedAddresses.map((addr) => (
+                    <div
+                      key={addr.id}
+                      onClick={() => {
+                        setSelectedAddressId(addr.id);
+                        setIsAddressModalOpen(false);
+                      }}
+                      className={`p-4 border-[2.5px] border-black cursor-pointer transition-all ${selectedAddressId === addr.id ? 'bg-[#00ff88]/10 shadow-[3px_3px_0px_0px_#000]' : 'bg-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000]'}`}
+                    >
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <HomeIcon size={14} className="text-black" />
+                        <span className="font-black text-[9px] uppercase bg-black text-[#00ff88] px-1.5 py-0.5">{addr.label}</span>
+                      </div>
+                      <p className="text-xs font-black uppercase text-black">{addr.fullName}</p>
+                      <p className="text-[10px] font-bold uppercase text-black/60 mt-0.5">{addr.address}, {addr.city}, {addr.state} - {addr.pincode}</p>
+                      <p className="text-[9px] font-black text-black mt-1">TEL: {addr.phone}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNewAddressForm({
+                      label: 'Home',
+                      fullName: '',
+                      phone: '',
+                      address: '',
+                      city: '',
+                      state: '',
+                      pincode: ''
+                    });
+                    setIsAddingNewAddress(true);
+                  }}
+                  className="w-full bg-white text-black border-[2.5px] border-black font-black uppercase py-2.5 shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all text-xs"
+                >
+                  + Add New Address Manually
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <span className="text-[10px] font-black uppercase text-black/50 block">New Address Details</span>
+                
+                {/* Form fields */}
+                <div className="space-y-3">
+                  {/* Address Type Buttons */}
+                  <div>
+                    <label className="block text-[10px] font-black uppercase text-black mb-1">Location Label</label>
+                    <div className="flex gap-2">
+                      {['Home', 'Work', 'Other'].map((label) => (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={() => setNewAddressForm(prev => ({ ...prev, label }))}
+                          className={`flex-1 py-1.5 border-[2px] border-black font-black uppercase text-[10px] transition-all ${newAddressForm.label === label ? 'bg-black text-[#00ff88]' : 'bg-white text-black'}`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black uppercase text-black mb-1">Full Name</label>
+                    <input
+                      type="text"
+                      value={newAddressForm.fullName}
+                      onChange={(e) => setNewAddressForm(prev => ({ ...prev, fullName: e.target.value }))}
+                      className="w-full bg-white border-[2px] border-black p-2 text-xs text-black font-black uppercase outline-none"
+                      placeholder="RECIPIENT NAME"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black uppercase text-black mb-1">Phone Number</label>
+                    <input
+                      type="text"
+                      value={newAddressForm.phone}
+                      onChange={(e) => setNewAddressForm(prev => ({ ...prev, phone: e.target.value.replace(/[^0-9]/g, '') }))}
+                      className="w-full bg-white border-[2px] border-black p-2 text-xs text-black font-black uppercase outline-none"
+                      placeholder="10-DIGIT MOBILE"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black uppercase text-black mb-1">Address Details</label>
+                    <input
+                      type="text"
+                      value={newAddressForm.address}
+                      onChange={(e) => setNewAddressForm(prev => ({ ...prev, address: e.target.value }))}
+                      className="w-full bg-white border-[2px] border-black p-2 text-xs text-black font-black uppercase outline-none"
+                      placeholder="STREET, APARTMENT NO, AREA"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="block text-[10px] font-black uppercase text-black mb-1">City</label>
+                      <input
+                        type="text"
+                        value={newAddressForm.city}
+                        onChange={(e) => setNewAddressForm(prev => ({ ...prev, city: e.target.value }))}
+                        className="w-full bg-white border-[2px] border-black p-2 text-xs text-black font-black uppercase outline-none"
+                        placeholder="CITY"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black uppercase text-black mb-1">State</label>
+                      <input
+                        type="text"
+                        value={newAddressForm.state}
+                        onChange={(e) => setNewAddressForm(prev => ({ ...prev, state: e.target.value }))}
+                        className="w-full bg-white border-[2px] border-black p-2 text-xs text-black font-black uppercase outline-none"
+                        placeholder="STATE"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black uppercase text-black mb-1">Pincode</label>
+                      <input
+                        type="text"
+                        value={newAddressForm.pincode}
+                        onChange={(e) => setNewAddressForm(prev => ({ ...prev, pincode: e.target.value.replace(/[^0-9]/g, '') }))}
+                        className="w-full bg-white border-[2px] border-black p-2 text-xs text-black font-black uppercase outline-none"
+                        placeholder="PINCODE"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingNewAddress(false)}
+                    className="flex-1 bg-white border-[2px] border-black font-black uppercase py-2 text-xs"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!newAddressForm.fullName || !newAddressForm.phone || !newAddressForm.address || !newAddressForm.city || !newAddressForm.state || !newAddressForm.pincode) {
+                        alert('Please fill in all address details.');
+                        return;
+                      }
+                      const id = 'addr-' + Date.now();
+                      const newAddr = {
+                        id,
+                        ...newAddressForm
+                      };
+                      setSavedAddresses(prev => [...prev, newAddr]);
+                      setSelectedAddressId(id);
+                      setIsAddingNewAddress(false);
+                      setIsAddressModalOpen(false);
+                    }}
+                    className="flex-1 bg-[#00ff88] border-[2px] border-black font-black uppercase py-2 text-xs shadow-[2px_2px_0px_0px_#000]"
+                  >
+                    Save Address
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* STICKY FOOTER ON MOBILE SCREEN SIZES */}
       {isMobile && (
         <div style={{
           position: 'fixed',
