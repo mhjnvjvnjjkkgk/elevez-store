@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ELEVEZ - Smart Content Editor</title>
   <style>
@@ -299,7 +300,10 @@
   <div class="editor-layout">
     <!-- Top Bar -->
     <div class="top-bar">
-      <div class="brand">✨ ELEVEZ Smart Content Editor</div>
+      <div class="brand" style="display:flex;align-items:center;gap:8px;">
+        <img src="/logo.png" alt="ELEVEZ" style="height:18px;filter:invert(1);object-fit:contain;" />
+        <span style="font-size:12px;color:#00ff88;opacity:0.8;letter-spacing:1px;">Smart Editor</span>
+      </div>
       <div class="top-actions">
         <button class="btn btn-secondary" onclick="editor.preview()">👁️ Preview</button>
         <button class="btn btn-primary" onclick="editor.saveAndDeploy()">🚀 Save & Deploy</button>

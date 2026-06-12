@@ -2789,82 +2789,162 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                 </button>
               </div>
 
-              {/* Drawer Body - Vibes List */}
-              <div className="space-y-3 mb-5">
-                <p className="text-[9px] font-black text-black/50 uppercase tracking-wider leading-none mb-1 text-left">Tap to animate & filter</p>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {[
-                    { id: 'CUTE', label: 'CUTE 🧸', activeColor: 'bg-[#ff69b4] text-white hover:bg-[#ff1493]' },
-                    { id: 'FUNKY', label: 'FUNKY ⚡', activeColor: 'bg-[#00ff88] text-black hover:bg-[#00cc77]' },
-                    { id: 'BEAUTIFUL', label: 'BEAUTIFUL ✨', activeColor: 'bg-[#ffd700] text-black hover:bg-[#e6c200]' },
-                    { id: 'ANIME', label: 'ANIME 🌸', activeColor: 'bg-black text-[#ffff00] border-[#ffff00] hover:bg-zinc-900' },
-                    { id: 'COLORFUL', label: 'COLORFUL 🌈', activeColor: 'bg-gradient-to-r from-red-500 via-green-500 to-blue-500 text-white font-black' },
-                    { id: 'OLD_MONEY', label: 'OLD MONEY ☕', activeColor: 'bg-[#1b263b] text-[#e0e1dd] hover:bg-[#0d1b2a]' },
-                  ].map(v => (
-                    <button
-                      key={v.id}
-                      onClick={() => {
-                        setActiveVibe(v.id);
-                        setAnimTrigger(prev => prev + 1);
-                        audioService.playClick();
-                      }}
-                      className={`border-[2px] border-black px-2 py-2.5 font-black uppercase text-[9px] tracking-wider transition-all cursor-pointer ${
-                        activeVibe === v.id
-                          ? `${v.activeColor} shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)] scale-[0.98]`
-                          : 'bg-white text-black hover:translate-y-[-1px] hover:shadow-[2px_2px_0px_0px_#000] active:translate-y-0 active:shadow-none'
-                      }`}
-                      onMouseEnter={() => setCursorVariant('hover')}
-                      onMouseLeave={() => setCursorVariant('default')}
+              {/* Drawer Body - Vibes List with INDIVIDUAL animations */}
+              <div className="space-y-3 mb-4">
+                <p className="text-[9px] font-black text-black/50 uppercase tracking-wider leading-none mb-2 text-left">Tap to animate &amp; filter grid</p>
+                <div className="grid grid-cols-2 gap-2">
+
+                  {/* CUTE 🧸 — bouncy rubber toy */}
+                  <motion.button
+                    animate={{ y: [0, -4, 0], scale: [1, 1.05, 1] }}
+                    transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: 0 }}
+                    whileHover={{ y: -5, scale: 1.08, rotate: 3 }}
+                    whileTap={{ scale: 0.82, rotate: -10, transition: { duration: 0.1 } }}
+                    onClick={() => {
+                      const isActive = activeVibe === 'CUTE';
+                      setActiveVibe(isActive ? null : 'CUTE');
+                      setAnimTrigger(prev => prev + 1);
+                      setFilter(isActive ? 'All' : 'CUTE');
+                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
+                      audioService.playClick();
+                    }}
+                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${activeVibe === 'CUTE' ? 'bg-[#ff69b4] text-white shadow-[0_0_14px_rgba(255,105,180,0.5)]' : 'bg-white text-black'}`}
+                  >
+                    CUTE 🧸
+                  </motion.button>
+
+                  {/* FUNKY ⚡ — electric zap shake */}
+                  <motion.button
+                    animate={{ x: [0, 3, -3, 3, 0], skewX: [0, 4, -4, 0] }}
+                    transition={{ duration: 0.45, repeat: Infinity, repeatDelay: 2.2, ease: 'easeInOut', delay: 0.4 }}
+                    whileHover={{ scale: 1.09, x: 3, skewX: 3 }}
+                    whileTap={{ scale: 1.18, skewX: 10, transition: { duration: 0.08 } }}
+                    onClick={() => {
+                      const isActive = activeVibe === 'FUNKY';
+                      setActiveVibe(isActive ? null : 'FUNKY');
+                      setAnimTrigger(prev => prev + 1);
+                      setFilter(isActive ? 'All' : 'FUNKY');
+                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
+                      audioService.playSwipe();
+                    }}
+                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${activeVibe === 'FUNKY' ? 'bg-[#00ff88] text-black shadow-[0_0_14px_rgba(0,255,136,0.5)]' : 'bg-white text-black'}`}
+                  >
+                    FUNKY ⚡
+                  </motion.button>
+
+                  {/* BEAUTIFUL ✨ — slow radiant pulse */}
+                  <motion.button
+                    animate={{ scale: [1, 1.04, 1], opacity: [1, 0.88, 1] }}
+                    transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
+                    whileHover={{ scale: 1.08, rotate: -3 }}
+                    whileTap={{ scale: 0.88, rotate: 6, transition: { duration: 0.14, type: 'spring', stiffness: 500 } }}
+                    onClick={() => {
+                      const isActive = activeVibe === 'BEAUTIFUL';
+                      setActiveVibe(isActive ? null : 'BEAUTIFUL');
+                      setAnimTrigger(prev => prev + 1);
+                      setFilter(isActive ? 'All' : 'BEAUTIFUL');
+                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
+                      audioService.playClick();
+                    }}
+                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${activeVibe === 'BEAUTIFUL' ? 'bg-[#ffd700] text-black shadow-[0_0_14px_rgba(255,215,0,0.5)]' : 'bg-white text-black'}`}
+                  >
+                    BEAUTIFUL ✨
+                  </motion.button>
+
+                  {/* ANIME 🌸 — tilt spin pop */}
+                  <motion.button
+                    animate={{ rotate: [0, 4, -4, 0] }}
+                    transition={{ duration: 1.1, repeat: Infinity, repeatDelay: 2.0, ease: 'easeInOut', delay: 1.2 }}
+                    whileHover={{ rotate: 8, scale: 1.06 }}
+                    whileTap={{ rotate: 360, scale: 0.82, transition: { duration: 0.22, ease: 'backOut' } }}
+                    onClick={() => {
+                      const isActive = activeVibe === 'ANIME';
+                      setActiveVibe(isActive ? null : 'ANIME');
+                      setAnimTrigger(prev => prev + 1);
+                      setFilter(isActive ? 'All' : 'ANIME');
+                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
+                      audioService.playClick();
+                    }}
+                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${activeVibe === 'ANIME' ? 'bg-black text-[#ffff00] shadow-[0_0_14px_rgba(255,255,0,0.4)]' : 'bg-white text-black'}`}
+                  >
+                    ANIME 🌸
+                  </motion.button>
+
+                  {/* COLORFUL 🌈 — rainbow shimmer wave */}
+                  <motion.button
+                    animate={{ scale: [1, 1.06, 1, 1.06, 1], rotate: [0, 1.5, -1.5, 1.5, 0] }}
+                    transition={{ duration: 1.9, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
+                    whileHover={{ scale: 1.12, rotate: 4 }}
+                    whileTap={{ scale: 1.22, transition: { duration: 0.08, type: 'spring', stiffness: 700 } }}
+                    onClick={() => {
+                      const isActive = activeVibe === 'COLORFUL';
+                      setActiveVibe(isActive ? null : 'COLORFUL');
+                      setAnimTrigger(prev => prev + 1);
+                      setFilter(isActive ? 'All' : 'COLORFUL');
+                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
+                      audioService.playSwipe();
+                    }}
+                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center col-span-1 ${activeVibe === 'COLORFUL' ? 'bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500 text-white shadow-[0_0_16px_rgba(255,100,0,0.4)]' : 'bg-white text-black'}`}
+                  >
+                    COLORFUL 🌈
+                  </motion.button>
+
+                  {/* OLD MONEY ☕ — slow elegant drift */}
+                  <motion.button
+                    animate={{ y: [0, -2.5, 0], opacity: [1, 0.82, 1] }}
+                    transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut', delay: 1.6 }}
+                    whileHover={{ y: -4, scale: 1.05 }}
+                    whileTap={{ scale: 0.9, y: 4, transition: { duration: 0.18, ease: 'backIn' } }}
+                    onClick={() => {
+                      const isActive = activeVibe === 'OLD_MONEY';
+                      setActiveVibe(isActive ? null : 'OLD_MONEY');
+                      setAnimTrigger(prev => prev + 1);
+                      setFilter(isActive ? 'All' : 'OLD MONEY');
+                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
+                      audioService.playClick();
+                    }}
+                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${activeVibe === 'OLD_MONEY' ? 'bg-[#1b263b] text-[#e0e1dd] shadow-[0_0_14px_rgba(27,38,59,0.6)]' : 'bg-white text-black'}`}
+                  >
+                    OLD MONEY ☕
+                  </motion.button>
+
+                </div>
+              </div>
+
+              {/* Filter Applied Confirmation — replaces the old products list */}
+              <AnimatePresence mode="wait">
+                {activeVibe ? (
+                  <motion.div
+                    key={activeVibe}
+                    initial={{ opacity: 0, scale: 0.9, y: 8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="border-t-[3px] border-black pt-3 text-center px-2"
+                  >
+                    <motion.div
+                      animate={{ scale: [1, 1.15, 1] }}
+                      transition={{ duration: 0.5, times: [0, 0.5, 1] }}
+                      className="text-2xl mb-1"
                     >
-                      {v.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Drawer Body - Products List */}
-              <div className="flex-1 flex flex-col min-h-0">
-                <div className="border-t-[3px] border-black pt-3 mb-3">
-                  <h4 className="text-[10px] font-black uppercase text-black mb-2 tracking-widest flex items-center gap-1">
-                    <Package size={12} /> Matching Items ({vibeProducts.length})
-                  </h4>
-                  {!activeVibe && (
-                    <div className="text-center py-6 border border-black border-dashed bg-gray-50 p-2">
-                      <p className="text-[9px] font-black uppercase text-black/40 tracking-wider">Select a vibe to see vaults</p>
-                    </div>
-                  )}
-                  {activeVibe && vibeProducts.length === 0 && (
-                    <div className="text-center py-6 border border-black border-dashed bg-gray-50 p-2">
-                      <p className="text-[9px] font-black uppercase text-black/40 tracking-wider">Out of stock</p>
-                    </div>
-                  )}
-                </div>
-
-                {activeVibe && vibeProducts.length > 0 && (
-                  <div className="flex-1 overflow-y-auto space-y-2 pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-black [&::-webkit-scrollbar-track]:bg-gray-100">
-                    {vibeProducts.map(p => (
-                      <div
-                        key={p.id}
-                        onClick={() => {
-                          navigate(`/product/${p.shopifyHandle || p.handle || p.id}`);
-                          setIsVibeDrawerOpen(false);
-                        }}
-                        className="flex items-center gap-2 border-[2px] border-black p-1.5 hover:bg-gray-50 transition-all cursor-pointer group hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000]"
-                        onMouseEnter={() => setCursorVariant('hover')}
-                        onMouseLeave={() => setCursorVariant('default')}
-                      >
-                        <div className="w-10 h-10 shrink-0 border border-black overflow-hidden bg-gray-100">
-                          <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                        </div>
-                        <div className="flex-1 min-w-0 flex flex-col text-left">
-                          <span className="text-[9px] font-black uppercase text-black truncate leading-tight mb-0.5">{p.name}</span>
-                          <span className="text-[10px] font-black text-black/60">₹{p.price}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ✓
+                    </motion.div>
+                    <p className="text-[10px] font-black uppercase text-[#00ff88] tracking-widest">
+                      {activeVibe.replace('_', ' ')} vibes applied!
+                    </p>
+                    <p className="text-[8px] text-black/40 mt-1">Collection grid updated →</p>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="no-vibe"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="border-t-[3px] border-dashed border-black/20 pt-3 text-center"
+                  >
+                    <p className="text-[8px] font-black text-black/30 uppercase tracking-wider">Pick a vibe to filter the collection</p>
+                  </motion.div>
                 )}
-              </div>
+              </AnimatePresence>
 
               {/* Drawer Footer */}
               <div className="mt-auto pt-3 border-t-[3px] border-black text-center">
@@ -3052,24 +3132,30 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
                   className="w-full bg-white border-[3px] border-black px-10 py-3 text-black font-black placeholder-gray-400 focus:shadow-[4px_4px_0px_0px_#00ff88] outline-none transition-all uppercase text-xs"
                 />
               </div>
-              <button
+              <motion.button
                 onClick={() => setIsMobileFilterOpen(true)}
-                className="bg-black text-[#00ff88] border-[3px] border-black font-black uppercase text-xs px-5 py-3 shadow-[4px_4px_0px_0px_#00ff88] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center gap-2 shrink-0"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.93, x: 2, y: 2 }}
+                className="bg-black text-[#00ff88] border-[3px] border-black font-black uppercase text-xs px-5 py-3 shadow-[4px_4px_0px_0px_#00ff88] transition-all flex items-center gap-2 shrink-0 cursor-pointer"
               >
                 <SlidersHorizontal size={14} /> FILTERS
-              </button>
+              </motion.button>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-6 md:gap-12">
+            <div key={`grid-${filter}-${selectedCollection}`} className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-6 md:gap-12">
               <AnimatePresence mode="popLayout">
-                {filteredProducts.map(product => (
+                {filteredProducts.map((product, i) => (
                   <motion.div
                     key={product.id}
                     layout
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.4 }}
+                    initial={{ opacity: 0, y: 30, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.88, y: -10 }}
+                    transition={{ 
+                      duration: 0.38, 
+                      delay: Math.min(i * 0.045, 0.3),
+                      ease: [0.16, 1, 0.3, 1]
+                    }}
                   >
                     <ScrollVelocityContainer skewMax={4} blurMax={1.5}>
                       <ProductCard
@@ -3097,26 +3183,74 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           </div>
         </div>
       </div>
+      {/* Mobile Swipe-to-Filter Hint — right edge, mobile only */}
+      <AnimatePresence>
+        {!isMobileFilterOpen && (
+          <motion.button
+            key="swipe-filter-hint"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ 
+              opacity: [0.65, 1, 0.65], 
+              x: [6, 0, 6],
+            }}
+            transition={{ 
+              duration: 2.4, 
+              repeat: Infinity, 
+              ease: 'easeInOut',
+              delay: 2.0
+            }}
+            exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }}
+            onClick={() => { setIsMobileFilterOpen(true); audioService.playSwipe(); }}
+            className="lg:hidden fixed right-0 top-[62%] -translate-y-1/2 z-[9990] bg-[#00ff88] text-black border-2 border-r-0 border-black px-1.5 py-4 font-black uppercase text-[7px] tracking-wider [writing-mode:vertical-lr] rotate-180 flex flex-col items-center justify-center rounded-l-md shadow-[-3px_2px_0px_0px_rgba(0,0,0,0.2)] cursor-pointer"
+          >
+            <span>⟵ FILTER</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
-      {/* Mobile Filters Drawer */}
+      {/* Mobile Filters Bottom Sheet */}
       <AnimatePresence>
         {isMobileFilterOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: '100%' }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-            className="fixed inset-0 bg-white z-[100] flex flex-col p-6 overflow-y-auto"
-          >
-            {/* Modal Header */}
-            <div className="flex justify-between items-center mb-8 pb-4 border-b-[4px] border-black">
-              <span className="font-black font-syne text-2xl uppercase text-black">Filters</span>
-              <button 
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="filter-sheet-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setIsMobileFilterOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99]"
+            />
+            {/* Bottom Sheet Panel */}
+            <motion.div
+              key="filter-sheet-panel"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 320 }}
+              drag="y"
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={{ top: 0.05, bottom: 0.3 }}
+              onDragEnd={(_: any, info: any) => { if (info.offset.y > 80) setIsMobileFilterOpen(false); }}
+              className="fixed bottom-0 left-0 right-0 bg-white z-[100] flex flex-col rounded-t-2xl shadow-[0_-8px_40px_rgba(0,0,0,0.3)] border-t-[4px] border-black max-h-[72vh]"
+            >
+              {/* Drag Handle Pill */}
+              <div className="flex justify-center pt-3 pb-1 shrink-0">
+                <div className="w-10 h-1 bg-black/20 rounded-full" />
+              </div>
+              {/* Scrollable inner content */}
+              <div className="flex flex-col overflow-y-auto px-6 pb-6 flex-1">
+              {/* Sheet Header */}
+              <div className="flex justify-between items-center mb-6 pb-4 border-b-[4px] border-black mt-2">
+              <span className="font-black font-syne text-xl uppercase text-black">Filters</span>
+              <motion.button 
                 onClick={() => setIsMobileFilterOpen(false)}
-                className="bg-black text-[#00ff88] p-2 border-[2px] border-black font-black uppercase text-xs shadow-[3px_3px_0px_0px_#000]"
+                whileTap={{ scale: 0.88, rotate: 90 }}
+                className="bg-black text-[#00ff88] p-2 border-[2px] border-black font-black uppercase text-xs shadow-[3px_3px_0px_0px_#00ff88] cursor-pointer"
               >
-                Close
-              </button>
+                <X size={14} />
+              </motion.button>
             </div>
 
             {/* Modal Content */}
@@ -3125,15 +3259,34 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               <div>
                 <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Category</h4>
                 <div className="flex flex-wrap gap-2">
-                  {['All', 'Men', 'Women', 'Unisex'].map(c => (
-                    <button
-                      key={c}
-                      onClick={() => setFilter(c)}
-                      className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest transition-all ${filter === c ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black active:translate-y-[1px]'}`}
-                    >
-                      {c}
-                    </button>
-                  ))}
+                  {/* ALL — spin dismiss */}
+                  <motion.button
+                    whileHover={{ y: -3, scale: 1.06 }}
+                    whileTap={{ scale: 0.85, rotate: -8, transition: { duration: 0.1 } }}
+                    onClick={() => { setFilter('All'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
+                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'All' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
+                  >All</motion.button>
+                  {/* MEN — slide right */}
+                  <motion.button
+                    whileHover={{ x: 4 }}
+                    whileTap={{ x: 10, scale: 0.93, transition: { duration: 0.1 } }}
+                    onClick={() => { setFilter('Men'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
+                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Men' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
+                  >Men</motion.button>
+                  {/* WOMEN — rotate pop */}
+                  <motion.button
+                    whileHover={{ scale: 1.08, rotate: 3 }}
+                    whileTap={{ scale: 1.18, rotate: 8, transition: { duration: 0.1, type: 'spring', stiffness: 600 } }}
+                    onClick={() => { setFilter('Women'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
+                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Women' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
+                  >Women</motion.button>
+                  {/* UNISEX — bounce up */}
+                  <motion.button
+                    whileHover={{ y: -4 }}
+                    whileTap={{ y: -8, scale: 0.9, transition: { duration: 0.12, ease: 'backOut' } }}
+                    onClick={() => { setFilter('Unisex'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
+                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Unisex' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
+                  >Unisex</motion.button>
                 </div>
               </div>
 
@@ -3141,15 +3294,34 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               <div>
                 <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Product Type</h4>
                 <div className="flex flex-wrap gap-2">
-                  {['Hoodie', 'T-Shirt', 'Crop Top', 'Oversized'].map(c => (
-                    <button
-                      key={c}
-                      onClick={() => setFilter(c)}
-                      className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest transition-all ${filter === c ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black active:translate-y-[1px]'}`}
-                    >
-                      {c}
-                    </button>
-                  ))}
+                  {/* HOODIE — twist */}
+                  <motion.button
+                    whileHover={{ rotate: 5 }}
+                    whileTap={{ rotate: 18, scale: 0.88, transition: { duration: 0.12 } }}
+                    onClick={() => { setFilter('Hoodie'); audioService.playSwipe(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
+                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Hoodie' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
+                  >Hoodie</motion.button>
+                  {/* T-SHIRT — squash */}
+                  <motion.button
+                    whileHover={{ scaleX: 1.06 }}
+                    whileTap={{ scaleX: 1.35, scaleY: 0.65, transition: { duration: 0.1 } }}
+                    onClick={() => { setFilter('T-Shirt'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
+                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'T-Shirt' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
+                  >T-Shirt</motion.button>
+                  {/* CROP TOP — jump up */}
+                  <motion.button
+                    whileHover={{ y: -5 }}
+                    whileTap={{ y: -12, scale: 0.92, transition: { duration: 0.14, ease: 'backOut' } }}
+                    onClick={() => { setFilter('Crop Top'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
+                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Crop Top' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
+                  >Crop Top</motion.button>
+                  {/* OVERSIZED — mega pop */}
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 1.25, transition: { duration: 0.08, type: 'spring', stiffness: 800 } }}
+                    onClick={() => { setFilter('Oversized'); audioService.playSwipe(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
+                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Oversized' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
+                  >Oversized</motion.button>
                 </div>
               </div>
 
@@ -3234,27 +3406,35 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               </div>
             </div>
 
-            {/* Modal Actions */}
-            <div className="mt-8 pt-4 border-t-[4px] border-black flex gap-4">
-              <button
+            {/* Sheet Actions */}
+            <div className="mt-6 pt-4 border-t-[4px] border-black flex gap-3 shrink-0">
+              <motion.button
+                whileTap={{ scale: 0.93, x: 2, y: 2 }}
                 onClick={() => {
                   setFilter('All');
                   setSelectedCollection('all');
                   setSearchQuery('');
                   setPriceRange([0, 5000]);
+                  audioService.playClick();
                 }}
-                className="flex-1 py-4 bg-white text-black border-[3px] border-black font-black uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+                className="flex-1 py-3 bg-white text-black border-[3px] border-black font-black uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_#000] cursor-pointer"
               >
-                Clear
-              </button>
-              <button
-                onClick={() => setIsMobileFilterOpen(false)}
-                className="flex-1 py-4 bg-[#00ff88] text-black border-[3px] border-black font-black uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+                Clear All
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.93, x: 2, y: 2 }}
+                onClick={() => {
+                  audioService.playClick();
+                  setIsMobileFilterOpen(false);
+                }}
+                className="flex-1 py-3 bg-[#00ff88] text-black border-[3px] border-black font-black uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_#000] cursor-pointer"
               >
                 Apply
-              </button>
+              </motion.button>
             </div>
+            </div>{/* end scrollable inner */}
           </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
