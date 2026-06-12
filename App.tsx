@@ -647,6 +647,19 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
     }
   };
 
+  const vibeTag = product.tags?.find((t: string) => 
+    ['CUTE', 'FUNKY', 'BEAUTIFUL', 'ANIME', 'COLORFUL', 'OLD MONEY'].includes(t.toUpperCase().replace('_', ' '))
+  );
+
+  const vibeBadgeStyles: Record<string, string> = {
+    'CUTE': 'bg-[#ff69b4] text-white',
+    'FUNKY': 'bg-[#00ff88] text-black',
+    'BEAUTIFUL': 'bg-[#ffd700] text-black',
+    'ANIME': 'bg-black text-[#ffff00]',
+    'COLORFUL': 'bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500 text-white',
+    'OLD MONEY': 'bg-[#1b263b] text-[#e0e1dd]'
+  };
+
   return (
     <motion.div 
       className="group h-full relative"
@@ -681,6 +694,11 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
           <div className="bg-red-500 text-white text-[6px] sm:text-[8px] font-black px-[2px] sm:px-1 py-[1px] sm:py-[2px] uppercase tracking-wider border-[1px] sm:border-[2px] border-black shadow-[1px_1px_0px_0px_#000]">
             <GlitchText text="50% OFF" triggerOnHover={false} />
           </div>
+          {vibeTag && (
+            <div className={`${vibeBadgeStyles[vibeTag.toUpperCase().replace('_', ' ')] || 'bg-black text-white'} text-[5px] sm:text-[7px] font-black px-1.5 py-0.5 uppercase tracking-wider border-[1px] sm:border-[1.5px] border-black shadow-[1px_1px_0px_0px_#000]`}>
+              {vibeTag.toUpperCase().replace('_', ' ')}
+            </div>
+          )}
         </div>
 
         {/* Wishlist Heart Button */}
@@ -2557,6 +2575,36 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   );
 };
 
+const assignMissingVibes = (productsList: any[]) => {
+  const vibes = ['CUTE', 'FUNKY', 'BEAUTIFUL', 'ANIME', 'COLORFUL', 'OLD MONEY'];
+  return productsList.map(p => {
+    const tags = p.tags ? p.tags.map((t: string) => t.toUpperCase().replace('_', ' ')) : [];
+    const hasVibe = tags.some((t: string) => vibes.includes(t));
+    if (!hasVibe) {
+      let assigned = 'FUNKY';
+      const nameLower = (p.name || '').toLowerCase();
+      if (nameLower.includes('cute') || nameLower.includes('bunny') || nameLower.includes('butterfly')) {
+        assigned = 'CUTE';
+      } else if (nameLower.includes('premium') || nameLower.includes('sovereign') || nameLower.includes('glass')) {
+        assigned = 'OLD MONEY';
+      } else if (nameLower.includes('anime') || nameLower.includes('kanji') || nameLower.includes('samurai') || nameLower.includes('dragon')) {
+        assigned = 'ANIME';
+      } else if (nameLower.includes('colorful') || nameLower.includes('gradient') || nameLower.includes('vibrant')) {
+        assigned = 'COLORFUL';
+      } else if (nameLower.includes('beautiful') || nameLower.includes('blossom') || nameLower.includes('ascent')) {
+        assigned = 'BEAUTIFUL';
+      } else {
+        assigned = vibes[p.id % vibes.length];
+      }
+      return {
+        ...p,
+        tags: [...(p.tags || []), assigned]
+      };
+    }
+    return p;
+  });
+};
+
 const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const { category } = useParams<{ category?: string }>();
   useSEO({
@@ -2578,9 +2626,11 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  // Vibe Drawer and Animation States
-  const [isVibeDrawerOpen, setIsVibeDrawerOpen] = useState(false);
-  const [activeVibe, setActiveVibe] = useState<string | null>(null);
+  // Restructured Filters States
+  const [activeVibeFilter, setActiveVibeFilter] = useState<string | null>(null);
+  const [activePriceFilter, setActivePriceFilter] = useState<number | null>(null);
+
+  // Vibe Animation States
   const [animTrigger, setAnimTrigger] = useState(0);
 
   // Track page-level touch start/move/end to detect swipe gestures on the Shop page
@@ -2599,23 +2649,17 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     const diffX = touch.clientX - pageSwipeStartX.current;
     const diffY = touch.clientY - pageSwipeStartY.current;
 
-    // Detect left-to-right swipe (Swipe Right) to open vibe drawer / close filter drawer
+    // Detect left-to-right swipe (Swipe Right) to open filter drawer
     if (diffX > 60 && Math.abs(diffX) > Math.abs(diffY)) {
-      if (isMobileFilterOpen) {
-        setIsMobileFilterOpen(false);
-        audioService.playSwipe();
-      } else {
-        setIsVibeDrawerOpen(true);
+      if (!isMobileFilterOpen) {
+        setIsMobileFilterOpen(true);
         audioService.playSwipe();
       }
     }
-    // Detect right-to-left swipe (Swipe Left) to close vibe drawer / open filter drawer
+    // Detect right-to-left swipe (Swipe Left) to close filter drawer
     else if (diffX < -60 && Math.abs(diffX) > Math.abs(diffY)) {
-      if (isVibeDrawerOpen) {
-        setIsVibeDrawerOpen(false);
-        audioService.playSwipe();
-      } else {
-        setIsMobileFilterOpen(true);
+      if (isMobileFilterOpen) {
+        setIsMobileFilterOpen(false);
         audioService.playSwipe();
       }
     }
@@ -2624,18 +2668,14 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     pageSwipeStartY.current = null;
   };
 
-  // Pre-filter recommended products for the current selected vibe inside the drawer
-  const vibeProducts = products.filter(p => {
-    if (!activeVibe) return false;
-    const searchVibe = activeVibe === 'OLD_MONEY' ? 'OLD MONEY' : activeVibe;
-    return p.tags?.includes(searchVibe) || p.tags?.includes(activeVibe);
-  });
+
 
   useEffect(() => {
     const handleStoreUpdate = () => {
       // Always read from localCollectionService so SSE-triggered refreshes work in all envs
       const freshProducts = localCollectionService.getActiveProducts();
-      setProducts(freshProducts.length > 0 ? freshProducts : PRODUCTS);
+      const productsWithVibes = assignMissingVibes(freshProducts.length > 0 ? freshProducts : PRODUCTS);
+      setProducts(productsWithVibes);
       const storedCollections = localCollectionService.getAllCollections();
       setCollections(storedCollections);
     };
@@ -2738,235 +2778,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       className="min-h-screen pt-48 pb-20 px-6 bg-white relative overflow-x-hidden"
     >
       {/* Vibe Animation Overlay */}
-      <VibeAnimationEngine vibe={activeVibe} trigger={animTrigger} />
-
-      {/* Floating Vibes Badge (visible only when drawer is closed) */}
-      {createPortal(
-        <AnimatePresence>
-          {!isVibeDrawerOpen && (
-            <motion.button
-              key="vibe-floating-badge"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              whileHover={{ scale: 1.05, backgroundColor: '#00ff88', color: '#000' }}
-              onClick={() => setIsVibeDrawerOpen(true)}
-              className="fixed left-0 top-[45%] -translate-y-1/2 z-[99999] bg-black text-[#00ff88] border-2 border-l-0 border-black px-1.5 py-3.5 font-black uppercase text-[8px] tracking-wider [writing-mode:vertical-lr] rotate-180 flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[1px] transition-all cursor-pointer rounded-r-md"
-              onMouseEnter={() => setCursorVariant('hover')}
-              onMouseLeave={() => setCursorVariant('default')}
-            >
-              <span>➔ VIBES</span>
-            </motion.button>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
-
-      {/* Vibe Drawer Side Panel */}
-      <AnimatePresence>
-        {isVibeDrawerOpen && (
-          <>
-            {/* Backdrop Overlay */}
-            <motion.div
-              key="vibe-drawer-backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsVibeDrawerOpen(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[99980]"
-            />
-
-            {/* Sliding Panel */}
-            <motion.div
-              key="vibe-drawer-panel"
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-              onTouchStart={handlePageTouchStart}
-              onTouchEnd={handlePageTouchEnd}
-              className="fixed left-0 top-0 h-full w-64 md:w-72 bg-white border-r-[4px] border-black z-[99990] flex flex-col p-4 shadow-[5px_0_0_0_#000] overflow-y-auto"
-            >
-              {/* Drawer Header */}
-              <div className="flex justify-between items-center pb-3 border-b-[3px] border-black mb-4">
-                <span className="font-black font-syne text-sm uppercase text-black tracking-tight flex items-center gap-1.5">
-                  <Compass size={16} className="text-[#00ff88]" /> What's Your Vibe?
-                </span>
-                <button
-                  onClick={() => setIsVibeDrawerOpen(false)}
-                  className="bg-black text-[#00ff88] p-1 border-[1.5px] border-black font-black uppercase text-[9px] shadow-[1.5px_1.5px_0px_0px_#000] active:translate-x-[0.5px] active:translate-y-[0.5px] active:shadow-none cursor-pointer flex items-center justify-center"
-                  onMouseEnter={() => setCursorVariant('hover')}
-                  onMouseLeave={() => setCursorVariant('default')}
-                >
-                  <X size={12} />
-                </button>
-              </div>
-
-              {/* Drawer Body - Vibes List with INDIVIDUAL animations */}
-              <div className="space-y-3 mb-4">
-                <p className="text-[9px] font-black text-black/50 uppercase tracking-wider leading-none mb-2 text-left">Tap to animate &amp; filter grid</p>
-                <div className="grid grid-cols-2 gap-2">
-
-                  {/* CUTE 🧸 — bouncy rubber toy */}
-                  <motion.button
-                    animate={{ y: [0, -4, 0], scale: [1, 1.05, 1] }}
-                    transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: 0 }}
-                    whileHover={{ y: -5, scale: 1.08, rotate: 3 }}
-                    whileTap={{ scale: 0.82, rotate: -10, transition: { duration: 0.1 } }}
-                    onClick={() => {
-                      const isActive = activeVibe === 'CUTE';
-                      setActiveVibe(isActive ? null : 'CUTE');
-                      setAnimTrigger(prev => prev + 1);
-                      setFilter(isActive ? 'All' : 'CUTE');
-                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
-                      audioService.playClick();
-                    }}
-                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${activeVibe === 'CUTE' ? 'bg-[#ff69b4] text-white shadow-[0_0_14px_rgba(255,105,180,0.5)]' : 'bg-white text-black'}`}
-                  >
-                    CUTE 🧸
-                  </motion.button>
-
-                  {/* FUNKY ⚡ — electric zap shake */}
-                  <motion.button
-                    animate={{ x: [0, 3, -3, 3, 0], skewX: [0, 4, -4, 0] }}
-                    transition={{ duration: 0.45, repeat: Infinity, repeatDelay: 2.2, ease: 'easeInOut', delay: 0.4 }}
-                    whileHover={{ scale: 1.09, x: 3, skewX: 3 }}
-                    whileTap={{ scale: 1.18, skewX: 10, transition: { duration: 0.08 } }}
-                    onClick={() => {
-                      const isActive = activeVibe === 'FUNKY';
-                      setActiveVibe(isActive ? null : 'FUNKY');
-                      setAnimTrigger(prev => prev + 1);
-                      setFilter(isActive ? 'All' : 'FUNKY');
-                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
-                      audioService.playSwipe();
-                    }}
-                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${activeVibe === 'FUNKY' ? 'bg-[#00ff88] text-black shadow-[0_0_14px_rgba(0,255,136,0.5)]' : 'bg-white text-black'}`}
-                  >
-                    FUNKY ⚡
-                  </motion.button>
-
-                  {/* BEAUTIFUL ✨ — slow radiant pulse */}
-                  <motion.button
-                    animate={{ scale: [1, 1.04, 1], opacity: [1, 0.88, 1] }}
-                    transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
-                    whileHover={{ scale: 1.08, rotate: -3 }}
-                    whileTap={{ scale: 0.88, rotate: 6, transition: { duration: 0.14, type: 'spring', stiffness: 500 } }}
-                    onClick={() => {
-                      const isActive = activeVibe === 'BEAUTIFUL';
-                      setActiveVibe(isActive ? null : 'BEAUTIFUL');
-                      setAnimTrigger(prev => prev + 1);
-                      setFilter(isActive ? 'All' : 'BEAUTIFUL');
-                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
-                      audioService.playClick();
-                    }}
-                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${activeVibe === 'BEAUTIFUL' ? 'bg-[#ffd700] text-black shadow-[0_0_14px_rgba(255,215,0,0.5)]' : 'bg-white text-black'}`}
-                  >
-                    BEAUTIFUL ✨
-                  </motion.button>
-
-                  {/* ANIME 🌸 — tilt spin pop */}
-                  <motion.button
-                    animate={{ rotate: [0, 4, -4, 0] }}
-                    transition={{ duration: 1.1, repeat: Infinity, repeatDelay: 2.0, ease: 'easeInOut', delay: 1.2 }}
-                    whileHover={{ rotate: 8, scale: 1.06 }}
-                    whileTap={{ rotate: 360, scale: 0.82, transition: { duration: 0.22, ease: 'backOut' } }}
-                    onClick={() => {
-                      const isActive = activeVibe === 'ANIME';
-                      setActiveVibe(isActive ? null : 'ANIME');
-                      setAnimTrigger(prev => prev + 1);
-                      setFilter(isActive ? 'All' : 'ANIME');
-                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
-                      audioService.playClick();
-                    }}
-                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${activeVibe === 'ANIME' ? 'bg-black text-[#ffff00] shadow-[0_0_14px_rgba(255,255,0,0.4)]' : 'bg-white text-black'}`}
-                  >
-                    ANIME 🌸
-                  </motion.button>
-
-                  {/* COLORFUL 🌈 — rainbow shimmer wave */}
-                  <motion.button
-                    animate={{ scale: [1, 1.06, 1, 1.06, 1], rotate: [0, 1.5, -1.5, 1.5, 0] }}
-                    transition={{ duration: 1.9, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
-                    whileHover={{ scale: 1.12, rotate: 4 }}
-                    whileTap={{ scale: 1.22, transition: { duration: 0.08, type: 'spring', stiffness: 700 } }}
-                    onClick={() => {
-                      const isActive = activeVibe === 'COLORFUL';
-                      setActiveVibe(isActive ? null : 'COLORFUL');
-                      setAnimTrigger(prev => prev + 1);
-                      setFilter(isActive ? 'All' : 'COLORFUL');
-                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
-                      audioService.playSwipe();
-                    }}
-                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center col-span-1 ${activeVibe === 'COLORFUL' ? 'bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500 text-white shadow-[0_0_16px_rgba(255,100,0,0.4)]' : 'bg-white text-black'}`}
-                  >
-                    COLORFUL 🌈
-                  </motion.button>
-
-                  {/* OLD MONEY ☕ — slow elegant drift */}
-                  <motion.button
-                    animate={{ y: [0, -2.5, 0], opacity: [1, 0.82, 1] }}
-                    transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut', delay: 1.6 }}
-                    whileHover={{ y: -4, scale: 1.05 }}
-                    whileTap={{ scale: 0.9, y: 4, transition: { duration: 0.18, ease: 'backIn' } }}
-                    onClick={() => {
-                      const isActive = activeVibe === 'OLD_MONEY';
-                      setActiveVibe(isActive ? null : 'OLD_MONEY');
-                      setAnimTrigger(prev => prev + 1);
-                      setFilter(isActive ? 'All' : 'OLD MONEY');
-                      if (!isActive) { setTimeout(() => setIsVibeDrawerOpen(false), 320); }
-                      audioService.playClick();
-                    }}
-                    className={`border-[2px] border-black px-2 py-3 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${activeVibe === 'OLD_MONEY' ? 'bg-[#1b263b] text-[#e0e1dd] shadow-[0_0_14px_rgba(27,38,59,0.6)]' : 'bg-white text-black'}`}
-                  >
-                    OLD MONEY ☕
-                  </motion.button>
-
-                </div>
-              </div>
-
-              {/* Filter Applied Confirmation — replaces the old products list */}
-              <AnimatePresence mode="wait">
-                {activeVibe ? (
-                  <motion.div
-                    key={activeVibe}
-                    initial={{ opacity: 0, scale: 0.9, y: 8 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    className="border-t-[3px] border-black pt-3 text-center px-2"
-                  >
-                    <motion.div
-                      animate={{ scale: [1, 1.15, 1] }}
-                      transition={{ duration: 0.5, times: [0, 0.5, 1] }}
-                      className="text-2xl mb-1"
-                    >
-                      ✓
-                    </motion.div>
-                    <p className="text-[10px] font-black uppercase text-[#00ff88] tracking-widest">
-                      {activeVibe.replace('_', ' ')} vibes applied!
-                    </p>
-                    <p className="text-[8px] text-black/40 mt-1">Collection grid updated →</p>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="no-vibe"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="border-t-[3px] border-dashed border-black/20 pt-3 text-center"
-                  >
-                    <p className="text-[8px] font-black text-black/30 uppercase tracking-wider">Pick a vibe to filter the collection</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Drawer Footer */}
-              <div className="mt-auto pt-3 border-t-[3px] border-black text-center">
-                <span className="text-[8px] font-black text-black/40 uppercase tracking-widest leading-none">ELEVEZ IDENTITY</span>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <VibeAnimationEngine vibe={activeVibeFilter} trigger={animTrigger} />
 
       <div className="container mx-auto">
         <motion.div
@@ -2984,157 +2796,10 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         </motion.div>
 
         <div className="flex flex-col lg:flex-row gap-16 relative items-start">
-          {/* Sticky Sidebar */}
-          <aside className="hidden lg:block w-full lg:w-1/4 shrink-0 sticky top-32 max-h-[calc(100vh-8rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden">
-            <div className="bg-white border-[6px] border-black p-8 shadow-[12px_12px_0px_0px_#000] mb-8">
-              <div className="flex items-center gap-4 mb-8 pb-4 border-b-[4px] border-black">
-                <SlidersHorizontal size={24} className="text-black" />
-                <span className="font-black font-syne text-2xl uppercase text-black">Filters</span>
-              </div>
-
-              {/* Search */}
-              <div className="mb-8">
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={20} />
-                  <input
-                    type="text"
-                    placeholder="SEARCH COLLECTION..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-white border-[4px] border-black px-12 py-4 text-black font-black placeholder-gray-400 focus:shadow-[6px_6px_0px_0px_#00ff88] outline-none transition-all uppercase"
-                  />
-                </div>
-              </div>
-
-              {/* Filter Groups */}
-              <div className="space-y-8">
-                <div>
-                  <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Category</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {['All', 'Men', 'Women', 'Unisex'].map(c => (
-                      <button
-                        key={c}
-                        onClick={() => setFilter(c)}
-                        className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest transition-all ${filter === c ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000]'}`}
-                      >
-                        {c}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Product Type</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {['Hoodie', 'T-Shirt', 'Crop Top', 'Oversized'].map(c => (
-                      <button
-                        key={c}
-                        onClick={() => setFilter(c)}
-                        className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest transition-all ${filter === c ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000]'}`}
-                      >
-                        {c}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Price Range</h4>
-                  <div className="px-2 mb-8">
-                    <div className="flex justify-between text-sm font-black text-black mb-2">
-                      <span>₹{priceRange[0]}</span>
-                      <span>₹{priceRange[1]}{priceRange[1] >= 5000 ? '+' : ''}</span>
-                    </div>
-                    <div 
-                      className="relative h-2 bg-gray-200 rounded-full mb-4"
-                      onMouseEnter={() => setCursorVariant('hidden')}
-                      onMouseLeave={() => setCursorVariant('default')}
-                    >
-                      <div 
-                        className="absolute h-full bg-[#00ff88]" 
-                        style={{ 
-                          left: `${(priceRange[0] / 5000) * 100}%`, 
-                          right: `${100 - (priceRange[1] / 5000) * 100}%` 
-                        }}
-                      />
-                      <input
-                        type="range"
-                        min="0"
-                        max="5000"
-                        step="100"
-                        value={priceRange[0]}
-                        onChange={(e) => setPriceRange([Math.min(parseInt(e.target.value), priceRange[1] - 100), priceRange[1]])}
-                        className="absolute w-full -top-1 h-4 opacity-0 cursor-pointer pointer-events-auto dual-range"
-                        style={{ zIndex: priceRange[0] > 2500 ? 5 : 3 }}
-                      />
-                      <input
-                        type="range"
-                        min="0"
-                        max="5000"
-                        step="100"
-                        value={priceRange[1]}
-                        onChange={(e) => setPriceRange([priceRange[0], Math.max(parseInt(e.target.value), priceRange[0] + 100)])}
-                        className="absolute w-full -top-1 h-4 opacity-0 cursor-pointer pointer-events-auto dual-range"
-                        style={{ zIndex: 4 }}
-                      />
-                      {/* Thumbs */}
-                      <div 
-                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black border-2 border-white rounded-full pointer-events-none transition-all"
-                        style={{ left: `calc(${(priceRange[0] / 5000) * 100}% - 8px)` }}
-                      />
-                      <div 
-                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black border-2 border-white rounded-full pointer-events-none transition-all"
-                        style={{ left: `calc(${(priceRange[1] / 5000) * 100}% - 8px)` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Collections</h4>
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => setSelectedCollection('all')}
-                      className={`block w-full text-left px-4 py-2 border-[3px] border-black font-black text-xs uppercase transition-all ${selectedCollection === 'all' ? 'bg-black text-[#00ff88]' : 'bg-white text-black'}`}
-                    >
-                      All Products
-                    </button>
-                    {collections
-                      .filter(c => c.handle !== 'all')
-                      .filter(c => !['classic-tshirts', 'oversized-fit', 'hoodies-sweatshirts', 'crop-tops'].includes(c.handle))
-                      .filter(c => !c.name.toLowerCase().includes('all products') && c.name.toLowerCase() !== 'all')
-                      .filter(c => !c.name.toLowerCase().includes('under') && !c.name.toLowerCase().includes('below') && !c.name.toLowerCase().includes('₹'))
-                      .map(collection => (
-                      <button
-                        key={collection.handle}
-                        onClick={() => setSelectedCollection(collection.handle)}
-                        className={`block w-full text-left px-4 py-2 border-[3px] border-black font-black text-xs uppercase transition-all ${selectedCollection === collection.handle ? 'bg-black text-[#00ff88]' : 'bg-white text-black'}`}
-                      >
-                        {collection.name} ({collection.productCount || 0})
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => {
-                    setFilter('All');
-                    setSelectedCollection('all');
-                    setSearchQuery('');
-                    setPriceRange([0, 5000]);
-                  }}
-                  className="w-full mt-8 py-3 bg-white hover:bg-gray-100 text-black border-[3px] border-black font-black uppercase tracking-widest text-xs shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
-                >
-                  Clear All Filters
-                </button>
-              </div>
-            </div>
-          </aside>
-
           {/* Product Grid */}
-          <div className="flex-1 w-full">
-            {/* Mobile Search and Filter Bar — sticky once scrolled past hero */}
-            <div className="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b-[3px] border-black -mx-6 px-6 py-3 mb-8 flex gap-3 w-[calc(100%+3rem)] shadow-[0_4px_0px_0px_rgba(0,0,0,0.08)]">
+          <div className="w-full">
+            {/* Search and Filter Bar — sticky once scrolled past hero */}
+            <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b-[3px] border-black -mx-6 px-6 py-3 mb-8 flex gap-3 w-[calc(100%+3rem)] shadow-[0_4px_0px_0px_rgba(0,0,0,0.08)]">
               <div className="relative flex-1">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={18} />
                 <input
@@ -3157,28 +2822,43 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
             <div key={`grid-${filter}-${selectedCollection}`} className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-6 md:gap-12">
               <AnimatePresence mode="popLayout">
-                {filteredProducts.map((product, i) => (
-                  <motion.div
-                    key={product.id}
-                    layout
-                    initial={{ opacity: 0, y: 30, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.88, y: -10 }}
-                    transition={{ 
-                      duration: 0.38, 
-                      delay: Math.min(i * 0.045, 0.3),
-                      ease: [0.16, 1, 0.3, 1]
-                    }}
-                  >
-                    <ScrollVelocityContainer skewMax={4} blurMax={1.5}>
-                      <ProductCard
-                        product={product}
-                        onHoverStart={() => setCursorVariant('hover')}
-                        onHoverEnd={() => setCursorVariant('default')}
-                      />
-                    </ScrollVelocityContainer>
-                  </motion.div>
-                ))}
+                {filteredProducts.map((product, i) => {
+                  const normalizedVibe = activeVibeFilter ? activeVibeFilter.toUpperCase() : null;
+                  const matchesVibe = !normalizedVibe || product.tags?.some((t: string) => {
+                    const normalizedTag = t.toUpperCase().replace('_', ' ');
+                    return normalizedTag === normalizedVibe;
+                  });
+                  const matchesPrice = !activePriceFilter || product.price <= activePriceFilter;
+                  const isHighlighted = matchesVibe && matchesPrice;
+
+                  return (
+                    <motion.div
+                      key={product.id}
+                      layout
+                      initial={{ opacity: 0, y: 30, scale: 0.96 }}
+                      animate={{ 
+                        opacity: isHighlighted ? 1 : 0.12, 
+                        scale: isHighlighted ? 1 : 0.93,
+                        filter: isHighlighted ? 'blur(0px)' : 'blur(2px)',
+                        y: 0 
+                      }}
+                      exit={{ opacity: 0, scale: 0.88, y: -10 }}
+                      transition={{ 
+                        duration: 0.45, 
+                        ease: [0.16, 1, 0.3, 1]
+                      }}
+                      className={isHighlighted ? "" : "pointer-events-none"}
+                    >
+                      <ScrollVelocityContainer skewMax={4} blurMax={1.5}>
+                        <ProductCard
+                          product={product}
+                          onHoverStart={() => setCursorVariant('hover')}
+                          onHoverEnd={() => setCursorVariant('default')}
+                        />
+                      </ScrollVelocityContainer>
+                    </motion.div>
+                  );
+                })}
               </AnimatePresence>
             </div>
 
@@ -3186,7 +2866,14 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               <div className="text-center py-24 border-[6px] border-black border-dashed bg-gray-50">
                 <p className="text-4xl font-black text-black uppercase mb-8">Nothing Found In The Collection</p>
                 <button 
-                  onClick={() => { setFilter('All'); setSearchQuery(''); setSelectedCollection('all'); setPriceRange([0, 5000]); }} 
+                  onClick={() => { 
+                    setFilter('All'); 
+                    setSearchQuery(''); 
+                    setSelectedCollection('all'); 
+                    setPriceRange([0, 5000]); 
+                    setActiveVibeFilter(null);
+                    setActivePriceFilter(null);
+                  }} 
                   className="bg-black text-[#00ff88] px-12 py-4 border-[4px] border-black font-black uppercase tracking-widest shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
                 >
                   Reset All Filters
@@ -3217,7 +2904,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               onClick={() => { setIsMobileFilterOpen(true); audioService.playSwipe(); }}
               className="fixed right-0 top-[62%] -translate-y-1/2 z-[99999] bg-[#00ff88] text-black border-2 border-r-0 border-black px-1.5 py-4 font-black uppercase text-[8px] tracking-wider [writing-mode:vertical-lr] rotate-180 flex flex-col items-center justify-center rounded-l-md shadow-[-3px_2px_0px_0px_rgba(0,0,0,0.2)] hover:-translate-x-[1px] transition-all cursor-pointer"
             >
-              <span>⟵ FILTER</span>
+              <span>➔ FILTER</span>
             </motion.button>
           )}
         </AnimatePresence>,
@@ -3267,183 +2954,198 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
             {/* Modal Content */}
             <div className="space-y-8 flex-1">
-              {/* Category */}
+              {/* Price Filters */}
               <div>
-                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Category</h4>
-                <div className="flex flex-wrap gap-2">
-                  {/* ALL — spin dismiss */}
-                  <motion.button
-                    whileHover={{ y: -3, scale: 1.06 }}
-                    whileTap={{ scale: 0.85, rotate: -8, transition: { duration: 0.1 } }}
-                    onClick={() => { setFilter('All'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
-                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'All' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
-                  >All</motion.button>
-                  {/* MEN — slide right */}
-                  <motion.button
-                    whileHover={{ x: 4 }}
-                    whileTap={{ x: 10, scale: 0.93, transition: { duration: 0.1 } }}
-                    onClick={() => { setFilter('Men'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
-                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Men' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
-                  >Men</motion.button>
-                  {/* WOMEN — rotate pop */}
-                  <motion.button
-                    whileHover={{ scale: 1.08, rotate: 3 }}
-                    whileTap={{ scale: 1.18, rotate: 8, transition: { duration: 0.1, type: 'spring', stiffness: 600 } }}
-                    onClick={() => { setFilter('Women'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
-                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Women' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
-                  >Women</motion.button>
-                  {/* UNISEX — bounce up */}
-                  <motion.button
-                    whileHover={{ y: -4 }}
-                    whileTap={{ y: -8, scale: 0.9, transition: { duration: 0.12, ease: 'backOut' } }}
-                    onClick={() => { setFilter('Unisex'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
-                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Unisex' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
-                  >Unisex</motion.button>
+                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Price</h4>
+                <div className="flex flex-col gap-2">
+                  {[
+                    { label: 'Below ₹499', value: 499 },
+                    { label: 'Below ₹549', value: 549 },
+                    { label: 'Below ₹599', value: 599 },
+                    { label: 'Below ₹699', value: 699 },
+                    { label: 'Below ₹999', value: 999 },
+                  ].map(opt => {
+                    const isActive = activePriceFilter === opt.value;
+                    return (
+                      <motion.button
+                        key={opt.label}
+                        whileHover={{ x: 6, scale: 1.02 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          const nextState = isActive ? null : opt.value;
+                          setActivePriceFilter(nextState);
+                          audioService.playClick();
+                          setTimeout(() => setIsMobileFilterOpen(false), 320);
+                        }}
+                        className={`w-full text-left px-4 py-2.5 border-[3px] border-black font-black text-xs uppercase transition-all tracking-wider ${
+                          isActive 
+                            ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' 
+                            : 'bg-white text-black hover:bg-gray-50'
+                        }`}
+                      >
+                        {opt.label}
+                      </motion.button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Product Type */}
+              {/* Vibe Filters */}
               <div>
-                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Product Type</h4>
-                <div className="flex flex-wrap gap-2">
-                  {/* HOODIE — twist */}
+                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Vibe</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {/* CUTE 🧸 */}
                   <motion.button
-                    whileHover={{ rotate: 5 }}
-                    whileTap={{ rotate: 18, scale: 0.88, transition: { duration: 0.12 } }}
-                    onClick={() => { setFilter('Hoodie'); audioService.playSwipe(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
-                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Hoodie' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
-                  >Hoodie</motion.button>
-                  {/* T-SHIRT — squash */}
-                  <motion.button
-                    whileHover={{ scaleX: 1.06 }}
-                    whileTap={{ scaleX: 1.35, scaleY: 0.65, transition: { duration: 0.1 } }}
-                    onClick={() => { setFilter('T-Shirt'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
-                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'T-Shirt' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
-                  >T-Shirt</motion.button>
-                  {/* CROP TOP — jump up */}
-                  <motion.button
-                    whileHover={{ y: -5 }}
-                    whileTap={{ y: -12, scale: 0.92, transition: { duration: 0.14, ease: 'backOut' } }}
-                    onClick={() => { setFilter('Crop Top'); audioService.playClick(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
-                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Crop Top' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
-                  >Crop Top</motion.button>
-                  {/* OVERSIZED — mega pop */}
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 1.25, transition: { duration: 0.08, type: 'spring', stiffness: 800 } }}
-                    onClick={() => { setFilter('Oversized'); audioService.playSwipe(); setTimeout(() => setIsMobileFilterOpen(false), 280); }}
-                    className={`px-4 py-2 border-[3px] border-black font-black text-xs uppercase tracking-widest cursor-pointer ${filter === 'Oversized' ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black'}`}
-                  >Oversized</motion.button>
-                </div>
-              </div>
-
-              {/* Price Range */}
-              <div>
-                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Price Range</h4>
-                <div className="px-2">
-                  <div className="flex justify-between text-sm font-black text-black mb-2">
-                    <span>₹{priceRange[0]}</span>
-                    <span>₹{priceRange[1]}{priceRange[1] >= 5000 ? '+' : ''}</span>
-                  </div>
-                  <div 
-                    className="relative h-2 bg-gray-200 rounded-full mb-4"
-                    onMouseEnter={() => setCursorVariant('hidden')}
-                    onMouseLeave={() => setCursorVariant('default')}
+                    animate={{ y: [0, -2, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                    whileHover={{ scale: 1.05, rotate: 2 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => {
+                      const isActive = activeVibeFilter === 'CUTE';
+                      setActiveVibeFilter(isActive ? null : 'CUTE');
+                      setAnimTrigger(prev => prev + 1);
+                      audioService.playClick();
+                      setTimeout(() => setIsMobileFilterOpen(false), 320);
+                    }}
+                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
+                      activeVibeFilter === 'CUTE' 
+                        ? 'bg-[#ff69b4] text-white shadow-[0_0_12px_rgba(255,105,180,0.5)]' 
+                        : 'bg-white text-black'
+                    }`}
                   >
-                    <div 
-                      className="absolute h-full bg-[#00ff88]" 
-                      style={{ 
-                        left: `${(priceRange[0] / 5000) * 100}%`, 
-                        right: `${100 - (priceRange[1] / 5000) * 100}%` 
-                      }}
-                    />
-                    <input
-                      type="range"
-                      min="0"
-                      max="5000"
-                      step="100"
-                      value={priceRange[0]}
-                      onChange={(e) => setPriceRange([Math.min(parseInt(e.target.value), priceRange[1] - 100), priceRange[1]])}
-                      className="absolute w-full -top-1 h-4 opacity-0 cursor-pointer pointer-events-auto dual-range"
-                      style={{ zIndex: priceRange[0] > 2500 ? 5 : 3 }}
-                    />
-                    <input
-                      type="range"
-                      min="0"
-                      max="5000"
-                      step="100"
-                      value={priceRange[1]}
-                      onChange={(e) => setPriceRange([priceRange[0], Math.max(parseInt(e.target.value), priceRange[0] + 100)])}
-                      className="absolute w-full -top-1 h-4 opacity-0 cursor-pointer pointer-events-auto dual-range"
-                      style={{ zIndex: 4 }}
-                    />
-                    {/* Thumbs */}
-                    <div 
-                      className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black border-2 border-white rounded-full pointer-events-none transition-all"
-                      style={{ left: `calc(${(priceRange[0] / 5000) * 100}% - 8px)` }}
-                    />
-                    <div 
-                      className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-black border-2 border-white rounded-full pointer-events-none transition-all"
-                      style={{ left: `calc(${(priceRange[1] / 5000) * 100}% - 8px)` }}
-                    />
-                  </div>
-                </div>
-              </div>
+                    CUTE 🧸
+                  </motion.button>
 
-              {/* Collections */}
-              <div>
-                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Collections</h4>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setSelectedCollection('all')}
-                    className={`block w-full text-left px-4 py-2 border-[3px] border-black font-black text-xs uppercase transition-all ${selectedCollection === 'all' ? 'bg-black text-[#00ff88]' : 'bg-white text-black'}`}
+                  {/* FUNKY ⚡ */}
+                  <motion.button
+                    animate={{ x: [0, 2, -2, 0] }}
+                    transition={{ duration: 0.6, repeat: Infinity, repeatDelay: 2 }}
+                    whileHover={{ scale: 1.05, skewX: 3 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => {
+                      const isActive = activeVibeFilter === 'FUNKY';
+                      setActiveVibeFilter(isActive ? null : 'FUNKY');
+                      setAnimTrigger(prev => prev + 1);
+                      audioService.playSwipe();
+                      setTimeout(() => setIsMobileFilterOpen(false), 320);
+                    }}
+                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
+                      activeVibeFilter === 'FUNKY' 
+                        ? 'bg-[#00ff88] text-black shadow-[0_0_12px_rgba(0,255,136,0.5)]' 
+                        : 'bg-white text-black'
+                    }`}
                   >
-                    All Products
-                  </button>
-                  {collections
-                    .filter(c => c.handle !== 'all')
-                    .filter(c => !['classic-tshirts', 'oversized-fit', 'hoodies-sweatshirts', 'crop-tops'].includes(c.handle))
-                    .filter(c => !c.name.toLowerCase().includes('all products') && c.name.toLowerCase() !== 'all')
-                    .filter(c => !c.name.toLowerCase().includes('under') && !c.name.toLowerCase().includes('below') && !c.name.toLowerCase().includes('₹'))
-                    .map(collection => (
-                    <button
-                      key={collection.handle}
-                      onClick={() => setSelectedCollection(collection.handle)}
-                      className={`block w-full text-left px-4 py-2 border-[3px] border-black font-black text-xs uppercase transition-all ${selectedCollection === collection.handle ? 'bg-black text-[#00ff88]' : 'bg-white text-black'}`}
-                    >
-                      {collection.name} ({collection.productCount || 0})
-                    </button>
-                  ))}
+                    FUNKY ⚡
+                  </motion.button>
+
+                  {/* BEAUTIFUL ✨ */}
+                  <motion.button
+                    animate={{ scale: [1, 1.03, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                    whileHover={{ scale: 1.05, rotate: -2 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => {
+                      const isActive = activeVibeFilter === 'BEAUTIFUL';
+                      setActiveVibeFilter(isActive ? null : 'BEAUTIFUL');
+                      setAnimTrigger(prev => prev + 1);
+                      audioService.playClick();
+                      setTimeout(() => setIsMobileFilterOpen(false), 320);
+                    }}
+                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
+                      activeVibeFilter === 'BEAUTIFUL' 
+                        ? 'bg-[#ffd700] text-black shadow-[0_0_12px_rgba(255,215,0,0.5)]' 
+                        : 'bg-white text-black'
+                    }`}
+                  >
+                    BEAUTIFUL ✨
+                  </motion.button>
+
+                  {/* ANIME 🌸 */}
+                  <motion.button
+                    animate={{ rotate: [0, 2, -2, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                    whileHover={{ scale: 1.05, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => {
+                      const isActive = activeVibeFilter === 'ANIME';
+                      setActiveVibeFilter(isActive ? null : 'ANIME');
+                      setAnimTrigger(prev => prev + 1);
+                      audioService.playClick();
+                      setTimeout(() => setIsMobileFilterOpen(false), 320);
+                    }}
+                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
+                      activeVibeFilter === 'ANIME' 
+                        ? 'bg-black text-[#ffff00] shadow-[0_0_12px_rgba(255,255,0,0.4)]' 
+                        : 'bg-white text-black'
+                    }`}
+                  >
+                    ANIME 🌸
+                  </motion.button>
+
+                  {/* COLORFUL 🌈 */}
+                  <motion.button
+                    animate={{ scale: [1, 1.04, 1] }}
+                    transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                    whileHover={{ scale: 1.05, rotate: 3 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => {
+                      const isActive = activeVibeFilter === 'COLORFUL';
+                      setActiveVibeFilter(isActive ? null : 'COLORFUL');
+                      setAnimTrigger(prev => prev + 1);
+                      audioService.playSwipe();
+                      setTimeout(() => setIsMobileFilterOpen(false), 320);
+                    }}
+                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
+                      activeVibeFilter === 'COLORFUL' 
+                        ? 'bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500 text-white shadow-[0_0_12px_rgba(255,100,0,0.4)]' 
+                        : 'bg-white text-black'
+                    }`}
+                  >
+                    COLORFUL 🌈
+                  </motion.button>
+
+                  {/* OLD MONEY ☕ */}
+                  <motion.button
+                    animate={{ y: [0, -1.5, 0] }}
+                    transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => {
+                      const isActive = activeVibeFilter === 'OLD MONEY';
+                      setActiveVibeFilter(isActive ? null : 'OLD MONEY');
+                      setAnimTrigger(prev => prev + 1);
+                      audioService.playClick();
+                      setTimeout(() => setIsMobileFilterOpen(false), 320);
+                    }}
+                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
+                      activeVibeFilter === 'OLD MONEY' 
+                        ? 'bg-[#1b263b] text-[#e0e1dd] shadow-[0_0_12px_rgba(27,38,59,0.6)]' 
+                        : 'bg-white text-black'
+                    }`}
+                  >
+                    OLD MONEY ☕
+                  </motion.button>
                 </div>
               </div>
             </div>
 
-            {/* Sheet Actions */}
-            <div className="mt-6 pt-4 border-t-[4px] border-black flex gap-3 shrink-0">
-              <motion.button
-                whileTap={{ scale: 0.93, x: 2, y: 2 }}
-                onClick={() => {
-                  setFilter('All');
-                  setSelectedCollection('all');
-                  setSearchQuery('');
-                  setPriceRange([0, 5000]);
-                  audioService.playClick();
-                }}
-                className="flex-1 py-3 bg-white text-black border-[3px] border-black font-black uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_#000] cursor-pointer"
-              >
-                Clear All
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.93, x: 2, y: 2 }}
-                onClick={() => {
-                  audioService.playClick();
-                  setIsMobileFilterOpen(false);
-                }}
-                className="flex-1 py-3 bg-[#00ff88] text-black border-[3px] border-black font-black uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_#000] cursor-pointer"
-              >
-                Apply
-              </motion.button>
-            </div>
+            {/* Clear All Actions */}
+            {(activeVibeFilter || activePriceFilter) && (
+              <div className="mt-6 pt-4 border-t-[4px] border-black flex shrink-0">
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setActiveVibeFilter(null);
+                    setActivePriceFilter(null);
+                    audioService.playSwipe();
+                    setTimeout(() => setIsMobileFilterOpen(false), 320);
+                  }}
+                  className="w-full py-3 bg-black text-[#00ff88] border-[3px] border-black font-black uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_#00ff88] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none cursor-pointer text-center"
+                >
+                  Clear All
+                </motion.button>
+              </div>
+            )}
             </div>{/* end scrollable inner */}
           </motion.div>
           </>
