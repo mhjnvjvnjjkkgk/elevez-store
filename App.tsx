@@ -5090,33 +5090,6 @@ const Checkout = () => {
               )}
             </AnimatePresence>
           </form>
-
-          {/* Persuasive Secure Checkout Badges */}
-          <div className="mt-12 border-t-[3px] border-black pt-8">
-            <p className="text-center font-black uppercase text-[10px] text-black/40 tracking-widest mb-6">🔒 SECURE CHECKOUT ASSURED</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white border-[2px] border-black p-3 text-center shadow-[3px_3px_0px_0px_#000] space-y-1">
-                <span className="text-xl">🛡️</span>
-                <h4 className="text-[9px] font-black uppercase text-black">SSL ENCRYPTED</h4>
-                <p className="text-[7.5px] font-bold text-black/50 uppercase leading-none">100% SECURE PROTOCOL</p>
-              </div>
-              <div className="bg-white border-[2px] border-black p-3 text-center shadow-[3px_3px_0px_0px_#000] space-y-1">
-                <span className="text-xl">🔄</span>
-                <h4 className="text-[9px] font-black uppercase text-black">7-DAY EXCHANGES</h4>
-                <p className="text-[7.5px] font-bold text-black/50 uppercase leading-none">EASY SIZE REPLACEMENTS</p>
-              </div>
-              <div className="bg-white border-[2px] border-black p-3 text-center shadow-[3px_3px_0px_0px_#000] space-y-1">
-                <span className="text-xl">🚀</span>
-                <h4 className="text-[9px] font-black uppercase text-black">FREE SHIPPING</h4>
-                <p className="text-[7.5px] font-bold text-black/50 uppercase leading-none">ON ALL ORDERS OVER ₹650</p>
-              </div>
-              <div className="bg-white border-[2px] border-black p-3 text-center shadow-[3px_3px_0px_0px_#000] space-y-1">
-                <span className="text-xl">🇮🇳</span>
-                <h4 className="text-[9px] font-black uppercase text-black">MADE IN INDIA</h4>
-                <p className="text-[7.5px] font-bold text-black/50 uppercase leading-none">PREMIUM COUTURE QUALITY</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
