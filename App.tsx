@@ -2741,23 +2741,26 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       <VibeAnimationEngine vibe={activeVibe} trigger={animTrigger} />
 
       {/* Floating Vibes Badge (visible only when drawer is closed) */}
-      <AnimatePresence>
-        {!isVibeDrawerOpen && (
-          <motion.button
-            key="vibe-floating-badge"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            whileHover={{ scale: 1.05, backgroundColor: '#00ff88', color: '#000' }}
-            onClick={() => setIsVibeDrawerOpen(true)}
-            className="fixed left-0 top-[45%] -translate-y-1/2 z-[99999] bg-black text-[#00ff88] border-2 border-l-0 border-black px-1.5 py-3.5 font-black uppercase text-[8px] tracking-wider [writing-mode:vertical-lr] rotate-180 flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[1px] transition-all cursor-pointer rounded-r-md"
-            onMouseEnter={() => setCursorVariant('hover')}
-            onMouseLeave={() => setCursorVariant('default')}
-          >
-            <span>➔ VIBES</span>
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {createPortal(
+        <AnimatePresence>
+          {!isVibeDrawerOpen && (
+            <motion.button
+              key="vibe-floating-badge"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              whileHover={{ scale: 1.05, backgroundColor: '#00ff88', color: '#000' }}
+              onClick={() => setIsVibeDrawerOpen(true)}
+              className="fixed left-0 top-[45%] -translate-y-1/2 z-[99999] bg-black text-[#00ff88] border-2 border-l-0 border-black px-1.5 py-3.5 font-black uppercase text-[8px] tracking-wider [writing-mode:vertical-lr] rotate-180 flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,0.15)] hover:translate-x-[1px] transition-all cursor-pointer rounded-r-md"
+              onMouseEnter={() => setCursorVariant('hover')}
+              onMouseLeave={() => setCursorVariant('default')}
+            >
+              <span>➔ VIBES</span>
+            </motion.button>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       {/* Vibe Drawer Side Panel */}
       <AnimatePresence>
@@ -3194,29 +3197,32 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         </div>
       </div>
       {/* Mobile Swipe-to-Filter Hint — right edge, mobile only */}
-      <AnimatePresence>
-        {!isMobileFilterOpen && (
-          <motion.button
-            key="swipe-filter-hint"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ 
-              opacity: [0.65, 1, 0.65], 
-              x: [6, 0, 6],
-            }}
-            transition={{ 
-              duration: 2.4, 
-              repeat: Infinity, 
-              ease: 'easeInOut',
-              delay: 2.0
-            }}
-            exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }}
-            onClick={() => { setIsMobileFilterOpen(true); audioService.playSwipe(); }}
-            className="fixed right-0 top-[62%] -translate-y-1/2 z-[99999] bg-[#00ff88] text-black border-2 border-r-0 border-black px-1.5 py-4 font-black uppercase text-[8px] tracking-wider [writing-mode:vertical-lr] rotate-180 flex flex-col items-center justify-center rounded-l-md shadow-[-3px_2px_0px_0px_rgba(0,0,0,0.2)] hover:-translate-x-[1px] transition-all cursor-pointer"
-          >
-            <span>⟵ FILTER</span>
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {createPortal(
+        <AnimatePresence>
+          {!isMobileFilterOpen && (
+            <motion.button
+              key="swipe-filter-hint"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ 
+                opacity: [0.65, 1, 0.65], 
+                x: [6, 0, 6],
+              }}
+              transition={{ 
+                duration: 2.4, 
+                repeat: Infinity, 
+                ease: 'easeInOut',
+                delay: 2.0
+              }}
+              exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }}
+              onClick={() => { setIsMobileFilterOpen(true); audioService.playSwipe(); }}
+              className="fixed right-0 top-[62%] -translate-y-1/2 z-[99999] bg-[#00ff88] text-black border-2 border-r-0 border-black px-1.5 py-4 font-black uppercase text-[8px] tracking-wider [writing-mode:vertical-lr] rotate-180 flex flex-col items-center justify-center rounded-l-md shadow-[-3px_2px_0px_0px_rgba(0,0,0,0.2)] hover:-translate-x-[1px] transition-all cursor-pointer"
+            >
+              <span>⟵ FILTER</span>
+            </motion.button>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       {/* Mobile Filters Right Drawer Panel */}
       <AnimatePresence>
@@ -5841,7 +5847,7 @@ const TopHeader = () => {
           }}
         >
           <GlitchImage 
-            src="/logo.png?v=2" 
+            src="/logo.png?v=3" 
             alt={BRAND_NAME} 
             imgClassName="h-10 md:h-14 w-auto object-contain"
             triggerOnHover={false} 
@@ -6229,7 +6235,7 @@ const Footer = () => (
         <div className="space-y-8">
           <Link to="/" className="inline-block">
             <GlitchImage 
-              src="/logo.png?v=2" 
+              src="/logo.png?v=3" 
               alt={BRAND_NAME} 
               imgClassName="h-16 w-auto object-contain invert"
               triggerOnHover={false} 
