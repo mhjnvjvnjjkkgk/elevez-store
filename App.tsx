@@ -6312,8 +6312,9 @@ const TopHeader = () => {
 // --- CART TIMER WIDGET (floating pill, right edge) ---
 const CartTimerWidget = () => {
   const { setIsCartOpen, isCartOpen, secondsLeft, expired, isTimerVisible } = useCart();
+  const location = useLocation();
 
-  if (!isTimerVisible || isCartOpen) return null;
+  if (!isTimerVisible || isCartOpen || location.pathname === '/checkout') return null;
 
   const mins = Math.floor(secondsLeft / 60);
   const secs = secondsLeft % 60;
