@@ -2643,27 +2643,37 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     pageSwipeStartY.current = touch.clientY;
   };
 
-  const handlePageTouchEnd = (e: React.TouchEvent) => {
+  const handlePageTouchMove = (e: React.TouchEvent) => {
     if (pageSwipeStartX.current === null || pageSwipeStartY.current === null) return;
-    const touch = e.changedTouches[0];
+    const touch = e.touches[0];
     const diffX = touch.clientX - pageSwipeStartX.current;
     const diffY = touch.clientY - pageSwipeStartY.current;
 
-    // Detect right-to-left swipe (Swipe Left) to open filter drawer
-    if (diffX < -60 && Math.abs(diffX) > Math.abs(diffY)) {
-      if (!isMobileFilterOpen) {
-        setIsMobileFilterOpen(true);
-        audioService.playSwipe();
+    // Detect horizontal swipes (wider than tall)
+    if (Math.abs(diffX) > Math.abs(diffY) * 1.4) {
+      // Right-to-left swipe (Swipe Left) -> Open filters
+      if (diffX < -55) {
+        if (!isMobileFilterOpen) {
+          setIsMobileFilterOpen(true);
+          audioService.playSwipe();
+        }
+        // Reset references so it only fires once per touch sequence
+        pageSwipeStartX.current = null;
+        pageSwipeStartY.current = null;
+      }
+      // Left-to-right swipe (Swipe Right) -> Close filters
+      else if (diffX > 55) {
+        if (isMobileFilterOpen) {
+          setIsMobileFilterOpen(false);
+          audioService.playSwipe();
+        }
+        pageSwipeStartX.current = null;
+        pageSwipeStartY.current = null;
       }
     }
-    // Detect left-to-right swipe (Swipe Right) to close filter drawer
-    else if (diffX > 60 && Math.abs(diffX) > Math.abs(diffY)) {
-      if (isMobileFilterOpen) {
-        setIsMobileFilterOpen(false);
-        audioService.playSwipe();
-      }
-    }
+  };
 
+  const handlePageTouchEnd = () => {
     pageSwipeStartX.current = null;
     pageSwipeStartY.current = null;
   };
@@ -2774,7 +2784,9 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   return (
     <div 
       onTouchStart={handlePageTouchStart}
+      onTouchMove={handlePageTouchMove}
       onTouchEnd={handlePageTouchEnd}
+      onTouchCancel={handlePageTouchEnd}
       className="min-h-screen pt-48 pb-20 px-6 bg-white relative"
     >
       {/* Vibe Animation Overlay */}
