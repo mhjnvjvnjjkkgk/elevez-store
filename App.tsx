@@ -3211,7 +3211,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             }}
             exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }}
             onClick={() => { setIsMobileFilterOpen(true); audioService.playSwipe(); }}
-            className="lg:hidden fixed right-0 top-[62%] -translate-y-1/2 z-[9990] bg-[#00ff88] text-black border-2 border-r-0 border-black px-1.5 py-4 font-black uppercase text-[7px] tracking-wider [writing-mode:vertical-lr] rotate-180 flex flex-col items-center justify-center rounded-l-md shadow-[-3px_2px_0px_0px_rgba(0,0,0,0.2)] cursor-pointer"
+            className="fixed right-0 top-[62%] -translate-y-1/2 z-[99999] bg-[#00ff88] text-black border-2 border-r-0 border-black px-1.5 py-4 font-black uppercase text-[8px] tracking-wider [writing-mode:vertical-lr] rotate-180 flex flex-col items-center justify-center rounded-l-md shadow-[-3px_2px_0px_0px_rgba(0,0,0,0.2)] hover:-translate-x-[1px] transition-all cursor-pointer"
           >
             <span>⟵ FILTER</span>
           </motion.button>
@@ -5835,15 +5835,15 @@ const TopHeader = () => {
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            height: isMobile ? '32px' : '40px',
+            height: isMobile ? '40px' : '56px',
             textDecoration: 'none',
             userSelect: 'none',
           }}
         >
           <GlitchImage 
-            src="/logo.png" 
+            src="/logo.png?v=2" 
             alt={BRAND_NAME} 
-            imgClassName="h-8 md:h-10 w-auto object-contain"
+            imgClassName="h-10 md:h-14 w-auto object-contain"
             triggerOnHover={false} 
           />
         </Link>
@@ -6229,9 +6229,9 @@ const Footer = () => (
         <div className="space-y-8">
           <Link to="/" className="inline-block">
             <GlitchImage 
-              src="/logo.png" 
+              src="/logo.png?v=2" 
               alt={BRAND_NAME} 
-              imgClassName="h-12 w-auto object-contain invert"
+              imgClassName="h-16 w-auto object-contain invert"
               triggerOnHover={false} 
             />
           </Link>
