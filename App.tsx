@@ -5552,7 +5552,7 @@ const TopHeader = () => {
           }}
         >
           <GlitchImage 
-            src="/logo.png?v=3" 
+            src="/logo.png?v=5" 
             alt={BRAND_NAME} 
             imgClassName="h-14 md:h-22 w-auto object-contain"
             triggerOnHover={false} 
@@ -5940,7 +5940,7 @@ const Footer = () => (
         <div className="space-y-8">
           <Link to="/" className="inline-block">
             <GlitchImage 
-              src="/logo.png?v=3" 
+              src="/logo.png?v=5" 
               alt={BRAND_NAME} 
               imgClassName="h-16 w-auto object-contain invert"
               triggerOnHover={false} 
