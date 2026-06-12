@@ -2649,15 +2649,15 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     const diffX = touch.clientX - pageSwipeStartX.current;
     const diffY = touch.clientY - pageSwipeStartY.current;
 
-    // Detect left-to-right swipe (Swipe Right) to open filter drawer
-    if (diffX > 60 && Math.abs(diffX) > Math.abs(diffY)) {
+    // Detect right-to-left swipe (Swipe Left) to open filter drawer
+    if (diffX < -60 && Math.abs(diffX) > Math.abs(diffY)) {
       if (!isMobileFilterOpen) {
         setIsMobileFilterOpen(true);
         audioService.playSwipe();
       }
     }
-    // Detect right-to-left swipe (Swipe Left) to close filter drawer
-    else if (diffX < -60 && Math.abs(diffX) > Math.abs(diffY)) {
+    // Detect left-to-right swipe (Swipe Right) to close filter drawer
+    else if (diffX > 60 && Math.abs(diffX) > Math.abs(diffY)) {
       if (isMobileFilterOpen) {
         setIsMobileFilterOpen(false);
         audioService.playSwipe();
@@ -2775,7 +2775,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     <div 
       onTouchStart={handlePageTouchStart}
       onTouchEnd={handlePageTouchEnd}
-      className="min-h-screen pt-48 pb-20 px-6 bg-white relative overflow-x-hidden"
+      className="min-h-screen pt-48 pb-20 px-6 bg-white relative"
     >
       {/* Vibe Animation Overlay */}
       <VibeAnimationEngine vibe={activeVibeFilter} trigger={animTrigger} />
@@ -2904,7 +2904,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               onClick={() => { setIsMobileFilterOpen(true); audioService.playSwipe(); }}
               className="fixed right-0 top-[62%] -translate-y-1/2 z-[99999] bg-[#00ff88] text-black border-2 border-r-0 border-black px-1.5 py-4 font-black uppercase text-[8px] tracking-wider [writing-mode:vertical-lr] rotate-180 flex flex-col items-center justify-center rounded-l-md shadow-[-3px_2px_0px_0px_rgba(0,0,0,0.2)] hover:-translate-x-[1px] transition-all cursor-pointer"
             >
-              <span>➔ FILTER</span>
+              <span>⟵ FILTER</span>
             </motion.button>
           )}
         </AnimatePresence>,
@@ -2936,7 +2936,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               dragConstraints={{ left: 0 }}
               dragElastic={{ left: 0.05, right: 0.3 }}
               onDragEnd={(_: any, info: any) => { if (info.offset.x > 80) setIsMobileFilterOpen(false); }}
-              className="fixed right-0 top-0 h-full w-76 max-w-[85vw] bg-white z-[99990] flex flex-col shadow-[-8px_0_40px_rgba(0,0,0,0.3)] border-l-[4px] border-black"
+              className="fixed right-0 top-0 h-fit w-76 max-w-[85vw] bg-white z-[99990] flex flex-col shadow-[-8px_0_40px_rgba(0,0,0,0.3)] border-l-[4px] border-b-[4px] border-black rounded-bl-2xl"
             >
               {/* Scrollable inner content */}
               <div className="flex flex-col overflow-y-auto p-4 flex-1">
