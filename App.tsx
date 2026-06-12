@@ -4171,7 +4171,27 @@ const Checkout = () => {
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
-  
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 600; // Reset
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const [newAddressForm, setNewAddressForm] = useState({
     label: 'Home',
     fullName: '',
@@ -4583,70 +4603,110 @@ const Checkout = () => {
             <h1 className="text-3xl md:text-6xl font-black font-syne uppercase text-black leading-none">Checkout</h1>
           </div>
 
-          {/* Multipage Progress Wizard Header */}
-          <div className="grid grid-cols-3 gap-2 mb-8 border-[3px] border-black p-1.5 shadow-[4px_4px_0px_0px_#000] bg-black">
-            <button
-              type="button"
-              onClick={() => setActiveStep('cart')}
-              className={`py-2 px-1 text-center font-black uppercase text-[9px] md:text-xs tracking-wider transition-all border-[2px] border-black ${activeStep === 'cart' ? 'bg-[#00ff88] text-black shadow-[2px_2px_0px_0px_#000]' : 'bg-zinc-800 text-zinc-400 border-transparent'}`}
-            >
-              01. Cart & Savings
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (!user) {
-                  handleGoogleSignIn();
-                  return;
-                }
-                setActiveStep('shipping');
-              }}
-              className={`py-2 px-1 text-center font-black uppercase text-[9px] md:text-xs tracking-wider transition-all border-[2px] border-black ${activeStep === 'shipping' ? 'bg-[#00ff88] text-black shadow-[2px_2px_0px_0px_#000]' : 'bg-zinc-800 text-zinc-400 border-transparent'}`}
-            >
-              02. Address
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (!user) {
-                  handleGoogleSignIn();
-                  return;
-                }
-                if (!selectedAddressId) {
-                  alert('Please select or add a delivery address first.');
-                  return;
-                }
-                setActiveStep('payment');
-              }}
-              className={`py-2 px-1 text-center font-black uppercase text-[9px] md:text-xs tracking-wider transition-all border-[2px] border-black ${activeStep === 'payment' ? 'bg-[#00ff88] text-black shadow-[2px_2px_0px_0px_#000]' : 'bg-zinc-800 text-zinc-400 border-transparent'}`}
-            >
-              03. Payment
-            </button>
+          {/* Reservation Countdown Alert */}
+          <div className="bg-red-500 text-white border-[3px] border-black p-3.5 shadow-[4px_4px_0px_0px_#000] mb-6 flex items-center justify-between font-black uppercase text-[10px] md:text-xs tracking-wider">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">⏱️</span>
+              <span className="animate-pulse">Order Reserved! Your cart is locked to guarantee stock.</span>
+            </div>
+            <span className="font-mono bg-black text-[#00ff88] px-2.5 py-0.5 border border-black text-xs">{formatTime(timeLeft)}</span>
+          </div>
+
+          {/* Stepper Progress Indicator */}
+          <div className="relative mb-8 pt-4">
+            <div className="absolute top-1/2 left-0 right-0 h-[3px] bg-black -translate-y-1/2 z-0" />
+            <div className="relative flex justify-between z-10">
+              <button
+                type="button"
+                onClick={() => setActiveStep('cart')}
+                className="flex flex-col items-center gap-1 bg-white px-2 focus:outline-none"
+              >
+                <div className={`w-8 h-8 rounded-full border-[3px] border-black flex items-center justify-center font-black text-xs transition-all shadow-[2px_2px_0px_0px_#000] ${activeStep === 'cart' ? 'bg-[#00ff88] text-black scale-110' : 'bg-black text-white hover:bg-zinc-800'}`}>
+                  1
+                </div>
+                <span className={`text-[9px] font-black uppercase tracking-wider ${activeStep === 'cart' ? 'text-black' : 'text-black/60'}`}>Cart Review</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (!user) {
+                    handleGoogleSignIn();
+                    return;
+                  }
+                  setActiveStep('shipping');
+                }}
+                className="flex flex-col items-center gap-1 bg-white px-2 focus:outline-none"
+              >
+                <div className={`w-8 h-8 rounded-full border-[3px] border-black flex items-center justify-center font-black text-xs transition-all shadow-[2px_2px_0px_0px_#000] ${activeStep === 'shipping' ? 'bg-[#00ff88] text-black scale-110' : (activeStep === 'payment' ? 'bg-black text-[#00ff88]' : 'bg-white text-black hover:bg-zinc-100')}`}>
+                  2
+                </div>
+                <span className={`text-[9px] font-black uppercase tracking-wider ${activeStep === 'shipping' ? 'text-black' : 'text-black/60'}`}>Delivery</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (!user) {
+                    handleGoogleSignIn();
+                    return;
+                  }
+                  if (!selectedAddressId) {
+                    alert('Please select or add a delivery address first.');
+                    return;
+                  }
+                  setActiveStep('payment');
+                }}
+                className="flex flex-col items-center gap-1 bg-white px-2 focus:outline-none"
+              >
+                <div className={`w-8 h-8 rounded-full border-[3px] border-black flex items-center justify-center font-black text-xs transition-all shadow-[2px_2px_0px_0px_#000] ${activeStep === 'payment' ? 'bg-[#00ff88] text-black scale-110' : 'bg-white text-black hover:bg-zinc-100'}`}>
+                  3
+                </div>
+                <span className={`text-[9px] font-black uppercase tracking-wider ${activeStep === 'payment' ? 'text-black' : 'text-black/60'}`}>Payment</span>
+              </button>
+            </div>
           </div>
 
           {/* Step Banner */}
-          <div className="mb-6 p-4 bg-yellow-100 border-[3px] border-black shadow-[3px_3px_0px_0px_#000] flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Timer className="w-5 h-5 animate-bounce text-black" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            <div className="p-3.5 bg-yellow-100 border-[3px] border-black shadow-[3px_3px_0px_0px_#000] flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Timer className="w-5 h-5 animate-bounce text-black" />
+                <div>
+                  <p className="text-xs font-black uppercase text-black leading-none">
+                    {shippingMethod === 'express' ? 'Delivering in 2 days (Express)' : 'Delivering in 3 days'}
+                  </p>
+                  <p className="text-[9px] font-bold uppercase text-black/60 mt-0.5">
+                    {shippingMethod === 'express' ? 'Express priority delivery active' : 'Standard courier route active'}
+                  </p>
+                </div>
+              </div>
+              <span className="bg-black text-[#00ff88] text-[9px] font-black px-2 py-0.5 border border-black uppercase">
+                {items.length} items
+              </span>
+            </div>
+
+            <div className="p-3.5 bg-red-50 border-[3px] border-red-500 shadow-[3px_3px_0px_0px_#ef4444] flex items-center gap-3">
+              <span className="text-lg">🔥</span>
               <div>
-                <p className="text-xs font-black uppercase text-black leading-none">
-                  {shippingMethod === 'express' ? 'Delivering in 2 days (Express)' : 'Delivering in 3 days'}
-                </p>
-                <p className="text-[10px] font-bold uppercase text-black/60">
-                  {shippingMethod === 'express' ? 'Express priority delivery active' : 'Standard courier route active'}
-                </p>
+                <p className="text-[10px] font-black uppercase text-red-600 leading-none">High Demand Period</p>
+                <p className="text-[9px] font-bold uppercase text-red-600/70 mt-0.5">27 rebels are checking out right now. Stock is reserved temporarily.</p>
               </div>
             </div>
-            <span className="bg-black text-[#00ff88] text-[9px] font-black px-2 py-0.5 border border-black uppercase">
-              {items.length} items
-            </span>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            
-            {/* STEP 1: CART & SAVINGS DETAILS */}
-            {activeStep === 'cart' && (
-              <div className="space-y-6">
+            <AnimatePresence mode="wait">
+              {/* STEP 1: CART & SAVINGS DETAILS */}
+              {activeStep === 'cart' && (
+                <motion.div
+                  key="cart-step"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-6"
+                >
                 <div className="bg-white border-[4px] border-black p-4 md:p-6 shadow-[6px_6px_0px_0px_#000] space-y-4">
                   <h3 className="text-lg font-black uppercase font-syne text-black border-b-[2px] border-black pb-2">Cart Review</h3>
                   
@@ -4785,12 +4845,19 @@ const Checkout = () => {
                 >
                   Proceed to Delivery Address
                 </button>
-              </div>
-            )}
+                </motion.div>
+              )}
 
-            {/* STEP 2: DELIVERY ADDRESS SELECTION */}
-            {activeStep === 'shipping' && (
-              <div className="space-y-6">
+              {/* STEP 2: DELIVERY ADDRESS SELECTION */}
+              {activeStep === 'shipping' && (
+                <motion.div
+                  key="shipping-step"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-6"
+                >
                 
                 {/* Active address summary */}
                 <div className="bg-white border-[4px] border-black p-4 md:p-6 shadow-[6px_6px_0px_0px_#000] space-y-4">
@@ -4907,12 +4974,19 @@ const Checkout = () => {
                 >
                   Proceed to Payment Selection
                 </button>
-              </div>
-            )}
+                </motion.div>
+              )}
 
-            {/* STEP 3: PAYMENT METHOD SELECTION */}
-            {activeStep === 'payment' && (
-              <div className="space-y-6">
+              {/* STEP 3: PAYMENT METHOD SELECTION */}
+              {activeStep === 'payment' && (
+                <motion.div
+                  key="payment-step"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-6"
+                >
                 
                 {/* To Pay Header */}
                 <div className="bg-white border-[4px] border-black p-4 md:p-6 shadow-[6px_6px_0px_0px_#000] space-y-4">
@@ -5012,10 +5086,37 @@ const Checkout = () => {
                 >
                   {isSubmitting ? 'PROCESSING...' : (!user ? 'SIGN IN WITH GOOGLE & PLACE ORDER' : `PAY & PLACE ORDER • ₹${totalAmount.toFixed(0)}`)}
                 </button>
-              </div>
-            )}
-
+                </motion.div>
+              )}
+            </AnimatePresence>
           </form>
+
+          {/* Persuasive Secure Checkout Badges */}
+          <div className="mt-12 border-t-[3px] border-black pt-8">
+            <p className="text-center font-black uppercase text-[10px] text-black/40 tracking-widest mb-6">🔒 SECURE CHECKOUT ASSURED</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white border-[2px] border-black p-3 text-center shadow-[3px_3px_0px_0px_#000] space-y-1">
+                <span className="text-xl">🛡️</span>
+                <h4 className="text-[9px] font-black uppercase text-black">SSL ENCRYPTED</h4>
+                <p className="text-[7.5px] font-bold text-black/50 uppercase leading-none">100% SECURE PROTOCOL</p>
+              </div>
+              <div className="bg-white border-[2px] border-black p-3 text-center shadow-[3px_3px_0px_0px_#000] space-y-1">
+                <span className="text-xl">🔄</span>
+                <h4 className="text-[9px] font-black uppercase text-black">7-DAY EXCHANGES</h4>
+                <p className="text-[7.5px] font-bold text-black/50 uppercase leading-none">EASY SIZE REPLACEMENTS</p>
+              </div>
+              <div className="bg-white border-[2px] border-black p-3 text-center shadow-[3px_3px_0px_0px_#000] space-y-1">
+                <span className="text-xl">🚀</span>
+                <h4 className="text-[9px] font-black uppercase text-black">FREE SHIPPING</h4>
+                <p className="text-[7.5px] font-bold text-black/50 uppercase leading-none">ON ALL ORDERS OVER ₹650</p>
+              </div>
+              <div className="bg-white border-[2px] border-black p-3 text-center shadow-[3px_3px_0px_0px_#000] space-y-1">
+                <span className="text-xl">🇮🇳</span>
+                <h4 className="text-[9px] font-black uppercase text-black">MADE IN INDIA</h4>
+                <p className="text-[7.5px] font-bold text-black/50 uppercase leading-none">PREMIUM COUTURE QUALITY</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
