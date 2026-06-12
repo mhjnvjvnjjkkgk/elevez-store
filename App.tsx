@@ -2936,218 +2936,218 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               dragConstraints={{ left: 0 }}
               dragElastic={{ left: 0.05, right: 0.3 }}
               onDragEnd={(_: any, info: any) => { if (info.offset.x > 80) setIsMobileFilterOpen(false); }}
-              className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-white z-[99990] flex flex-col shadow-[-8px_0_40px_rgba(0,0,0,0.3)] border-l-[4px] border-black"
+              className="fixed right-0 top-0 h-full w-76 max-w-[85vw] bg-white z-[99990] flex flex-col shadow-[-8px_0_40px_rgba(0,0,0,0.3)] border-l-[4px] border-black"
             >
               {/* Scrollable inner content */}
-              <div className="flex flex-col overflow-y-auto p-6 flex-1">
-              {/* Sheet Header */}
-              <div className="flex justify-between items-center mb-6 pb-4 border-b-[4px] border-black mt-2">
-              <span className="font-black font-syne text-xl uppercase text-black">Filters</span>
-              <motion.button 
-                onClick={() => setIsMobileFilterOpen(false)}
-                whileTap={{ scale: 0.88, rotate: 90 }}
-                className="bg-black text-[#00ff88] p-2 border-[2px] border-black font-black uppercase text-xs shadow-[3px_3px_0px_0px_#00ff88] cursor-pointer"
-              >
-                <X size={14} />
-              </motion.button>
-            </div>
+              <div className="flex flex-col overflow-y-auto p-4 flex-1">
+                {/* Sheet Header */}
+                <div className="flex justify-between items-center mb-4 pb-2 border-b-[3px] border-black mt-1">
+                  <span className="font-black font-syne text-lg uppercase text-black">Filters</span>
+                  <motion.button 
+                    onClick={() => setIsMobileFilterOpen(false)}
+                    whileTap={{ scale: 0.88, rotate: 90 }}
+                    className="bg-black text-[#00ff88] p-1.5 border-[2px] border-black font-black uppercase text-xs shadow-[2px_2px_0px_0px_#00ff88] cursor-pointer"
+                  >
+                    <X size={12} />
+                  </motion.button>
+                </div>
 
-            {/* Modal Content */}
-            <div className="space-y-8 flex-1">
-              {/* Price Filters */}
-              <div>
-                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Price</h4>
-                <div className="flex flex-col gap-2">
-                  {[
-                    { label: 'Below ₹499', value: 499 },
-                    { label: 'Below ₹549', value: 549 },
-                    { label: 'Below ₹599', value: 599 },
-                    { label: 'Below ₹699', value: 699 },
-                    { label: 'Below ₹999', value: 999 },
-                  ].map(opt => {
-                    const isActive = activePriceFilter === opt.value;
-                    return (
+                {/* Modal Content */}
+                <div className="space-y-4 flex-1">
+                  {/* Price Filters */}
+                  <div>
+                    <h4 className="text-xs font-black uppercase text-black mb-2 bg-black text-white px-2 py-0.5 inline-block">Price</h4>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {[
+                        { label: '≤ ₹499', value: 499 },
+                        { label: '≤ ₹549', value: 549 },
+                        { label: '≤ ₹599', value: 599 },
+                        { label: '≤ ₹699', value: 699 },
+                        { label: '≤ ₹999', value: 999 },
+                      ].map(opt => {
+                        const isActive = activePriceFilter === opt.value;
+                        return (
+                          <motion.button
+                            key={opt.label}
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => {
+                              const nextState = isActive ? null : opt.value;
+                              setActivePriceFilter(nextState);
+                              audioService.playClick();
+                            }}
+                            className={`text-center py-1.5 border-[2px] border-black font-black text-[9px] uppercase transition-all tracking-wider ${
+                              isActive 
+                                ? 'bg-[#00ff88] text-black shadow-[2px_2px_0px_0px_#000]' 
+                                : 'bg-white text-black hover:bg-gray-50'
+                            }`}
+                          >
+                            {opt.label}
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Vibe Filters */}
+                  <div>
+                    <h4 className="text-xs font-black uppercase text-black mb-2 bg-black text-white px-2 py-0.5 inline-block">Vibe</h4>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {/* CUTE 🧸 */}
                       <motion.button
-                        key={opt.label}
-                        whileHover={{ x: 6, scale: 1.02 }}
-                        whileTap={{ scale: 0.95 }}
+                        animate={{ y: [0, -2, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                        whileHover={{ scale: 1.05, rotate: 2 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={() => {
-                          const nextState = isActive ? null : opt.value;
-                          setActivePriceFilter(nextState);
+                          const isActive = activeVibeFilter === 'CUTE';
+                          setActiveVibeFilter(isActive ? null : 'CUTE');
+                          setAnimTrigger(prev => prev + 1);
                           audioService.playClick();
-                          setTimeout(() => setIsMobileFilterOpen(false), 320);
                         }}
-                        className={`w-full text-left px-4 py-2.5 border-[3px] border-black font-black text-xs uppercase transition-all tracking-wider ${
-                          isActive 
-                            ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' 
-                            : 'bg-white text-black hover:bg-gray-50'
+                        className={`border-[2px] border-black py-2 font-black uppercase text-[8px] tracking-wider cursor-pointer origin-center ${
+                          activeVibeFilter === 'CUTE' 
+                            ? 'bg-[#ff69b4] text-white shadow-[0_0_8px_rgba(255,105,180,0.5)]' 
+                            : 'bg-white text-black'
                         }`}
                       >
-                        {opt.label}
+                        CUTE 🧸
                       </motion.button>
-                    );
-                  })}
+
+                      {/* FUNKY ⚡ */}
+                      <motion.button
+                        animate={{ x: [0, 2, -2, 0] }}
+                        transition={{ duration: 0.6, repeat: Infinity, repeatDelay: 2 }}
+                        whileHover={{ scale: 1.05, skewX: 3 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => {
+                          const isActive = activeVibeFilter === 'FUNKY';
+                          setActiveVibeFilter(isActive ? null : 'FUNKY');
+                          setAnimTrigger(prev => prev + 1);
+                          audioService.playSwipe();
+                        }}
+                        className={`border-[2px] border-black py-2 font-black uppercase text-[8px] tracking-wider cursor-pointer origin-center ${
+                          activeVibeFilter === 'FUNKY' 
+                            ? 'bg-[#00ff88] text-black shadow-[0_0_8px_rgba(0,255,136,0.5)]' 
+                            : 'bg-white text-black'
+                        }`}
+                      >
+                        FUNKY ⚡
+                      </motion.button>
+
+                      {/* BEAUTIFUL ✨ */}
+                      <motion.button
+                        animate={{ scale: [1, 1.03, 1] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                        whileHover={{ scale: 1.05, rotate: -2 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => {
+                          const isActive = activeVibeFilter === 'BEAUTIFUL';
+                          setActiveVibeFilter(isActive ? null : 'BEAUTIFUL');
+                          setAnimTrigger(prev => prev + 1);
+                          audioService.playClick();
+                        }}
+                        className={`border-[2px] border-black py-2 font-black uppercase text-[8px] tracking-wider cursor-pointer origin-center ${
+                          activeVibeFilter === 'BEAUTIFUL' 
+                            ? 'bg-[#ffd700] text-black shadow-[0_0_8px_rgba(255,215,0,0.5)]' 
+                            : 'bg-white text-black'
+                        }`}
+                      >
+                        BEAUTY ✨
+                      </motion.button>
+
+                      {/* ANIME 🌸 */}
+                      <motion.button
+                        animate={{ rotate: [0, 2, -2, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                        whileHover={{ scale: 1.05, rotate: 5 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => {
+                          const isActive = activeVibeFilter === 'ANIME';
+                          setActiveVibeFilter(isActive ? null : 'ANIME');
+                          setAnimTrigger(prev => prev + 1);
+                          audioService.playClick();
+                        }}
+                        className={`border-[2px] border-black py-2 font-black uppercase text-[8px] tracking-wider cursor-pointer origin-center ${
+                          activeVibeFilter === 'ANIME' 
+                            ? 'bg-black text-[#ffff00] shadow-[0_0_8px_rgba(255,255,0,0.4)]' 
+                            : 'bg-white text-black'
+                        }`}
+                      >
+                        ANIME 🌸
+                      </motion.button>
+
+                      {/* COLORFUL 🌈 */}
+                      <motion.button
+                        animate={{ scale: [1, 1.04, 1] }}
+                        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                        whileHover={{ scale: 1.05, rotate: 3 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => {
+                          const isActive = activeVibeFilter === 'COLORFUL';
+                          setActiveVibeFilter(isActive ? null : 'COLORFUL');
+                          setAnimTrigger(prev => prev + 1);
+                          audioService.playSwipe();
+                        }}
+                        className={`border-[2px] border-black py-2 font-black uppercase text-[8px] tracking-wider cursor-pointer origin-center ${
+                          activeVibeFilter === 'COLORFUL' 
+                            ? 'bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500 text-white shadow-[0_0_8px_rgba(255,100,0,0.4)]' 
+                            : 'bg-white text-black'
+                        }`}
+                      >
+                        COLOR 🌈
+                      </motion.button>
+
+                      {/* OLD MONEY ☕ */}
+                      <motion.button
+                        animate={{ y: [0, -1.5, 0] }}
+                        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => {
+                          const isActive = activeVibeFilter === 'OLD MONEY';
+                          setActiveVibeFilter(isActive ? null : 'OLD MONEY');
+                          setAnimTrigger(prev => prev + 1);
+                          audioService.playClick();
+                        }}
+                        className={`border-[2px] border-black py-2 font-black uppercase text-[8px] tracking-wider cursor-pointer origin-center ${
+                          activeVibeFilter === 'OLD MONEY' 
+                            ? 'bg-[#1b263b] text-[#e0e1dd] shadow-[0_0_8px_rgba(27,38,59,0.6)]' 
+                            : 'bg-white text-black'
+                        }`}
+                      >
+                        CLASSIC ☕
+                      </motion.button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Vibe Filters */}
-              <div>
-                <h4 className="text-sm font-black uppercase text-black mb-4 bg-black text-white px-3 py-1 inline-block">Vibe</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {/* CUTE 🧸 */}
-                  <motion.button
-                    animate={{ y: [0, -2, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                    whileHover={{ scale: 1.05, rotate: 2 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      const isActive = activeVibeFilter === 'CUTE';
-                      setActiveVibeFilter(isActive ? null : 'CUTE');
-                      setAnimTrigger(prev => prev + 1);
-                      audioService.playClick();
-                      setTimeout(() => setIsMobileFilterOpen(false), 320);
-                    }}
-                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
-                      activeVibeFilter === 'CUTE' 
-                        ? 'bg-[#ff69b4] text-white shadow-[0_0_12px_rgba(255,105,180,0.5)]' 
-                        : 'bg-white text-black'
-                    }`}
-                  >
-                    CUTE 🧸
-                  </motion.button>
-
-                  {/* FUNKY ⚡ */}
-                  <motion.button
-                    animate={{ x: [0, 2, -2, 0] }}
-                    transition={{ duration: 0.6, repeat: Infinity, repeatDelay: 2 }}
-                    whileHover={{ scale: 1.05, skewX: 3 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      const isActive = activeVibeFilter === 'FUNKY';
-                      setActiveVibeFilter(isActive ? null : 'FUNKY');
-                      setAnimTrigger(prev => prev + 1);
-                      audioService.playSwipe();
-                      setTimeout(() => setIsMobileFilterOpen(false), 320);
-                    }}
-                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
-                      activeVibeFilter === 'FUNKY' 
-                        ? 'bg-[#00ff88] text-black shadow-[0_0_12px_rgba(0,255,136,0.5)]' 
-                        : 'bg-white text-black'
-                    }`}
-                  >
-                    FUNKY ⚡
-                  </motion.button>
-
-                  {/* BEAUTIFUL ✨ */}
-                  <motion.button
-                    animate={{ scale: [1, 1.03, 1] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                    whileHover={{ scale: 1.05, rotate: -2 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      const isActive = activeVibeFilter === 'BEAUTIFUL';
-                      setActiveVibeFilter(isActive ? null : 'BEAUTIFUL');
-                      setAnimTrigger(prev => prev + 1);
-                      audioService.playClick();
-                      setTimeout(() => setIsMobileFilterOpen(false), 320);
-                    }}
-                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
-                      activeVibeFilter === 'BEAUTIFUL' 
-                        ? 'bg-[#ffd700] text-black shadow-[0_0_12px_rgba(255,215,0,0.5)]' 
-                        : 'bg-white text-black'
-                    }`}
-                  >
-                    BEAUTIFUL ✨
-                  </motion.button>
-
-                  {/* ANIME 🌸 */}
-                  <motion.button
-                    animate={{ rotate: [0, 2, -2, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                    whileHover={{ scale: 1.05, rotate: 5 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      const isActive = activeVibeFilter === 'ANIME';
-                      setActiveVibeFilter(isActive ? null : 'ANIME');
-                      setAnimTrigger(prev => prev + 1);
-                      audioService.playClick();
-                      setTimeout(() => setIsMobileFilterOpen(false), 320);
-                    }}
-                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
-                      activeVibeFilter === 'ANIME' 
-                        ? 'bg-black text-[#ffff00] shadow-[0_0_12px_rgba(255,255,0,0.4)]' 
-                        : 'bg-white text-black'
-                    }`}
-                  >
-                    ANIME 🌸
-                  </motion.button>
-
-                  {/* COLORFUL 🌈 */}
-                  <motion.button
-                    animate={{ scale: [1, 1.04, 1] }}
-                    transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                    whileHover={{ scale: 1.05, rotate: 3 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      const isActive = activeVibeFilter === 'COLORFUL';
-                      setActiveVibeFilter(isActive ? null : 'COLORFUL');
-                      setAnimTrigger(prev => prev + 1);
-                      audioService.playSwipe();
-                      setTimeout(() => setIsMobileFilterOpen(false), 320);
-                    }}
-                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
-                      activeVibeFilter === 'COLORFUL' 
-                        ? 'bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500 text-white shadow-[0_0_12px_rgba(255,100,0,0.4)]' 
-                        : 'bg-white text-black'
-                    }`}
-                  >
-                    COLORFUL 🌈
-                  </motion.button>
-
-                  {/* OLD MONEY ☕ */}
-                  <motion.button
-                    animate={{ y: [0, -1.5, 0] }}
-                    transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      const isActive = activeVibeFilter === 'OLD MONEY';
-                      setActiveVibeFilter(isActive ? null : 'OLD MONEY');
-                      setAnimTrigger(prev => prev + 1);
-                      audioService.playClick();
-                      setTimeout(() => setIsMobileFilterOpen(false), 320);
-                    }}
-                    className={`border-[2.5px] border-black px-2 py-3.5 font-black uppercase text-[9px] tracking-wider cursor-pointer origin-center ${
-                      activeVibeFilter === 'OLD MONEY' 
-                        ? 'bg-[#1b263b] text-[#e0e1dd] shadow-[0_0_12px_rgba(27,38,59,0.6)]' 
-                        : 'bg-white text-black'
-                    }`}
-                  >
-                    OLD MONEY ☕
-                  </motion.button>
-                </div>
-              </div>
-            </div>
-
-            {/* Clear All Actions */}
-            {(activeVibeFilter || activePriceFilter) && (
-              <div className="mt-6 pt-4 border-t-[4px] border-black flex shrink-0">
+              {/* Bottom Action Bar */}
+              <div className="p-4 border-t-[3px] border-black bg-white flex gap-2 shrink-0">
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => {
                     setActiveVibeFilter(null);
                     setActivePriceFilter(null);
                     audioService.playSwipe();
-                    setTimeout(() => setIsMobileFilterOpen(false), 320);
                   }}
-                  className="w-full py-3 bg-black text-[#00ff88] border-[3px] border-black font-black uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_#00ff88] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none cursor-pointer text-center"
+                  className="flex-1 py-2 bg-white text-black border-[2.5px] border-black font-black uppercase tracking-wider text-xs shadow-[2px_2px_0px_0px_#000] cursor-pointer text-center"
                 >
                   Clear All
                 </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setIsMobileFilterOpen(false);
+                    audioService.playClick();
+                  }}
+                  className="flex-1 py-2 bg-[#00ff88] text-black border-[2.5px] border-black font-black uppercase tracking-wider text-xs shadow-[2px_2px_0px_0px_#000] cursor-pointer text-center"
+                >
+                  Apply
+                </motion.button>
               </div>
-            )}
-            </div>{/* end scrollable inner */}
-          </motion.div>
+            </motion.div>
           </>
         )}
       </AnimatePresence>
