@@ -2599,15 +2599,25 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
     const diffX = touch.clientX - pageSwipeStartX.current;
     const diffY = touch.clientY - pageSwipeStartY.current;
 
-    // Detect left-to-right swipe (Swipe Right) to open
+    // Detect left-to-right swipe (Swipe Right) to open vibe drawer / close filter drawer
     if (diffX > 60 && Math.abs(diffX) > Math.abs(diffY)) {
-      setIsVibeDrawerOpen(true);
-      audioService.playSwipe();
+      if (isMobileFilterOpen) {
+        setIsMobileFilterOpen(false);
+        audioService.playSwipe();
+      } else {
+        setIsVibeDrawerOpen(true);
+        audioService.playSwipe();
+      }
     }
-    // Detect right-to-left swipe (Swipe Left) to close
+    // Detect right-to-left swipe (Swipe Left) to close vibe drawer / open filter drawer
     else if (diffX < -60 && Math.abs(diffX) > Math.abs(diffY)) {
-      setIsVibeDrawerOpen(false);
-      audioService.playSwipe();
+      if (isVibeDrawerOpen) {
+        setIsVibeDrawerOpen(false);
+        audioService.playSwipe();
+      } else {
+        setIsMobileFilterOpen(true);
+        audioService.playSwipe();
+      }
     }
 
     pageSwipeStartX.current = null;
@@ -3208,7 +3218,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         )}
       </AnimatePresence>
 
-      {/* Mobile Filters Bottom Sheet */}
+      {/* Mobile Filters Right Drawer Panel */}
       <AnimatePresence>
         {isMobileFilterOpen && (
           <>
@@ -3220,27 +3230,23 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setIsMobileFilterOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99]"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99980]"
             />
-            {/* Bottom Sheet Panel */}
+            {/* Right Drawer Panel */}
             <motion.div
               key="filter-sheet-panel"
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 320 }}
-              drag="y"
-              dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={{ top: 0.05, bottom: 0.3 }}
-              onDragEnd={(_: any, info: any) => { if (info.offset.y > 80) setIsMobileFilterOpen(false); }}
-              className="fixed bottom-0 left-0 right-0 bg-white z-[100] flex flex-col rounded-t-2xl shadow-[0_-8px_40px_rgba(0,0,0,0.3)] border-t-[4px] border-black max-h-[72vh]"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              drag="x"
+              dragConstraints={{ left: 0 }}
+              dragElastic={{ left: 0.05, right: 0.3 }}
+              onDragEnd={(_: any, info: any) => { if (info.offset.x > 80) setIsMobileFilterOpen(false); }}
+              className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-white z-[99990] flex flex-col shadow-[-8px_0_40px_rgba(0,0,0,0.3)] border-l-[4px] border-black"
             >
-              {/* Drag Handle Pill */}
-              <div className="flex justify-center pt-3 pb-1 shrink-0">
-                <div className="w-10 h-1 bg-black/20 rounded-full" />
-              </div>
               {/* Scrollable inner content */}
-              <div className="flex flex-col overflow-y-auto px-6 pb-6 flex-1">
+              <div className="flex flex-col overflow-y-auto p-6 flex-1">
               {/* Sheet Header */}
               <div className="flex justify-between items-center mb-6 pb-4 border-b-[4px] border-black mt-2">
               <span className="font-black font-syne text-xl uppercase text-black">Filters</span>
@@ -5837,7 +5843,7 @@ const TopHeader = () => {
           <GlitchImage 
             src="/logo.png" 
             alt={BRAND_NAME} 
-            imgClassName="h-8 md:h-10 w-auto object-contain invert"
+            imgClassName="h-8 md:h-10 w-auto object-contain"
             triggerOnHover={false} 
           />
         </Link>
@@ -6225,7 +6231,7 @@ const Footer = () => (
             <GlitchImage 
               src="/logo.png" 
               alt={BRAND_NAME} 
-              imgClassName="h-12 w-auto object-contain"
+              imgClassName="h-12 w-auto object-contain invert"
               triggerOnHover={false} 
             />
           </Link>
