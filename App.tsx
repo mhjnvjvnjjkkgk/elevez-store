@@ -149,6 +149,8 @@ interface CartContextType {
   secondsLeft: number;
   expired: boolean;
   isTimerVisible: boolean;
+  isExitDiscountApplied: boolean;
+  setIsExitDiscountApplied: (applied: boolean) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -156,6 +158,9 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const CART_STORAGE_KEY = 'elevez_cart';
 
 const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isExitDiscountApplied, setIsExitDiscountApplied] = useState(() => {
+    return localStorage.getItem('elevez_exit_discount_claimed') === 'true';
+  });
   // Initialize from localStorage
   const [items, setItems] = useState<CartItem[]>(() => {
     try {
@@ -260,7 +265,7 @@ const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const cartTotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   return (
-    <CartContext.Provider value={{ items, addToCart, removeFromCart, clearCart, isCartOpen, setIsCartOpen, cartTotal, secondsLeft, expired, isTimerVisible }}>
+    <CartContext.Provider value={{ items, addToCart, removeFromCart, clearCart, isCartOpen, setIsCartOpen, cartTotal, secondsLeft, expired, isTimerVisible, isExitDiscountApplied, setIsExitDiscountApplied }}>
       {children}
     </CartContext.Provider>
   );
@@ -4131,7 +4136,7 @@ const About = () => {
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { items, cartTotal, clearCart } = useCart();
+  const { items, cartTotal, clearCart, isExitDiscountApplied } = useCart();
   const [user, setUser] = useState<any>(null);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -4347,7 +4352,9 @@ const Checkout = () => {
   const codFee = formData.paymentMethod === 'cod' ? 30 : 0;
   const shippingCost = baseShippingCost + expressFee + codFee;
   
-  const discountAmount = discountApplied ? (cartTotal * discountPercentage) / 100 : 0;
+  const effectiveDiscountApplied = discountApplied || !!isExitDiscountApplied;
+  const effectiveDiscountPercentage = discountApplied ? discountPercentage : (isExitDiscountApplied ? 10 : 0);
+  const discountAmount = (cartTotal * effectiveDiscountPercentage) / 100;
   const totalAmount = cartTotal + shippingCost - discountAmount;
 
   // Handle discount code validation
@@ -4815,9 +4822,9 @@ const Checkout = () => {
                     <span>Handling Fee</span>
                     <span className="text-green-600 font-black">FREE</span>
                   </div>
-                  {discountApplied && (
+                  {effectiveDiscountApplied && (
                     <div className="flex justify-between text-xs font-black uppercase text-green-600">
-                      <span>Discount Applied ({discountPercentage}%)</span>
+                      <span>Discount Applied ({effectiveDiscountPercentage}%){!discountApplied && ' [Exit-Intent]'}</span>
                       <span>-₹{discountAmount.toFixed(0)}</span>
                     </div>
                   )}
@@ -4833,7 +4840,7 @@ const Checkout = () => {
                     <span className="bg-green-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-sm">SAVED</span>
                     <span className="text-[10px] font-black uppercase">Yay! You saved money on this order!</span>
                   </div>
-                  <span className="text-xs font-black">₹{discountApplied ? (discountAmount + 80).toFixed(0) : '80'}</span>
+                  <span className="text-xs font-black">₹{effectiveDiscountApplied ? (discountAmount + 80).toFixed(0) : '80'}</span>
                 </div>
 
                 <button
@@ -6348,6 +6355,13 @@ const CartTimerWidget = () => {
 };
 
 
+// --- EXIT INTENT POPUP CONTEXT WRAPPER ---
+const ExitIntentPopupWithContext = () => {
+  const { setIsExitDiscountApplied } = useCart();
+  return <ExitIntentPopup onApplyDiscount={() => setIsExitDiscountApplied(true)} />;
+};
+
+
 // --- BOTTOM TAB BAR (mobile only) ---
 // 5 tabs: Home | Accounts | Product | Cart | Contact
 // Chrome-style scroll: hides on scroll DOWN, shows instantly on scroll UP
@@ -6851,7 +6865,7 @@ function App() {
               <LoyaltyRulesNotificationBanner />
 
               {/* Exit Intent Popup */}
-              <ExitIntentPopup />
+              <ExitIntentPopupWithContext />
             </div>
           </ClickSpark>
 
