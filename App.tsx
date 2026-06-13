@@ -4264,6 +4264,14 @@ const Checkout = () => {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isAddressModalOpen) {
+      setLocationError(null);
+    }
+  }, [isAddressModalOpen]);
+
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
 
@@ -4312,53 +4320,89 @@ const Checkout = () => {
     }
   }, [selectedAddressId, savedAddresses]);
 
-  // Geolocation and Reverse Geocoding via Nominatim API
+  // Geolocation and Reverse Geocoding via Nominatim API with autonomic self-recovery retries
   const handleAutoChooseLocation = () => {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser.');
+      setLocationError('Geolocation is not supported by your browser.');
       return;
     }
     setDetectingLocation(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-          if (!res.ok) throw new Error('Failed to fetch address');
-          const data = await res.json();
-          
-          const addrDetails = data.address || {};
-          const road = addrDetails.road || '';
-          const suburb = addrDetails.suburb || addrDetails.neighbourhood || '';
-          const city = addrDetails.city || addrDetails.town || addrDetails.village || '';
-          const state = addrDetails.state || '';
-          const pincode = addrDetails.postcode || '';
-          
-          const constructedAddress = [road, suburb].filter(Boolean).join(', ');
-          
-          setNewAddressForm(prev => ({
-            ...prev,
-            address: constructedAddress || data.display_name || '',
-            city: city,
-            state: state,
-            pincode: pincode
-          }));
-          
-          setIsAddingNewAddress(true); // Switch to manual form so they can confirm details
-        } catch (error) {
-          console.error('Error reverse geocoding:', error);
-          alert('Could not detect address automatically. Please enter it manually.');
-        } finally {
+    setLocationError(null);
+
+    const performReverseGeocode = async (latitude: number, longitude: number, retryCount = 0): Promise<void> => {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+        if (!res.ok) throw new Error('Nominatim server returned non-ok response');
+        const data = await res.json();
+        
+        const addrDetails = data.address || {};
+        const road = addrDetails.road || '';
+        const suburb = addrDetails.suburb || addrDetails.neighbourhood || '';
+        const city = addrDetails.city || addrDetails.town || addrDetails.village || '';
+        const state = addrDetails.state || '';
+        const pincode = addrDetails.postcode || '';
+        
+        const constructedAddress = [road, suburb].filter(Boolean).join(', ');
+        
+        setNewAddressForm(prev => ({
+          ...prev,
+          address: constructedAddress || data.display_name || '',
+          city: city,
+          state: state,
+          pincode: pincode
+        }));
+        
+        setIsAddingNewAddress(true); // Switch to manual form so they can confirm details
+        setDetectingLocation(false);
+      } catch (error) {
+        console.error(`Reverse geocoding attempt ${retryCount + 1} failed:`, error);
+        if (retryCount < 2) {
+          // Autonomic retry: delay 1.5s and retry reverse geocoding to bypass rate limits or transient issues
+          setTimeout(() => {
+            performReverseGeocode(latitude, longitude, retryCount + 1);
+          }, 1500);
+        } else {
+          setLocationError('Reverse geocoding failed after retries. Please enter address details manually.');
           setDetectingLocation(false);
         }
-      },
-      (error) => {
-        console.error('Geolocation error:', error);
-        alert('Permission denied or error acquiring location.');
-        setDetectingLocation(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+      }
+    };
+
+    const requestPosition = (highAccuracy: boolean, isFallbackAttempt: boolean) => {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          await performReverseGeocode(latitude, longitude);
+        },
+        (error) => {
+          console.error(`Geolocation error (highAccuracy=${highAccuracy}):`, error);
+          if (highAccuracy && (error.code === 3 || error.code === 2)) {
+            // Autonomic retry: timeout or position unavailable, fallback to low accuracy
+            console.log('Autonomic recovery: Retrying with low accuracy and longer timeout...');
+            requestPosition(false, true);
+            return;
+          }
+          
+          let errorMsg = 'Could not acquire location. Please try entering it manually.';
+          if (error.code === 1) {
+            errorMsg = 'Location request blocked or denied. If you are on Android/Mobile: please close any active overlays (like Facebook Messenger chat heads), active screen recorders, or screen-dimmer apps, then click "Use Current Location" again. Alternatively, add your address manually below.';
+          } else if (error.code === 3) {
+            errorMsg = 'Location detection timed out. Please try again or enter your address manually.';
+          }
+          
+          setLocationError(errorMsg);
+          setDetectingLocation(false);
+        },
+        { 
+          enableHighAccuracy: highAccuracy, 
+          timeout: highAccuracy ? 8000 : 15000, 
+          maximumAge: 10000 
+        }
+      );
+    };
+
+    // Start with high accuracy
+    requestPosition(true, false);
   };
 
   useEffect(() => {
@@ -5214,6 +5258,22 @@ const Checkout = () => {
 
             <h3 className="text-xl font-black font-syne uppercase text-black mb-6">Select Address</h3>
 
+            {locationError && (
+              <div className="mb-6 p-4 bg-red-50 border-[3px] border-red-600 text-red-950 text-xs font-bold flex flex-col gap-2 shadow-[3px_3px_0px_0px_#000] rounded-none">
+                <div className="flex items-start gap-2">
+                  <span className="font-black text-red-600 text-sm">⚠️ WARNING:</span>
+                  <span className="leading-relaxed font-black uppercase text-[10px] tracking-wider">{locationError}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setLocationError(null)}
+                  className="self-end text-[9px] font-black uppercase tracking-wider bg-black text-white px-2.5 py-1 border-[1.5px] border-black hover:bg-white hover:text-black transition-all"
+                >
+                  DISMISS
+                </button>
+              </div>
+            )}
+
             {!isAddingNewAddress ? (
               <div className="space-y-6">
                 
@@ -5263,6 +5323,7 @@ const Checkout = () => {
                       pincode: ''
                     });
                     setIsAddingNewAddress(true);
+                    setLocationError(null);
                   }}
                   className="w-full bg-white text-black border-[2.5px] border-black font-black uppercase py-2.5 shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all text-xs"
                 >
