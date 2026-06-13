@@ -6190,10 +6190,11 @@ const TopHeader = () => {
       style={{
         position: 'absolute',
         top: 0,
-        left: 0,
-        right: 0,
+        left: '50%',
+        transform: 'translateX(-50%)',
         zIndex: 9980,
         width: '100%',
+        maxWidth: isMobile ? '100%' : '1100px',
       }}
     >
       {/* Liquid-glass bar */}
@@ -6940,7 +6941,7 @@ function App() {
             <CartSidebar />
             <QuickViewModal />
 
-            <div className={`bg-black min-h-screen text-white selection:bg-[#00ff88] selection:text-black font-space w-full overflow-x-hidden pb-20 md:pb-0 ${dopamineOverdrive ? 'border-[8px] border-[#ff007f] shadow-[0_0_30px_rgba(255,0,127,0.5)]' : ''}`}
+            <div className={`bg-black min-h-screen text-white selection:bg-[#00ff88] selection:text-black font-space w-full md:max-w-[1100px] md:mx-auto md:border-x-[2px] md:border-zinc-800/80 md:shadow-[0_0_80px_rgba(0,0,0,0.9)] overflow-x-hidden pb-20 md:pb-0 relative ${dopamineOverdrive ? 'border-[8px] border-[#ff007f] shadow-[0_0_30px_rgba(255,0,127,0.5)]' : ''}`}
               style={{
                 willChange: 'auto',
                 transform: 'translateZ(0)',
