@@ -4259,19 +4259,8 @@ const Checkout = () => {
   const [activeStep, setActiveStep] = useState<'cart' | 'shipping' | 'payment'>('cart');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  const [savedAddresses, setSavedAddresses] = useState<any[]>([
-    {
-      id: 'default-home',
-      label: 'Home',
-      fullName: 'Harihar Nagar',
-      phone: '9876543210',
-      address: 'Harihar Nagar Lane, 2nd Floor, Krishna Kunja Apartment, 50',
-      city: 'Dum Dum',
-      state: 'West Bengal',
-      pincode: '700074'
-    }
-  ]);
-  const [selectedAddressId, setSelectedAddressId] = useState<string>('default-home');
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
@@ -4781,7 +4770,7 @@ const Checkout = () => {
                 <Timer className="w-5 h-5 animate-bounce text-black" />
                 <div>
                   <p className="text-xs font-black uppercase text-black leading-none">
-                    {shippingMethod === 'express' ? 'Delivering in 2 days (Express)' : 'Delivering in 3 days'}
+                    {shippingMethod === 'express' ? 'Next Day Dispatch (Express)' : 'Delivering in 3-4 Days'}
                   </p>
                   <p className="text-[9px] font-bold uppercase text-black/60 mt-0.5">
                     {shippingMethod === 'express' ? 'Express priority delivery active' : 'Standard courier route active'}
@@ -5025,7 +5014,7 @@ const Checkout = () => {
                         />
                         <div>
                           <p className="text-xs font-black uppercase text-black leading-none">Standard Delivery</p>
-                          <p className="text-[9px] font-bold uppercase text-black/50 mt-1">Delivered in 3 days all over India</p>
+                          <p className="text-[9px] font-bold uppercase text-black/50 mt-1">3-4days all over india</p>
                         </div>
                       </div>
                       <span className="text-xs font-black uppercase text-green-600">FREE</span>
@@ -5043,7 +5032,7 @@ const Checkout = () => {
                         />
                         <div>
                           <p className="text-xs font-black uppercase text-black leading-none">Express Shipping</p>
-                          <p className="text-[9px] font-bold uppercase text-black/50 mt-1">Delivered in 2 days (1 day less)</p>
+                          <p className="text-[9px] font-bold uppercase text-black/50 mt-1">(next day dispatch)</p>
                         </div>
                       </div>
                       <span className="text-xs font-black text-black">₹50 Extra</span>
@@ -5111,14 +5100,14 @@ const Checkout = () => {
                     {/* Recommended UPI options */}
                     <div>
                       <span className="text-[10px] font-black uppercase text-black/50 block mb-2">Recommended UPI</span>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-3 gap-2">
                         <button
                           type="button"
                           onClick={() => {
                             setFormData(prev => ({ ...prev, paymentMethod: 'upi' }));
                             handleSubmit(new Event('submit') as any);
                           }}
-                          className="flex items-center justify-center gap-2 p-3 bg-white border-[2.5px] border-black font-black uppercase text-xs shadow-[2.5px_2.5px_0px_0px_#000] hover:bg-[#00ff88] transition-colors"
+                          className="flex items-center justify-center gap-1.5 p-3 bg-white border-[2.5px] border-black font-black uppercase text-[10px] sm:text-xs text-black shadow-[2.5px_2.5px_0px_0px_#000] hover:bg-black hover:text-[#00ff88] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
                         >
                           Google Pay
                         </button>
@@ -5128,9 +5117,19 @@ const Checkout = () => {
                             setFormData(prev => ({ ...prev, paymentMethod: 'upi' }));
                             handleSubmit(new Event('submit') as any);
                           }}
-                          className="flex items-center justify-center gap-2 p-3 bg-white border-[2.5px] border-black font-black uppercase text-xs shadow-[2.5px_2.5px_0px_0px_#000] hover:bg-[#00ff88] transition-colors"
+                          className="flex items-center justify-center gap-1.5 p-3 bg-white border-[2.5px] border-black font-black uppercase text-[10px] sm:text-xs text-black shadow-[2.5px_2.5px_0px_0px_#000] hover:bg-black hover:text-[#00ff88] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
                         >
                           PhonePe
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, paymentMethod: 'upi' }));
+                            handleSubmit(new Event('submit') as any);
+                          }}
+                          className="flex items-center justify-center gap-1.5 p-3 bg-white border-[2.5px] border-black font-black uppercase text-[10px] sm:text-xs text-black shadow-[2.5px_2.5px_0px_0px_#000] hover:bg-black hover:text-[#00ff88] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                        >
+                          Paytm / Other
                         </button>
                       </div>
                     </div>
