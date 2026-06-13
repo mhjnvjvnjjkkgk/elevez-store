@@ -890,7 +890,7 @@ const QuickViewModal = () => {
             <div className="mt-auto space-y-4">
               <button
                 onClick={handleAddToCart}
-                className="w-full bg-[#00ff88] text-black font-black py-6 border-[4px] border-black uppercase tracking-widest shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-xl"
+                className="w-full bg-[#00ff88] text-black font-black py-4 lg:py-3 border-[3px] lg:border-[2.5px] border-black uppercase tracking-widest shadow-[4px_4px_0px_0px_#000] lg:shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all text-sm lg:text-xs"
               >
                 Add to Cart - ₹{(activeProduct.price).toFixed(0)}
               </button>
@@ -3825,16 +3825,16 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
 
 
             {/* Desktop Buttons */}
-            <div className="hidden lg:flex flex-col gap-4 mb-8">
+            <div className="hidden lg:flex flex-col gap-3 mb-8">
               <Magnetic>
                 <button
                   onClick={() => {
                     addToCart(product, selectedSize, selectedColor || 'Standard', quantity);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="w-full py-4 bg-black text-[#00ff88] border-[3px] border-black font-black text-xl uppercase tracking-widest shadow-[6px_6px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center justify-center gap-4"
+                  className="w-full py-2.5 bg-black text-[#00ff88] border-[2px] border-black font-black text-sm uppercase tracking-widest shadow-[3px_3px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center justify-center gap-2"
                 >
-                  <ShoppingBag size={20} /> Initiate Purchase
+                  <ShoppingBag size={15} /> Initiate Purchase
                 </button>
               </Magnetic>
 
@@ -3846,7 +3846,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                     window.scrollTo(0, 0);
                   }, 300);
                 }}
-                className="w-full bg-[#00ff88] text-black font-black text-base py-3 border-[3px] border-black uppercase tracking-widest shadow-[5px_5px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+                className="w-full bg-[#00ff88] text-black font-black text-xs py-2.5 border-[2px] border-black uppercase tracking-widest shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
               >
                 Buy It Now
               </button>
@@ -5188,7 +5188,7 @@ const Checkout = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full font-black text-sm md:text-xl py-4 border-[3px] border-black transition-all uppercase tracking-widest ${isSubmitting ? 'bg-gray-400 text-black cursor-not-allowed' : 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]'}`}
+                  className={`w-full font-black text-xs md:text-sm py-3 border-[2.5px] border-black transition-all uppercase tracking-widest ${isSubmitting ? 'bg-gray-400 text-black cursor-not-allowed' : 'bg-[#00ff88] text-black shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]'}`}
                 >
                   {isSubmitting ? 'PROCESSING...' : (!user ? 'SIGN IN WITH GOOGLE & PLACE ORDER' : `PAY & PLACE ORDER • ₹${totalAmount.toFixed(0)}`)}
                 </button>
@@ -5633,7 +5633,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
             <p className="text-sm sm:text-xl font-bold text-black uppercase mb-8 sm:mb-12 opacity-70">Please sign in to view your account, orders, and wishlist.</p>
             <button
               onClick={handleGoogleSignIn}
-              className="w-full bg-black text-[#00ff88] py-4 sm:py-6 px-4 sm:px-6 border-[3px] sm:border-[4px] border-black font-black flex items-center justify-center gap-3 sm:gap-6 shadow-[6px_6px_0px_0px_#00ff88] sm:shadow-[12px_12px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-lg sm:text-2xl uppercase tracking-[0.1em] sm:tracking-[0.2em]"
+              className="w-full bg-black text-[#00ff88] py-4 lg:py-3 px-4 lg:px-5 border-[3px] border-black font-black flex items-center justify-center gap-3 lg:gap-2 shadow-[6px_6px_0px_0px_#00ff88] lg:shadow-[3px_3px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[4px] lg:hover:translate-x-[2px] hover:translate-y-[4px] lg:hover:translate-y-[2px] transition-all text-lg lg:text-sm uppercase tracking-[0.1em] lg:tracking-wider"
             >
               <svg className="w-8 h-8" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -6123,7 +6123,7 @@ const Contact = () => (
           <label className="text-sm font-black uppercase text-black">Message</label>
           <textarea rows={4} className="w-full bg-white border-[4px] border-black p-4 text-black font-bold focus:shadow-[4px_4px_0px_0px_#00ff88] outline-none transition-all uppercase" placeholder="TELL US EVERYTHING..." />
         </div>
-        <button className="w-full bg-black text-[#00ff88] py-6 border-[4px] border-black font-black uppercase text-2xl tracking-[0.2em] shadow-[8px_8px_0px_0px_#000] hover:bg-[#00ff88] hover:text-black transition-all">
+        <button className="w-full bg-black text-[#00ff88] py-4 lg:py-3 border-[3px] lg:border-[2.5px] border-black font-black uppercase text-lg lg:text-sm tracking-[0.15em] shadow-[4px_4px_0px_0px_#000] lg:shadow-[3px_3px_0px_0px_#000] hover:bg-[#00ff88] hover:text-black transition-all">
           Transmit Message
         </button>
       </form>
