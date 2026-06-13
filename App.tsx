@@ -2390,11 +2390,11 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               Welcome to the new era of <span className="bg-black text-white px-2 uppercase">{BRAND_NAME}</span>.
             </motion.p>
 
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
               <Magnetic>
                 <button
                   onClick={() => navigate('/shop/all')}
-                  className="w-full sm:w-auto px-6 py-3 sm:px-12 sm:py-6 bg-[#00ff88] border-2 sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-black font-black text-sm sm:text-xl tracking-widest uppercase"
+                  className="w-full sm:w-auto px-6 py-3 sm:px-8 sm:py-4 bg-[#00ff88] border-2 sm:border-[3px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[5px_5px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all text-black font-black text-sm sm:text-base tracking-widest uppercase"
                 >
                   Shop Collection
                 </button>
@@ -2403,7 +2403,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               <Magnetic>
                 <button
                   onClick={() => navigate('/account?tab=earn-redeem')}
-                  className="w-full sm:w-auto px-6 py-3 sm:px-12 sm:py-6 bg-white border-2 sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-black font-black text-sm sm:text-xl tracking-widest uppercase"
+                  className="w-full sm:w-auto px-6 py-3 sm:px-8 sm:py-4 bg-white border-2 sm:border-[3px] border-black shadow-[4px_4px_0px_0px_#000] sm:shadow-[5px_5px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all text-black font-black text-sm sm:text-base tracking-widest uppercase"
                 >
                   Join Rewards
                 </button>
@@ -2590,26 +2590,26 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
               {hasMoreVaultProducts && (
                 <motion.button
-                  whileHover={{ scale: 1.04, boxShadow: '8px 8px 0px 0px #00ff88' }}
-                  whileTap={{ scale: 0.96, y: 3, boxShadow: '2px 2px 0px 0px #000' }}
+                  whileHover={{ scale: 1.02, boxShadow: '4px 4px 0px 0px #00ff88' }}
+                  whileTap={{ scale: 0.98, y: 2, boxShadow: '1px 1px 0px 0px #000' }}
                   onClick={() => setVaultDisplayCount(prev => prev + 8)}
                   onMouseEnter={() => setCursorVariant('hover')}
                   onMouseLeave={() => setCursorVariant('default')}
-                  className="bg-black text-[#00ff88] border-[4px] border-black px-10 py-4 sm:px-14 sm:py-5 font-black uppercase tracking-widest text-sm sm:text-lg shadow-[6px_6px_0px_0px_#00ff88] transition-all flex items-center gap-3 cursor-pointer"
+                  className="bg-black text-[#00ff88] border-[2.5px] sm:border-[3px] border-black px-6 py-2.5 sm:px-10 sm:py-3.5 font-black uppercase tracking-widest text-xs sm:text-sm shadow-[4px_4px_0px_0px_#00ff88] transition-all flex items-center gap-2 cursor-pointer"
                 >
-                  <RefreshCw size={18} />
+                  <RefreshCw size={15} />
                   LOAD MORE
                 </motion.button>
               )}
               <motion.button
-                whileHover={{ scale: 1.04, boxShadow: '8px 8px 0px 0px #000' }}
-                whileTap={{ scale: 0.96, y: 3, boxShadow: '2px 2px 0px 0px #00ff88' }}
+                whileHover={{ scale: 1.02, boxShadow: '4px 4px 0px 0px #000' }}
+                whileTap={{ scale: 0.98, y: 2, boxShadow: '1px 1px 0px 0px #00ff88' }}
                 onClick={() => navigate('/shop/all')}
                 onMouseEnter={() => setCursorVariant('hover')}
                 onMouseLeave={() => setCursorVariant('default')}
-                className="bg-white text-black border-[4px] border-black px-10 py-4 sm:px-14 sm:py-5 font-black uppercase tracking-widest text-sm sm:text-lg shadow-[6px_6px_0px_0px_#000] transition-all flex items-center gap-3 cursor-pointer hover:bg-[#00ff88]"
+                className="bg-white text-black border-[2.5px] sm:border-[3px] border-black px-6 py-2.5 sm:px-10 sm:py-3.5 font-black uppercase tracking-widest text-xs sm:text-sm shadow-[4px_4px_0px_0px_#000] transition-all flex items-center gap-2 cursor-pointer hover:bg-[#00ff88]"
               >
-                <Package size={18} />
+                <Package size={15} />
                 VIEW ALL PRODUCTS
               </motion.button>
             </div>
@@ -5066,7 +5066,7 @@ const Checkout = () => {
                     }
                     setActiveStep('payment');
                   }}
-                  className="w-full bg-[#00ff88] text-black border-[3px] border-black font-black uppercase text-xs md:text-sm py-4 shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                  className="w-full bg-[#00ff88] text-black border-[2.5px] border-black font-black uppercase text-xs md:text-sm py-3 shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[1.5px] hover:translate-y-[1.5px] transition-all"
                 >
                   Proceed to Payment Selection
                 </button>
@@ -6190,11 +6190,10 @@ const TopHeader = () => {
       style={{
         position: 'absolute',
         top: 0,
-        left: '50%',
-        transform: 'translateX(-50%)',
+        left: 0,
+        right: 0,
         zIndex: 9980,
         width: '100%',
-        maxWidth: isMobile ? '100%' : '1100px',
       }}
     >
       {/* Liquid-glass bar */}
@@ -6941,7 +6940,7 @@ function App() {
             <CartSidebar />
             <QuickViewModal />
 
-            <div className={`bg-black min-h-screen text-white selection:bg-[#00ff88] selection:text-black font-space w-full md:max-w-[1100px] md:mx-auto md:border-x-[2px] md:border-zinc-800/80 md:shadow-[0_0_80px_rgba(0,0,0,0.9)] overflow-x-hidden pb-20 md:pb-0 relative ${dopamineOverdrive ? 'border-[8px] border-[#ff007f] shadow-[0_0_30px_rgba(255,0,127,0.5)]' : ''}`}
+            <div className={`bg-black min-h-screen text-white selection:bg-[#00ff88] selection:text-black font-space w-full overflow-x-hidden pb-20 md:pb-0 relative ${dopamineOverdrive ? 'border-[8px] border-[#ff007f] shadow-[0_0_30px_rgba(255,0,127,0.5)]' : ''}`}
               style={{
                 willChange: 'auto',
                 transform: 'translateZ(0)',
