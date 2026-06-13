@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSEO } from './hooks/useSEO';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, useInView } from 'framer-motion';
-import { Terminal, Package, Shield, Truck, Zap, Star, X, ShoppingBag, ShoppingCart, Menu, Camera, Sparkles, Filter, ChevronDown, ChevronUp, Share2, Heart, Maximize2, Gift, User, Mail, MapPin, Instagram, Twitter, ArrowRight, ArrowLeft, Award, ShieldCheck, Timer, Play, SlidersHorizontal, Search, Check, Minus, Plus, RefreshCw, CreditCard, Banknote, LogOut, Eye, Trash2, ChevronRight, Lock, Home as HomeIcon, Compass } from 'lucide-react';
+import { Terminal, Package, Shield, Truck, Zap, Star, X, ShoppingBag, ShoppingCart, Menu, Camera, Sparkles, Filter, ChevronDown, ChevronUp, Share2, Heart, Maximize2, Gift, User, Mail, MapPin, Instagram, Twitter, ArrowRight, ArrowLeft, Award, ShieldCheck, Timer, Play, SlidersHorizontal, Search, Check, Minus, Plus, RefreshCw, CreditCard, Banknote, LogOut, Eye, Trash2, ChevronRight, Lock, Home as HomeIcon, Compass, Volume2, VolumeX } from 'lucide-react';
 import ScrollReveal from './components/ScrollReveal';
 import ClickSpark from './components/ClickSpark';
 import gsap from 'gsap';
@@ -2032,6 +2032,103 @@ const DualPriceSlider = ({
   );
 };
 
+const PromoVideoSection = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play().catch(err => console.log("Play failed:", err));
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  return (
+    <section className="py-12 sm:py-20 bg-white relative z-30 border-t-4 sm:border-t-[6px] border-black">
+      <div className="container mx-auto px-4 max-w-5xl">
+        <div className="flex items-center justify-between mb-6 text-black font-black uppercase text-[10px] sm:text-xs tracking-widest border-b-[3px] border-black pb-3 select-none">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 bg-red-600 rounded-full animate-pulse" />
+            <span>LIVE BROADCAST // SS26</span>
+          </div>
+          <span className="text-gray-400">PROMO FILM: FINALE</span>
+        </div>
+
+        <div 
+          className="relative border-[4px] sm:border-[8px] border-black bg-black shadow-[8px_8px_0px_0px_#000] sm:shadow-[16px_16px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] sm:hover:shadow-[24px_24px_0px_0px_#00ff88] transition-all duration-500 overflow-hidden group cursor-pointer"
+          onClick={togglePlay}
+          onMouseEnter={() => setCursorVariant('hover')}
+          onMouseLeave={() => setCursorVariant('default')}
+        >
+          <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-[#00ff88] z-20 pointer-events-none opacity-80" />
+          <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-[#00ff88] z-20 pointer-events-none opacity-80" />
+          <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-[#00ff88] z-20 pointer-events-none opacity-80" />
+          <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-[#00ff88] z-20 pointer-events-none opacity-80" />
+
+          <video
+            ref={videoRef}
+            src="/promo-vid.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-auto object-cover"
+          />
+
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-white border-[3px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000] transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+              {isPlaying ? (
+                <div className="flex gap-1.5 justify-center items-center">
+                  <div className="w-2.5 h-6 bg-black rounded-sm" />
+                  <div className="w-2.5 h-6 bg-black rounded-sm" />
+                </div>
+              ) : (
+                <Play size={24} fill="currentColor" className="ml-1 text-black" />
+              )}
+            </div>
+          </div>
+
+          <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-none">
+            <button
+              onClick={toggleMute}
+              className="pointer-events-auto bg-black text-[#00ff88] border-[2px] border-black px-3 py-1.5 font-mono text-[9px] sm:text-[10px] font-black uppercase tracking-wider shadow-[3px_3px_0px_0px_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px] hover:bg-[#00ff88] hover:text-black transition-all flex items-center gap-1.5"
+            >
+              {isMuted ? (
+                <>
+                  <VolumeX size={12} />
+                  <span>UNMUTE AUDIO</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 size={12} />
+                  <span className="text-white">MUTE AUDIO</span>
+                </>
+              )}
+            </button>
+            
+            <div className="hidden sm:block bg-black text-white px-2 py-1 font-mono text-[9px] font-black uppercase tracking-widest border border-white/20">
+              VERIFIED // SS26_CAMPAIGN_01
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   useSEO({
     title: 'Elevez | Elevate Your Style',
@@ -2316,6 +2413,9 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         </motion.div>
         </ScrollVelocityContainer>
       </section>
+
+      {/* Promo Video Film */}
+      <PromoVideoSection setCursorVariant={setCursorVariant} />
 
       {/* Symmetrical X-Shaped Crossing Marquees */}
       <div className="relative w-full h-40 sm:h-80 z-40 flex items-center justify-center -my-8 sm:-my-16 pointer-events-none select-none">
