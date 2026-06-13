@@ -1511,7 +1511,7 @@ const BestSellers = () => {
           </div>
 
           {/* Products Grid - Displayed immediately after header text */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-8 mb-16 relative z-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 md:gap-6 mb-16 relative z-10">
             {bestSellers.map((product, index) => (
               <ScrollVelocityContainer key={product.id} skewMax={4} blurMax={1.5}>
                 <ProductCard
@@ -2556,7 +2556,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           />
 
           {/* Dynamic Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
             {vaultProducts.map((product, index) => (
               <motion.div
                 key={product.id}
@@ -2938,7 +2938,7 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               </motion.button>
             </div>
 
-            <div key={`grid-${filter}-${selectedCollection}`} className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-6 md:gap-12">
+            <div key={`grid-${filter}-${selectedCollection}`} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
               <AnimatePresence mode="popLayout">
                 {filteredProducts.map((product, i) => {
                   const normalizedVibe = activeVibeFilter ? activeVibeFilter.toUpperCase() : null;
@@ -3949,8 +3949,8 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
             </h2>
             <span className="text-xs font-bold uppercase tracking-widest text-black opacity-60">RECOMMENDED PROTOCOL</span>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6">
-            {PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4).map(p => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
+            {PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 5).map(p => (
               <ProductCard
                 key={p.id}
                 product={p}
