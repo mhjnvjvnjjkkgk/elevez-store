@@ -16,7 +16,7 @@ import { PRODUCTS, BRAND_NAME, AVAILABLE_COLORS, AVAILABLE_SIZES } from './const
 import { localCollectionService } from './services/localCollectionService';
 import { Product, ProductType, CartItem, CursorVariant } from './types';
 import { auth } from './firebaseConfig';
-import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
 import { BuilderComponent, useBuilderContent } from './BuilderComponent';
 import { RewardsPage } from './components/RewardsPage';
 import { HomeLuckySpinWheel } from './components/rewards/HomeLuckySpinWheel';
@@ -4328,6 +4328,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { items, cartTotal, clearCart, isExitDiscountApplied } = useCart();
   const [user, setUser] = useState<any>(null);
+  const shouldPlaceOrderAfterLogin = useRef(false);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -4527,16 +4528,43 @@ const Checkout = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Check user authentication state
+  // Check user authentication state and restore session storage state
   useEffect(() => {
+    // Restore step and form data if returning from a redirect login
+    const savedStep = sessionStorage.getItem('checkout_active_step');
+    const savedAddressId = sessionStorage.getItem('checkout_selected_address_id');
+    const savedFormData = sessionStorage.getItem('checkout_form_data');
+    const autoSubmit = sessionStorage.getItem('checkout_auto_submit');
+    
+    if (savedStep) {
+      setActiveStep(savedStep as any);
+      sessionStorage.removeItem('checkout_active_step');
+    }
+    if (savedAddressId) {
+      setSelectedAddressId(savedAddressId);
+      sessionStorage.removeItem('checkout_selected_address_id');
+    }
+    if (savedFormData) {
+      try {
+        setFormData(JSON.parse(savedFormData));
+      } catch (e) {
+        console.error('Error parsing saved form data', e);
+      }
+      sessionStorage.removeItem('checkout_form_data');
+    }
+    if (autoSubmit === 'true') {
+      shouldPlaceOrderAfterLogin.current = true;
+      sessionStorage.removeItem('checkout_auto_submit');
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
         // Pre-fill form with user data if available
         setFormData(prev => ({
           ...prev,
-          fullName: user.displayName || '',
-          email: user.email || ''
+          fullName: prev.fullName || user.displayName || '',
+          email: prev.email || user.email || ''
         }));
       } else {
         setUser(null);
@@ -4546,12 +4574,37 @@ const Checkout = () => {
     return () => unsubscribe();
   }, []);
 
-  // Handle Google Sign-In
+  // Place order automatically if login was triggered via the Place Order button
+  useEffect(() => {
+    if (user && shouldPlaceOrderAfterLogin.current) {
+      shouldPlaceOrderAfterLogin.current = false;
+      const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+      handleSubmit(fakeEvent);
+    }
+  }, [user]);
+
+  // Handle Google Sign-In with popup + redirect fallback
   const handleGoogleSignIn = async () => {
     try {
       console.log('Starting Google Sign-In...');
       const provider = new GoogleAuthProvider();
       console.log('Google Provider created:', provider);
+
+      // Save checkout state to sessionStorage before attempting login
+      sessionStorage.setItem('checkout_active_step', activeStep);
+      sessionStorage.setItem('checkout_selected_address_id', selectedAddressId);
+      sessionStorage.setItem('checkout_form_data', JSON.stringify(formData));
+      if (shouldPlaceOrderAfterLogin.current) {
+        sessionStorage.setItem('checkout_auto_submit', 'true');
+      }
+
+      // Check if we are on a mobile device to bypass popup attempt entirely
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobileDevice) {
+        console.log('Mobile device detected. Triggering signInWithRedirect directly...');
+        await signInWithRedirect(auth, provider);
+        return;
+      }
 
       const result = await signInWithPopup(auth, provider);
       console.log('Sign-in successful!', result.user);
@@ -4571,23 +4624,31 @@ const Checkout = () => {
         fullName: result.user.displayName || '',
         email: result.user.email || ''
       }));
+
+      // Succeeded in-place, clean up sessionStorage
+      sessionStorage.removeItem('checkout_active_step');
+      sessionStorage.removeItem('checkout_selected_address_id');
+      sessionStorage.removeItem('checkout_form_data');
+      sessionStorage.removeItem('checkout_auto_submit');
     } catch (error: any) {
       console.error('Error signing in with Google:', error);
       console.error('Error code:', error.code);
       console.error('Error message:', error.message);
 
-      let errorMessage = 'Failed to sign in. ';
-      if (error.code === 'auth/popup-blocked') {
-        errorMessage += 'Please allow popups for this site.';
-      } else if (error.code === 'auth/popup-closed-by-user') {
-        errorMessage += 'Sign-in was cancelled.';
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+        console.log('Popup blocked, closed, or cancelled. Falling back to signInWithRedirect...');
+        try {
+          const provider = new GoogleAuthProvider();
+          await signInWithRedirect(auth, provider);
+        } catch (redirectError) {
+          console.error('Redirect sign-in error:', redirectError);
+          alert('Failed to sign in. Please try again.');
+        }
       } else if (error.code === 'auth/unauthorized-domain') {
-        errorMessage += 'This domain is not authorized. Please add it to Firebase Console.';
+        alert('This domain is not authorized. Please add it to Firebase Console.');
       } else {
-        errorMessage += error.message || 'Please try again.';
+        alert('Failed to sign in: ' + (error.message || 'Please try again.'));
       }
-
-      alert(errorMessage);
     }
   };
 
@@ -5338,6 +5399,23 @@ const Checkout = () => {
                   </div>
                 </div>
 
+                {/* Instant sign-in fallback check */}
+                {!user && (
+                  <div className="bg-gray-100 border-[3px] border-black p-4 shadow-[4px_4px_0px_0px_#000] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <h4 className="text-xs font-black uppercase text-black">Sign in with Google</h4>
+                      <p className="text-[9px] text-black/60 font-bold uppercase">Keep your delivery details synced</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleGoogleSignIn}
+                      className="bg-black text-[#00ff88] border-[2px] border-black px-4 py-2 font-black uppercase text-[10px] shadow-[2px_2px_0px_0px_#000]"
+                    >
+                      Sign In
+                    </button>
+                  </div>
+                )}
+
                 {user && (
                   <div className="p-3.5 bg-[#00ff88] border-[3.5px] border-black shadow-[4px_4px_0px_0px_#000] flex items-center justify-between">
                     <span className="text-xs font-black uppercase text-black opacity-80">Syndicate Points Gained:</span>
@@ -5346,7 +5424,14 @@ const Checkout = () => {
                 )}
 
                 <button
-                  type="submit"
+                  type={user ? "submit" : "button"}
+                  onClick={async (e) => {
+                    if (!user) {
+                      e.preventDefault();
+                      shouldPlaceOrderAfterLogin.current = true;
+                      await handleGoogleSignIn();
+                    }
+                  }}
                   disabled={isSubmitting}
                   className={`w-full font-black text-xs md:text-sm py-3 border-[2.5px] border-black transition-all uppercase tracking-widest ${isSubmitting ? 'bg-gray-400 text-black cursor-not-allowed' : 'bg-[#00ff88] text-black shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]'}`}
                 >
