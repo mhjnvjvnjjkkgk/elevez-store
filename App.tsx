@@ -6419,6 +6419,96 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
     </div>
   );
 };
+const PrivacyPolicy = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  return (
+    <div className="min-h-screen pt-48 pb-24 bg-white">
+      <div className="container mx-auto px-6 max-w-4xl">
+        <div className="inline-block bg-black text-[#00ff88] text-sm font-black uppercase tracking-[0.3em] px-6 py-2 border-[4px] border-black shadow-[4px_4px_0px_0px_#000] mb-8">
+          Privacy Policy
+        </div>
+        <h1 className="text-6xl md:text-8xl font-black mb-12 font-syne text-black uppercase leading-[0.9]">
+          PRIVACY <span className="text-[#00ff88]" style={{ WebkitTextStroke: '2px black' }}>POLICY</span>
+        </h1>
+        
+        <div className="bg-white p-8 md:p-12 border-[6px] border-black shadow-[12px_12px_0px_0px_#000] space-y-8 text-black font-medium leading-relaxed">
+          <section className="space-y-4">
+            <h2 className="text-2xl font-black uppercase border-b-4 border-black pb-2">1. INFORMATION WE COLLECT</h2>
+            <p>We collect information directly from you when you register, purchase products, or sign up for our loyalty rules program using Google authentication. This includes:</p>
+            <ul className="list-disc pl-6 space-y-2 font-bold uppercase">
+              <li>Contact details (Name, email address, phone number, shipping address).</li>
+              <li>Authentication profile information (Google ID and email profile).</li>
+              <li>Transaction data (Items purchased, points accrued/redeemed).</li>
+            </ul>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-2xl font-black uppercase border-b-4 border-black pb-2">2. HOW WE USE YOUR INFORMATION</h2>
+            <p>Your data is processed to deliver a customized streetwear shopping experience, specifically to:</p>
+            <ul className="list-disc pl-6 space-y-2 font-bold uppercase">
+              <li>Process and ship your product orders safely.</li>
+              <li>Manage your ELEVEZ rewards points and custom tier benefits.</li>
+              <li>Authenticate your identity securely via Firebase Authentication.</li>
+            </ul>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-2xl font-black uppercase border-b-4 border-black pb-2">3. SECURITY & STORAGE</h2>
+            <p>Your authentication details are handled via Google Firebase with enterprise-grade security encryption. We do not sell or lease your personal data to third parties. We preserve your information only as long as necessary to manage your orders and loyalty status.</p>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-2xl font-black uppercase border-b-4 border-black pb-2">4. CONTACT INFORMATION</h2>
+            <p>If you have questions about your data or want to request deletion of your account, you can contact us at:</p>
+            <p className="font-black text-xl bg-[#00ff88]/20 p-4 border-[3px] border-black inline-block">EMAIL: SUPPORT@ELEVEZ.SHOP</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TermsOfService = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  return (
+    <div className="min-h-screen pt-48 pb-24 bg-white">
+      <div className="container mx-auto px-6 max-w-4xl">
+        <div className="inline-block bg-black text-[#00ff88] text-sm font-black uppercase tracking-[0.3em] px-6 py-2 border-[4px] border-black shadow-[4px_4px_0px_0px_#000] mb-8">
+          Terms of Service
+        </div>
+        <h1 className="text-6xl md:text-8xl font-black mb-12 font-syne text-black uppercase leading-[0.9]">
+          TERMS OF <span className="text-[#00ff88]" style={{ WebkitTextStroke: '2px black' }}>SERVICE</span>
+        </h1>
+        
+        <div className="bg-white p-8 md:p-12 border-[6px] border-black shadow-[12px_12px_0px_0px_#000] space-y-8 text-black font-medium leading-relaxed">
+          <section className="space-y-4">
+            <h2 className="text-2xl font-black uppercase border-b-4 border-black pb-2">1. OVERVIEW</h2>
+            <p>Welcome to ELEVEZ. This website is operated by ELEVEZ. Throughout the site, the terms "we", "us" and "our" refer to ELEVEZ. By visiting our site and/or purchasing from us, you engage in our "Service" and agree to be bound by the following terms and conditions.</p>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-2xl font-black uppercase border-b-4 border-black pb-2">2. PURCHASES & PAYMENTS</h2>
+            <p>We offer premium streetwear products for sale. Prices are subject to change without notice. We reserve the right to refuse or cancel any order for reasons including availability, errors in descriptions or prices, or fraud detection.</p>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-2xl font-black uppercase border-b-4 border-black pb-2">3. REWARDS & ACCOUNTS</h2>
+            <p>Account creation is handled securely through Google Single Sign-In via Firebase. Users earn points dynamically on successful orders which can be used to redeem customized discount coupons. Abuse of the points/tier system may result in account termination.</p>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-2xl font-black uppercase border-b-4 border-black pb-2">4. LIMITATION OF LIABILITY</h2>
+            <p>In no event shall ELEVEZ, our directors, employees, or affiliates be liable for any injury, loss, claim, or any direct or indirect damages arising from your use of any of our products or services.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Contact = () => (
   <div className="min-h-screen pt-48 pb-24 bg-white">
@@ -7023,8 +7113,8 @@ const Footer = () => {
         <div className="border-t-[4px] border-black pt-12 flex flex-col md:flex-row justify-between items-center text-black font-black uppercase text-xs tracking-widest">
           <p>&copy; 2024 {BRAND_NAME}. All rights reserved.</p>
           <div className="flex gap-12 mt-6 md:mt-0">
-            <a href="#" className="hover:text-[#00ff88] transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-[#00ff88] transition-colors">Terms of Service</a>
+            <Link to="/privacy" className="hover:text-[#00ff88] transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-[#00ff88] transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>
@@ -7133,6 +7223,8 @@ const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => vo
         <Route path="/rewards" element={<PageTransition><ErrorBoundary><RewardsRedirect /></ErrorBoundary></PageTransition>} />
         <Route path="/order/:orderId" element={<PageTransition><OrderDetail /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
+        <Route path="/terms" element={<PageTransition><TermsOfService /></PageTransition>} />
       </Routes>
     </AnimatePresence>
   );
