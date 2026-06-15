@@ -4,10 +4,17 @@ import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
 
-// TODO: Replace with your Firebase project configuration
+const isLocalhost = typeof window !== 'undefined' && (
+  window.location.hostname === 'localhost' || 
+  window.location.hostname === '127.0.0.1' ||
+  window.location.hostname.startsWith('192.168.')
+);
+
 const firebaseConfig = {
   apiKey: (import.meta as any).env.VITE_FIREBASE_API_KEY,
-  authDomain: (import.meta as any).env.VITE_FIREBASE_AUTH_DOMAIN,
+  authDomain: isLocalhost 
+    ? (import.meta as any).env.VITE_FIREBASE_AUTH_DOMAIN 
+    : (typeof window !== 'undefined' ? window.location.hostname : (import.meta as any).env.VITE_FIREBASE_AUTH_DOMAIN),
   projectId: (import.meta as any).env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: (import.meta as any).env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: (import.meta as any).env.VITE_FIREBASE_MESSAGING_SENDER_ID,

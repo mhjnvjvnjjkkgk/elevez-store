@@ -6777,6 +6777,8 @@ const CartTimerWidget = () => {
 // --- EXIT INTENT POPUP CONTEXT WRAPPER ---
 const ExitIntentPopupWithContext = () => {
   const { setIsExitDiscountApplied } = useCart();
+  const location = useLocation();
+  if (location.pathname === '/checkout') return null;
   return <ExitIntentPopup onApplyDiscount={() => setIsExitDiscountApplied(true)} />;
 };
 
@@ -7106,6 +7108,13 @@ const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => vo
   );
 };
 
+const LiveActivityTickerWithContext = () => {
+  const location = useLocation();
+  const { isCartOpen } = useCart();
+  if (location.pathname === '/checkout' || isCartOpen) return null;
+  return <LiveActivityTicker />;
+};
+
 function App() {
   const { cursorVariant, setCursorVariant } = useCursor();
   const [isRewardsModalOpen, setIsRewardsModalOpen] = useState(false);
@@ -7293,7 +7302,7 @@ function App() {
           <TopHeader />
           <BottomTabBar />
           <CartTimerWidget />
-          <LiveActivityTicker />
+          <LiveActivityTickerWithContext />
 
           {/* Optimized Custom Cursor - Rendered OUTSIDE main container for maximum z-index */}
           <OptimizedCursor variant={cursorVariant} />
