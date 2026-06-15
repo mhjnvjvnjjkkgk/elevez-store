@@ -4234,6 +4234,96 @@ const About = () => {
   );
 };
 
+// Dynamic Leaflet Map Preview Component using CDN
+const MapPreview = ({ 
+  lat, 
+  lon, 
+  onLocationChange 
+}: { 
+  lat: number; 
+  lon: number; 
+  onLocationChange: (lat: number, lon: number) => void 
+}) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const leafletMapInstance = useRef<any>(null);
+  const markerInstance = useRef<any>(null);
+
+  useEffect(() => {
+    // Inject Leaflet CSS if not present
+    let cssLink = document.getElementById('leaflet-css') as HTMLLinkElement;
+    if (!cssLink) {
+      cssLink = document.createElement('link');
+      cssLink.id = 'leaflet-css';
+      cssLink.rel = 'stylesheet';
+      cssLink.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(cssLink);
+    }
+
+    const initMap = () => {
+      const L = (window as any).L;
+      if (!L || !mapRef.current) return;
+
+      // Clean up previous map if it exists
+      if (leafletMapInstance.current) {
+        leafletMapInstance.current.remove();
+      }
+
+      // Initialize map centered at lat, lon
+      const map = L.map(mapRef.current).setView([lat, lon], 16);
+      leafletMapInstance.current = map;
+
+      // Add OpenStreetMap tiles
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Create a draggable marker
+      const marker = L.marker([lat, lon], { draggable: true }).addTo(map);
+      markerInstance.current = marker;
+
+      // Event listener for drag end
+      marker.on('dragend', () => {
+        const position = marker.getLatLng();
+        onLocationChange(position.lat, position.lng);
+      });
+
+      // Event listener for clicking on the map to place pin
+      map.on('click', (e: any) => {
+        marker.setLatLng(e.latlng);
+        onLocationChange(e.latlng.lat, e.latlng.lng);
+      });
+    };
+
+    // Load Leaflet JS if not already available
+    if (!(window as any).L) {
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.async = true;
+      script.onload = initMap;
+      document.body.appendChild(script);
+    } else {
+      initMap();
+    }
+
+    return () => {
+      // Clean up on component unmount
+      if (leafletMapInstance.current) {
+        leafletMapInstance.current.remove();
+        leafletMapInstance.current = null;
+      }
+    };
+  }, [lat, lon]);
+
+  return (
+    <div className="w-full border-[3px] border-black shadow-[4px_4px_0px_0px_#000] relative rounded-none overflow-hidden my-3">
+      <div ref={mapRef} style={{ width: '100%', height: '220px' }} className="z-[10]" />
+      <div className="absolute bottom-2 left-2 z-[999] bg-black text-[#00ff88] px-2.5 py-1 text-[8px] font-black uppercase tracking-wider border-[2px] border-black shadow-[2px_2px_0px_0px_#000]">
+        📍 Drag Marker or Click Map to Pin Delivery Location
+      </div>
+    </div>
+  );
+};
+
 const Checkout = () => {
   const navigate = useNavigate();
   const { items, cartTotal, clearCart, isExitDiscountApplied } = useCart();
@@ -4259,16 +4349,31 @@ const Checkout = () => {
   const [activeStep, setActiveStep] = useState<'cart' | 'shipping' | 'payment'>('cart');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
-  const [selectedAddressId, setSelectedAddressId] = useState<string>('');
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([
+    {
+      id: 'addr-default',
+      label: 'Home',
+      fullName: 'SHAYAN SEN',
+      addressLine1: 'FLAT 402, SUNSHINE HEIGHTS',
+      addressLine2: 'ROAD NO 4, BANJARA HILLS',
+      city: 'HYDERABAD',
+      state: 'TELANGANA',
+      pincode: '500034',
+      landline: '0402334567',
+      backupPhone: '9876543210'
+    }
+  ]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('addr-default');
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [locationCoords, setLocationCoords] = useState<{ lat: number; lon: number } | null>(null);
 
   useEffect(() => {
     if (!isAddressModalOpen) {
       setLocationError(null);
+      setLocationCoords(null);
     }
   }, [isAddressModalOpen]);
 
@@ -4297,11 +4402,13 @@ const Checkout = () => {
   const [newAddressForm, setNewAddressForm] = useState({
     label: 'Home',
     fullName: '',
-    phone: '',
-    address: '',
+    addressLine1: '',
+    addressLine2: '',
     city: '',
     state: '',
-    pincode: ''
+    pincode: '',
+    landline: '',
+    backupPhone: ''
   });
 
   const activeAddress = savedAddresses.find(addr => addr.id === selectedAddressId);
@@ -4311,8 +4418,8 @@ const Checkout = () => {
       setFormData(prev => ({
         ...prev,
         fullName: activeAddress.fullName || prev.fullName,
-        phone: activeAddress.phone || prev.phone,
-        address: activeAddress.address || prev.address,
+        phone: activeAddress.landline + (activeAddress.backupPhone ? ' / ' + activeAddress.backupPhone : ''),
+        address: activeAddress.addressLine1 + (activeAddress.addressLine2 ? ', ' + activeAddress.addressLine2 : ''),
         city: activeAddress.city || prev.city,
         state: activeAddress.state || prev.state,
         pincode: activeAddress.pincode || prev.pincode
@@ -4321,6 +4428,48 @@ const Checkout = () => {
   }, [selectedAddressId, savedAddresses]);
 
   // Geolocation and Reverse Geocoding via Nominatim API with autonomic self-recovery retries
+  const performReverseGeocode = async (latitude: number, longitude: number, retryCount = 0): Promise<void> => {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+      if (!res.ok) throw new Error('Nominatim server returned non-ok response');
+      const data = await res.json();
+      
+      const addrDetails = data.address || {};
+      const road = addrDetails.road || addrDetails.pedestrian || addrDetails.path || '';
+      const neighborhood = addrDetails.neighbourhood || addrDetails.suburb || addrDetails.village || '';
+      const city = addrDetails.city || addrDetails.town || addrDetails.village || '';
+      const state = addrDetails.state || '';
+      const pincode = addrDetails.postcode || '';
+      
+      const line1 = [road, neighborhood].filter(Boolean).join(', ');
+      const line2 = addrDetails.city_district || addrDetails.county || addrDetails.subdistrict || '';
+      
+      setNewAddressForm(prev => ({
+        ...prev,
+        addressLine1: line1 || data.display_name || '',
+        addressLine2: line2 || '',
+        city: city || '',
+        state: state || '',
+        pincode: pincode || ''
+      }));
+      
+      setLocationCoords({ lat: latitude, lon: longitude });
+      setIsAddingNewAddress(true); // Switch to manual form so they can confirm details
+      setDetectingLocation(false);
+    } catch (error) {
+      console.error(`Reverse geocoding attempt ${retryCount + 1} failed:`, error);
+      if (retryCount < 2) {
+        // Autonomic retry: delay 1.5s and retry reverse geocoding to bypass rate limits or transient issues
+        setTimeout(() => {
+          performReverseGeocode(latitude, longitude, retryCount + 1);
+        }, 1500);
+      } else {
+        setLocationError('Reverse geocoding failed after retries. Please enter address details manually.');
+        setDetectingLocation(false);
+      }
+    }
+  };
+
   const handleAutoChooseLocation = () => {
     if (!navigator.geolocation) {
       setLocationError('Geolocation is not supported by your browser.');
@@ -4328,45 +4477,6 @@ const Checkout = () => {
     }
     setDetectingLocation(true);
     setLocationError(null);
-
-    const performReverseGeocode = async (latitude: number, longitude: number, retryCount = 0): Promise<void> => {
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-        if (!res.ok) throw new Error('Nominatim server returned non-ok response');
-        const data = await res.json();
-        
-        const addrDetails = data.address || {};
-        const road = addrDetails.road || '';
-        const suburb = addrDetails.suburb || addrDetails.neighbourhood || '';
-        const city = addrDetails.city || addrDetails.town || addrDetails.village || '';
-        const state = addrDetails.state || '';
-        const pincode = addrDetails.postcode || '';
-        
-        const constructedAddress = [road, suburb].filter(Boolean).join(', ');
-        
-        setNewAddressForm(prev => ({
-          ...prev,
-          address: constructedAddress || data.display_name || '',
-          city: city,
-          state: state,
-          pincode: pincode
-        }));
-        
-        setIsAddingNewAddress(true); // Switch to manual form so they can confirm details
-        setDetectingLocation(false);
-      } catch (error) {
-        console.error(`Reverse geocoding attempt ${retryCount + 1} failed:`, error);
-        if (retryCount < 2) {
-          // Autonomic retry: delay 1.5s and retry reverse geocoding to bypass rate limits or transient issues
-          setTimeout(() => {
-            performReverseGeocode(latitude, longitude, retryCount + 1);
-          }, 1500);
-        } else {
-          setLocationError('Reverse geocoding failed after retries. Please enter address details manually.');
-          setDetectingLocation(false);
-        }
-      }
-    };
 
     const requestPosition = (highAccuracy: boolean, isFallbackAttempt: boolean) => {
       navigator.geolocation.getCurrentPosition(
@@ -4403,6 +4513,12 @@ const Checkout = () => {
 
     // Start with high accuracy
     requestPosition(true, false);
+  };
+
+  const handleMapLocationChange = (lat: number, lon: number) => {
+    setLocationCoords({ lat, lon });
+    // Perform geocoding to update fields in real-time as pin moves
+    performReverseGeocode(lat, lon);
   };
 
   useEffect(() => {
@@ -5304,8 +5420,15 @@ const Checkout = () => {
                         <span className="font-black text-[9px] uppercase bg-black text-[#00ff88] px-1.5 py-0.5">{addr.label}</span>
                       </div>
                       <p className="text-xs font-black uppercase text-black">{addr.fullName}</p>
-                      <p className="text-[10px] font-bold uppercase text-black/60 mt-0.5">{addr.address}, {addr.city}, {addr.state} - {addr.pincode}</p>
-                      <p className="text-[9px] font-black text-black mt-1">TEL: {addr.phone}</p>
+                      <p className="text-[10px] font-bold uppercase text-black/60 mt-0.5">
+                        {addr.addressLine1}
+                        {addr.addressLine2 ? `, ${addr.addressLine2}` : ''}
+                        , {addr.city}, {addr.state} - {addr.pincode}
+                      </p>
+                      <p className="text-[9px] font-black text-black mt-1">
+                        TEL: {addr.landline}
+                        {addr.backupPhone ? ` / ${addr.backupPhone}` : ''}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -5316,12 +5439,15 @@ const Checkout = () => {
                     setNewAddressForm({
                       label: 'Home',
                       fullName: '',
-                      phone: '',
-                      address: '',
+                      addressLine1: '',
+                      addressLine2: '',
                       city: '',
                       state: '',
-                      pincode: ''
+                      pincode: '',
+                      landline: '',
+                      backupPhone: ''
                     });
+                    setLocationCoords(null);
                     setIsAddingNewAddress(true);
                     setLocationError(null);
                   }}
@@ -5334,6 +5460,15 @@ const Checkout = () => {
               <div className="space-y-4">
                 <span className="text-[10px] font-black uppercase text-black/50 block">New Address Details</span>
                 
+                {/* Geolocation Map Preview */}
+                {locationCoords && (
+                  <MapPreview 
+                    lat={locationCoords.lat} 
+                    lon={locationCoords.lon} 
+                    onLocationChange={handleMapLocationChange} 
+                  />
+                )}
+
                 {/* Form fields */}
                 <div className="space-y-3">
                   {/* Address Type Buttons */}
@@ -5365,24 +5500,24 @@ const Checkout = () => {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-black uppercase text-black mb-1">Phone Number</label>
+                    <label className="block text-[10px] font-black uppercase text-black mb-1">Address Line 1</label>
                     <input
                       type="text"
-                      value={newAddressForm.phone}
-                      onChange={(e) => setNewAddressForm(prev => ({ ...prev, phone: e.target.value.replace(/[^0-9]/g, '') }))}
+                      value={newAddressForm.addressLine1}
+                      onChange={(e) => setNewAddressForm(prev => ({ ...prev, addressLine1: e.target.value }))}
                       className="w-full bg-white border-[2px] border-black p-2 text-xs text-black font-black uppercase outline-none"
-                      placeholder="10-DIGIT MOBILE"
+                      placeholder="STREET NAME, HOUSE NO, APARTMENT"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-black uppercase text-black mb-1">Address Details</label>
+                    <label className="block text-[10px] font-black uppercase text-black mb-1">Address Line 2 (Optional)</label>
                     <input
                       type="text"
-                      value={newAddressForm.address}
-                      onChange={(e) => setNewAddressForm(prev => ({ ...prev, address: e.target.value }))}
+                      value={newAddressForm.addressLine2}
+                      onChange={(e) => setNewAddressForm(prev => ({ ...prev, addressLine2: e.target.value }))}
                       className="w-full bg-white border-[2px] border-black p-2 text-xs text-black font-black uppercase outline-none"
-                      placeholder="STREET, APARTMENT NO, AREA"
+                      placeholder="AREA, LANDMARK, SECTOR"
                     />
                   </div>
 
@@ -5414,7 +5549,30 @@ const Checkout = () => {
                         value={newAddressForm.pincode}
                         onChange={(e) => setNewAddressForm(prev => ({ ...prev, pincode: e.target.value.replace(/[^0-9]/g, '') }))}
                         className="w-full bg-white border-[2px] border-black p-2 text-xs text-black font-black uppercase outline-none"
-                        placeholder="PINCODE"
+                        placeholder="6-DIGIT PIN"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] font-black uppercase text-black mb-1">Landline</label>
+                      <input
+                        type="text"
+                        value={newAddressForm.landline}
+                        onChange={(e) => setNewAddressForm(prev => ({ ...prev, landline: e.target.value.replace(/[^0-9]/g, '') }))}
+                        className="w-full bg-white border-[2px] border-black p-2 text-xs text-black font-black uppercase outline-none"
+                        placeholder="10-DIGIT LANDLINE"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black uppercase text-black mb-1">Backup Phone (Optional)</label>
+                      <input
+                        type="text"
+                        value={newAddressForm.backupPhone}
+                        onChange={(e) => setNewAddressForm(prev => ({ ...prev, backupPhone: e.target.value.replace(/[^0-9]/g, '') }))}
+                        className="w-full bg-white border-[2px] border-black p-2 text-xs text-black font-black uppercase outline-none"
+                        placeholder="10-DIGIT BACKUP"
                       />
                     </div>
                   </div>
@@ -5424,17 +5582,33 @@ const Checkout = () => {
                   <button
                     type="button"
                     onClick={() => setIsAddingNewAddress(false)}
-                    className="flex-1 bg-white border-[2px] border-black font-black uppercase py-2 text-xs"
+                    className="flex-1 bg-white text-black border-[2px] border-black font-black uppercase py-2 text-xs hover:bg-zinc-100 transition-all"
                   >
                     Back
                   </button>
                   <button
                     type="button"
                     onClick={() => {
-                      if (!newAddressForm.fullName || !newAddressForm.phone || !newAddressForm.address || !newAddressForm.city || !newAddressForm.state || !newAddressForm.pincode) {
-                        alert('Please fill in all address details.');
+                      if (!newAddressForm.fullName || !newAddressForm.addressLine1 || !newAddressForm.city || !newAddressForm.state || !newAddressForm.pincode || !newAddressForm.landline) {
+                        alert('Please fill in all required address fields.');
                         return;
                       }
+                      // Strict 6 digit pincode validation
+                      if (!/^[0-9]{6}$/.test(newAddressForm.pincode)) {
+                        alert('Pincode must be exactly 6 digits.');
+                        return;
+                      }
+                      // Strict 10 digit landline validation
+                      if (!/^[0-9]{10}$/.test(newAddressForm.landline)) {
+                        alert('Landline must be exactly 10 digits.');
+                        return;
+                      }
+                      // Optional 10 digit backup phone validation
+                      if (newAddressForm.backupPhone && !/^[0-9]{10}$/.test(newAddressForm.backupPhone)) {
+                        alert('Backup phone number must be exactly 10 digits.');
+                        return;
+                      }
+
                       const id = 'addr-' + Date.now();
                       const newAddr = {
                         id,
@@ -5445,7 +5619,7 @@ const Checkout = () => {
                       setIsAddingNewAddress(false);
                       setIsAddressModalOpen(false);
                     }}
-                    className="flex-1 bg-[#00ff88] border-[2px] border-black font-black uppercase py-2 text-xs shadow-[2px_2px_0px_0px_#000]"
+                    className="flex-1 bg-[#00ff88] text-black border-[2px] border-black font-black uppercase py-2 text-xs shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_#000] transition-all"
                   >
                     Save Address
                   </button>
