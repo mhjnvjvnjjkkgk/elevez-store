@@ -12,9 +12,7 @@ const isLocalhost = typeof window !== 'undefined' && (
 
 const firebaseConfig = {
   apiKey: (import.meta as any).env.VITE_FIREBASE_API_KEY,
-  authDomain: isLocalhost 
-    ? (import.meta as any).env.VITE_FIREBASE_AUTH_DOMAIN 
-    : (typeof window !== 'undefined' ? window.location.hostname : (import.meta as any).env.VITE_FIREBASE_AUTH_DOMAIN),
+  authDomain: (import.meta as any).env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: (import.meta as any).env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: (import.meta as any).env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: (import.meta as any).env.VITE_FIREBASE_MESSAGING_SENDER_ID,
