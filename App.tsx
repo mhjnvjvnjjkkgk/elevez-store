@@ -4557,6 +4557,36 @@ const Checkout = () => {
       sessionStorage.removeItem('checkout_auto_submit');
     }
 
+    // Process redirect sign-in result from Google OAuth
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result?.user) {
+          console.log('Redirect sign-in successful! User:', result.user);
+          setUser(result.user);
+          
+          try {
+            // Create or update user profile
+            const { ensureUserExists } = await import('./services/userService');
+            await ensureUserExists(result.user.email || '', result.user.uid, {
+              name: result.user.displayName || '',
+              source: 'signup'
+            });
+            
+            // Pre-fill form with user data
+            setFormData(prev => ({
+              ...prev,
+              fullName: prev.fullName || result.user.displayName || '',
+              email: prev.email || result.user.email || ''
+            }));
+          } catch (profileError) {
+            console.error('Error ensuring user profile exists on redirect:', profileError);
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Error handling redirect result:', error);
+      });
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
