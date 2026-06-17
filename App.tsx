@@ -4530,100 +4530,22 @@ const Checkout = () => {
   }, []);
 
 
-  // Check user authentication state and restore session storage state
+  // Auth state — simple onAuthStateChanged only (we use popup sign-in, no redirect)
   useEffect(() => {
-    // Restore step and form data if returning from a redirect login
-    const savedStep = sessionStorage.getItem('checkout_active_step');
-    const savedAddressId = sessionStorage.getItem('checkout_selected_address_id');
-    const savedFormData = sessionStorage.getItem('checkout_form_data');
-    const autoSubmit = sessionStorage.getItem('checkout_auto_submit');
-    
-    if (savedStep) {
-      setActiveStep(savedStep as any);
-      sessionStorage.removeItem('checkout_active_step');
-    }
-    if (savedAddressId) {
-      setSelectedAddressId(savedAddressId);
-      sessionStorage.removeItem('checkout_selected_address_id');
-    }
-    if (savedFormData) {
-      try {
-        setFormData(JSON.parse(savedFormData));
-      } catch (e) {
-        console.error('Error parsing saved form data', e);
-      }
-      sessionStorage.removeItem('checkout_form_data');
-    }
-    if (autoSubmit === 'true') {
-      shouldPlaceOrderAfterLogin.current = true;
-      sessionStorage.removeItem('checkout_auto_submit');
-    }
-
-    // We need BOTH getRedirectResult and onAuthStateChanged to resolve before
-    // we can safely hide the loading state. Otherwise onAuthStateChanged fires
-    // with null first (before redirect credentials are processed), and the user
-    // sees a false "SIGN IN" prompt.
-    let authStateResolved = false;
-    let redirectResolved = false;
-
-    const maybeFinishLoading = () => {
-      if (authStateResolved && redirectResolved) {
-        setAuthLoading(false);
-      }
-    };
-
-    // Process redirect sign-in result from Google OAuth
-    getRedirectResult(auth)
-      .then(async (result) => {
-        if (result?.user) {
-          console.log('Redirect sign-in successful! User:', result.user);
-          setUser(result.user);
-          
-          try {
-            // Create or update user profile
-            const { ensureUserExists } = await import('./services/userService');
-            await ensureUserExists(result.user.email || '', result.user.uid, {
-              name: result.user.displayName || '',
-              source: 'signup'
-            });
-            
-            // Pre-fill form with user data
-            setFormData(prev => ({
-              ...prev,
-              fullName: prev.fullName || result.user.displayName || '',
-              email: prev.email || result.user.email || ''
-            }));
-          } catch (profileError) {
-            console.error('Error ensuring user profile exists on redirect:', profileError);
-          }
-        }
-      })
-      .catch((error) => {
-        console.error('Error handling redirect result:', error);
-      })
-      .finally(() => {
-        // Redirect result has been checked (success or failure)
-        redirectResolved = true;
-        maybeFinishLoading();
-      });
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-        // Pre-fill form with user data if available
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        // Pre-fill form with user data
         setFormData(prev => ({
           ...prev,
-          fullName: prev.fullName || user.displayName || '',
-          email: prev.email || user.email || ''
+          fullName: prev.fullName || firebaseUser.displayName || '',
+          email: prev.email || firebaseUser.email || ''
         }));
       } else {
         setUser(null);
       }
-      // Auth state has been resolved at least once
-      authStateResolved = true;
-      maybeFinishLoading();
+      setAuthLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -4637,72 +4559,32 @@ const Checkout = () => {
     }
   }, [user]);
 
-  // Handle Google Sign-In with popup + redirect fallback
+  // Handle Google Sign-In — popup on ALL devices (works on modern mobile browsers)
+  // We intentionally avoid signInWithRedirect because getRedirectResult silently fails
+  // when authDomain differs from the app's domain, causing the "SIGN IN" button to reappear.
   const handleGoogleSignIn = async () => {
     try {
-      console.log('Starting Google Sign-In...');
       const provider = new GoogleAuthProvider();
-      console.log('Google Provider created:', provider);
-
-      // Save checkout state to sessionStorage before attempting login
-      sessionStorage.setItem('checkout_active_step', activeStep);
-      sessionStorage.setItem('checkout_selected_address_id', selectedAddressId);
-      sessionStorage.setItem('checkout_form_data', JSON.stringify(formData));
-      if (shouldPlaceOrderAfterLogin.current) {
-        sessionStorage.setItem('checkout_auto_submit', 'true');
+      provider.setCustomParameters({ prompt: 'select_account' });
+      const result = await signInWithPopup(auth, provider);
+      // onAuthStateChanged will pick up the new user automatically
+      // Profile creation happens as a side-effect
+      try {
+        const { ensureUserExists } = await import('./services/userService');
+        await ensureUserExists(result.user.email || '', result.user.uid, {
+          name: result.user.displayName || '',
+          source: 'signup'
+        });
+      } catch (profileError) {
+        console.error('Profile creation error (non-fatal):', profileError);
       }
-
-      // Check if we are on a mobile device to bypass popup attempt entirely
-      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (isMobileDevice) {
-        console.log('Mobile device detected. Triggering signInWithRedirect directly...');
-        await signInWithRedirect(auth, provider);
+    } catch (error: any) {
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+        // User closed the popup — do nothing
         return;
       }
-
-      const result = await signInWithPopup(auth, provider);
-      console.log('Sign-in successful!', result.user);
-      setUser(result.user);
-
-      // Create or update user profile
-      const { ensureUserExists } = await import('./services/userService');
-      const profileResult = await ensureUserExists(result.user.email || '', result.user.uid, {
-        name: result.user.displayName || '',
-        source: 'signup'
-      });
-      console.log('User profile created/loaded:', profileResult);
-
-      // Pre-fill form with user data
-      setFormData(prev => ({
-        ...prev,
-        fullName: result.user.displayName || '',
-        email: result.user.email || ''
-      }));
-
-      // Succeeded in-place, clean up sessionStorage
-      sessionStorage.removeItem('checkout_active_step');
-      sessionStorage.removeItem('checkout_selected_address_id');
-      sessionStorage.removeItem('checkout_form_data');
-      sessionStorage.removeItem('checkout_auto_submit');
-    } catch (error: any) {
-      console.error('Error signing in with Google:', error);
-      console.error('Error code:', error.code);
-      console.error('Error message:', error.message);
-
-      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
-        console.log('Popup blocked, closed, or cancelled. Falling back to signInWithRedirect...');
-        try {
-          const provider = new GoogleAuthProvider();
-          await signInWithRedirect(auth, provider);
-        } catch (redirectError) {
-          console.error('Redirect sign-in error:', redirectError);
-          alert('Failed to sign in. Please try again.');
-        }
-      } else if (error.code === 'auth/unauthorized-domain') {
-        alert('This domain is not authorized. Please add it to Firebase Console.');
-      } else {
-        alert('Failed to sign in: ' + (error.message || 'Please try again.'));
-      }
+      console.error('Google Sign-In error:', error);
+      alert('Sign in failed: ' + (error.message || 'Please try again.'));
     }
   };
 
@@ -5858,38 +5740,8 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
     return () => unsubscribe();
   }, []);
 
-  // Check authentication
+  // Auth — simple onAuthStateChanged only (popup sign-in, no redirect)
   useEffect(() => {
-    // Safety timeout - force loading to false after 6 seconds if nothing resolves
-    const loadingTimeout = setTimeout(() => {
-      setLoading(false);
-      console.warn('⚠️ Loading timeout reached - forcing loading to false');
-    }, 6000);
-
-    // Process redirect sign-in result from Google OAuth
-    getRedirectResult(auth)
-      .then(async (result) => {
-        if (result?.user) {
-          console.log('Account Redirect sign-in successful! User:', result.user);
-          setUser(result.user);
-          
-          try {
-            // Create or update user profile
-            const { ensureUserExists } = await import('./services/userService');
-            await ensureUserExists(result.user.email || '', result.user.uid, {
-              name: result.user.displayName || '',
-              source: 'signup'
-            });
-            await loadUserData(result.user.uid);
-          } catch (profileError) {
-            console.error('Error ensuring user profile exists on redirect:', profileError);
-          }
-        }
-      })
-      .catch((error) => {
-        console.error('Error handling redirect result in Account:', error);
-      });
-
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -5898,12 +5750,8 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
         setUser(null);
         setLoading(false);
       }
-      clearTimeout(loadingTimeout); // Clear timeout once auth state is resolved
     });
-    return () => {
-      unsubscribe();
-      clearTimeout(loadingTimeout);
-    };
+    return () => unsubscribe();
   }, []);
 
   // Load user data - COMPREHENSIVE AUTO-LOADER
@@ -5965,47 +5813,28 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
     }
   };
 
-  // Handle Google Sign-In with popup + redirect fallback
+  // Handle Google Sign-In — popup on ALL devices
   const handleGoogleSignIn = async () => {
     try {
-      console.log('Starting Google Sign-In from Account page...');
       const provider = new GoogleAuthProvider();
-      
-      // Check if we are on a mobile device to bypass popup attempt entirely
-      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (isMobileDevice) {
-        console.log('Mobile device detected. Triggering signInWithRedirect directly...');
-        await signInWithRedirect(auth, provider);
+      provider.setCustomParameters({ prompt: 'select_account' });
+      const result = await signInWithPopup(auth, provider);
+      // onAuthStateChanged fires with the new user automatically
+      try {
+        const { ensureUserExists } = await import('./services/userService');
+        await ensureUserExists(result.user.email || '', result.user.uid, {
+          name: result.user.displayName || '',
+          source: 'signup'
+        });
+      } catch (profileError) {
+        console.error('Profile creation error (non-fatal):', profileError);
+      }
+    } catch (error: any) {
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
         return;
       }
-
-      const result = await signInWithPopup(auth, provider);
-      console.log('Sign-in successful!', result.user);
-      setUser(result.user);
-
-      const { ensureUserExists } = await import('./services/userService');
-      const profileResult = await ensureUserExists(result.user.email || '', result.user.uid, {
-        name: result.user.displayName || '',
-        source: 'signup'
-      });
-      console.log('User profile created/loaded:', profileResult);
-      await loadUserData(result.user.uid);
-    } catch (error: any) {
-      console.error('Error signing in from Account page:', error);
-      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
-        console.log('Popup blocked, closed, or cancelled. Falling back to signInWithRedirect...');
-        try {
-          const provider = new GoogleAuthProvider();
-          await signInWithRedirect(auth, provider);
-        } catch (redirectError) {
-          console.error('Redirect sign-in error:', redirectError);
-          alert('Failed to sign in. Please try again.');
-        }
-      } else if (error.code === 'auth/unauthorized-domain') {
-        alert('This domain is not authorized. Please add it to Firebase Console.');
-      } else {
-        alert('Failed to sign in: ' + (error.message || 'Please try again.'));
-      }
+      console.error('Google Sign-In error:', error);
+      alert('Sign in failed: ' + (error.message || 'Please try again.'));
     }
   };
 
