@@ -5834,11 +5834,35 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
 
   // Check authentication
   useEffect(() => {
-    // Safety timeout - force loading to false after 3 seconds
+    // Safety timeout - force loading to false after 6 seconds if nothing resolves
     const loadingTimeout = setTimeout(() => {
       setLoading(false);
       console.warn('⚠️ Loading timeout reached - forcing loading to false');
-    }, 3000);
+    }, 6000);
+
+    // Process redirect sign-in result from Google OAuth
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result?.user) {
+          console.log('Account Redirect sign-in successful! User:', result.user);
+          setUser(result.user);
+          
+          try {
+            // Create or update user profile
+            const { ensureUserExists } = await import('./services/userService');
+            await ensureUserExists(result.user.email || '', result.user.uid, {
+              name: result.user.displayName || '',
+              source: 'signup'
+            });
+            await loadUserData(result.user.uid);
+          } catch (profileError) {
+            console.error('Error ensuring user profile exists on redirect:', profileError);
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Error handling redirect result in Account:', error);
+      });
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -5915,11 +5939,20 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
     }
   };
 
-  // Handle Google Sign-In
+  // Handle Google Sign-In with popup + redirect fallback
   const handleGoogleSignIn = async () => {
     try {
       console.log('Starting Google Sign-In from Account page...');
       const provider = new GoogleAuthProvider();
+      
+      // Check if we are on a mobile device to bypass popup attempt entirely
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobileDevice) {
+        console.log('Mobile device detected. Triggering signInWithRedirect directly...');
+        await signInWithRedirect(auth, provider);
+        return;
+      }
+
       const result = await signInWithPopup(auth, provider);
       console.log('Sign-in successful!', result.user);
       setUser(result.user);
@@ -5932,18 +5965,21 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
       console.log('User profile created/loaded:', profileResult);
       await loadUserData(result.user.uid);
     } catch (error: any) {
-      console.error('Error signing in:', error);
-      let errorMessage = 'Failed to sign in. ';
-      if (error.code === 'auth/popup-blocked') {
-        errorMessage += 'Please allow popups for this site.';
-      } else if (error.code === 'auth/popup-closed-by-user') {
-        errorMessage += 'Sign-in was cancelled.';
+      console.error('Error signing in from Account page:', error);
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+        console.log('Popup blocked, closed, or cancelled. Falling back to signInWithRedirect...');
+        try {
+          const provider = new GoogleAuthProvider();
+          await signInWithRedirect(auth, provider);
+        } catch (redirectError) {
+          console.error('Redirect sign-in error:', redirectError);
+          alert('Failed to sign in. Please try again.');
+        }
       } else if (error.code === 'auth/unauthorized-domain') {
-        errorMessage += 'This domain is not authorized. Please add it to Firebase Console.';
+        alert('This domain is not authorized. Please add it to Firebase Console.');
       } else {
-        errorMessage += error.message || 'Please try again.';
+        alert('Failed to sign in: ' + (error.message || 'Please try again.'));
       }
-      alert(errorMessage);
     }
   };
 
