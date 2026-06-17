@@ -4529,6 +4529,7 @@ const Checkout = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+
   // Check user authentication state and restore session storage state
   useEffect(() => {
     // Restore step and form data if returning from a redirect login
@@ -4558,6 +4559,19 @@ const Checkout = () => {
       sessionStorage.removeItem('checkout_auto_submit');
     }
 
+    // We need BOTH getRedirectResult and onAuthStateChanged to resolve before
+    // we can safely hide the loading state. Otherwise onAuthStateChanged fires
+    // with null first (before redirect credentials are processed), and the user
+    // sees a false "SIGN IN" prompt.
+    let authStateResolved = false;
+    let redirectResolved = false;
+
+    const maybeFinishLoading = () => {
+      if (authStateResolved && redirectResolved) {
+        setAuthLoading(false);
+      }
+    };
+
     // Process redirect sign-in result from Google OAuth
     getRedirectResult(auth)
       .then(async (result) => {
@@ -4586,6 +4600,11 @@ const Checkout = () => {
       })
       .catch((error) => {
         console.error('Error handling redirect result:', error);
+      })
+      .finally(() => {
+        // Redirect result has been checked (success or failure)
+        redirectResolved = true;
+        maybeFinishLoading();
       });
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -4600,11 +4619,14 @@ const Checkout = () => {
       } else {
         setUser(null);
       }
-      setAuthLoading(false); // Auth state resolved — safe to show real UI
+      // Auth state has been resolved at least once
+      authStateResolved = true;
+      maybeFinishLoading();
     });
 
     return () => unsubscribe();
   }, []);
+
 
   // Place order automatically if login was triggered via the Place Order button
   useEffect(() => {
