@@ -4328,6 +4328,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { items, cartTotal, clearCart, isExitDiscountApplied } = useCart();
   const [user, setUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true); // true until Firebase resolves auth state
   const shouldPlaceOrderAfterLogin = useRef(false);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -4599,6 +4600,7 @@ const Checkout = () => {
       } else {
         setUser(null);
       }
+      setAuthLoading(false); // Auth state resolved — safe to show real UI
     });
 
     return () => unsubscribe();
@@ -4729,6 +4731,7 @@ const Checkout = () => {
 
   // Dynamic helper functions for the mobile sticky footer action bar
   const getStickyActionLabel = () => {
+    if (authLoading) return 'LOADING...';
     if (!user) return 'SIGN IN TO PLACE ORDER';
     if (activeStep === 'cart') return `PROCEED TO ADDRESS • ₹${totalAmount.toFixed(0)}`;
     if (activeStep === 'shipping') {
@@ -4738,6 +4741,7 @@ const Checkout = () => {
   };
 
   const handleStickyAction = () => {
+    if (authLoading) return; // Don't do anything while auth is resolving
     if (!user) {
       handleGoogleSignIn();
       return;
