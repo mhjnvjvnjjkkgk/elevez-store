@@ -1345,6 +1345,14 @@ const CartSidebar = () => {
                 </div>
                 <p style={{ fontWeight: 900, fontSize: '7.5px', textTransform: 'uppercase', color: '#000', opacity: 0.3, fontStyle: 'italic', margin: 0, lineHeight: 1.15 }}>Logistics and taxes calculated during mission briefing.</p>
 
+                {/* Points preview */}
+                {cartTotal > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#00ff88', border: '2px solid #000', padding: '5px 10px' }}>
+                    <span style={{ fontWeight: 900, fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#000' }}>Syndicate Points Earned</span>
+                    <span style={{ fontWeight: 900, fontSize: '13px', color: '#000', fontFamily: 'monospace' }}>+{Math.floor(cartTotal / 10)} PTS</span>
+                  </div>
+                )}
+
                 {/* Free Shipping Tracker — right above checkout */}
                 <FreeShippingTracker cartTotal={cartTotal} />
 
@@ -4342,6 +4350,7 @@ const Checkout = () => {
   });
 
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [confirmedTotal, setConfirmedTotal] = useState(0);
   const [orderId, setOrderId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [discountCode, setDiscountCode] = useState('');
@@ -4769,17 +4778,20 @@ const Checkout = () => {
           }
         }
 
+        setConfirmedTotal(totalAmount);
         clearCart();
         setOrderPlaced(true);
       } else {
         console.error('Error saving order:', result.error);
         // Still show success page even if save fails for demo purposes
+        setConfirmedTotal(totalAmount);
         clearCart();
         setOrderPlaced(true);
       }
     } catch (error) {
       console.error('Error during order submission:', error);
       // Still show success page even if save fails for demo purposes
+      setConfirmedTotal(totalAmount);
       clearCart();
       setOrderPlaced(true);
     } finally {
@@ -4821,7 +4833,7 @@ const Checkout = () => {
             <div className="bg-gray-100 border-[3px] border-black p-4 md:p-6 mb-6 md:mb-10 shadow-[4px_4px_0px_0px_#000] text-left space-y-3 md:space-y-4">
               <div className="flex justify-between items-center mb-1 md:mb-2">
                 <span className="text-xs md:text-sm font-black uppercase text-black/60">Order Total</span>
-                <span className="text-lg md:text-2xl font-black text-black">₹{totalAmount.toFixed(0)}</span>
+                <span className="text-lg md:text-2xl font-black text-black">₹{confirmedTotal.toFixed(0)}</span>
               </div>
               <div className="flex justify-between items-center text-xs md:text-sm border-t-2 border-dashed border-black/10 pt-2">
                 <span className="text-xs md:text-sm font-black uppercase text-black/60">Payment Method</span>
@@ -4834,12 +4846,20 @@ const Checkout = () => {
                 </div>
               )}
             </div>
-            <Link
-              to="/"
-              className="inline-block bg-black text-[#00ff88] py-3.5 md:py-5 px-6 md:px-10 border-[3px] md:border-[4px] border-black font-black uppercase text-sm md:text-xl shadow-[4px_4px_0px_0px_#000] md:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] md:hover:translate-x-[4px] hover:translate-y-[2px] md:hover:translate-y-[4px] transition-all tracking-widest"
-            >
-              Back to Home
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                to="/account?tab=orders"
+                className="inline-block bg-[#00ff88] text-black py-3.5 md:py-5 px-6 md:px-10 border-[3px] md:border-[4px] border-black font-black uppercase text-sm md:text-xl shadow-[4px_4px_0px_0px_#000] md:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] md:hover:translate-x-[4px] hover:translate-y-[2px] md:hover:translate-y-[4px] transition-all tracking-widest"
+              >
+                View Your Orders
+              </Link>
+              <Link
+                to="/"
+                className="inline-block bg-white text-black py-3.5 md:py-5 px-6 md:px-10 border-[3px] md:border-[4px] border-black font-black uppercase text-sm md:text-xl shadow-[4px_4px_0px_0px_#000] md:shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] md:hover:translate-x-[4px] hover:translate-y-[2px] md:hover:translate-y-[4px] transition-all tracking-widest"
+              >
+                Back to Home
+              </Link>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -5701,11 +5721,11 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
   const normalizedTab = ['dashboard', 'orders', 'wishlist', 'rewards', 'earn-redeem', 'arcade'].includes(activeTab) ? activeTab : 'dashboard';
   const displayTab = normalizedTab === 'rewards' ? 'earn-redeem' : normalizedTab;
 
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(() => auth.currentUser); // sync init — avoids blank screen for logged-in users
   const [userProfile, setUserProfile] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [wishlistProducts, setWishlistProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!!auth.currentUser); // start loading only if user is already signed in
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const { addToCart } = useCart();
@@ -5742,10 +5762,19 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
 
   // Auth — simple onAuthStateChanged only (popup sign-in, no redirect)
   useEffect(() => {
+    const hasLoadedRef = { current: false };
+    // If already signed in synchronously, kick off data load immediately
+    if (auth.currentUser) {
+      hasLoadedRef.current = true;
+      loadUserData(auth.currentUser.uid);
+    }
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        await loadUserData(currentUser.uid);
+        if (!hasLoadedRef.current) {
+          hasLoadedRef.current = true;
+          await loadUserData(currentUser.uid);
+        }
       } else {
         setUser(null);
         setLoading(false);
