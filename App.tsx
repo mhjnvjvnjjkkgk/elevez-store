@@ -3055,10 +3055,10 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               dragConstraints={{ left: 0 }}
               dragElastic={{ left: 0.05, right: 0.3 }}
               onDragEnd={(_: any, info: any) => { if (info.offset.x > 80) setIsMobileFilterOpen(false); }}
-              className="fixed right-0 bottom-[80px] h-fit w-76 max-w-[85vw] bg-white z-[99990] flex flex-col shadow-[-8px_0_40px_rgba(0,0,0,0.3)] border-[3px] border-r-0 border-black rounded-l-2xl"
+              className="fixed right-0 top-0 h-full w-[85vw] max-w-sm bg-white z-[99990] flex flex-col shadow-[-8px_0_40px_rgba(0,0,0,0.3)] border-l-[3px] border-black rounded-l-2xl"
             >
               {/* Scrollable inner content */}
-              <div className="flex flex-col overflow-y-auto p-4 flex-1">
+              <div className="flex flex-col overflow-y-auto p-4 flex-1 pb-safe">
                 {/* Sheet Header */}
                 <div className="flex justify-between items-center mb-4 pb-2 border-b-[3px] border-black mt-1">
                   <span className="font-black font-syne text-lg uppercase text-black">Filters</span>
@@ -4327,12 +4327,12 @@ const MapPreview = ({
 const Checkout = () => {
   const navigate = useNavigate();
   const { items, cartTotal, clearCart, isExitDiscountApplied } = useCart();
-  const [user, setUser] = useState<any>(null);
-  const [authLoading, setAuthLoading] = useState(true); // true until Firebase resolves auth state
+  const [user, setUser] = useState<any>(() => auth.currentUser); // sync init — avoids sign-in flash
+  const [authLoading, setAuthLoading] = useState(!auth.currentUser); // false immediately if already signed in
   const shouldPlaceOrderAfterLogin = useRef(false);
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
+    fullName: auth.currentUser?.displayName || '',
+    email: auth.currentUser?.email || '',
     phone: '',
     address: '',
     city: '',
