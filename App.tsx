@@ -60,6 +60,10 @@ import { PageTransition } from './components/PageTransition';
 import { FloatingElements } from './components/FloatingElements';
 import { LiveActivityTicker } from './components/LiveActivityTicker';
 import { audioService } from './services/audioService';
+import { userDataLoaderService } from './services/userDataLoaderService';
+import { userPointsService } from './services/userPointsService';
+import { checkoutDiscountService } from './services/checkoutDiscountService';
+import { ensureUserExists, getUserProfile } from './services/userService';
 
 const AutoScrollToTop = () => {
   const { pathname } = useLocation();
@@ -615,7 +619,6 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        const { getUserProfile } = await import('./services/userService');
         const result = await getUserProfile(currentUser.uid);
         if (result.success) {
           setIsInWishlist(result.data.wishlist?.includes(product.id) || false);
@@ -638,7 +641,6 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
     }
 
     try {
-      const { addToWishlist, removeFromWishlist } = await import('./services/userService');
 
       if (isInWishlist) {
         await removeFromWishlist(user.uid, product.id);
@@ -4579,7 +4581,6 @@ const Checkout = () => {
       // onAuthStateChanged will pick up the new user automatically
       // Profile creation happens as a side-effect
       try {
-        const { ensureUserExists } = await import('./services/userService');
         await ensureUserExists(result.user.email || '', result.user.uid, {
           name: result.user.displayName || '',
           source: 'signup'
@@ -5850,7 +5851,6 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
       const result = await signInWithPopup(auth, provider);
       // onAuthStateChanged fires with the new user automatically
       try {
-        const { ensureUserExists } = await import('./services/userService');
         await ensureUserExists(result.user.email || '', result.user.uid, {
           name: result.user.displayName || '',
           source: 'signup'
@@ -5872,7 +5872,6 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
     if (!user) return;
 
     try {
-      const { addToWishlist, removeFromWishlist } = await import('./services/userService');
       const isInWishlist = wishlistProducts.some(p => p.id === productId);
 
       if (isInWishlist) {
