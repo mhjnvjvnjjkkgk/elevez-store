@@ -234,8 +234,16 @@ class LoyaltyRulesService {
       
       this.unsubscribe = onSnapshot(rulesRef, (snapshot) => {
         if (snapshot.exists()) {
-          this.cachedRules = snapshot.data() as LoyaltyRules;
-          console.log('🔄 Loyalty rules updated from Firebase:', this.cachedRules.version);
+          const data = snapshot.data();
+          this.cachedRules = {
+            ...DEFAULT_RULES,
+            ...data,
+            pointsEarning: { ...DEFAULT_RULES.pointsEarning, ...data.pointsEarning },
+            settings: { ...DEFAULT_RULES.settings, ...data.settings },
+            tiers: Array.isArray(data.tiers) && data.tiers.length > 0 ? data.tiers : DEFAULT_RULES.tiers,
+            redemption: Array.isArray(data.redemption) && data.redemption.length > 0 ? data.redemption : DEFAULT_RULES.redemption,
+          } as LoyaltyRules;
+          console.log('🔄 Loyalty rules updated from Firebase (merged):', this.cachedRules.version);
           
           // Notify all listeners
           this.notifyListeners(this.cachedRules);
@@ -314,8 +322,16 @@ class LoyaltyRulesService {
       const rulesSnap = await getDoc(rulesRef);
       
       if (rulesSnap.exists()) {
-        this.cachedRules = rulesSnap.data() as LoyaltyRules;
-        console.log('✅ Loaded loyalty rules from Firebase');
+        const data = rulesSnap.data();
+        this.cachedRules = {
+          ...DEFAULT_RULES,
+          ...data,
+          pointsEarning: { ...DEFAULT_RULES.pointsEarning, ...data.pointsEarning },
+          settings: { ...DEFAULT_RULES.settings, ...data.settings },
+          tiers: Array.isArray(data.tiers) && data.tiers.length > 0 ? data.tiers : DEFAULT_RULES.tiers,
+          redemption: Array.isArray(data.redemption) && data.redemption.length > 0 ? data.redemption : DEFAULT_RULES.redemption,
+        } as LoyaltyRules;
+        console.log('✅ Loaded and merged loyalty rules from Firebase');
       } else {
         console.log('⚠️ No rules found, initializing with defaults');
         await this.initializeDefaultRules();

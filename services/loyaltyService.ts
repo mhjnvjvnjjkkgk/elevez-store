@@ -264,7 +264,7 @@ export async function calculateTier(totalPoints: number): Promise<TierLevel> {
 export async function getTierConfig(tier: TierLevel): Promise<TierConfig> {
   const rules = await loyaltyRulesService.getRules();
   const tierName = (tier || 'Bronze').toLowerCase();
-  const tierConfig = rules.tiers.find(t => t.name.toLowerCase() === tierName);
+  const tierConfig = rules?.tiers?.find(t => t.name.toLowerCase() === tierName);
 
   if (!tierConfig) {
     // Fallback to bronze
@@ -278,13 +278,13 @@ export async function getTierConfig(tier: TierLevel): Promise<TierConfig> {
     color: tierConfig.color,
     gradient: `linear-gradient(135deg, ${tierConfig.color} 0%, ${tierConfig.color}99 100%)`,
     benefits: [
-      `Earn ${tierConfig.benefits.earningMultiplier}x points`,
-      `${tierConfig.benefits.discountPercentage}% discount`,
-      tierConfig.benefits.freeShippingThreshold === 0
+      `Earn ${tierConfig.benefits?.earningMultiplier ?? 1}x points`,
+      `${tierConfig.benefits?.discountPercentage ?? 0}% discount`,
+      tierConfig.benefits?.freeShippingThreshold === 0
         ? 'Free shipping on all orders'
-        : `Free shipping on orders above ₹${tierConfig.benefits.freeShippingThreshold}`,
-      ...(tierConfig.benefits.exclusiveAccess ? ['Exclusive access'] : []),
-      ...(tierConfig.benefits.prioritySupport ? ['Priority support'] : [])
+        : `Free shipping on orders above ₹${tierConfig.benefits?.freeShippingThreshold ?? 999}`,
+      ...(tierConfig.benefits?.exclusiveAccess ? ['Exclusive access'] : []),
+      ...(tierConfig.benefits?.prioritySupport ? ['Priority support'] : [])
     ],
     icon: tierConfig.icon
   };
@@ -293,9 +293,9 @@ export async function getTierConfig(tier: TierLevel): Promise<TierConfig> {
 export async function getNextTier(currentTier: TierLevel): Promise<TierConfig | null> {
   const rules = await loyaltyRulesService.getRules();
   const tierName = (currentTier || 'Bronze').toLowerCase();
-  const currentIndex = rules.tiers.findIndex(t => t.name.toLowerCase() === tierName);
+  const currentIndex = rules?.tiers?.findIndex(t => t.name.toLowerCase() === tierName) ?? -1;
 
-  if (currentIndex < rules.tiers.length - 1) {
+  if (rules?.tiers && currentIndex >= 0 && currentIndex < rules.tiers.length - 1) {
     const nextTierData = rules.tiers[currentIndex + 1];
     return {
       name: nextTierData.name as TierLevel,
@@ -303,8 +303,13 @@ export async function getNextTier(currentTier: TierLevel): Promise<TierConfig | 
       color: nextTierData.color,
       gradient: `linear-gradient(135deg, ${nextTierData.color} 0%, ${nextTierData.color}99 100%)`,
       benefits: [
-        `Earn ${nextTierData.benefits.earningMultiplier}x points`,
-        `${nextTierData.benefits.discountPercentage}% discount`
+        `Earn ${nextTierData.benefits?.earningMultiplier ?? 1}x points`,
+        `${nextTierData.benefits?.discountPercentage ?? 0}% discount`,
+        nextTierData.benefits?.freeShippingThreshold === 0
+          ? 'Free shipping on all orders'
+          : `Free shipping on orders above ₹${nextTierData.benefits?.freeShippingThreshold ?? 999}`,
+        ...(nextTierData.benefits?.exclusiveAccess ? ['Exclusive access'] : []),
+        ...(nextTierData.benefits?.prioritySupport ? ['Priority support'] : [])
       ],
       icon: nextTierData.icon
     };

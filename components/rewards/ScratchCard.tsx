@@ -187,32 +187,31 @@ export const ScratchCard: React.FC = () => {
     scratch(touch.clientX, touch.clientY);
   };
 
+  useEffect(() => {
+    setCardError('⚠️ Scratch tickets are temporarily deactivated.');
+  }, []);
+
   return (
-    <div className="bg-black text-white border-[6px] border-black p-8 shadow-[12px_12px_0px_0px_#ff007f] max-w-md mx-auto text-center font-mono">
+    <div className="bg-black text-white border-[6px] border-black p-8 shadow-[12px_12px_0px_0px_#666] max-w-md mx-auto text-center font-mono opacity-50">
       <div className="flex items-center justify-center gap-2 mb-6 text-[#ff007f]">
         <Gift size={20} fill="currentColor" />
         <h3 className="text-xl font-black uppercase tracking-wider">HYPED SCRATCH ZONE</h3>
       </div>
 
       <p className="text-xs text-zinc-400 mb-8 uppercase">
-        🎫 Buy a scratch ticket for 30 PTS. Scratch to win exclusive codes or points!
+        ⚡ Scratch card rewards are currently disabled.
       </p>
 
       {!isPlaying ? (
         <div className="border-[4px] border-dashed border-zinc-700 bg-zinc-950 p-12 flex flex-col items-center justify-center min-h-[220px]">
           <ShoppingBag size={48} className="text-zinc-600 mb-6" />
           <button
-            onClick={handlePurchase}
-            disabled={profile && profile.points < 30}
-            className={`px-8 py-3 border-[3px] border-black font-black uppercase tracking-wider cursor-pointer active:translate-y-[2px] active:translate-x-[2px] active:shadow-none transition-all
-              ${profile && profile.points < 30
-                ? 'bg-zinc-800 text-zinc-500 border-zinc-800 cursor-not-allowed shadow-none'
-                : 'bg-[#ff007f] text-white shadow-[4px_4px_0_0_#000] hover:bg-[#ff007f]/90'
-              }`}
+            disabled={true}
+            className="px-8 py-3 border-[3px] border-black font-black uppercase tracking-wider bg-zinc-800 text-zinc-500 border-zinc-700 cursor-not-allowed shadow-none"
           >
-            GET TICKET (-30 PTS)
+            TICKET DISABLED
           </button>
-          {cardError && <p className="text-red-500 text-xs mt-4 uppercase font-bold">{cardError}</p>}
+          {cardError && <p className="text-yellow-500 text-xs mt-4 uppercase font-bold">{cardError}</p>}
         </div>
       ) : (
         <div className="relative inline-block w-[300px] h-[180px] select-none overflow-hidden border-[4px] border-white bg-zinc-900 shadow-[0_0_15px_rgba(255,0,127,0.3)]">

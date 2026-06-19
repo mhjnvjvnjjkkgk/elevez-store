@@ -238,17 +238,19 @@ export const LuckySpinWheel: React.FC = () => {
     animateWheel();
   };
 
+  useEffect(() => {
+    setMessage('⚠️ Daily spin is temporarily deactivated.');
+  }, []);
+
   return (
-    <div className="bg-black text-white border-[6px] border-black p-8 shadow-[12px_12px_0px_0px_#00ff88] max-w-md mx-auto text-center font-mono">
-      <div className="flex items-center justify-center gap-2 mb-6 text-[#00ff88]">
+    <div className="bg-black text-white border-[6px] border-black p-8 shadow-[12px_12px_0px_0px_#666] max-w-md mx-auto text-center font-mono opacity-50">
+      <div className="flex items-center justify-center gap-2 mb-6 text-[#ff007f]">
         <Zap fill="currentColor" size={20} />
         <h3 className="text-xl font-black uppercase tracking-wider">DAILY LOOT WHEEL</h3>
       </div>
       
       <p className="text-xs text-zinc-400 mb-8 uppercase">
-        {canSpinFree 
-          ? '⚡ First spin is FREE! Win up to 500 PTS or discount codes.' 
-          : '💵 Re-spin cost: 50 PTS (deducted from your balance)'}
+        ⚡ Wheel of fortune rewards are currently disabled.
       </p>
 
       {/* Roulette Canvas Frame */}
@@ -260,22 +262,17 @@ export const LuckySpinWheel: React.FC = () => {
           ref={canvasRef}
           width={280}
           height={280}
-          className="border-[6px] border-white bg-zinc-950 rounded-full shadow-[0_0_20px_rgba(0,255,136,0.3)] transition-transform duration-300"
+          className="border-[6px] border-white bg-zinc-950 rounded-full shadow-none transition-transform duration-300"
         />
       </div>
 
       <div className="mt-4 space-y-6">
         <button
-          onClick={handleSpinClick}
-          disabled={spinning || (!canSpinFree && (!profile || profile.points < 50))}
-          className={`w-full py-4 border-[3px] border-black font-black uppercase text-lg tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0_0_#000]
-            ${spinning 
-              ? 'bg-zinc-700 text-zinc-400 border-zinc-700 cursor-not-allowed shadow-none' 
-              : 'bg-[#00ff88] text-black shadow-[4px_4px_0_0_#000] hover:bg-[#00ff88]/90'
-            }`}
+          disabled={true}
+          className="w-full py-4 border-[3px] border-black font-black uppercase text-lg tracking-wider bg-zinc-800 text-zinc-500 border-zinc-700 cursor-not-allowed shadow-none"
         >
-          <RefreshCw className={spinning ? 'animate-spin' : ''} size={18} />
-          {spinning ? 'SPINNING...' : canSpinFree ? 'SPIN FOR FREE' : 'SPIN FOR 50 PTS'}
+          <RefreshCw size={18} />
+          SPIN DISABLED
         </button>
 
         <AnimatePresence mode="wait">

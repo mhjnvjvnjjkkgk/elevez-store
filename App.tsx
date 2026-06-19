@@ -64,6 +64,8 @@ import { userDataLoaderService } from './services/userDataLoaderService';
 import { userPointsService } from './services/userPointsService';
 import { checkoutDiscountService } from './services/checkoutDiscountService';
 import { ensureUserExists, getUserProfile } from './services/userService';
+import { saveOrder } from './services/orderService';
+import { firebaseSyncService } from './services/firebaseSyncService';
 
 const AutoScrollToTop = () => {
   const { pathname } = useLocation();
@@ -4621,7 +4623,6 @@ const Checkout = () => {
     }
 
     try {
-      const { checkoutDiscountService } = await import('./services/checkoutDiscountService');
       const result = await checkoutDiscountService.calculateDiscount(discountCode, cartTotal, user?.uid);
 
       if (result.valid && result.discount) {
@@ -4719,9 +4720,6 @@ const Checkout = () => {
     setIsSubmitting(true);
 
     try {
-      // Import the saveOrder function dynamically to avoid issues
-      const { saveOrder } = await import('./services/orderService');
-
       // Prepare order data
       const orderData = {
         userId: user.uid,
@@ -4755,7 +4753,6 @@ const Checkout = () => {
 
         // Award loyalty points for the purchase
         try {
-          const { userPointsService } = await import('./services/userPointsService');
           const pointsAwarded = await userPointsService.addPointsFromPurchase(
             user.uid,
             totalAmount,
@@ -4771,7 +4768,6 @@ const Checkout = () => {
         // Record discount usage if discount was applied
         if (discountApplied && discountCode) {
           try {
-            const { checkoutDiscountService } = await import('./services/checkoutDiscountService');
             await checkoutDiscountService.recordUsage(discountCode, user?.uid);
             console.log(`✅ Discount usage recorded for code: ${discountCode}`);
           } catch (discountError) {
@@ -5788,8 +5784,6 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
   const loadUserData = async (userId: string) => {
     try {
       console.log('🔄 Auto-loading all user data for:', userId);
-
-      const { userDataLoaderService } = await import('./services/userDataLoaderService');
 
       // Load ALL user data at once
       const userData = await userDataLoaderService.loadAllUserData(userId);
@@ -7214,7 +7208,6 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         // Sync user profile on login
-        const { firebaseSyncService } = await import('./services/firebaseSyncService');
         await firebaseSyncService.syncUserProfile(user.uid, {
           email: user.email || '',
           displayName: user.displayName || 'User',

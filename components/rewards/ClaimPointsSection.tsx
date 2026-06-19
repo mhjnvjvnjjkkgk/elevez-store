@@ -122,6 +122,11 @@ export const ClaimPointsSection: React.FC = () => {
           </h2>
         </div>
 
+        {/* Warning Banner */}
+        <div className="mb-12 p-6 bg-yellow-400 text-black border-[4px] border-black shadow-[8px_8px_0px_0px_#000] font-black uppercase text-center text-lg">
+          ⚠️ Points generation is temporarily deactivated.
+        </div>
+
         {/* Message Display */}
         <AnimatePresence>
           {message && (
@@ -147,14 +152,10 @@ export const ClaimPointsSection: React.FC = () => {
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: action.claimed ? 0 : -8 }}
-              className={`bg-white border-[6px] border-black p-10 transition-all relative group flex flex-col h-full ${
-                action.claimed 
-                  ? 'opacity-40 grayscale shadow-[8px_8px_0px_0px_#000]' 
-                  : 'shadow-[12px_12px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88]'
-              }`}
+              whileHover={{ y: 0 }}
+              className="bg-white border-[6px] border-black p-10 transition-all relative group flex flex-col h-full opacity-40 grayscale shadow-[8px_8px_0px_0px_#000]"
             >
-              <div className="w-20 h-20 bg-black text-[#00ff88] border-[3px] border-black flex items-center justify-center mb-8 shadow-[6px_6px_0px_0px_#00ff88] group-hover:scale-110 transition-transform mx-auto">
+              <div className="w-20 h-20 bg-black text-[#00ff88] border-[3px] border-black flex items-center justify-center mb-8 shadow-[6px_6px_0px_0px_#00ff88] mx-auto">
                 <action.icon size={36} />
               </div>
 
@@ -164,19 +165,10 @@ export const ClaimPointsSection: React.FC = () => {
               </p>
 
               <button
-                onClick={action.action}
-                disabled={action.claimed || loading === action.id}
-                className={`w-full py-5 font-black uppercase text-xl border-[4px] border-black shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center justify-center gap-4 ${
-                  action.claimed ? 'bg-white text-black opacity-30 cursor-not-allowed' : 'bg-[#00ff88] text-black'
-                }`}
+                disabled={true}
+                className="w-full py-5 font-black uppercase text-xl border-[4px] border-black bg-white text-black opacity-30 cursor-not-allowed shadow-[8px_8px_0px_0px_#000]"
               >
-                {loading === action.id ? (
-                  <Loader size={24} className="animate-spin" />
-                ) : action.claimed ? (
-                  <><Check size={24} /> SECURED</>
-                ) : (
-                  'INITIALIZE'
-                )}
+                CLAIM DISABLED
               </button>
             </motion.div>
           ))}
@@ -214,18 +206,14 @@ export const ClaimPointsSection: React.FC = () => {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   placeholder="TEL_NUMBER"
-                  className="px-8 py-5 bg-white border-[4px] border-black font-black text-2xl uppercase focus:outline-none focus:shadow-[8px_8px_0px_0px_#00ff88] transition-all min-w-[300px]"
+                  disabled={true}
+                  className="px-8 py-5 bg-zinc-100 border-[4px] border-black font-black text-2xl uppercase focus:outline-none transition-all min-w-[300px] opacity-50 cursor-not-allowed"
                 />
                 <button
-                  onClick={handlePhoneClaim}
-                  disabled={loading === 'phone'}
-                  className="bg-[#00ff88] text-black px-12 py-5 border-[4px] border-black font-black uppercase text-2xl shadow-[8px_8px_0px_0px_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center justify-center gap-4 whitespace-nowrap"
+                  disabled={true}
+                  className="bg-white text-black opacity-30 cursor-not-allowed px-12 py-5 border-[4px] border-black font-black uppercase text-2xl shadow-[8px_8px_0px_0px_#000] flex items-center justify-center gap-4 whitespace-nowrap"
                 >
-                  {loading === 'phone' ? (
-                    <Loader size={28} className="animate-spin" />
-                  ) : (
-                    'LINK'
-                  )}
+                  LINK DISABLED
                 </button>
               </div>
             )}
