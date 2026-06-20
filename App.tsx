@@ -5726,7 +5726,13 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const { addToCart } = useCart();
-  const { profile: loyaltyProfile, tierInfo: loyaltyTierInfo } = useLoyalty();
+  const {
+    profile: loyaltyProfile,
+    tierInfo: loyaltyTierInfo,
+    nextTier: loyaltyNextTier,
+    pointsToNextTier: loyaltyPointsToNextTier,
+    tierProgress: loyaltyTierProgress,
+  } = useLoyalty();
 
   // Dynamic rules state for Earn & Redeem tab
   const [dynamicRules, setDynamicRules] = useState<any>(null);
@@ -5930,13 +5936,6 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
     { id: 'earn-redeem', label: 'Earn & Redeem', icon: Gift },
     { id: 'arcade', label: 'Arcade Zone', icon: Sparkles }
   ];
-
-  const {
-    tierInfo: loyaltyTierInfoFull,
-    nextTier: loyaltyNextTier,
-    pointsToNextTier: loyaltyPointsToNextTier,
-    tierProgress: loyaltyTierProgress,
-  } = useLoyalty();
 
   return (
     <div className="min-h-screen pt-48 pb-20 bg-white">
