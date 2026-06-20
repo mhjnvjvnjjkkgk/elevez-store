@@ -153,7 +153,7 @@ export function useLoyalty() {
             // Also sync it to userPoints to keep both databases perfectly in sync!
             const { doc: firestoreDoc, updateDoc: firestoreUpdateDoc } = await import('firebase/firestore');
             const pointsRef = firestoreDoc(db, 'userPoints', user.uid);
-            firestoreUpdateDoc(pointsRef, { tier: correctTier.toLowerCase() }).catch(err => {
+            firestoreUpdateDoc(pointsRef, { tier: (correctTier || 'Bronze').toLowerCase() }).catch(err => {
               console.warn('Could not sync corrected tier to userPoints collection:', err);
             });
           }

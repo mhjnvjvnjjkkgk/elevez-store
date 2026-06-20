@@ -6042,7 +6042,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                         <p className="text-sm font-black uppercase text-black opacity-50 mb-2">Available Balance</p>
                         <div className="flex items-baseline gap-2">
                           <span className="text-5xl sm:text-7xl font-black text-black font-syne leading-none">
-                            {loyaltyProfile ? loyaltyProfile.points.toLocaleString() : '0'}
+                            {loyaltyProfile ? (loyaltyProfile.points ?? 0).toLocaleString() : '0'}
                           </span>
                           <span className="text-base sm:text-lg font-black text-black uppercase">PTS</span>
                         </div>
@@ -7132,7 +7132,7 @@ const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => vo
         <Route path="/shop/:category" element={<PageTransition><Shop setCursorVariant={setCursorVariant} /></PageTransition>} />
         <Route path="/product/:id" element={<ProductDetail setCursorVariant={setCursorVariant} />} />
         <Route path="/checkout" element={<PageTransition><Checkout /></PageTransition>} />
-        <Route path="/account" element={<PageTransition><Account setCursorVariant={setCursorVariant} /></PageTransition>} />
+        <Route path="/account" element={<PageTransition><ErrorBoundary><Account setCursorVariant={setCursorVariant} /></ErrorBoundary></PageTransition>} />
         <Route path="/rewards" element={<PageTransition><ErrorBoundary><RewardsRedirect /></ErrorBoundary></PageTransition>} />
         <Route path="/order/:orderId" element={<PageTransition><OrderDetail /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />

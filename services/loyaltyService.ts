@@ -264,7 +264,8 @@ export async function calculateTier(totalPoints: number): Promise<TierLevel> {
 export async function getTierConfig(tier: TierLevel): Promise<TierConfig> {
   const rules = await loyaltyRulesService.getRules();
   const tierName = (tier || 'Bronze').toLowerCase();
-  const tierConfig = rules?.tiers?.find(t => t.name.toLowerCase() === tierName);
+  const tiers = Array.isArray(rules?.tiers) ? rules.tiers.filter(t => t && typeof t === 'object') : [];
+  const tierConfig = tiers.find(t => t.name?.toLowerCase() === tierName);
 
   if (!tierConfig) {
     // Fallback to bronze
@@ -293,10 +294,11 @@ export async function getTierConfig(tier: TierLevel): Promise<TierConfig> {
 export async function getNextTier(currentTier: TierLevel): Promise<TierConfig | null> {
   const rules = await loyaltyRulesService.getRules();
   const tierName = (currentTier || 'Bronze').toLowerCase();
-  const currentIndex = rules?.tiers?.findIndex(t => t.name.toLowerCase() === tierName) ?? -1;
+  const tiers = Array.isArray(rules?.tiers) ? rules.tiers.filter(t => t && typeof t === 'object') : [];
+  const currentIndex = tiers.findIndex(t => t.name?.toLowerCase() === tierName);
 
-  if (rules?.tiers && currentIndex >= 0 && currentIndex < rules.tiers.length - 1) {
-    const nextTierData = rules.tiers[currentIndex + 1];
+  if (currentIndex >= 0 && currentIndex < tiers.length - 1) {
+    const nextTierData = tiers[currentIndex + 1];
     return {
       name: nextTierData.name as TierLevel,
       minPoints: nextTierData.pointsRequired,

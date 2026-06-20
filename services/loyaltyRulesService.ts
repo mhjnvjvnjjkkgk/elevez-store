@@ -458,13 +458,14 @@ class LoyaltyRulesService {
    */
   public async calculateTier(totalPoints: number): Promise<TierConfig> {
     const rules = await this.getRules();
+    const tiers = Array.isArray(rules?.tiers) ? rules.tiers.filter(t => t && typeof t === 'object') : [];
     
     // Find the highest tier the user qualifies for
-    const qualifiedTiers = rules.tiers
-      .filter(tier => totalPoints >= tier.pointsRequired)
-      .sort((a, b) => b.pointsRequired - a.pointsRequired);
+    const qualifiedTiers = tiers
+      .filter(tier => totalPoints >= (tier.pointsRequired ?? 0))
+      .sort((a, b) => (b.pointsRequired ?? 0) - (a.pointsRequired ?? 0));
     
-    return qualifiedTiers[0] || rules.tiers[0]; // Default to first tier (Bronze)
+    return qualifiedTiers[0] || DEFAULT_RULES.tiers[0];
   }
   
   /**
@@ -472,7 +473,8 @@ class LoyaltyRulesService {
    */
   public async getTierBenefits(tierId: string): Promise<TierConfig['benefits'] | null> {
     const rules = await this.getRules();
-    const tier = rules.tiers.find(t => t.id === tierId);
+    const tiers = Array.isArray(rules?.tiers) ? rules.tiers.filter(t => t && typeof t === 'object') : [];
+    const tier = tiers.find(t => t.id === tierId);
     return tier?.benefits || null;
   }
   
