@@ -63,7 +63,7 @@ import { audioService } from './services/audioService';
 import { userDataLoaderService } from './services/userDataLoaderService';
 import { userPointsService } from './services/userPointsService';
 import { checkoutDiscountService } from './services/checkoutDiscountService';
-import { ensureUserExists, getUserProfile } from './services/userService';
+import { ensureUserExists, getUserProfile, addToWishlist, removeFromWishlist } from './services/userService';
 import { saveOrder } from './services/orderService';
 import { firebaseSyncService } from './services/firebaseSyncService';
 
@@ -3334,6 +3334,72 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
   const [products, setProducts] = useState<any[]>([]);
   // isLoading prevents 'Product Not Found' from flashing during SSE re-fetch
   const [isLoading, setIsLoading] = useState(true);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user);
+      if (user && product) {
+        try {
+          const profile = await getUserProfile(user.uid);
+          if (profile.success && profile.data?.wishlist) {
+            setIsWishlisted(profile.data.wishlist.includes(product.id));
+          }
+        } catch (error) {
+          console.error('Error fetching wishlist status:', error);
+        }
+      } else {
+        setIsWishlisted(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [product]);
+
+  const handleToggleWishlist = async () => {
+    if (!currentUser) {
+      alert('Please sign in to add items to your wishlist');
+      return;
+    }
+    if (!product) return;
+
+    try {
+      if (isWishlisted) {
+        await removeFromWishlist(currentUser.uid, product.id);
+        setIsWishlisted(false);
+      } else {
+        await addToWishlist(currentUser.uid, product.id);
+        setIsWishlisted(true);
+      }
+    } catch (error) {
+      console.error('Error toggling wishlist:', error);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!product) return;
+    const shareUrl = `${window.location.origin}/#/product/${product.id}`;
+    const shareText = `Check out ${product.name} on Elevez!`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product.name,
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('Link copied to clipboard!');
+      } catch (error) {
+        console.error('Failed to copy link:', error);
+      }
+    }
+  };
 
   // Scroll visibility state for mobile Add to Cart bar
   const [isVisible, setIsVisible] = useState(true);
@@ -3861,6 +3927,26 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                 className="w-full bg-[#00ff88] text-black font-black text-xs py-2.5 border-[2px] border-black uppercase tracking-widest shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
               >
                 Buy It Now
+              </button>
+            </div>
+
+            {/* Wishlist & Share - visible on all devices */}
+            <div className="flex gap-3 mb-8">
+              <button
+                onClick={handleToggleWishlist}
+                className={`flex-1 py-2.5 border-[2px] border-black font-black text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] cursor-pointer ${
+                  isWishlisted ? 'bg-[#ff007f] text-white' : 'bg-white text-black'
+                }`}
+              >
+                <Heart size={16} className={isWishlisted ? 'fill-current' : ''} />
+                {isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}
+              </button>
+              <button
+                onClick={handleShare}
+                className="flex-1 py-2.5 bg-white text-black border-[2px] border-black font-black text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] cursor-pointer"
+              >
+                <Share2 size={16} />
+                Share Asset
               </button>
             </div>
 
@@ -5932,7 +6018,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: User },
     { id: 'orders', label: 'Log History', icon: Package },
-    { id: 'wishlist', label: 'Saved Items', icon: Heart },
+    { id: 'wishlist', label: 'Wishlist', icon: Heart },
     { id: 'earn-redeem', label: 'Earn & Redeem', icon: Gift },
     { id: 'arcade', label: 'Arcade Zone', icon: Sparkles }
   ];
@@ -6135,8 +6221,51 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                         const status = getStatusStyle(order.status);
                         const total = order.totalAmount ?? order.total ?? 0;
 
+                        const handleCardClick = () => {
+                          const modalOrder = {
+                            id: order.id,
+                            orderNumber: order.id.slice(-8).toUpperCase(),
+                            date: order.createdAt?.toDate?.().toISOString() || order.orderDate || new Date().toISOString(),
+                            status: (order.status || 'processing') as any,
+                            items: (order.items || []).map((item: any) => ({
+                              id: item.id || item.name,
+                              name: item.name,
+                              image: item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '',
+                              price: item.price,
+                              quantity: item.quantity,
+                              size: item.size,
+                              color: item.color
+                            })),
+                            subtotal: total,
+                            shipping: order.shippingCost || 0,
+                            tax: 0,
+                            discount: order.discount || 0,
+                            total: total,
+                            customer: {
+                              name: order.shippingAddress?.name || order.customerName || order.customer?.name || user.displayName || 'N/A',
+                              email: order.customerEmail || order.customer?.email || user.email || 'N/A',
+                              phone: order.shippingAddress?.phone || order.phone || order.customer?.phone || 'N/A'
+                            },
+                            shippingAddress: {
+                              street: order.shippingAddress?.street || order.shippingAddress?.line1 || order.address || 'N/A',
+                              city: order.shippingAddress?.city || order.city || 'N/A',
+                              state: order.shippingAddress?.state || order.state || 'N/A',
+                              zip: order.shippingAddress?.zip || order.shippingAddress?.pincode || order.shippingAddress?.postal_code || order.pincode || 'N/A',
+                              country: order.shippingAddress?.country || order.country || 'India'
+                            },
+                            payment: {
+                              method: order.paymentMethod || 'UPI',
+                              status: 'paid'
+                            },
+                            trackingLink: order.trackingLink || null,
+                            timeline: []
+                          };
+                          setSelectedOrder(modalOrder);
+                          setShowOrderModal(true);
+                        };
+
                         return (
-                          <div key={order.id} className="bg-white border-[3px] border-black p-4 sm:p-6 shadow-[4px_4px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all">
+                          <div key={order.id} onClick={handleCardClick} className="bg-white border-[3px] border-black p-4 sm:p-6 shadow-[4px_4px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer hover:bg-zinc-50">
                             <div className="flex flex-col sm:flex-row justify-between gap-4 mb-4 border-b-[2px] border-black pb-4">
                               <div className="space-y-1">
                                 <div className="flex items-center gap-2">
@@ -6173,51 +6302,14 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                             </div>
 
                             <button 
-                              onClick={() => {
-                                const modalOrder = {
-                                  id: order.id,
-                                  orderNumber: order.id.slice(-8).toUpperCase(),
-                                  date: order.createdAt?.toDate?.().toISOString() || new Date().toISOString(),
-                                  status: (order.status || 'processing') as any,
-                                  items: (order.items || []).map((item: any) => ({
-                                    id: item.id || item.name,
-                                    name: item.name,
-                                    image: item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '',
-                                    price: item.price,
-                                    quantity: item.quantity,
-                                    size: item.size,
-                                    color: item.color
-                                  })),
-                                  subtotal: total,
-                                  shipping: order.shippingCost || 0,
-                                  tax: 0,
-                                  discount: order.discount || 0,
-                                  total: total,
-                                  customer: {
-                                    name: user.displayName,
-                                    email: user.email,
-                                    phone: order.phone || 'N/A'
-                                  },
-                                  shippingAddress: {
-                                    street: order.address || 'N/A',
-                                    city: order.city || 'N/A',
-                                    state: order.state || 'N/A',
-                                    zip: order.pincode || 'N/A',
-                                    country: 'India'
-                                  },
-                                  payment: {
-                                    method: order.paymentMethod || 'UPI',
-                                    status: 'paid'
-                                  },
-                                  timeline: []
-                                };
-                                setSelectedOrder(modalOrder);
-                                setShowOrderModal(true);
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCardClick();
                               }}
                               className="w-full mt-4 bg-black text-[#00ff88] py-2.5 border-[2px] border-black font-black uppercase text-[10px] sm:text-xs shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all flex items-center justify-center gap-2 cursor-pointer"
                             >
                               <Eye size={12} />
-                              Full Report
+                              View Detail
                             </button>
                           </div>
                         );
@@ -6233,7 +6325,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                   <div className="w-10 h-10 bg-black text-[#00ff88] border-[2px] sm:border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0px_0px_#000]">
                     <Heart size={18} />
                   </div>
-                  <h2 className="text-2xl sm:text-4xl font-black uppercase font-syne text-black">Saved Items</h2>
+                  <h2 className="text-2xl sm:text-4xl font-black uppercase font-syne text-black">Wishlist</h2>
                 </div>
 
                 {wishlistProducts.length === 0 ? (

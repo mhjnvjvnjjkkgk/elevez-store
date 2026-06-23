@@ -11,7 +11,9 @@ import {
   getDocs,
   serverTimestamp,
   increment,
-  Timestamp
+  Timestamp,
+  arrayUnion,
+  arrayRemove
 } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { loyaltyRulesService } from './loyaltyRulesService';
@@ -312,5 +314,33 @@ export async function getUserOrders(userId: string): Promise<{ success: boolean;
   } catch (error: any) {
     console.error('Error getting user orders:', error);
     return { success: false, error: error.message };
+  }
+}
+
+// Add product to user wishlist
+export async function addToWishlist(userId: string, productId: number): Promise<void> {
+  try {
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      wishlist: arrayUnion(productId),
+      lastUpdated: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Error adding to wishlist:', error);
+    throw error;
+  }
+}
+
+// Remove product from user wishlist
+export async function removeFromWishlist(userId: string, productId: number): Promise<void> {
+  try {
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      wishlist: arrayRemove(productId),
+      lastUpdated: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Error removing from wishlist:', error);
+    throw error;
   }
 }

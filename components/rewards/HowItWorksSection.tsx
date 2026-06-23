@@ -4,7 +4,7 @@ import { ShoppingBag, Gift, Sparkles, TrendingUp, ArrowRight, Zap } from 'lucide
 import { loyaltyRulesService } from '../../services/loyaltyRulesService';
 
 export const HowItWorksSection: React.FC = () => {
-  const [earningRate, setEarningRate] = useState<string>('1 point per $10');
+  const [earningRate, setEarningRate] = useState<string>('1 point per ₹10');
 
   // Load dynamic earning rate
   useEffect(() => {

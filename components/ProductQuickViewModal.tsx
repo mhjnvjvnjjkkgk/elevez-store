@@ -167,11 +167,11 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
                   {/* Price */}
                   <div className="flex items-center gap-3 mb-4">
                     <p className="text-4xl font-bold text-[#00ff88]">
-                      ${product.price.toFixed(2)}
+                      ₹{product.price.toFixed(2)}
                     </p>
                     {(product as any).originalPrice && (
                       <p className="text-xl text-gray-500 line-through">
-                        ${(product as any).originalPrice.toFixed(2)}
+                        ₹{(product as any).originalPrice.toFixed(2)}
                       </p>
                     )}
                   </div>

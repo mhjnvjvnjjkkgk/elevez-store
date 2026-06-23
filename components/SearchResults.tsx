@@ -150,11 +150,11 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-2xl font-bold text-[#00ff88]">
-                      ${product.price.toFixed(2)}
+                      ₹{product.price.toFixed(2)}
                     </p>
                     {(product as any).originalPrice && (
                       <p className="text-sm text-gray-500 line-through">
-                        ${(product as any).originalPrice.toFixed(2)}
+                        ₹{(product as any).originalPrice.toFixed(2)}
                       </p>
                     )}
                   </div>

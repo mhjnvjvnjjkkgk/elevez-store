@@ -220,7 +220,7 @@ export const ProductAssignment: React.FC<ProductAssignmentProps> = ({
                         ? 'text-[#00ff88]'
                         : 'text-gray-400'
                     }`}>
-                      ${product.price}
+                      ₹{product.price}
                     </span>
                     {selectedProducts.has(product.id) && (
                       <Check size={16} className="text-[#00ff88]" />
