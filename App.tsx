@@ -66,6 +66,8 @@ import { checkoutDiscountService } from './services/checkoutDiscountService';
 import { ensureUserExists, getUserProfile, addToWishlist, removeFromWishlist } from './services/userService';
 import { saveOrder } from './services/orderService';
 import { firebaseSyncService } from './services/firebaseSyncService';
+import { AdminDashboard } from './components/AdminDashboard';
+import { ProtectedAdminRoute } from './components/ProtectedAdminRoute';
 
 const AutoScrollToTop = () => {
   const { pathname } = useLocation();
@@ -7218,6 +7220,8 @@ const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => vo
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
         <Route path="/terms" element={<PageTransition><TermsOfService /></PageTransition>} />
+        <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard adminId="admin" /></ProtectedAdminRoute>} />
+        <Route path="/admin/*" element={<ProtectedAdminRoute><AdminDashboard adminId="admin" /></ProtectedAdminRoute>} />
       </Routes>
     </AnimatePresence>
   );

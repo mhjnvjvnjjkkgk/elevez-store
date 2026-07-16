@@ -5,6 +5,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Lock, AlertCircle, Loader } from 'lucide-react';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import { AdminSetup } from './AdminSetup';
+import { auth } from '../firebaseConfig';
 
 export interface ProtectedAdminRouteProps {
   children: React.ReactNode;
@@ -37,8 +39,13 @@ export const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({
     );
   }
 
-  // Not authenticated
+  // Not an admin — if they ARE signed in, show first-run setup; otherwise show lock screen
   if (!isAdmin) {
+    // User is signed in but not yet an admin → show self-registration setup
+    if (auth.currentUser) {
+      return fallback ? <>{fallback}</> : <AdminSetup />;
+    }
+    // Not signed in at all
     return (
       fallback || (
         <motion.div
@@ -50,12 +57,9 @@ export const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({
             <div className="flex justify-center">
               <Lock size={48} className="text-red-500" />
             </div>
-            <h1 className="text-2xl font-bold">Access Denied</h1>
+            <h1 className="text-2xl font-bold">Sign In Required</h1>
             <p className="text-gray-400">
-              You don't have permission to access the admin panel. Only authorized administrators can access this area.
-            </p>
-            <p className="text-sm text-gray-500">
-              If you believe this is an error, please contact your system administrator.
+              Please sign in with your Google account to access the admin panel.
             </p>
           </div>
         </motion.div>
