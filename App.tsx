@@ -5473,12 +5473,7 @@ const Checkout = () => {
                   </div>
                 )}
 
-                {user && (
-                  <div className="p-3.5 bg-[#00ff88] border-[3.5px] border-black shadow-[4px_4px_0px_0px_#000] flex items-center justify-between">
-                    <span className="text-xs font-black uppercase text-black opacity-80">Syndicate Points Gained:</span>
-                    <span className="font-mono font-black text-black text-base">+{Math.floor(totalAmount / 10)} PTS</span>
-                  </div>
-                )}
+{/* Points section — disabled */}
 
                 <button
                   type={user ? "submit" : "button"}
@@ -6256,37 +6251,31 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                         };
 
                         return (
-                          <div key={order.id} onClick={handleCardClick} className="bg-white border-[3px] border-black p-4 sm:p-6 shadow-[4px_4px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer hover:bg-zinc-50">
-                            <div className="flex flex-col sm:flex-row justify-between gap-4 mb-4 border-b-[2px] border-black pb-4">
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-[9px] font-black uppercase opacity-40">Operation ID:</span>
-                                  <span className="text-xs font-black uppercase">{order.id.slice(0, 8)}</span>
+                          <div key={order.id} onClick={handleCardClick} className="bg-white border-[2px] border-black p-2.5 sm:p-4 shadow-[3px_3px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer hover:bg-zinc-50">
+                            <div className="flex flex-row justify-between items-center gap-2 mb-2 border-b-[1.5px] border-black pb-2">
+                              <div className="space-y-0.5">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-[8px] font-black uppercase opacity-40">Order:</span>
+                                  <span className="text-[10px] font-black uppercase">{order.id.slice(0, 8)}</span>
                                 </div>
-                                <div className="text-lg sm:text-xl font-black uppercase font-syne text-black">
+                                <div className="text-xs font-black uppercase font-syne text-black">
                                   {orderDateStr}
                                 </div>
                               </div>
-                              <div className="flex items-center justify-between sm:justify-end gap-4">
-                                <div className="text-left sm:text-right">
-                                  <p className="text-[9px] font-black uppercase opacity-40">Value</p>
-                                  <p className="text-lg sm:text-xl font-black text-black">₹{total.toFixed(0)}</p>
-                                </div>
-                                <div className={`${status.bg} ${status.text} px-2.5 py-1 border-[1.5px] border-black font-black uppercase text-[9px] shadow-[2px_2px_0px_0px_#000]`}>
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-black text-black">₹{total.toFixed(0)}</p>
+                                <div className={`${status.bg} ${status.text} px-2 py-0.5 border-[1.5px] border-black font-black uppercase text-[8px]`}>
                                   {order.status || 'pending'}
                                 </div>
                               </div>
                             </div>
 
-                            <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar">
+                            <div className="flex gap-2 overflow-x-auto pb-1">
                               {(order.items || []).slice(0, 4).map((item: any, i: number) => {
                                 const fallbackImage = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
                                 return (
-                                  <div key={i} className="w-16 h-20 border-[2px] border-black shrink-0 relative group">
-                                    <img src={fallbackImage} alt={item.name || "Order item thumbnail"} loading="lazy" className="w-full h-full object-cover transition-all" />
-                                    <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[8px] text-white font-black uppercase text-center p-1">
-                                      {item.quantity}x {item.size}
-                                    </div>
+                                  <div key={i} className="w-10 h-13 border-[1.5px] border-black shrink-0 relative group">
+                                    <img src={fallbackImage} alt={item.name || "Order item"} loading="lazy" className="w-full h-full object-cover" />
                                   </div>
                                 );
                               })}
@@ -6297,9 +6286,9 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                                 e.stopPropagation();
                                 handleCardClick();
                               }}
-                              className="w-full mt-4 bg-black text-[#00ff88] py-2.5 border-[2px] border-black font-black uppercase text-[10px] sm:text-xs shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                              className="w-full mt-2 bg-black text-[#00ff88] py-1.5 border-[1.5px] border-black font-black uppercase text-[9px] shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                             >
-                              <Eye size={12} />
+                              <Eye size={10} />
                               View Detail
                             </button>
                           </div>
@@ -7220,8 +7209,6 @@ const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => vo
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
         <Route path="/terms" element={<PageTransition><TermsOfService /></PageTransition>} />
-        <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard adminId="admin" /></ProtectedAdminRoute>} />
-        <Route path="/admin/*" element={<ProtectedAdminRoute><AdminDashboard adminId="admin" /></ProtectedAdminRoute>} />
       </Routes>
     </AnimatePresence>
   );
