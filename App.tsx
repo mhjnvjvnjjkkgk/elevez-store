@@ -4758,10 +4758,10 @@ const Checkout = () => {
     }
     if (activeStep === 'cart') {
       setActiveStep('shipping');
-      // If no addresses saved, immediately open the add-address modal
+      // If no addresses saved, immediately open the manual add-address form
       if (savedAddresses.length === 0) {
         setIsAddressModalOpen(true);
-        setIsAddingNewAddress(false); // show the choice screen (current location vs manual)
+        setIsAddingNewAddress(true); // go straight to the manual form
       }
       return;
     }
@@ -5514,34 +5514,9 @@ const Checkout = () => {
 
             <h3 className="text-xl font-black font-syne uppercase text-black mb-6">Select Address</h3>
 
-            {locationError && (
-              <div className="mb-6 p-4 bg-red-50 border-[3px] border-red-600 text-red-950 text-xs font-bold flex flex-col gap-2 shadow-[3px_3px_0px_0px_#000] rounded-none">
-                <div className="flex items-start gap-2">
-                  <span className="font-black text-red-600 text-sm">⚠️ WARNING:</span>
-                  <span className="leading-relaxed font-black uppercase text-[10px] tracking-wider">{locationError}</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setLocationError(null)}
-                  className="self-end text-[9px] font-black uppercase tracking-wider bg-black text-white px-2.5 py-1 border-[1.5px] border-black hover:bg-white hover:text-black transition-all"
-                >
-                  DISMISS
-                </button>
-              </div>
-            )}
-
             {!isAddingNewAddress ? (
               <div className="space-y-6">
                 
-                {/* Auto choose location button */}
-                <button
-                  type="button"
-                  onClick={handleAutoChooseLocation}
-                  disabled={detectingLocation}
-                  className="w-full bg-[#00ff88] text-black border-[3px] border-black font-black uppercase py-3.5 shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center justify-center gap-2"
-                >
-                  {detectingLocation ? 'DETECTING LOCATION...' : 'USE CURRENT LOCATION'}
-                </button>
 
                 {/* Saved addresses list */}
                 <div className="space-y-3">
