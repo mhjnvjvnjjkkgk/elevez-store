@@ -6039,26 +6039,28 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
             </div>
           </div>
 
-          {/* Responsive Tabs Selector */}
-          <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 mb-10 snap-x no-scrollbar touch-scroll border-b-[3px] border-black/10">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = displayTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setSearchParams({ tab: tab.id })}
-                  className={`shrink-0 snap-center flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3.5 border-[2.5px] sm:border-[3px] border-black font-black uppercase text-[10px] sm:text-xs tracking-wider transition-all cursor-pointer shadow-[3px_3px_0px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none ${
-                    isActive
-                      ? 'bg-[#00ff88] text-black'
-                      : 'bg-white text-black hover:bg-zinc-50'
-                  }`}
-                >
-                  <Icon size={14} className="sm:w-[16px] sm:h-[16px]" />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
+          {/* Sticky Tab Grid — no scroll, always visible */}
+          <div className="sticky top-0 z-40 bg-white border-b-[3px] border-black mb-8 -mx-4 sm:-mx-6 md:-mx-10 px-4 sm:px-6 md:px-10 pt-3 pb-3 shadow-sm">
+            <div className="grid grid-cols-3 gap-2">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = displayTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setSearchParams({ tab: tab.id })}
+                    className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 py-2 border-[2px] border-black font-black uppercase text-[8px] sm:text-[10px] tracking-wider transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[#00ff88] text-black shadow-[2px_2px_0px_0px_#000]'
+                        : 'bg-white text-black hover:bg-zinc-50 shadow-[2px_2px_0px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none'
+                    }`}
+                  >
+                    <Icon size={12} className="sm:w-[14px] sm:h-[14px] shrink-0" />
+                    <span className="leading-tight text-center">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Tab Contents */}
@@ -6251,46 +6253,94 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                         };
 
                         return (
-                          <div key={order.id} onClick={handleCardClick} className="bg-white border-[2px] border-black p-2.5 sm:p-4 shadow-[3px_3px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer hover:bg-zinc-50">
-                            <div className="flex flex-row justify-between items-center gap-2 mb-2 border-b-[1.5px] border-black pb-2">
-                              <div className="space-y-0.5">
-                                <div className="flex items-center gap-1.5">
-                                  <span className="text-[8px] font-black uppercase opacity-40">Order:</span>
-                                  <span className="text-[10px] font-black uppercase">{order.id.slice(0, 8)}</span>
-                                </div>
-                                <div className="text-xs font-black uppercase font-syne text-black">
-                                  {orderDateStr}
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <p className="text-sm font-black text-black">₹{total.toFixed(0)}</p>
-                                <div className={`${status.bg} ${status.text} px-2 py-0.5 border-[1.5px] border-black font-black uppercase text-[8px]`}>
-                                  {order.status || 'pending'}
-                                </div>
-                              </div>
+                          <div key={order.id} onClick={handleCardClick} className="bg-white border-[2px] border-black shadow-[3px_3px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer hover:bg-zinc-50 overflow-hidden">
+
+                            {/* Header row: status badge + date */}
+                            <div className={`${status.bg} px-3 py-1.5 flex items-center justify-between border-b-[2px] border-black`}>
+                              <span className={`font-black uppercase text-[9px] tracking-widest ${status.text}`}>{order.status || 'pending'}</span>
+                              <span className="font-black text-[9px] uppercase opacity-60">{orderDateStr}</span>
                             </div>
 
-                            <div className="flex gap-2 overflow-x-auto pb-1">
-                              {(order.items || []).slice(0, 4).map((item: any, i: number) => {
-                                const fallbackImage = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
-                                return (
-                                  <div key={i} className="w-10 h-13 border-[1.5px] border-black shrink-0 relative group">
-                                    <img src={fallbackImage} alt={item.name || "Order item"} loading="lazy" className="w-full h-full object-cover" />
+                            {/* Main info grid */}
+                            <div className="p-3">
+                              {/* Order ID + Total */}
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <p className="text-[8px] font-black uppercase opacity-40">Order ID</p>
+                                  <p className="text-[10px] font-black uppercase tracking-wider">{order.id.slice(0, 12).toUpperCase()}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-[8px] font-black uppercase opacity-40">Total</p>
+                                  <p className="text-base font-black text-black">₹{total.toFixed(0)}</p>
+                                </div>
+                              </div>
+
+                              {/* Delivery address */}
+                              {(order.shippingAddress || order.address) && (
+                                <div className="mb-3 p-2 bg-zinc-50 border-[1.5px] border-black/20">
+                                  <p className="text-[8px] font-black uppercase opacity-40 mb-0.5">Deliver To</p>
+                                  <p className="text-[10px] font-bold text-black leading-snug">
+                                    {order.shippingAddress?.name || order.customerName || ''}
+                                    {order.shippingAddress?.name ? ' — ' : ''}
+                                    {[
+                                      order.shippingAddress?.street || order.shippingAddress?.line1 || order.address,
+                                      order.shippingAddress?.city || order.city,
+                                      order.shippingAddress?.state || order.state,
+                                      order.shippingAddress?.pincode || order.shippingAddress?.zip || order.pincode
+                                    ].filter(Boolean).join(', ')}
+                                  </p>
+                                </div>
+                              )}
+
+                              {/* Payment + Items row */}
+                              <div className="flex items-center justify-between mb-3">
+                                <div>
+                                  <p className="text-[8px] font-black uppercase opacity-40">Payment</p>
+                                  <p className="text-[10px] font-black uppercase">{order.paymentMethod || 'UPI'}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-[8px] font-black uppercase opacity-40">Items</p>
+                                  <p className="text-[10px] font-black">{(order.items || []).length} item{(order.items || []).length !== 1 ? 's' : ''}</p>
+                                </div>
+                              </div>
+
+                              {/* Item thumbnails */}
+                              <div className="flex gap-2 overflow-x-auto pb-1 mb-3">
+                                {(order.items || []).slice(0, 5).map((item: any, i: number) => {
+                                  const fallbackImage = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
+                                  return (
+                                    <div key={i} className="shrink-0 flex flex-col items-center">
+                                      <div className="w-10 h-12 border-[1.5px] border-black overflow-hidden">
+                                        <img src={fallbackImage} alt={item.name || 'item'} loading="lazy" className="w-full h-full object-cover" />
+                                      </div>
+                                      <p className="text-[7px] font-black uppercase mt-0.5 max-w-[40px] truncate">{item.size || ''}</p>
+                                    </div>
+                                  );
+                                })}
+                                {(order.items || []).length > 5 && (
+                                  <div className="w-10 h-12 border-[1.5px] border-black bg-black flex items-center justify-center shrink-0">
+                                    <span className="text-[8px] font-black text-[#00ff88]">+{(order.items || []).length - 5}</span>
                                   </div>
-                                );
-                              })}
-                            </div>
+                                )}
+                              </div>
 
-                            <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleCardClick();
-                              }}
-                              className="w-full mt-2 bg-black text-[#00ff88] py-1.5 border-[1.5px] border-black font-black uppercase text-[9px] shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                            >
-                              <Eye size={10} />
-                              View Detail
-                            </button>
+                              {/* Shipping method if available */}
+                              {order.shippingMethod && (
+                                <p className="text-[8px] font-black uppercase opacity-50 mb-2">
+                                  Shipping: {order.shippingMethod}
+                                  {order.shippingCost > 0 ? ` — ₹${order.shippingCost}` : ' — Free'}
+                                </p>
+                              )}
+
+                              {/* View detail button */}
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleCardClick(); }}
+                                className="w-full bg-black text-[#00ff88] py-1.5 border-[1.5px] border-black font-black uppercase text-[9px] shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                              >
+                                <Eye size={10} />
+                                View Full Details
+                              </button>
+                            </div>
                           </div>
                         );
                       })}
