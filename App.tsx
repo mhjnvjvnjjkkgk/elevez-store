@@ -4512,31 +4512,59 @@ const Checkout = () => {
   // Geolocation and Reverse Geocoding via Nominatim API with autonomic self-recovery retries
   const performReverseGeocode = async (latitude: number, longitude: number, retryCount = 0): Promise<void> => {
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+      // zoom=18 → street-level detail | accept-language=en → English output
+      // User-Agent required by Nominatim ToS to avoid throttling
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1&accept-language=en`,
+        { headers: { 'User-Agent': 'ElevezShop/1.0 (elevez.shop)' } }
+      );
       if (!res.ok) throw new Error('Nominatim server returned non-ok response');
       const data = await res.json();
-      
-      const addrDetails = data.address || {};
-      const road = addrDetails.road || addrDetails.pedestrian || addrDetails.path || '';
-      const neighborhood = addrDetails.neighbourhood || addrDetails.suburb || addrDetails.village || '';
-      const city = addrDetails.city || addrDetails.town || addrDetails.village || '';
-      const state = addrDetails.state || '';
-      const pincode = addrDetails.postcode || '';
-      
-      const line1 = [road, neighborhood].filter(Boolean).join(', ');
-      const line2 = addrDetails.city_district || addrDetails.county || addrDetails.subdistrict || '';
-      
+
+      const a = data.address || {};
+
+      // --- Address Line 1: house/building number + road/street ---
+      const houseNo = a.house_number || a.building || '';
+      const road    = a.road || a.footway || a.pedestrian || a.path || a.street || a.construction || '';
+      const line1   = [houseNo, road].filter(Boolean).join(', ')
+                      || data.display_name?.split(',')[0]?.trim()
+                      || '';
+
+      // --- Address Line 2: locality / neighbourhood (sub-area within city) ---
+      // For India: neighbourhood → suburb → quarter → hamlet → locality (in priority order)
+      const line2 = a.neighbourhood || a.suburb || a.quarter || a.hamlet || a.locality || '';
+
+      // --- City ---
+      // For India: city/town appears for metros; city_block/municipality for smaller towns.
+      // state_district often holds the correct district name (e.g. "Hyderabad", "Bengaluru Urban").
+      // We do NOT use `village` here — that's a sub-locality, not a city name.
+      const city =
+        a.city        ||
+        a.town        ||
+        a.city_block  ||
+        a.municipality ||
+        a.state_district ||
+        a.county      ||
+        a.village     ||
+        '';
+
+      // --- State ---
+      const state = a.state || '';
+
+      // --- Pincode ---
+      const pincode = a.postcode || '';
+
       setNewAddressForm(prev => ({
         ...prev,
-        addressLine1: line1 || data.display_name || '',
-        addressLine2: line2 || '',
-        city: city || '',
-        state: state || '',
-        pincode: pincode || ''
+        addressLine1: line1,
+        addressLine2: line2,
+        city: city,
+        state: state,
+        pincode: pincode
       }));
-      
+
       setLocationCoords({ lat: latitude, lon: longitude });
-      setIsAddingNewAddress(true); // Switch to manual form so they can confirm details
+      setIsAddingNewAddress(true); // Switch to manual form so they can confirm/edit details
       setDetectingLocation(false);
     } catch (error) {
       console.error(`Reverse geocoding attempt ${retryCount + 1} failed:`, error);
