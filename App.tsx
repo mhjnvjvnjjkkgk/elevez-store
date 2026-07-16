@@ -6010,33 +6010,30 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
   ];
 
   return (
-    <div className="min-h-screen pt-48 pb-20 bg-white">
+    <div className="min-h-screen pt-20 pb-20 bg-white">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-16 border-b-[6px] sm:border-b-[8px] border-black pb-8 sm:pb-12">
-            <div>
-              <div className="inline-block bg-[#00ff88] text-black text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] px-3 sm:px-4 py-1.5 sm:py-2 border-[2px] sm:border-[3px] border-black shadow-[3px_3px_0px_0px_#000] mb-4 sm:mb-6">
-                Identity Profile
-              </div>
-              <h1 className="text-5xl sm:text-7xl md:text-9xl font-black font-syne uppercase text-black leading-none tracking-tighter">My <span className="text-[#00ff88]" style={{ WebkitTextStroke: '2px black' }}>Account</span></h1>
+          {/* Compact header strip: avatar + name + logout */}
+          <div className="flex items-center justify-between mb-4 pb-3 border-b-[2px] border-black/10">
+            <div className="flex items-center gap-2">
+              {user.photoURL ? (
+                <img src={user.photoURL} alt="avatar" className="w-7 h-7 rounded-full border-[2px] border-black object-cover" />
+              ) : (
+                <div className="w-7 h-7 bg-black text-[#00ff88] border-[2px] border-black flex items-center justify-center">
+                  <User size={14} />
+                </div>
+              )}
+              <span className="text-xs font-black uppercase tracking-wider text-black truncate max-w-[160px]">
+                {user.displayName || user.email || 'My Account'}
+              </span>
             </div>
-            <div className="flex items-center gap-4 sm:gap-6">
-              <button
-                onClick={() => loadUserData(user.uid)}
-                className="w-11 h-11 sm:w-14 sm:h-14 bg-white text-black border-[3px] sm:border-[4px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000] sm:shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer"
-                title="Sync Data"
-              >
-                <RefreshCw size={20} className="sm:w-7 sm:h-7" />
-              </button>
-              <button
-                onClick={() => signOut(auth)}
-                className="bg-black text-[#00ff88] px-5 sm:px-10 py-3 sm:py-4 border-[3px] sm:border-[4px] border-black font-black uppercase text-sm sm:text-lg shadow-[4px_4px_0px_0px_#00ff88] sm:shadow-[8px_8px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center gap-2 sm:gap-4 cursor-pointer"
-              >
-                <LogOut size={16} className="sm:w-6 sm:h-6" />
-                <span>Disconnect</span>
-              </button>
-            </div>
+            <button
+              onClick={() => signOut(auth)}
+              className="flex items-center gap-1.5 bg-black text-[#00ff88] px-3 py-1.5 border-[2px] border-black font-black uppercase text-[9px] shadow-[2px_2px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all cursor-pointer"
+            >
+              <LogOut size={11} />
+              Logout
+            </button>
           </div>
 
           {/* Sticky Tab Grid — no scroll, always visible */}
