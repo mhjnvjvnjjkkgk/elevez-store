@@ -1349,13 +1349,7 @@ const CartSidebar = () => {
                 </div>
                 <p style={{ fontWeight: 900, fontSize: '7.5px', textTransform: 'uppercase', color: '#000', opacity: 0.3, fontStyle: 'italic', margin: 0, lineHeight: 1.15 }}>Logistics and taxes calculated during mission briefing.</p>
 
-                {/* Points preview */}
-                {cartTotal > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#00ff88', border: '2px solid #000', padding: '5px 10px' }}>
-                    <span style={{ fontWeight: 900, fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#000' }}>Syndicate Points Earned</span>
-                    <span style={{ fontWeight: 900, fontSize: '13px', color: '#000', fontFamily: 'monospace' }}>+{Math.floor(cartTotal / 10)} PTS</span>
-                  </div>
-                )}
+                {/* Points preview — disabled */}
 
                 {/* Free Shipping Tracker — right above checkout */}
                 <FreeShippingTracker cartTotal={cartTotal} />
@@ -6668,7 +6662,7 @@ const TopHeader = () => {
           <GlitchImage 
             src="/logo.png?v=5" 
             alt={BRAND_NAME} 
-            imgClassName="h-10 md:h-16 w-auto object-contain"
+            imgClassName="h-14 md:h-20 w-auto object-contain"
             triggerOnHover={false} 
           />
         </Link>
