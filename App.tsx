@@ -6003,10 +6003,8 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: User },
-    { id: 'orders', label: 'Log History', icon: Package },
+    { id: 'orders', label: 'Orders', icon: Package },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
-    { id: 'earn-redeem', label: 'Earn & Redeem', icon: Gift },
-    { id: 'arcade', label: 'Arcade Zone', icon: Sparkles }
   ];
 
   return (
@@ -6156,23 +6154,24 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
 
             {displayTab === 'orders' && (
               <section>
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-10 h-10 bg-black text-[#00ff88] border-[2px] sm:border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0px_0px_#000]">
-                    <Package size={18} />
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2">
+                    <Package size={16} className="text-black" />
+                    <h2 className="text-sm font-black uppercase tracking-widest text-black">Order History</h2>
                   </div>
-                  <h2 className="text-2xl sm:text-4xl font-black uppercase font-syne text-black">Log History</h2>
+                  <span className="text-[10px] font-bold uppercase text-zinc-400">{orders.length} order{orders.length !== 1 ? 's' : ''}</span>
                 </div>
 
                 {orders.length === 0 ? (
-                  <div className="bg-white border-[3px] sm:border-[4px] border-black p-8 sm:p-16 text-center shadow-[6px_6px_0px_0px_#000]">
-                    <Package size={48} className="mx-auto mb-4 text-black opacity-10" />
-                    <p className="text-sm sm:text-lg font-black text-black uppercase mb-6 opacity-50 italic">No operations recorded yet.</p>
-                    <Link to="/shop/all" className="inline-block bg-[#00ff88] text-black px-6 py-3 border-[2.5px] border-black font-black uppercase text-xs sm:text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
-                      Browse Store
+                  <div className="flex flex-col items-center justify-center py-16 border-[2px] border-dashed border-black/20 rounded-none">
+                    <Package size={40} className="text-black/10 mb-4" />
+                    <p className="text-xs font-black uppercase text-black/30 mb-5">No orders yet</p>
+                    <Link to="/shop/all" className="bg-black text-[#00ff88] px-6 py-2.5 border-[2px] border-black font-black uppercase text-[10px] tracking-widest shadow-[3px_3px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+                      Shop Now
                     </Link>
                   </div>
                 ) : (
-                  <div className="space-y-6 max-w-4xl">
+                  <div className="space-y-4">
                     {[...orders]
                       .sort((a, b) => {
                         const getDate = (orderObj: any) => {
@@ -6186,24 +6185,20 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                       })
                       .map((order) => {
                         if (!order || !order.id) return null;
-                      
+
                         let orderDateStr = 'N/A';
+                        let orderTimeStr = '';
                         try {
                           if (order.orderDate || order.createdAt) {
                             const dateValue = order.orderDate || order.createdAt;
                             const date = typeof dateValue === 'string' ? new Date(dateValue) : (dateValue.seconds ? new Date(dateValue.seconds * 1000) : new Date(dateValue));
-                            orderDateStr = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                            orderDateStr = date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+                            orderTimeStr = date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
                           }
                         } catch (e) {}
 
-                        const getStatusStyle = (status: string) => {
-                          const s = (status || 'pending').toLowerCase();
-                          if (s === 'delivered') return { bg: 'bg-[#00ff88]', text: 'text-black', icon: 'DONE' };
-                          if (s === 'shipped') return { bg: 'bg-blue-400', text: 'text-black', icon: 'MOVE' };
-                          return { bg: 'bg-yellow-400', text: 'text-black', icon: 'SYNC' };
-                        };
-
-                        const status = getStatusStyle(order.status);
+                        const s = (order.status || 'pending').toLowerCase();
+                        const statusColor = s === 'delivered' ? 'bg-emerald-500 text-white' : s === 'shipped' ? 'bg-blue-500 text-white' : s === 'cancelled' ? 'bg-red-500 text-white' : 'bg-amber-400 text-black';
                         const total = order.totalAmount ?? order.total ?? 0;
 
                         const handleCardClick = () => {
@@ -6249,92 +6244,92 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                           setShowOrderModal(true);
                         };
 
-                        return (
-                          <div key={order.id} onClick={handleCardClick} className="bg-white border-[2px] border-black shadow-[3px_3px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer hover:bg-zinc-50 overflow-hidden">
+                        const addressParts = [
+                          order.shippingAddress?.street || order.shippingAddress?.line1 || order.address,
+                          order.shippingAddress?.city || order.city,
+                          order.shippingAddress?.state || order.state,
+                          order.shippingAddress?.pincode || order.shippingAddress?.zip || order.pincode
+                        ].filter(Boolean);
 
-                            {/* Header row: status badge + date */}
-                            <div className={`${status.bg} px-3 py-1.5 flex items-center justify-between border-b-[2px] border-black`}>
-                              <span className={`font-black uppercase text-[9px] tracking-widest ${status.text}`}>{order.status || 'pending'}</span>
-                              <span className="font-black text-[9px] uppercase opacity-60">{orderDateStr}</span>
+                        return (
+                          <div key={order.id} className="border-[2px] border-black bg-white overflow-hidden">
+                            {/* Top bar: order # + status */}
+                            <div className="flex items-center justify-between px-4 py-2.5 bg-black">
+                              <div className="flex items-center gap-2">
+                                <Package size={12} className="text-[#00ff88]" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-[#00ff88]">#{order.id.slice(-8).toUpperCase()}</span>
+                              </div>
+                              <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest ${statusColor}`}>
+                                {order.status || 'Pending'}
+                              </span>
                             </div>
 
-                            {/* Main info grid */}
-                            <div className="p-3">
-                              {/* Order ID + Total */}
-                              <div className="flex justify-between items-start mb-3">
-                                <div>
-                                  <p className="text-[8px] font-black uppercase opacity-40">Order ID</p>
-                                  <p className="text-[10px] font-black uppercase tracking-wider">{order.id.slice(0, 12).toUpperCase()}</p>
-                                </div>
-                                <div className="text-right">
-                                  <p className="text-[8px] font-black uppercase opacity-40">Total</p>
-                                  <p className="text-base font-black text-black">₹{total.toFixed(0)}</p>
-                                </div>
+                            {/* Date + time + total */}
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-black/10">
+                              <div>
+                                <p className="text-xs font-black text-black">{orderDateStr}</p>
+                                {orderTimeStr && <p className="text-[10px] text-zinc-400 font-medium">{orderTimeStr}</p>}
                               </div>
-
-                              {/* Delivery address */}
-                              {(order.shippingAddress || order.address) && (
-                                <div className="mb-3 p-2 bg-zinc-50 border-[1.5px] border-black/20">
-                                  <p className="text-[8px] font-black uppercase opacity-40 mb-0.5">Deliver To</p>
-                                  <p className="text-[10px] font-bold text-black leading-snug">
-                                    {order.shippingAddress?.name || order.customerName || ''}
-                                    {order.shippingAddress?.name ? ' — ' : ''}
-                                    {[
-                                      order.shippingAddress?.street || order.shippingAddress?.line1 || order.address,
-                                      order.shippingAddress?.city || order.city,
-                                      order.shippingAddress?.state || order.state,
-                                      order.shippingAddress?.pincode || order.shippingAddress?.zip || order.pincode
-                                    ].filter(Boolean).join(', ')}
-                                  </p>
-                                </div>
-                              )}
-
-                              {/* Payment + Items row */}
-                              <div className="flex items-center justify-between mb-3">
-                                <div>
-                                  <p className="text-[8px] font-black uppercase opacity-40">Payment</p>
-                                  <p className="text-[10px] font-black uppercase">{order.paymentMethod || 'UPI'}</p>
-                                </div>
-                                <div className="text-right">
-                                  <p className="text-[8px] font-black uppercase opacity-40">Items</p>
-                                  <p className="text-[10px] font-black">{(order.items || []).length} item{(order.items || []).length !== 1 ? 's' : ''}</p>
-                                </div>
+                              <div className="text-right">
+                                <p className="text-[10px] font-black uppercase text-zinc-400">Total Paid</p>
+                                <p className="text-lg font-black text-black">₹{total.toFixed(0)}</p>
                               </div>
+                            </div>
 
-                              {/* Item thumbnails */}
-                              <div className="flex gap-2 overflow-x-auto pb-1 mb-3">
-                                {(order.items || []).slice(0, 5).map((item: any, i: number) => {
-                                  const fallbackImage = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
+                            {/* Items list */}
+                            <div className="px-4 py-3 border-b border-black/10">
+                              <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">Items Ordered</p>
+                              <div className="space-y-2">
+                                {(order.items || []).map((item: any, i: number) => {
+                                  const img = item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '';
                                   return (
-                                    <div key={i} className="shrink-0 flex flex-col items-center">
-                                      <div className="w-10 h-12 border-[1.5px] border-black overflow-hidden">
-                                        <img src={fallbackImage} alt={item.name || 'item'} loading="lazy" className="w-full h-full object-cover" />
+                                    <div key={i} className="flex items-center gap-3">
+                                      {img && (
+                                        <div className="w-9 h-11 border-[1.5px] border-black/20 shrink-0 overflow-hidden bg-zinc-100">
+                                          <img src={img} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
+                                        </div>
+                                      )}
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-[11px] font-black text-black truncate uppercase">{item.name}</p>
+                                        <p className="text-[9px] text-zinc-400 font-medium">
+                                          {[item.size && `Size: ${item.size}`, item.color && `Color: ${item.color}`].filter(Boolean).join(' · ')}
+                                        </p>
                                       </div>
-                                      <p className="text-[7px] font-black uppercase mt-0.5 max-w-[40px] truncate">{item.size || ''}</p>
+                                      <div className="text-right shrink-0">
+                                        <p className="text-[10px] font-black text-black">₹{item.price}</p>
+                                        <p className="text-[9px] text-zinc-400">×{item.quantity || 1}</p>
+                                      </div>
                                     </div>
                                   );
                                 })}
-                                {(order.items || []).length > 5 && (
-                                  <div className="w-10 h-12 border-[1.5px] border-black bg-black flex items-center justify-center shrink-0">
-                                    <span className="text-[8px] font-black text-[#00ff88]">+{(order.items || []).length - 5}</span>
-                                  </div>
-                                )}
                               </div>
+                            </div>
 
-                              {/* Shipping method if available */}
-                              {order.shippingMethod && (
-                                <p className="text-[8px] font-black uppercase opacity-50 mb-2">
-                                  Shipping: {order.shippingMethod}
-                                  {order.shippingCost > 0 ? ` — ₹${order.shippingCost}` : ' — Free'}
-                                </p>
-                              )}
+                            {/* Delivery address */}
+                            {addressParts.length > 0 && (
+                              <div className="px-4 py-3 border-b border-black/10 flex items-start gap-2">
+                                <MapPin size={11} className="text-zinc-400 mt-0.5 shrink-0" />
+                                <div>
+                                  <p className="text-[9px] font-black uppercase text-zinc-400 mb-0.5">Deliver To</p>
+                                  {(order.shippingAddress?.name || order.customerName) && (
+                                    <p className="text-[11px] font-black text-black">{order.shippingAddress?.name || order.customerName}</p>
+                                  )}
+                                  <p className="text-[10px] text-zinc-500 leading-snug">{addressParts.join(', ')}</p>
+                                </div>
+                              </div>
+                            )}
 
-                              {/* View detail button */}
+                            {/* Payment + CTA */}
+                            <div className="flex items-center justify-between px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <CreditCard size={11} className="text-zinc-400" />
+                                <span className="text-[10px] font-black uppercase text-zinc-500">{order.paymentMethod || 'UPI'}</span>
+                              </div>
                               <button
                                 onClick={(e) => { e.stopPropagation(); handleCardClick(); }}
-                                className="w-full bg-black text-[#00ff88] py-1.5 border-[1.5px] border-black font-black uppercase text-[9px] shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                className="flex items-center gap-1.5 bg-black text-[#00ff88] px-4 py-1.5 border-[1.5px] border-black font-black uppercase text-[9px] tracking-wider shadow-[2px_2px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all cursor-pointer"
                               >
-                                <Eye size={10} />
+                                           <Eye size={10} />
                                 View Full Details
                               </button>
                             </div>
@@ -6398,41 +6393,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
               </section>
             )}
 
-            {displayTab === 'earn-redeem' && (
-              <div className="space-y-16">
-                <HowItWorksSection />
-                <TiersBenefitsSection thresholds={tierThresholds} />
-                <ClaimPointsSection earningRate={earningRate} />
-                <RedeemRewardsSection />
-                <PointsHistorySection />
-              </div>
-            )}
 
-            {displayTab === 'arcade' && (
-              <div className="space-y-12 max-w-5xl mx-auto">
-                <div className="text-center mb-8">
-                  <div className="inline-block bg-black text-[#ff007f] text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 border-[2.5px] border-black shadow-[3px_3px_0_0_#000] mb-3">
-                    Arcade Cabinets
-                  </div>
-                  <h2 className="text-2xl sm:text-4xl font-black uppercase text-black font-syne tracking-tight">
-                    ARCADE <span className="text-[#ff007f]">ZONE</span>
-                  </h2>
-                  <p className="text-xs font-bold text-zinc-500 uppercase mt-2 max-w-md mx-auto">
-                    Play daily minigames to double your points or earn secret codes. Spins and scratches sync in real-time to your profile.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start justify-center">
-                  <div className="bg-white border-[3px] border-black p-4 shadow-[4px_4px_0px_0px_#000]">
-                    <LuckySpinWheel />
-                  </div>
-                  <div className="bg-white border-[3px] border-black p-4 shadow-[4px_4px_0px_0px_#000]">
-                    <ScratchCard />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
