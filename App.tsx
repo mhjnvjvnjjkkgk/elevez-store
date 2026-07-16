@@ -4444,21 +4444,8 @@ const Checkout = () => {
   const [activeStep, setActiveStep] = useState<'cart' | 'shipping' | 'payment'>('cart');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  const [savedAddresses, setSavedAddresses] = useState<any[]>([
-    {
-      id: 'addr-default',
-      label: 'Home',
-      fullName: 'SHAYAN SEN',
-      addressLine1: 'FLAT 402, SUNSHINE HEIGHTS',
-      addressLine2: 'ROAD NO 4, BANJARA HILLS',
-      city: 'HYDERABAD',
-      state: 'TELANGANA',
-      pincode: '500034',
-      landline: '0402334567',
-      backupPhone: '9876543210'
-    }
-  ]);
-  const [selectedAddressId, setSelectedAddressId] = useState<string>('addr-default');
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
@@ -4743,6 +4730,11 @@ const Checkout = () => {
     }
     if (activeStep === 'cart') {
       setActiveStep('shipping');
+      // If no addresses saved, immediately open the add-address modal
+      if (savedAddresses.length === 0) {
+        setIsAddressModalOpen(true);
+        setIsAddingNewAddress(false); // show the choice screen (current location vs manual)
+      }
       return;
     }
     if (activeStep === 'shipping') {
