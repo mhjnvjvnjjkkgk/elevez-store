@@ -158,6 +158,7 @@ export const CheckoutExitPopup: React.FC<CheckoutExitPopupProps> = ({ isOpen, on
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
