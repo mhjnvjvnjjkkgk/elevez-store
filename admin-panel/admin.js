@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Load Instagram settings on dashboard startup
   try {
-    const db = await initAdminFirestore();
+    const db = await getFirebaseDB();
     if (db) {
       const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
       const docSnap = await getDoc(doc(db, 'settings', 'instagram'));
@@ -5808,7 +5808,7 @@ let abandonedCarts = [];
 
 window.refreshAbandonedCarts = async () => {
   try {
-    const db = await initAdminFirestore();
+    const db = await getFirebaseDB();
     if (!db) {
       console.warn('Firebase DB unavailable for abandoned carts sync');
       return;
@@ -5951,7 +5951,7 @@ window.saveInstagramFeedUrl = async () => {
   }
   
   try {
-    const db = await initAdminFirestore();
+    const db = await getFirebaseDB();
     if (!db) {
       alert('❌ Firebase database not initialized');
       return;
