@@ -5,6 +5,11 @@ service cloud.firestore {
     match /discounts/{discountId} {
       allow read, write: if true;
     }
+
+    // Allow full access to settings (for admin panel settings)
+    match /settings/{settingId} {
+      allow read, write: if true;
+    }
     
     // Allow full access to products (for admin panel)
     match /products/{productId} {
