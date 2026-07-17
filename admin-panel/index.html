@@ -109,6 +109,24 @@
           <h2>Dashboard</h2>
         </div>
         <div class="stats-grid" id="statsGrid"></div>
+
+        <!-- Instagram Settings Card -->
+        <div style="background: var(--card-bg); border: 2px solid #00ff88; border-radius: 12px; padding: 25px; margin-top: 30px; box-shadow: 0 4px 15px rgba(0,255,136,0.05);">
+          <h3 style="margin-top: 0; color: #00ff88; display: flex; align-items: center; gap: 10px;">📸 Instagram Live Feed Integration</h3>
+          <p style="color: var(--text-muted); font-size: 13px; line-height: 1.6;">
+            Show your actual Instagram posts on the website footer. We support <strong>Behold.so</strong>, which provides a free JSON feed endpoint from your Instagram account.
+          </p>
+          <ol style="color: var(--text-muted); font-size: 12px; padding-left: 20px; margin-bottom: 20px; line-height: 1.6;">
+            <li>Go to <a href="https://behold.so" target="_blank" style="color: #00ff88; font-weight: bold;">Behold.so</a> (100% Free).</li>
+            <li>Sign in with your Instagram Account.</li>
+            <li>Copy your <strong>JSON Feed URL</strong> (e.g., <code>https://feeds.behold.so/XYZ123</code>).</li>
+            <li>Paste it below and click Save.</li>
+          </ol>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="text" id="instaFeedUrl" placeholder="Enter your Behold JSON Feed URL..." style="flex: 1; min-width: 250px; background: rgba(0,0,0,0.4); border: 1px solid #444; color: #fff; padding: 12px; border-radius: 6px; outline: none; font-size: 13px;">
+            <button onclick="saveInstagramFeedUrl()" style="background: #00ff88; color: #000; font-weight: 800; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.9" onmouseout="this.style.opacity=1">Save URL</button>
+          </div>
+        </div>
       </div>
 
       <!-- Products View -->

@@ -309,6 +309,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Check for data issues on startup
   checkDataIntegrity();
 
+  // Load Instagram settings on dashboard startup
+  try {
+    const db = await initAdminFirestore();
+    if (db) {
+      const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+      const docSnap = await getDoc(doc(db, 'settings', 'instagram'));
+      if (docSnap.exists()) {
+        const { feedUrl } = docSnap.data();
+        const input = document.getElementById('instaFeedUrl');
+        if (input && feedUrl) {
+          input.value = feedUrl;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load Instagram settings:', err);
+  }
+
   // Setup Eyedropper custom mouse events
   setupEyedropperInteraction();
 
@@ -5921,3 +5939,34 @@ document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
   refreshAbandonedCarts();
 }, 2000);
+
+window.saveInstagramFeedUrl = async () => {
+  const urlInput = document.getElementById('instaFeedUrl');
+  if (!urlInput) return;
+  const feedUrl = urlInput.value.trim();
+  
+  if (feedUrl && !feedUrl.startsWith('https://')) {
+    alert('❌ Please enter a valid Behold JSON URL starting with https://');
+    return;
+  }
+  
+  try {
+    const db = await initAdminFirestore();
+    if (!db) {
+      alert('❌ Firebase database not initialized');
+      return;
+    }
+    
+    const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+    await setDoc(doc(db, 'settings', 'instagram'), {
+      feedUrl: feedUrl,
+      updatedAt: new Date().toISOString()
+    });
+    
+    showSyncStatus('📸 Instagram Feed URL saved successfully!', 'success');
+    alert('✅ Instagram Feed URL saved successfully!');
+  } catch (error) {
+    console.error('Error saving Instagram settings:', error);
+    alert('❌ Failed to save Instagram settings: ' + error.message);
+  }
+};
