@@ -39,6 +39,8 @@ import { ProductQuickPreview } from './components/ProductQuickPreview';
 import { WishlistButton } from './components/WishlistButton';
 import { ExitIntentPopup } from './components/ExitIntentPopup';
 import { OrderDetailModal } from './components/OrderDetailModal';
+import { CheckoutExitPopup } from './components/CheckoutExitPopup';
+import { InstagramFeed } from './components/InstagramFeed';
 import { useLoyalty } from './hooks/useLoyalty';
 import { LoyaltyRulesNotificationBanner } from './components/LoyaltyRulesNotificationBanner';
 import { VelocityHeader } from './components/VelocityHeader';
@@ -4445,10 +4447,45 @@ const MapPreview = ({
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { items, cartTotal, clearCart, isExitDiscountApplied } = useCart();
+  const { items, cartTotal, clearCart, isExitDiscountApplied, setIsExitDiscountApplied } = useCart();
   const [user, setUser] = useState<any>(() => auth.currentUser); // sync init — avoids sign-in flash
   const [authLoading, setAuthLoading] = useState(!auth.currentUser); // false immediately if already signed in
   const shouldPlaceOrderAfterLogin = useRef(false);
+
+  const [isCheckoutExitOpen, setIsCheckoutExitOpen] = useState(false);
+
+  // Desktop Mouse Leave exit intent
+  useEffect(() => {
+    const handleMouseLeave = (e: MouseEvent) => {
+      const hasSeen = localStorage.getItem('elevez_checkout_exit_seen') === 'true';
+      if (e.clientY <= 0 && !hasSeen && !isExitDiscountApplied) {
+        localStorage.setItem('elevez_checkout_exit_seen', 'true');
+        setIsCheckoutExitOpen(true);
+      }
+    };
+
+    document.addEventListener('mouseleave', handleMouseLeave);
+    return () => document.removeEventListener('mouseleave', handleMouseLeave);
+  }, [isExitDiscountApplied]);
+
+  // Mobile Back Button exit intent / intercept
+  useEffect(() => {
+    const hasSeen = localStorage.getItem('elevez_checkout_exit_seen') === 'true';
+    if (hasSeen || isExitDiscountApplied) return;
+
+    window.history.pushState({ checkoutExit: true }, '');
+
+    const handlePopState = (e: PopStateEvent) => {
+      if (!localStorage.getItem('elevez_checkout_exit_seen') && !isExitDiscountApplied) {
+        localStorage.setItem('elevez_checkout_exit_seen', 'true');
+        setIsCheckoutExitOpen(true);
+        window.history.pushState({ checkoutExit: true }, '');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isExitDiscountApplied]);
   const [formData, setFormData] = useState({
     fullName: auth.currentUser?.displayName || '',
     email: auth.currentUser?.email || '',
@@ -4485,6 +4522,65 @@ const Checkout = () => {
       setLocationCoords(null);
     }
   }, [isAddressModalOpen]);
+
+  // Save abandoned cart details to Firebase Firestore under 'abandoned_carts' collection
+  useEffect(() => {
+    if (items.length === 0) return;
+    if (!formData.email && !formData.phone) return;
+
+    const saveAbandonedCart = async () => {
+      try {
+        const { initializeApp, getApps, getApp } = await import('firebase/app');
+        const { getFirestore, doc, setDoc } = await import('firebase/firestore');
+        const { firebaseConfig } = await import('./firebaseConfig');
+        
+        let app;
+        if (getApps().length > 0) {
+          app = getApp();
+        } else {
+          app = initializeApp(firebaseConfig);
+        }
+        
+        const db = getFirestore(app);
+        const docId = user?.uid || formData.email || formData.phone;
+        if (!docId) return;
+
+        const cartDocRef = doc(db, 'abandoned_carts', docId);
+        
+        await setDoc(cartDocRef, {
+          userId: user?.uid || null,
+          fullName: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+          items: items.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            size: item.size || null,
+            color: item.color || null,
+            image: item.image || ''
+          })),
+          subtotal: cartTotal,
+          totalAmount: totalAmount,
+          lastUpdated: new Date().toISOString(),
+          status: 'abandoned'
+        });
+      } catch (error) {
+        console.error('Error logging abandoned cart:', error);
+      }
+    };
+
+    const debounceTimer = setTimeout(() => {
+      saveAbandonedCart();
+    }, 2500);
+
+    return () => clearTimeout(debounceTimer);
+  }, [formData, items, totalAmount]);
 
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
@@ -4733,9 +4829,9 @@ const Checkout = () => {
   const shippingCost = baseShippingCost + expressFee + codFee;
   
   const effectiveDiscountApplied = discountApplied || !!isExitDiscountApplied;
-  const effectiveDiscountPercentage = discountApplied ? discountPercentage : (isExitDiscountApplied ? 10 : 0);
-  const discountAmount = (cartTotal * effectiveDiscountPercentage) / 100;
-  const totalAmount = cartTotal + shippingCost - discountAmount;
+  const exitDiscountAmount = isExitDiscountApplied ? 15 : 0;
+  const discountAmount = (discountApplied ? (cartTotal * discountPercentage) / 100 : 0) + exitDiscountAmount;
+  const totalAmount = Math.max(0, cartTotal + shippingCost - discountAmount);
 
   // Handle discount code validation
   const handleApplyDiscount = async () => {
@@ -4904,6 +5000,20 @@ const Checkout = () => {
 
         setConfirmedTotal(totalAmount);
         clearCart();
+
+        // Delete abandoned cart document on order success
+        try {
+          const { getFirestore, doc, deleteDoc } = await import('firebase/firestore');
+          const { getApp } = await import('firebase/app');
+          const db = getFirestore(getApp());
+          const docId = user?.uid || formData.email || formData.phone;
+          if (docId) {
+            await deleteDoc(doc(db, 'abandoned_carts', docId));
+          }
+        } catch (err) {
+          console.error('Error removing abandoned cart:', err);
+        }
+
         setOrderPlaced(true);
       } else {
         console.error('Error saving order:', result.error);
@@ -5796,7 +5906,12 @@ const Checkout = () => {
           </button>
         </div>
       )}
-
+      {/* Checkout Exit Intent Popup */}
+      <CheckoutExitPopup 
+        isOpen={isCheckoutExitOpen} 
+        onClose={() => setIsCheckoutExitOpen(false)} 
+        onApplyDiscount={() => setIsExitDiscountApplied(true)} 
+      />
     </div>
   );
 }
@@ -7309,6 +7424,7 @@ function App() {
                   setIsRewardsModalOpen={setIsRewardsModalOpen} 
                 />
               </main>
+              <InstagramFeed />
               <Footer />
 
               {/* Floating Rewards Button & Modal */}

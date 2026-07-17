@@ -1360,6 +1360,9 @@ function renderCurrentView() {
         window.renderGlobalSizesGrid();
       }
       break;
+    case 'abandoned-carts':
+      renderAbandonedCarts();
+      break;
   }
 }
 
@@ -5781,3 +5784,140 @@ window.deleteGlobalSize = async function(index) {
 
   showSyncStatus(`Size "${size}" deleted`, 'success');
 };
+
+// --- ABANDONED CARTS SECTION ---
+let abandonedCarts = [];
+
+window.refreshAbandonedCarts = async () => {
+  try {
+    const db = await initAdminFirestore();
+    if (!db) {
+      console.warn('Firebase DB unavailable for abandoned carts sync');
+      return;
+    }
+    showSyncStatus('🔄 Fetching abandoned carts...', 'success');
+    
+    const { collection, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+    const q = query(collection(db, 'abandoned_carts'), orderBy('lastUpdated', 'desc'));
+    const snapshot = await getDocs(q);
+    
+    abandonedCarts = [];
+    snapshot.forEach(doc => {
+      abandonedCarts.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    // Update badge count
+    const badge = document.getElementById('abandonedCartsBadge');
+    if (badge) {
+      badge.textContent = abandonedCarts.length;
+    }
+    
+    renderAbandonedCarts();
+    showSyncStatus(`✅ Synced ${abandonedCarts.length} abandoned carts`, 'success');
+  } catch (error) {
+    console.error('Error syncing abandoned carts:', error);
+    showSyncStatus('⚠️ Failed to sync abandoned carts', 'error');
+  }
+};
+
+function renderAbandonedCarts() {
+  const container = document.getElementById('abandonedCartsContainer');
+  if (!container) return;
+  
+  if (abandonedCarts.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">⚠️</div>
+        <h3>No abandoned carts</h3>
+        <p>Abandoned checkouts from your website will appear here automatically</p>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = '';
+  abandonedCarts.forEach(cart => {
+    let lastUpdated = 'N/A';
+    try {
+      lastUpdated = new Date(cart.lastUpdated).toLocaleString();
+    } catch(e){}
+    
+    html += `
+      <div style="background: var(--card-bg); border: 1px solid #ffaa00; border-left: 6px solid #ffaa00; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="margin: 0; color: #ffaa00; font-size: 16px;">⚠️ Abandoned Cart Checkout</h3>
+            <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 12px;">Last Updated: ${lastUpdated}</p>
+          </div>
+          <span style="background: #ffaa00; color: #000; padding: 5px 12px; border-radius: 4px; font-weight: 800; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;">ABANDONED</span>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05);">
+          <h4 style="margin: 0 0 10px 0; color: #ffaa00; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">👤 Contact & Details</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 13px;">
+            <p style="margin: 0;"><strong>Name:</strong> ${cart.fullName || 'N/A'}</p>
+            <p style="margin: 0;"><strong>Email:</strong> ${cart.email || 'N/A'}</p>
+            <p style="margin: 0;"><strong>Phone:</strong> <span style="color: #ffaa00; font-weight: 800;">${cart.phone || 'N/A'}</span></p>
+            <p style="margin: 0; grid-column: 1 / -1;"><strong>Address:</strong> ${cart.address || 'N/A'}, ${cart.city || ''}, ${cart.state || ''} ${cart.pincode || ''}</p>
+          </div>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05);">
+          <h4 style="margin: 0 0 12px 0; color: #ffaa00; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">🛍️ Cart Content (${cart.items?.length || 0} items)</h4>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            ${cart.items?.map(item => `
+              <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; display: flex; gap: 15px; align-items: center;">
+                <div style="flex-shrink: 0; width: 50px; height: 60px; border: 1px solid rgba(255,170,0,0.1); border-radius: 4px; overflow: hidden;">
+                  <img src="${item.image || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='120' style='background:%23111;'></svg>"}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="flex: 1; font-size: 13px;">
+                  <p style="margin: 0; font-weight: bold; color: #fff;">${item.name}</p>
+                  <p style="margin: 3px 0 0 0; font-size: 11px; color: var(--text-muted);">
+                    ${item.size ? `Size: ${item.size}` : ''} ${item.color ? `• Color: ${item.color}` : ''} • Qty: ${item.quantity}
+                  </p>
+                </div>
+                <div style="text-align: right; font-size: 13px; font-weight: bold; color: #ffaa00;">
+                  ₹${((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                </div>
+              </div>
+            `).join('') || '<p style="color: var(--text-muted); font-size: 12px;">No items</p>'}
+          </div>
+        </div>
+        
+        <div style="background: rgba(255,170,0,0.06); padding: 15px; border-radius: 6px; border: 1px solid rgba(255,170,0,0.2); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+          <p style="margin: 0; font-size: 16px; font-weight: 800; color: #ffaa00;">Cart Value: ₹${(cart.totalAmount || 0).toFixed(2)}</p>
+          <div style="display: flex; gap: 10px;">
+            ${cart.phone ? `<a href="tel:${cart.phone}" style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; background: #ffaa00; color: #000; text-decoration: none; border-radius: 4px; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.9" onmouseout="this.style.opacity=1">📞 Call Customer</a>` : ''}
+            ${cart.email ? `<a href="mailto:${cart.email}?subject=Your%20Elevez%20Cart&body=Hi%20${encodeURIComponent(cart.fullName || '')},%20we%20noticed%20you%20left%20some%20items%20in%20your%20checkout%20cart.%20Complete%20your%20purchase%20today!" style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; background: transparent; color: #ffaa00; border: 2px solid #ffaa00; text-decoration: none; border-radius: 4px; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; transition: background 0.2s, color 0.2s;" onmouseover="this.style.background='#ffaa00'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='#ffaa00';">✉️ Email Followup</a>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+// Bind search input for abandoned carts
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const searchInput = document.getElementById('abandonedCartSearch');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        document.querySelectorAll('#abandonedCartsContainer > div').forEach(card => {
+          const text = card.textContent.toLowerCase();
+          card.style.display = text.includes(query) ? 'block' : 'none';
+        });
+      });
+    }
+  }, 1000);
+});
+
+// Run initial check for abandoned carts badge
+setTimeout(() => {
+  refreshAbandonedCarts();
+}, 2000);

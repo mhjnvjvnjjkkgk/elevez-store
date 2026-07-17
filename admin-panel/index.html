@@ -36,6 +36,11 @@
           <span class="nav-text">Orders</span>
           <span class="nav-badge" id="ordersBadge">0</span>
         </button>
+        <button class="nav-item" data-view="abandoned-carts">
+          <span class="nav-icon">⚠️</span>
+          <span class="nav-text">Abandoned Carts</span>
+          <span class="nav-badge" id="abandonedCartsBadge" style="background: #ffaa00; color: #000;">0</span>
+        </button>
         <button class="nav-item" data-view="collections">
           <span class="nav-icon">🗂️</span>
           <span class="nav-text">Collections</span>
@@ -141,6 +146,20 @@
         </div>
         <div class="orders-container" id="ordersContainer">
           <p style="color: #888; padding: 20px;">Loading orders...</p>
+        </div>
+      </div>
+
+      <!-- Abandoned Carts View -->
+      <div class="view" id="abandoned-carts-view">
+        <div class="view-header">
+          <h2>Abandoned Carts</h2>
+          <div class="header-actions">
+            <input type="text" class="search-input" id="abandonedCartSearch" placeholder="🔍 Search contact details...">
+            <button class="btn btn-secondary" onclick="refreshAbandonedCarts()">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="orders-container" id="abandonedCartsContainer">
+          <p style="color: #888; padding: 20px;">Loading abandoned carts...</p>
         </div>
       </div>
 

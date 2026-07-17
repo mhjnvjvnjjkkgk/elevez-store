@@ -24,6 +24,22 @@ export class CheckoutDiscountService {
 
   async validateCode(code: string, userId?: string, subtotal: number = 0): Promise<DiscountValidation> {
     try {
+      // Instagram Follower Promo Interceptor
+      if (code.toUpperCase() === 'INSTAFOLLOW15') {
+        return {
+          valid: true,
+          discount: {
+            id: 'insta-follow-15',
+            source: 'admin',
+            code: 'INSTAFOLLOW15',
+            name: 'Instagram Follow Promo',
+            type: 'fixed',
+            value: 15,
+            active: true
+          }
+        };
+      }
+
       // 1. Check General Discounts (Admin Panel)
       const discountsRef = collection(db, 'discounts');
       const q = query(discountsRef, where('code', '==', code));
@@ -140,6 +156,10 @@ export class CheckoutDiscountService {
       if (!validation.valid || !validation.discount) return false;
 
       const discount = validation.discount;
+
+      if (discount.id === 'insta-follow-15') {
+        return true;
+      }
 
       if (discount.source === 'admin') {
         const discountRef = doc(db, 'discounts', discount.id);
