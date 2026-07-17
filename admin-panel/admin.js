@@ -4121,21 +4121,28 @@ function renderOrders() {
           <p style="margin: 0; font-size: 18px; font-weight: 700; color: var(--primary);">Total: ₹${(order.totalAmount || 0).toFixed(2)}</p>
         </div>
         
-        ${statusClass === 'pending' || statusClass === 'processing' ? `
-          <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px; border: 1px solid rgba(0,255,136,0.2);">
-            <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 14px;">📦 Ship Order</h4>
-            <div style="display: flex; gap: 10px; align-items: center;">
-              <input type="text" id="tracking-${order.id}" placeholder="Enter tracking link (e.g., https://tracking.com/12345)" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid rgba(0,255,136,0.3); background: rgba(0,0,0,0.5); color: #fff; font-size: 14px;">
-              <button onclick="shipOrder('${order.id}')" style="padding: 10px 20px; background: var(--primary); color: #000; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; white-space: nowrap;">🚚 Ship Order</button>
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px; border: 1px solid rgba(0,255,136,0.2);">
+          <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 14px;">⚙️ Manage Order Status</h4>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <label style="color: #fff; font-size: 14px;"><strong>Status:</strong></label>
+              <select id="status-select-${order.id}" onchange="handleStatusChange('${order.id}')" style="padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(0,255,136,0.3); background: rgba(0,0,0,0.5); color: #fff; font-size: 14px; font-weight: bold;">
+                <option value="pending" ${statusClass === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                <option value="processing" ${statusClass === 'processing' ? 'selected' : ''}>⚙️ Processing</option>
+                <option value="shipped" ${statusClass === 'shipped' ? 'selected' : ''}>🚚 In Shipment (Shipped)</option>
+                <option value="delivered" ${statusClass === 'delivered' ? 'selected' : ''}>✅ Delivered</option>
+                <option value="cancelled" ${statusClass === 'cancelled' ? 'selected' : ''}>❌ Cancelled</option>
+              </select>
             </div>
+            
+            <div id="tracking-input-container-${order.id}" style="display: ${statusClass === 'shipped' ? 'block' : 'none'}; margin-top: 10px;">
+              <label style="display: block; color: #fff; font-size: 12px; margin-bottom: 5px;"><strong>Tracking URL / Link:</strong></label>
+              <input type="text" id="tracking-input-${order.id}" value="${order.trackingLink || ''}" placeholder="e.g., https://shiprocket.co/tracking/12345" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(0,255,136,0.3); background: rgba(0,0,0,0.5); color: #fff; font-size: 14px; box-sizing: border-box;">
+            </div>
+            
+            <button onclick="saveAdminOrderStatus('${order.id}')" style="padding: 10px 20px; background: var(--primary); color: #000; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 5px; width: fit-content;">💾 Save Status & Details</button>
           </div>
-        ` : statusClass === 'shipped' && order.trackingLink ? `
-          <div style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 6px; border: 1px solid rgba(0,255,136,0.3);">
-            <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 14px;">📦 Tracking Information</h4>
-            <p style="margin: 0 0 5px 0; font-size: 14px;">Tracking Link: <a href="${order.trackingLink}" target="_blank" style="color: var(--primary); text-decoration: underline;">${order.trackingLink}</a></p>
-            <button onclick="markDelivered('${order.id}')" style="padding: 10px 20px; background: var(--primary); color: #000; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 10px;">✅ Mark as Delivered</button>
-          </div>
-        ` : ''}
+        </div>
       </div>
     `;
   });
@@ -4324,6 +4331,93 @@ window.markDelivered = async (orderId) => {
 
   } catch (error) {
     console.error('Error marking delivered:', error);
+    showSyncStatus('❌ Error updating order', 'error');
+    alert(`❌ Error: ${error.message}`);
+  }
+};
+
+window.handleStatusChange = (orderId) => {
+  const select = document.getElementById(`status-select-${orderId}`);
+  const container = document.getElementById(`tracking-input-container-${orderId}`);
+  if (select && container) {
+    container.style.display = select.value === 'shipped' ? 'block' : 'none';
+  }
+};
+
+window.saveAdminOrderStatus = async (orderId) => {
+  const select = document.getElementById(`status-select-${orderId}`);
+  const trackingInput = document.getElementById(`tracking-input-${orderId}`);
+  if (!select) return;
+
+  const newStatus = select.value;
+  let trackingLink = '';
+
+  if (newStatus === 'shipped') {
+    trackingLink = trackingInput?.value?.trim() || '';
+    if (!trackingLink) {
+      alert('⚠️ Please enter a tracking link for shipment!');
+      return;
+    }
+    try {
+      if (!trackingLink.startsWith('http://') && !trackingLink.startsWith('https://')) {
+        trackingLink = 'https://' + trackingLink;
+      }
+      new URL(trackingLink);
+    } catch (e) {
+      alert('⚠️ Please enter a valid URL (e.g., https://example.com/track)');
+      return;
+    }
+  }
+
+  try {
+    showSyncStatus('🔄 Updating order in Firebase...', 'success');
+
+    const order = state.orders.find(o => o.id === orderId || o.orderId === orderId);
+    if (!order) throw new Error('Order not found');
+
+    const firebaseDocId = order.id;
+
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+    const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+
+    const app = initializeApp({
+      apiKey: "AIzaSyCCrE4ikRxLf2fF6ujdhwOcKGfuGRnMBMw",
+      authDomain: "elevez-ed97f.firebaseapp.com",
+      projectId: "elevez-ed97f",
+      storageBucket: "elevez-ed97f.firebasestorage.app",
+      messagingSenderId: "440636781018",
+      appId: "1:440636781018:web:24d9b6d31d5aee537850e3"
+    }, 'update-order-status-' + Date.now());
+
+    const db = getFirestore(app);
+    const orderRef = doc(db, 'orders', firebaseDocId);
+
+    const updateData = {
+      status: newStatus,
+      lastUpdated: new Date().toISOString()
+    };
+
+    if (newStatus === 'shipped') {
+      updateData.trackingLink = trackingLink;
+      updateData.shippedAt = new Date().toISOString();
+    } else if (newStatus === 'delivered') {
+      updateData.deliveredAt = new Date().toISOString();
+    }
+
+    await updateDoc(orderRef, updateData);
+
+    // Update local state
+    order.status = newStatus;
+    if (newStatus === 'shipped') {
+      order.trackingLink = trackingLink;
+    }
+
+    saveData();
+    renderOrders();
+    showSyncStatus('✅ Order status updated!', 'success');
+    alert(`✅ Order status updated successfully to ${newStatus}!`);
+  } catch (error) {
+    console.error('Error saving order status:', error);
     showSyncStatus('❌ Error updating order', 'error');
     alert(`❌ Error: ${error.message}`);
   }

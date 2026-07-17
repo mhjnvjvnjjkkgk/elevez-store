@@ -725,6 +725,31 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
           />
         </button>
 
+        {/* Share Button */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const shareUrl = `${window.location.origin}/#/product/${product.id}`;
+            const shareText = `Check out ${product.name} on Elevez!`;
+            if (navigator.share) {
+              navigator.share({
+                title: product.name,
+                text: shareText,
+                url: shareUrl,
+              }).catch(err => console.error(err));
+            } else {
+              navigator.clipboard.writeText(shareUrl)
+                .then(() => alert('Link copied to clipboard!'))
+                .catch(err => console.error(err));
+            }
+          }}
+          className="absolute top-7 sm:top-12 right-1 sm:right-2 z-30 w-5 h-5 sm:w-8 sm:h-8 bg-white border-[1px] sm:border-[2px] border-black flex items-center justify-center hover:bg-[#00ff88] transition-all shadow-[1px_1px_0px_0px_#000] sm:shadow-[2px_2px_0px_0px_#000]"
+          title="Share Product"
+        >
+          <Share2 className="w-3 h-3 sm:w-5 sm:h-5 text-black" />
+        </button>
+
         {/* Slanted sticker tag clipped inside bottom-left corner */}
         <div className="absolute -bottom-1 sm:-bottom-1 -left-4 sm:-left-8 w-14 sm:w-24 bg-[#00ff88] text-black text-[5px] sm:text-[7px] font-black text-center py-[1px] sm:py-[2px] border-[1px] sm:border-[2px] border-black rotate-[25deg] z-20 select-none pointer-events-none shadow-[1px_1px_0px_0px_#000] tracking-widest uppercase">
           {product.price > 500 ? "PREMIUM" : "LIMITED"}
@@ -5782,22 +5807,24 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
     title: 'My Account - Loyalty Rewards',
     description: 'Manage your profile, view orders, check your syndicate loyalty points, and redeem custom discount codes.',
   });
+
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'dashboard';
+  const activeTab = searchParams.get('tab') || 'orders';
 
   // Normalize tab
-  const normalizedTab = ['dashboard', 'orders', 'wishlist', 'rewards', 'earn-redeem', 'arcade'].includes(activeTab) ? activeTab : 'dashboard';
-  const displayTab = normalizedTab === 'rewards' ? 'earn-redeem' : normalizedTab;
+  const normalizedTab = ['orders', 'wishlist'].includes(activeTab) ? activeTab : 'orders';
+  const displayTab = normalizedTab;
 
-  const [user, setUser] = useState<any>(() => auth.currentUser); // sync init — avoids blank screen for logged-in users
+  const [user, setUser] = useState<any>(() => auth.currentUser);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [wishlistProducts, setWishlistProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(!!auth.currentUser); // start loading only if user is already signed in
+  const [loading, setLoading] = useState(!!auth.currentUser);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const { addToCart } = useCart();
+
   const {
     profile: loyaltyProfile,
     tierInfo: loyaltyTierInfo,
@@ -6002,8 +6029,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
   }
 
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: User },
-    { id: 'orders', label: 'Orders', icon: Package },
+    { id: 'orders', label: 'Order History', icon: Package },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
   ];
 
@@ -6034,9 +6060,9 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
             </button>
           </div>
 
-          {/* Sticky Tab Grid — no scroll, always visible */}
+          {/* Sticky Tab Grid — 2 columns, huge buttons */}
           <div className="sticky top-0 z-40 bg-white border-b-[3px] border-black mb-8 -mx-4 sm:-mx-6 md:-mx-10 px-4 sm:px-6 md:px-10 pt-3 pb-3 shadow-sm">
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-4">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = displayTab === tab.id;
@@ -6044,14 +6070,14 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                   <button
                     key={tab.id}
                     onClick={() => setSearchParams({ tab: tab.id })}
-                    className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 py-2 border-[2px] border-black font-black uppercase text-[8px] sm:text-[10px] tracking-wider transition-all cursor-pointer ${
+                    className={`flex items-center justify-center gap-3 px-4 py-4 border-[3px] border-black font-black uppercase text-xs sm:text-base tracking-widest transition-all cursor-pointer shadow-[3px_3px_0px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none ${
                       isActive
-                        ? 'bg-[#00ff88] text-black shadow-[2px_2px_0px_0px_#000]'
-                        : 'bg-white text-black hover:bg-zinc-50 shadow-[2px_2px_0px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none'
+                        ? 'bg-[#00ff88] text-black'
+                        : 'bg-white text-black hover:bg-zinc-50'
                     }`}
                   >
-                    <Icon size={12} className="sm:w-[14px] sm:h-[14px] shrink-0" />
-                    <span className="leading-tight text-center">{tab.label}</span>
+                    <Icon size={18} className="sm:w-[20px] sm:h-[20px] shrink-0" />
+                    <span>{tab.label}</span>
                   </button>
                 );
               })}
@@ -6060,97 +6086,6 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
 
           {/* Tab Contents */}
           <div className="min-h-[400px]">
-            {displayTab === 'dashboard' && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12">
-                {/* Left side: Profile details */}
-                <div className="lg:col-span-1 space-y-8">
-                  <div className="bg-white border-[3px] sm:border-[4px] border-black p-6 sm:p-10 shadow-[6px_6px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000]">
-                    <div className="relative inline-block mb-6 sm:mb-10">
-                      {user.photoURL ? (
-                        <img 
-                          src={user.photoURL} 
-                          alt={user.displayName} 
-                          referrerPolicy="no-referrer"
-                          className="w-24 h-24 sm:w-32 sm:h-32 object-cover border-[3px] sm:border-[4px] border-black shadow-[4px_4px_0px_0px_#00ff88] sm:shadow-[6px_6px_0px_0px_#00ff88]" 
-                        />
-                      ) : (
-                        <div className="w-24 h-24 sm:w-32 sm:h-32 bg-black text-[#00ff88] border-[3px] sm:border-[4px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#00ff88] sm:shadow-[6px_6px_0px_0px_#00ff88]">
-                          <User size={48} className="sm:w-16 sm:h-16" />
-                        </div>
-                      )}
-                      <div className="absolute -bottom-2 sm:-bottom-4 -right-2 sm:-right-4 bg-black text-white px-2 sm:px-3 py-0.5 sm:py-1.5 text-[8px] sm:text-[10px] font-black uppercase border-[2px] border-black">Verified</div>
-                    </div>
-                    <h2 className="text-xl sm:text-3xl font-black uppercase text-black mb-2">{user.displayName}</h2>
-                    <p className="text-xs sm:text-base font-bold text-black opacity-50 uppercase tracking-tighter mb-6 sm:mb-8 break-all">{user.email}</p>
-                    <div className="space-y-4 pt-6 border-t-[2px] sm:border-t-[3px] border-black">
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] sm:text-xs font-black uppercase opacity-40">Orders</span>
-                        <span className="text-sm sm:text-lg font-black uppercase">{orders.length}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] sm:text-xs font-black uppercase opacity-40">Wishlist</span>
-                        <span className="text-sm sm:text-lg font-black uppercase">{wishlistProducts.length}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right side: Loyalty Status Summary */}
-                <div className="lg:col-span-2 space-y-8">
-                  <div className="bg-[#00ff88] border-[3px] sm:border-[4px] border-black p-6 sm:p-10 shadow-[6px_6px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] h-full flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-2xl sm:text-4xl font-black uppercase text-black leading-none font-syne">Loyalty Status</h3>
-                        <span className="text-4xl bg-black p-3 text-white border-[2.5px] border-black shadow-[4px_4px_0px_0px_#fff] shrink-0">
-                          {loyaltyTierInfo ? loyaltyTierInfo.icon : '⭐'}
-                        </span>
-                      </div>
-                      
-                      <div className="bg-white border-[3px] border-black p-6 mb-6 text-left relative overflow-hidden">
-                        <p className="text-sm font-black uppercase text-black opacity-50 mb-2">Available Balance</p>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-5xl sm:text-7xl font-black text-black font-syne leading-none">
-                            {loyaltyProfile ? (loyaltyProfile.points ?? 0).toLocaleString() : '0'}
-                          </span>
-                          <span className="text-base sm:text-lg font-black text-black uppercase">PTS</span>
-                        </div>
-                        {loyaltyTierInfo && (
-                          <div className="mt-4 pt-4 border-t-2 border-black/10">
-                            <span className="text-xs sm:text-sm font-black uppercase text-black">Member Tier: {loyaltyTierInfo.name}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {loyaltyNextTier && (
-                        <div className="mt-6">
-                          <div className="flex justify-between items-center text-xs sm:text-sm font-black uppercase text-black mb-2">
-                            <span>Progress to {loyaltyNextTier.name}</span>
-                            <span>{loyaltyPointsToNextTier} PTS TO GO</span>
-                          </div>
-                          <div className="h-8 border-[3px] border-black bg-white relative overflow-hidden shadow-[2px_2px_0px_0px_#000]">
-                            <motion.div 
-                              initial={{ width: 0 }}
-                              animate={{ width: `${loyaltyTierProgress}%` }}
-                              className="absolute inset-0 bg-[#ff007f] border-r-[3px] border-black"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center mix-blend-difference">
-                              <span className="text-[10px] font-black uppercase text-white tracking-widest">{loyaltyTierProgress.toFixed(0)}% COMPLETE</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <button 
-                      onClick={() => setSearchParams({ tab: 'earn-redeem' })}
-                      className="mt-8 block w-full bg-black text-[#00ff88] py-4 text-center border-[2px] sm:border-[3px] border-black font-black uppercase text-xs sm:text-sm tracking-wider shadow-[4px_4px_0px_0px_#fff] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer"
-                    >
-                      Earn & Redeem Guide
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {displayTab === 'orders' && (
               <section>
@@ -6319,6 +6254,22 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                               </div>
                             )}
 
+                            {/* Tracking Link (if available) */}
+                            {order.trackingLink && (
+                              <div className="px-4 pb-3">
+                                <a
+                                  href={order.trackingLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="flex items-center justify-center gap-2 bg-[#00ff88] text-black py-2 border-[1.5px] border-black font-black uppercase text-[10px] tracking-wider shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all cursor-pointer w-full text-center"
+                                >
+                                  <Truck size={12} />
+                                  Track Shipment
+                                </a>
+                              </div>
+                            )}
+
                             {/* Payment + CTA */}
                             <div className="flex items-center justify-between px-4 py-3">
                               <div className="flex items-center gap-1.5">
@@ -6329,7 +6280,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                                 onClick={(e) => { e.stopPropagation(); handleCardClick(); }}
                                 className="flex items-center gap-1.5 bg-black text-[#00ff88] px-4 py-1.5 border-[1.5px] border-black font-black uppercase text-[9px] tracking-wider shadow-[2px_2px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all cursor-pointer"
                               >
-                                           <Eye size={10} />
+                                <Eye size={10} />
                                 View Full Details
                               </button>
                             </div>
@@ -6393,7 +6344,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
               </section>
             )}
 
-
+          </div>
         </div>
       </div>
 
@@ -7402,8 +7353,7 @@ function App() {
               {/* Floating Rewards Button & Modal */}
               <RewardsModal isOpen={isRewardsModalOpen} onClose={() => setIsRewardsModalOpen(false)} />
 
-              {/* Loyalty Rules Notification Banner */}
-              <LoyaltyRulesNotificationBanner />
+
 
               {/* Exit Intent Popup */}
               <ExitIntentPopupWithContext />
