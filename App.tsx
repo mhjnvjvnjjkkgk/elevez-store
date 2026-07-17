@@ -4523,64 +4523,6 @@ const Checkout = () => {
     }
   }, [isAddressModalOpen]);
 
-  // Save abandoned cart details to Firebase Firestore under 'abandoned_carts' collection
-  useEffect(() => {
-    if (items.length === 0) return;
-    if (!formData.email && !formData.phone) return;
-
-    const saveAbandonedCart = async () => {
-      try {
-        const { initializeApp, getApps, getApp } = await import('firebase/app');
-        const { getFirestore, doc, setDoc } = await import('firebase/firestore');
-        const { firebaseConfig } = await import('./firebaseConfig');
-        
-        let app;
-        if (getApps().length > 0) {
-          app = getApp();
-        } else {
-          app = initializeApp(firebaseConfig);
-        }
-        
-        const db = getFirestore(app);
-        const docId = user?.uid || formData.email || formData.phone;
-        if (!docId) return;
-
-        const cartDocRef = doc(db, 'abandoned_carts', docId);
-        
-        await setDoc(cartDocRef, {
-          userId: user?.uid || null,
-          fullName: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          pincode: formData.pincode,
-          items: items.map(item => ({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            size: item.size || null,
-            color: item.color || null,
-            image: item.image || ''
-          })),
-          subtotal: cartTotal,
-          totalAmount: totalAmount,
-          lastUpdated: new Date().toISOString(),
-          status: 'abandoned'
-        });
-      } catch (error) {
-        console.error('Error logging abandoned cart:', error);
-      }
-    };
-
-    const debounceTimer = setTimeout(() => {
-      saveAbandonedCart();
-    }, 2500);
-
-    return () => clearTimeout(debounceTimer);
-  }, [formData, items, totalAmount]);
 
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
@@ -4832,6 +4774,65 @@ const Checkout = () => {
   const exitDiscountAmount = isExitDiscountApplied ? 15 : 0;
   const discountAmount = (discountApplied ? (cartTotal * discountPercentage) / 100 : 0) + exitDiscountAmount;
   const totalAmount = Math.max(0, cartTotal + shippingCost - discountAmount);
+
+  // Save abandoned cart details to Firebase Firestore under 'abandoned_carts' collection
+  useEffect(() => {
+    if (items.length === 0) return;
+    if (!formData.email && !formData.phone) return;
+
+    const saveAbandonedCart = async () => {
+      try {
+        const { initializeApp, getApps, getApp } = await import('firebase/app');
+        const { getFirestore, doc, setDoc } = await import('firebase/firestore');
+        const { firebaseConfig } = await import('./firebaseConfig');
+        
+        let app;
+        if (getApps().length > 0) {
+          app = getApp();
+        } else {
+          app = initializeApp(firebaseConfig);
+        }
+        
+        const db = getFirestore(app);
+        const docId = user?.uid || formData.email || formData.phone;
+        if (!docId) return;
+
+        const cartDocRef = doc(db, 'abandoned_carts', docId);
+        
+        await setDoc(cartDocRef, {
+          userId: user?.uid || null,
+          fullName: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+          items: items.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            size: item.size || null,
+            color: item.color || null,
+            image: item.image || ''
+          })),
+          subtotal: cartTotal,
+          totalAmount: totalAmount,
+          lastUpdated: new Date().toISOString(),
+          status: 'abandoned'
+        });
+      } catch (error) {
+        console.error('Error logging abandoned cart:', error);
+      }
+    };
+
+    const debounceTimer = setTimeout(() => {
+      saveAbandonedCart();
+    }, 2500);
+
+    return () => clearTimeout(debounceTimer);
+  }, [formData, items, totalAmount]);
 
   // Handle discount code validation
   const handleApplyDiscount = async () => {
