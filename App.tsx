@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, createContext, useContext, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, useParams, useSearchParams, useBlocker } from 'react-router-dom';
 import { useSEO } from './hooks/useSEO';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, useInView } from 'framer-motion';
 import { Terminal, Package, Shield, Truck, Zap, Star, X, ShoppingBag, ShoppingCart, Menu, Camera, Sparkles, Filter, ChevronDown, ChevronUp, Share2, Heart, Maximize2, Gift, User, Mail, MapPin, Instagram, Twitter, ArrowRight, ArrowLeft, Award, ShieldCheck, Timer, Play, SlidersHorizontal, Search, Check, Minus, Plus, RefreshCw, CreditCard, Banknote, LogOut, Eye, Trash2, ChevronRight, Lock, Home as HomeIcon, Compass, Volume2, VolumeX } from 'lucide-react';
@@ -4468,24 +4468,6 @@ const Checkout = () => {
     return () => document.removeEventListener('mouseleave', handleMouseLeave);
   }, [isExitDiscountApplied]);
 
-  // Mobile Back Button exit intent / intercept
-  useEffect(() => {
-    const hasSeen = localStorage.getItem('elevez_checkout_exit_seen') === 'true';
-    if (hasSeen || isExitDiscountApplied) return;
-
-    window.history.pushState({ checkoutExit: true }, '');
-
-    const handlePopState = (e: PopStateEvent) => {
-      if (!localStorage.getItem('elevez_checkout_exit_seen') && !isExitDiscountApplied) {
-        localStorage.setItem('elevez_checkout_exit_seen', 'true');
-        setIsCheckoutExitOpen(true);
-        window.history.pushState({ checkoutExit: true }, '');
-      }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [isExitDiscountApplied]);
   const [formData, setFormData] = useState({
     fullName: auth.currentUser?.displayName || '',
     email: auth.currentUser?.email || '',
@@ -4515,6 +4497,22 @@ const Checkout = () => {
   const [detectingLocation, setDetectingLocation] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [locationCoords, setLocationCoords] = useState<{ lat: number; lon: number } | null>(null);
+
+  // React Router blocker to block browser back navigation and swipe gestures
+  const blocker = useBlocker(
+    ({ nextLocation }) => {
+      const hasSeen = localStorage.getItem('elevez_checkout_exit_seen') === 'true';
+      // Block if the user hasn't seen the popup, has not claimed the discount, and order is not yet placed
+      return !hasSeen && !isExitDiscountApplied && !orderPlaced;
+    }
+  );
+
+  useEffect(() => {
+    if (blocker.state === 'blocked') {
+      localStorage.setItem('elevez_checkout_exit_seen', 'true');
+      setIsCheckoutExitOpen(true);
+    }
+  }, [blocker.state]);
 
   useEffect(() => {
     if (!isAddressModalOpen) {
@@ -5910,8 +5908,19 @@ const Checkout = () => {
       {/* Checkout Exit Intent Popup */}
       <CheckoutExitPopup 
         isOpen={isCheckoutExitOpen} 
-        onClose={() => setIsCheckoutExitOpen(false)} 
-        onApplyDiscount={() => setIsExitDiscountApplied(true)} 
+        onClose={() => {
+          setIsCheckoutExitOpen(false);
+          if (blocker.state === 'blocked') {
+            blocker.proceed();
+          }
+        }} 
+        onApplyDiscount={() => {
+          setIsExitDiscountApplied(true);
+          setIsCheckoutExitOpen(false);
+          if (blocker.state === 'blocked') {
+            blocker.reset();
+          }
+        }} 
       />
     </div>
   );
