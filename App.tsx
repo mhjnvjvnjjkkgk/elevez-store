@@ -6137,46 +6137,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                         const total = order.totalAmount ?? order.total ?? 0;
 
                         const handleCardClick = () => {
-                          const modalOrder = {
-                            id: order.id,
-                            orderNumber: order.id.slice(-8).toUpperCase(),
-                            date: order.createdAt?.toDate?.().toISOString() || order.orderDate || new Date().toISOString(),
-                            status: (order.status || 'processing') as any,
-                            items: (order.items || []).map((item: any) => ({
-                              id: item.id || item.name,
-                              name: item.name,
-                              image: item.image || PRODUCTS.find(p => String(p.id) === String(item.id))?.image || '',
-                              price: item.price,
-                              quantity: item.quantity,
-                              size: item.size,
-                              color: item.color
-                            })),
-                            subtotal: total,
-                            shipping: order.shippingCost || 0,
-                            tax: 0,
-                            discount: order.discount || 0,
-                            total: total,
-                            customer: {
-                              name: order.shippingAddress?.name || order.customerName || order.customer?.name || user.displayName || 'N/A',
-                              email: order.customerEmail || order.customer?.email || user.email || 'N/A',
-                              phone: order.shippingAddress?.phone || order.phone || order.customer?.phone || 'N/A'
-                            },
-                            shippingAddress: {
-                              street: order.shippingAddress?.street || order.shippingAddress?.line1 || order.address || 'N/A',
-                              city: order.shippingAddress?.city || order.city || 'N/A',
-                              state: order.shippingAddress?.state || order.state || 'N/A',
-                              zip: order.shippingAddress?.zip || order.shippingAddress?.pincode || order.shippingAddress?.postal_code || order.pincode || 'N/A',
-                              country: order.shippingAddress?.country || order.country || 'India'
-                            },
-                            payment: {
-                              method: order.paymentMethod || 'UPI',
-                              status: 'paid'
-                            },
-                            trackingLink: order.trackingLink || null,
-                            timeline: []
-                          };
-                          setSelectedOrder(modalOrder);
-                          setShowOrderModal(true);
+                          navigate(`/order/${order.id}`);
                         };
 
                         const addressParts = [
@@ -6192,7 +6153,7 @@ const Account: React.FC<{ setCursorVariant: (variant: CursorVariant) => void }> 
                             <div className="flex items-center justify-between px-4 py-2.5 bg-black">
                               <div className="flex items-center gap-2">
                                 <Package size={12} className="text-[#00ff88]" />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-[#00ff88]">#{order.id.slice(-8).toUpperCase()}</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-[#00ff88]">Order Details</span>
                               </div>
                               <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest ${statusColor}`}>
                                 {order.status || 'Pending'}
