@@ -4446,8 +4446,9 @@ const MapPreview = ({
 };
 
 const Checkout = () => {
+  console.log('[Checkout] component mounting');
   const navigate = useNavigate();
-  const { items, cartTotal, clearCart, isExitDiscountApplied, setIsExitDiscountApplied } = useCart();
+  const { items, addToCart, removeFromCart, cartTotal, clearCart, isExitDiscountApplied, setIsExitDiscountApplied } = useCart();
   const [user, setUser] = useState<any>(() => auth.currentUser); // sync init — avoids sign-in flash
   const [authLoading, setAuthLoading] = useState(!auth.currentUser); // false immediately if already signed in
   const shouldPlaceOrderAfterLogin = useRef(false);
@@ -4781,16 +4782,10 @@ const Checkout = () => {
 
     const saveAbandonedCart = async () => {
       try {
-        const { initializeApp, getApps, getApp } = await import('firebase/app');
+        const { getApp } = await import('firebase/app');
         const { getFirestore, doc, setDoc } = await import('firebase/firestore');
-        const { firebaseConfig } = await import('./firebaseConfig');
         
-        let app;
-        if (getApps().length > 0) {
-          app = getApp();
-        } else {
-          app = initializeApp(firebaseConfig);
-        }
+        const app = getApp();
         
         const db = getFirestore(app);
         const docId = user?.uid || formData.email || formData.phone;
@@ -5326,7 +5321,7 @@ const Checkout = () => {
                   </div>
                   {effectiveDiscountApplied && (
                     <div className="flex justify-between text-xs font-black uppercase text-green-600">
-                      <span>Discount Applied ({effectiveDiscountPercentage}%){!discountApplied && ' [Exit-Intent]'}</span>
+                      <span>Discount Applied ({discountApplied ? `${discountPercentage}%` : '₹15 Off'}){!discountApplied && ' [Exit-Intent]'}</span>
                       <span>-₹{discountAmount.toFixed(0)}</span>
                     </div>
                   )}
@@ -7248,7 +7243,7 @@ const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => vo
         <Route path="/" element={<PageTransition><Home setCursorVariant={setCursorVariant} /></PageTransition>} />
         <Route path="/shop/:category" element={<PageTransition><Shop setCursorVariant={setCursorVariant} /></PageTransition>} />
         <Route path="/product/:id" element={<ProductDetail setCursorVariant={setCursorVariant} />} />
-        <Route path="/checkout" element={<PageTransition><Checkout /></PageTransition>} />
+        <Route path="/checkout" element={<PageTransition><ErrorBoundary><Checkout /></ErrorBoundary></PageTransition>} />
         <Route path="/account" element={<PageTransition><ErrorBoundary><Account setCursorVariant={setCursorVariant} /></ErrorBoundary></PageTransition>} />
         <Route path="/rewards" element={<PageTransition><ErrorBoundary><RewardsRedirect /></ErrorBoundary></PageTransition>} />
         <Route path="/order/:orderId" element={<PageTransition><OrderDetail /></PageTransition>} />
