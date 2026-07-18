@@ -1384,7 +1384,7 @@ const CartSidebar = () => {
                 <FreeShippingTracker cartTotal={cartTotal} />
 
                 {/* Checkout button */}
-                <CheckoutButton onClick={() => { setIsCartOpen(false); navigate('/checkout'); }} />
+                <CheckoutButton onClick={() => { setIsCartOpen(false); setTimeout(() => { navigate('/checkout'); window.scrollTo(0, 0); }, 280); }} />
               </div>
             )}
           </motion.div>
@@ -7243,7 +7243,7 @@ const RewardsRedirect = () => {
 const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   const location = useLocation();
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="sync">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Home setCursorVariant={setCursorVariant} /></PageTransition>} />
         <Route path="/shop/:category" element={<PageTransition><Shop setCursorVariant={setCursorVariant} /></PageTransition>} />
