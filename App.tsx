@@ -4499,11 +4499,12 @@ const Checkout = () => {
   const [locationCoords, setLocationCoords] = useState<{ lat: number; lon: number } | null>(null);
 
   // React Router blocker to block browser back navigation and swipe gestures
+  // Only block when navigating AWAY from /checkout (not when arriving at it)
   const blocker = useBlocker(
-    ({ nextLocation }) => {
+    ({ currentLocation, nextLocation }) => {
       const hasSeen = localStorage.getItem('elevez_checkout_exit_seen') === 'true';
-      // Block if the user hasn't seen the popup, has not claimed the discount, and order is not yet placed
-      return !hasSeen && !isExitDiscountApplied && !orderPlaced;
+      const isLeavingCheckout = currentLocation.pathname === '/checkout' && nextLocation.pathname !== '/checkout';
+      return isLeavingCheckout && !hasSeen && !isExitDiscountApplied && !orderPlaced;
     }
   );
 

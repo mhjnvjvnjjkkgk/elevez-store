@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Flame, ShieldAlert, Sparkles, CheckCircle } from 'lucide-react';
+import { X, Flame, Sparkles, CheckCircle } from 'lucide-react';
 
 interface CheckoutExitPopupProps {
   isOpen: boolean;
@@ -70,71 +70,89 @@ export const CheckoutExitPopup: React.FC<CheckoutExitPopupProps> = ({ isOpen, on
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="checkout-exit-container fixed inset-0 bg-black/80 backdrop-blur-md z-[999999]"
+            className="checkout-exit-container fixed inset-0 bg-black/80 backdrop-blur-md z-[999998]"
           />
 
-          {/* Popup Modal Box */}
+          {/* Popup Modal Box — fully mobile-fitted */}
           <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            initial={{ scale: 0.92, opacity: 0, y: 30 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="checkout-exit-container fixed w-full max-w-md px-4 z-[999999]"
+            exit={{ scale: 0.92, opacity: 0, y: 30 }}
+            transition={{ type: "spring", damping: 28, stiffness: 380 }}
+            className="checkout-exit-container fixed z-[999999]"
             style={{
-              left: '50%',
               top: '50%',
+              left: '50%',
               transform: 'translate(-50%, -50%)',
-              isolation: 'isolate'
+              width: 'min(92vw, 420px)',
+              maxHeight: '90dvh',
+              overflowY: 'auto',
+              isolation: 'isolate',
             }}
           >
-            <div className="bg-white border-[5px] border-black rounded-none p-6 sm:p-8 relative overflow-hidden shadow-[12px_12px_0px_0px_#ff0055]">
-              {/* Top Banner Tag */}
-              <div className="absolute top-0 left-0 right-0 bg-[#ff0055] text-white text-center py-1.5 text-[10px] font-black uppercase tracking-[0.2em] border-b-[3px] border-black select-none pointer-events-none animate-pulse">
+            <div
+              className="bg-white border-[4px] border-black relative overflow-hidden"
+              style={{ boxShadow: '8px 8px 0px 0px #ff0055' }}
+            >
+              {/* Top Banner */}
+              <div className="bg-[#ff0055] text-white text-center py-1.5 text-[9px] font-black uppercase tracking-[0.18em] border-b-[3px] border-black select-none pointer-events-none animate-pulse">
                 ⚡ EXTREMELY URGENT DISCOUNT ⚡
               </div>
 
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="absolute top-8 right-4 p-1 text-black hover:opacity-60 transition-opacity z-20 cursor-pointer"
+                className="absolute top-2 right-2 p-1.5 text-black hover:opacity-60 transition-opacity z-20 cursor-pointer"
                 aria-label="Close"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
 
-              <div className="mt-4 text-center">
+              {/* Content */}
+              <div className="p-5 pt-4 text-center">
                 {!claimed ? (
                   <>
-                    <div className="flex justify-center mb-3">
-                      <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center animate-bounce">
-                        <Flame size={24} />
+                    {/* Flame Icon */}
+                    <div className="flex justify-center mb-2">
+                      <div className="w-11 h-11 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center animate-bounce">
+                        <Flame size={22} />
                       </div>
                     </div>
 
-                    <h2 className="text-xl sm:text-2xl font-black text-black uppercase font-syne tracking-wide leading-tight">
-                      HOLD ON!<br />
+                    {/* Headline */}
+                    <h2 className="text-lg font-black text-black uppercase tracking-wide leading-tight mb-1">
+                      HOLD ON!
+                      <br />
                       <span className="text-[#ff0055]">ESPECIALLY FOR YOU ONLY</span>
                     </h2>
-                    
-                    {/* Urgent Pricing reserved countdown */}
-                    <div className="my-4 bg-zinc-900 border-[2px] border-black py-2.5 px-4 text-center">
-                      <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-0.5">Special Price Reserved For</span>
-                      <span className="text-xl font-bold font-mono text-[#00ff88] tracking-widest">{formatTime(secondsLeft)}</span>
+
+                    {/* Countdown */}
+                    <div className="my-3 bg-zinc-900 border-[2px] border-black py-2 px-3 text-center">
+                      <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest block mb-0.5">
+                        Special Price Reserved For
+                      </span>
+                      <span className="text-2xl font-bold font-mono text-[#00ff88] tracking-widest">
+                        {formatTime(secondsLeft)}
+                      </span>
                     </div>
 
-                    <p className="text-zinc-600 text-xs font-bold uppercase leading-relaxed mb-6">
-                      Complete checkout now to get an extra <span className="text-[#ff0055] font-black underline">₹15 DISCOUNT</span>. 
+                    {/* Body Text */}
+                    <p className="text-zinc-600 text-[11px] font-bold uppercase leading-relaxed mb-4">
+                      Complete checkout now to get an extra{' '}
+                      <span className="text-[#ff0055] font-black underline">₹15 DISCOUNT</span>.
                       <br />
-                      <span className="text-[10px] text-red-500 font-black tracking-tighter mt-1 block">⚠️ ONLY 2 ITEMS LEFT AT THIS PRICE. STOCK WILL BE RELEASED ONCE EXITED!</span>
+                      <span className="text-[10px] text-red-500 font-black tracking-tight mt-1 block">
+                        ⚠️ ONLY 2 ITEMS LEFT AT THIS PRICE. STOCK WILL BE RELEASED ONCE EXITED!
+                      </span>
                     </p>
 
-                    {/* CTA Button */}
+                    {/* CTA */}
                     <button
                       onClick={handleClaim}
-                      className="w-full bg-[#00ff88] text-black font-black text-xs py-3 border-[2.5px] border-black uppercase tracking-widest shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer flex items-center justify-center gap-2"
+                      className="w-full bg-[#00ff88] text-black font-black text-[11px] py-3 border-[2.5px] border-black uppercase tracking-widest shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
-                      <Sparkles size={14} />
-                      Claim ₹15 Off & Purchase
+                      <Sparkles size={13} />
+                      Claim ₹15 Off &amp; Purchase
                     </button>
 
                     <button
@@ -149,8 +167,10 @@ export const CheckoutExitPopup: React.FC<CheckoutExitPopupProps> = ({ isOpen, on
                     <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4">
                       <CheckCircle size={28} />
                     </div>
-                    <h3 className="text-lg font-black uppercase text-black font-syne">₹15 OFF APPLIED!</h3>
-                    <p className="text-xs text-zinc-500 uppercase font-bold mt-1">Completing your secure checkout...</p>
+                    <h3 className="text-lg font-black uppercase text-black">₹15 OFF APPLIED!</h3>
+                    <p className="text-xs text-zinc-500 uppercase font-bold mt-1">
+                      Completing your secure checkout...
+                    </p>
                   </div>
                 )}
               </div>
