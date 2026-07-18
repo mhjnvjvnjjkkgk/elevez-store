@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, createContext, useContext, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, useParams, useSearchParams, useBlocker } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSEO } from './hooks/useSEO';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, useInView } from 'framer-motion';
 import { Terminal, Package, Shield, Truck, Zap, Star, X, ShoppingBag, ShoppingCart, Menu, Camera, Sparkles, Filter, ChevronDown, ChevronUp, Share2, Heart, Maximize2, Gift, User, Mail, MapPin, Instagram, Twitter, ArrowRight, ArrowLeft, Award, ShieldCheck, Timer, Play, SlidersHorizontal, Search, Check, Minus, Plus, RefreshCw, CreditCard, Banknote, LogOut, Eye, Trash2, ChevronRight, Lock, Home as HomeIcon, Compass, Volume2, VolumeX } from 'lucide-react';
@@ -4499,22 +4499,33 @@ const Checkout = () => {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [locationCoords, setLocationCoords] = useState<{ lat: number; lon: number } | null>(null);
 
-  // React Router blocker to block browser back navigation and swipe gestures
-  // Only block when navigating AWAY from /checkout (not when arriving at it)
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) => {
-      const hasSeen = localStorage.getItem('elevez_checkout_exit_seen') === 'true';
-      const isLeavingCheckout = currentLocation.pathname === '/checkout' && nextLocation.pathname !== '/checkout';
-      return isLeavingCheckout && !hasSeen && !isExitDiscountApplied && !orderPlaced;
-    }
-  );
+  // Back-button / swipe-back exit intent via history.pushState + popstate
+  // We push a sentinel entry so the browser fires popstate instead of navigating away.
+  // On popstate we intercept and show the exit popup once.
+  const popstateShownRef = useRef(false);
 
   useEffect(() => {
-    if (blocker.state === 'blocked') {
-      localStorage.setItem('elevez_checkout_exit_seen', 'true');
-      setIsCheckoutExitOpen(true);
-    }
-  }, [blocker.state]);
+    // Push a sentinel state so pressing Back triggers popstate instead of leaving
+    history.pushState({ exitSentinel: true }, '');
+
+    const handlePopstate = () => {
+      const hasSeen = localStorage.getItem('elevez_checkout_exit_seen') === 'true';
+      if (!hasSeen && !isExitDiscountApplied && !orderPlaced && !popstateShownRef.current) {
+        popstateShownRef.current = true;
+        localStorage.setItem('elevez_checkout_exit_seen', 'true');
+        // Re-push so another back press is intercepted if user dismisses
+        history.pushState({ exitSentinel: true }, '');
+        setIsCheckoutExitOpen(true);
+      }
+      // If conditions not met, let the navigation happen naturally
+    };
+
+    window.addEventListener('popstate', handlePopstate);
+    return () => {
+      window.removeEventListener('popstate', handlePopstate);
+    };
+  }, [isExitDiscountApplied, orderPlaced]);
+
 
   useEffect(() => {
     if (!isAddressModalOpen) {
@@ -5902,21 +5913,18 @@ const Checkout = () => {
         </div>
       )}
       {/* Checkout Exit Intent Popup */}
-      <CheckoutExitPopup 
-        isOpen={isCheckoutExitOpen} 
+      <CheckoutExitPopup
+        isOpen={isCheckoutExitOpen}
         onClose={() => {
+          // User said "No thanks" — actually navigate back
           setIsCheckoutExitOpen(false);
-          if (blocker.state === 'blocked') {
-            blocker.proceed();
-          }
-        }} 
+          navigate(-1);
+        }}
         onApplyDiscount={() => {
+          // User claimed discount — stay on page
           setIsExitDiscountApplied(true);
           setIsCheckoutExitOpen(false);
-          if (blocker.state === 'blocked') {
-            blocker.reset();
-          }
-        }} 
+        }}
       />
     </div>
   );
