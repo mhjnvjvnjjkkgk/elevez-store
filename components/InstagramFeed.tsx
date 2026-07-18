@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Instagram, Heart, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
+import { db } from '../firebaseConfig';
 
 export const InstagramFeed: React.FC = () => {
   const fallbackPosts = [
@@ -59,18 +60,7 @@ export const InstagramFeed: React.FC = () => {
   useEffect(() => {
     const fetchInstagramFeed = async () => {
       try {
-        const { initializeApp, getApps, getApp } = await import('firebase/app');
-        const { getFirestore, doc, getDoc } = await import('firebase/firestore');
-        const { firebaseConfig } = await import('../firebaseConfig');
-        
-        let app;
-        if (getApps().length > 0) {
-          app = getApp();
-        } else {
-          app = initializeApp(firebaseConfig);
-        }
-        
-        const db = getFirestore(app);
+        const { doc, getDoc } = await import('firebase/firestore');
         const settingsSnap = await getDoc(doc(db, 'settings', 'instagram'));
         
         if (settingsSnap.exists()) {
@@ -81,7 +71,8 @@ export const InstagramFeed: React.FC = () => {
             if (Array.isArray(data) && data.length > 0) {
               const mapped = data.slice(0, 6).map((post: any) => ({
                 id: post.id,
-                image: post.mediaUrl || post.thumbnailUrl,
+                // Prioritize sizes.medium/small/thumbnail for images & reels to prevent broken MP4 video playback in img tags
+                image: post.sizes?.medium?.mediaUrl || post.thumbnailUrl || post.mediaUrl || post.sizes?.small?.mediaUrl,
                 likes: post.likeCount !== undefined ? String(post.likeCount) : String(Math.floor(Math.random() * 500) + 100),
                 comments: post.commentsCount !== undefined ? String(post.commentsCount) : String(Math.floor(Math.random() * 50) + 10),
                 caption: post.caption || '',
