@@ -2709,6 +2709,9 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         </section>
       </ScrollAnimatedSection>
 
+      {/* Instagram Feed — only on Home page */}
+      <InstagramFeed />
+
       {/* Newsletter Signup - End of Page */}
       <NewsletterSyndicate />
     </div>
@@ -3307,6 +3310,8 @@ const Shop = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
         </AnimatePresence>,
         document.body
       )}
+      {/* Instagram Feed — only on Shop page */}
+      <InstagramFeed />
     </div>
   );
 };
@@ -4180,7 +4185,7 @@ const About = () => {
             viewport={{ once: true }}
             className="bg-black p-12 border-[6px] border-black flex flex-col justify-center shadow-[16px_16px_0px_0px_#00ff88]"
           >
-            <h3 className="text-7xl font-black font-syne mb-6 text-[#00ff88] leading-none">2024</h3>
+            <h3 className="text-7xl font-black font-syne mb-6 text-[#00ff88] leading-none">2026</h3>
             <p className="text-xl text-white font-bold uppercase leading-relaxed opacity-70">The year we broke the code. Established in Neo-Tokyo, expanding globally with a vision to redefine streetwear.</p>
           </motion.div>
         </div>
@@ -7144,7 +7149,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t-[4px] border-black pt-12 flex flex-col md:flex-row justify-between items-center text-black font-black uppercase text-xs tracking-widest">
-          <p>&copy; 2024 {BRAND_NAME}. All rights reserved.</p>
+          <p>&copy; 2026 {BRAND_NAME}. All rights reserved.</p>
           <div className="flex gap-12 mt-6 md:mt-0">
             <Link to="/privacy" className="hover:text-[#00ff88] transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-[#00ff88] transition-colors">Terms of Service</Link>
@@ -7438,7 +7443,7 @@ function App() {
                   setIsRewardsModalOpen={setIsRewardsModalOpen} 
                 />
               </main>
-              <InstagramFeed />
+
               <Footer />
 
               {/* Floating Rewards Button & Modal */}
