@@ -4011,11 +4011,11 @@
     "id": 1785966718944,
     "qid": "ELVZ-MSGMGZXB",
     "name": "FEARLESS DIVE TSHIRT",
-    "price": 549,
+    "price": 499,
     "originalPrice": 1000,
     "cost": 400,
-    "profit": 149,
-    "profitMargin": 27.1,
+    "profit": 99,
+    "profitMargin": 19.8,
     "category": "Unisex",
     "type": "T-Shirt",
     "rating": 4.5,
@@ -4044,7 +4044,7 @@
     "showInShop": true,
     "showInCollections": true,
     "isNew": true,
-    "updatedAt": "2026-08-05T21:51:58.944Z"
+    "updatedAt": "2026-08-05T23:02:52.017Z"
   },
   {
     "id": 1785969623372,
