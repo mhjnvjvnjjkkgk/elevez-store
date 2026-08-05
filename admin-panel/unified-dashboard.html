@@ -529,11 +529,11 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Product Name</label>
-                        <input type="text" id="product-form-name" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                        <input type="text" id="product-form-name" placeholder="Optional" class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
                     </div>
                     <div>
                         <label class="block text-xs text-gray-500 uppercase font-bold mb-2">QID Code</label>
-                        <input type="text" id="product-form-qid" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                        <input type="text" id="product-form-qid" placeholder="Auto-generated if empty" class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -558,7 +558,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Price ($)</label>
-                        <input type="number" id="product-form-price" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
+                        <input type="number" id="product-form-price" placeholder="499" class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
                     </div>
                     <div>
                         <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Original Price ($)</label>
@@ -566,7 +566,7 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Main Image URL</label>
+                    <label class="block text-xs text-gray-500 uppercase font-bold mb-2">Main Image URL * <span class="text-[#00ff88] font-normal">(Compulsory)</span></label>
                     <input type="text" id="product-form-image" required class="w-full bg-[#1a1a1d] border border-[#2b2b30] rounded-lg px-4 py-2 text-white">
                 </div>
                 <div>
@@ -1096,13 +1096,19 @@
         window.submitProductForm = async function (event) {
             event.preventDefault();
             const id = document.getElementById("product-form-id").value;
-            const name = document.getElementById("product-form-name").value;
-            const qid = document.getElementById("product-form-qid").value;
-            const category = document.getElementById("product-form-category").value;
-            const type = document.getElementById("product-form-type").value;
-            const price = parseFloat(document.getElementById("product-form-price").value);
-            const origPrice = parseFloat(document.getElementById("product-form-origprice").value) || null;
-            const image = document.getElementById("product-form-image").value;
+            const image = document.getElementById("product-form-image").value.trim();
+            if (!image) {
+                alert("❌ Please provide a Main Image URL!");
+                return;
+            }
+            const rawName = document.getElementById("product-form-name").value.trim();
+            const name = rawName || `New Product ${state.products.length + 1}`;
+            const rawQid = document.getElementById("product-form-qid").value.trim();
+            const qid = rawQid || `ELVZ-${Date.now().toString(36).toUpperCase()}`;
+            const category = document.getElementById("product-form-category").value || "Men";
+            const type = document.getElementById("product-form-type").value || "T-Shirt";
+            const price = parseFloat(document.getElementById("product-form-price").value) || 499;
+            const origPrice = parseFloat(document.getElementById("product-form-origprice").value) || Math.round(price * 1.5);
             const description = document.getElementById("product-form-desc").value;
             const tags = document.getElementById("product-form-tags").value.split(',').map(t => t.trim()).filter(t => t !== '');
 

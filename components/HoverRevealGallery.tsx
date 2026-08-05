@@ -27,7 +27,7 @@ export const HoverRevealGallery: React.FC = () => {
   return (
     <div className="relative py-24 sm:py-40 bg-white" onMouseMove={handleMouseMove}>
       <div className="container mx-auto px-6 relative z-10">
-        <h2 className="text-sm font-black uppercase tracking-[0.4em] mb-16 sm:mb-20 text-black border-l-[6px] border-black pl-6">Lookbook // 2024</h2>
+        <h2 className="text-sm font-black uppercase tracking-[0.4em] mb-16 sm:mb-20 text-black border-l-[6px] border-black pl-6">Lookbook // 2026</h2>
         
         <div className="flex flex-col gap-0">
           {items.map((item, i) => (

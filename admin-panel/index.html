@@ -338,28 +338,28 @@
           <h4>Basic Information</h4>
           <div class="form-row">
             <div class="form-group">
-              <label>Product Name *</label>
-              <input type="text" id="productName" required placeholder="e.g., Neon Glitch Hoodie">
+              <label>Product Name</label>
+              <input type="text" id="productName" placeholder="e.g., Neon Glitch Hoodie (Optional)">
             </div>
             <div class="form-group">
-              <label>Product QID *</label>
-              <input type="text" id="productQID" required placeholder="e.g., NGH-001" pattern="[A-Z0-9-]+"
+              <label>Product QID</label>
+              <input type="text" id="productQID" placeholder="e.g., NGH-001 (Auto-generated if left empty)" pattern="[A-Z0-9-]+"
                 title="Use uppercase letters, numbers, and hyphens">
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label>Normal Price (₹) *</label>
-              <input type="number" id="normalPrice" required step="0.01" placeholder="170.00">
+              <label>Normal Price (₹)</label>
+              <input type="number" id="normalPrice" step="0.01" placeholder="170.00">
             </div>
             <div class="form-group">
-              <label>Sale Price (₹) *</label>
-              <input type="number" id="salePrice" required step="0.01" placeholder="85.00">
+              <label>Sale Price (₹)</label>
+              <input type="number" id="salePrice" step="0.01" placeholder="85.00">
             </div>
             <div class="form-group">
-              <label>Production Cost (₹) *</label>
-              <input type="number" id="productCost" required step="0.01" placeholder="50.00">
+              <label>Production Cost (₹)</label>
+              <input type="number" id="productCost" step="0.01" placeholder="50.00">
             </div>
           </div>
 
@@ -382,9 +382,9 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label>Category *</label>
+              <label>Category</label>
               <div style="display: flex; gap: 10px;">
-                <select id="productCategory" required style="flex: 1;">
+                <select id="productCategory" style="flex: 1;">
                   <option value="">Select or create category</option>
                 </select>
                 <button type="button" class="btn btn-secondary" onclick="toggleCategoryInput()"
@@ -394,9 +394,9 @@
                 style="display: none; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 8px; color: var(--text); width: 100%;">
             </div>
             <div class="form-group">
-              <label>Product Type *</label>
+              <label>Product Type</label>
               <div style="display: flex; gap: 10px;">
-                <select id="productType" required style="flex: 1;">
+                <select id="productType" style="flex: 1;">
                   <option value="">Select or create type</option>
                 </select>
                 <button type="button" class="btn btn-secondary" onclick="toggleTypeInput()"
@@ -406,16 +406,16 @@
                 style="display: none; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 8px; color: var(--text); width: 100%;">
             </div>
             <div class="form-group">
-              <label>Rating *</label>
-              <input type="number" id="productRating" required min="1" max="5" step="0.1" value="4.5">
+              <label>Rating</label>
+              <input type="number" id="productRating" min="1" max="5" step="0.1" value="4.5">
             </div>
           </div>
 
           <!-- Inventory Tracking -->
           <div class="form-row">
             <div class="form-group">
-              <label>SKU (Stock Keeping Unit)</label>
-              <input type="text" id="productSKU" placeholder="e.g., NGH-001-BLK-M">
+              <label>SKU (Stock Keeping Unit) - Optional</label>
+              <input type="text" id="productSKU" placeholder="e.g., NGH-001-BLK-M (Optional)">
             </div>
             <div class="form-group">
               <label>Stock Quantity</label>
@@ -446,7 +446,7 @@
         </div>
 
         <div class="form-section">
-          <h4>Product Images *</h4>
+          <h4>Product Images * <span style="font-size: 12px; color: var(--primary); font-weight: normal;">(Compulsory)</span></h4>
           <div class="image-upload-zone" id="imageUploadZone">
             <input type="file" id="imageInput" multiple accept="image/*" style="display: none;">
             <div class="upload-placeholder">
@@ -479,7 +479,7 @@
         </div>
 
         <div class="form-section">
-          <h4>Available Sizes *</h4>
+          <h4>Available Sizes</h4>
           <div class="size-selector" id="sizeSelector">
             <button type="button" class="size-btn" data-size="XS">XS</button>
             <button type="button" class="size-btn" data-size="S">S</button>
@@ -491,7 +491,7 @@
         </div>
 
         <div class="form-section">
-          <h4>Available Colors *</h4>
+          <h4>Available Colors</h4>
           <div class="colors-grid" id="colorsGrid"></div>
           <button type="button" class="btn-add-color" onclick="openColorPicker()">+ Add Custom Color</button>
           <div class="color-picker-popup" id="colorPickerPopup">

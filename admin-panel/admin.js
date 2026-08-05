@@ -2993,94 +2993,120 @@ window.setupEyedropperInteraction = () => {
 function handleProductSubmit(e) {
   e.preventDefault();
 
-  if (state.productForm.images.length === 0) {
+  // IMAGES are the ONLY compulsory requirement!
+  if (!state.productForm?.images || state.productForm.images.length === 0) {
     alert('❌ Please add at least one product image!');
     return;
   }
 
-  if (state.productForm.selectedSizes.length === 0) {
-    alert('❌ Please select at least one size!');
-    return;
-  }
+  // Handle all other optional fields with smart defaults:
+  const rawName = document.getElementById('productName')?.value?.trim();
+  const productName = rawName || `New Product ${state.products.length + 1}`;
 
-  const normalPrice = parseFloat(document.getElementById('normalPrice').value);
-  const salePrice = parseFloat(document.getElementById('salePrice').value);
   const qidInput = document.getElementById('productQID');
-  const qid = qidInput ? qidInput.value.trim().toUpperCase() : '';
-
+  let rawQID = qidInput ? qidInput.value.trim().toUpperCase() : '';
+  let qid = rawQID;
   if (!qid) {
-    alert('❌ Please enter a Product QID!');
-    return;
+    qid = `ELVZ-${Date.now().toString(36).toUpperCase()}`;
   }
 
-  if (salePrice >= normalPrice) {
-    alert('❌ Sale price must be less than normal price!');
-    return;
+  let sizes = state.productForm.selectedSizes;
+  if (!sizes || sizes.length === 0) {
+    sizes = ['S', 'M', 'L', 'XL'];
   }
 
-  // Check for duplicate QID (only if not editing the same product)
-  const currentProductId = state.editingProduct ? state.editingProduct.id : null;
-  // Use String() cast on both sides to handle Shopify IDs that may be stored as number OR string
-  const existingProduct = state.products.find(p => {
-    return p.qid === qid && String(p.id) !== String(currentProductId);
-  });
+  let normalPrice = parseFloat(document.getElementById('normalPrice')?.value) || 0;
+  let salePrice = parseFloat(document.getElementById('salePrice')?.value) || 0;
 
-  if (existingProduct) {
-    // Just warn but allow override
-    const shouldContinue = confirm(`⚠️ WARNING: QID "${qid}" already exists!\n\nExisting Product: ${existingProduct.name}\nProduct ID: ${existingProduct.id}\n\nClick OK to REPLACE the existing product.\nClick Cancel to use a different QID.`);
+  if (normalPrice === 0 && salePrice === 0) {
+    normalPrice = 999;
+    salePrice = 499;
+  } else if (normalPrice === 0 && salePrice > 0) {
+    normalPrice = Math.round(salePrice * 1.5);
+  } else if (salePrice === 0 && normalPrice > 0) {
+    salePrice = Math.round(normalPrice * 0.8);
+  } else if (salePrice >= normalPrice) {
+    normalPrice = salePrice + 100;
+  }
 
-    if (!shouldContinue) {
-      return; // User wants to use different QID
+  let category = document.getElementById('productCategory')?.value;
+  if (!category && state.availableCategories && state.availableCategories.length > 0) {
+    category = state.availableCategories[0];
+  }
+  if (!category) category = 'Uncategorized';
+
+  let type = document.getElementById('productType')?.value;
+  if (!type && state.availableTypes && state.availableTypes.length > 0) {
+    type = state.availableTypes[0];
+  }
+  if (!type) type = 'General';
+
+  let rating = parseFloat(document.getElementById('productRating')?.value);
+  if (isNaN(rating) || rating < 1 || rating > 5) {
+    rating = 4.5;
+  }
+
+  // Check for duplicate QID (only if user manually specified QID and not editing same product)
+  if (rawQID) {
+    const currentProductId = state.editingProduct ? state.editingProduct.id : null;
+    const existingProduct = state.products.find(p => p.qid === qid && String(p.id) !== String(currentProductId));
+    if (existingProduct) {
+      const shouldContinue = confirm(`⚠️ WARNING: QID "${qid}" already exists!\n\nExisting Product: ${existingProduct.name}\nProduct ID: ${existingProduct.id}\n\nClick OK to REPLACE the existing product.\nClick Cancel to use a different QID.`);
+      if (!shouldContinue) {
+        return;
+      }
+      state.products = state.products.filter(p => String(p.id) !== String(existingProduct.id));
+      console.log(`Replaced product with QID ${qid}`);
     }
-
-    // User chose to replace - remove the old product
-    state.products = state.products.filter(p => String(p.id) !== String(existingProduct.id));
-    console.log(`Replaced product with QID ${qid}`);
   }
 
   // Convert full URLs back to relative paths for storage
   const convertToRelativePath = (url) => {
-    if (url.startsWith('http://localhost:5173')) {
+    if (url && url.startsWith('http://localhost:5173')) {
       return url.replace('http://localhost:5173', '');
     }
     return url;
   };
 
   // Get cost and calculate profit
-  const productCost = parseFloat(document.getElementById('productCost').value) || 0;
+  const productCost = parseFloat(document.getElementById('productCost')?.value) || 0;
   const profit = productCost > 0 ? salePrice - productCost : 0;
   const profitMargin = productCost > 0 && salePrice > 0 ? ((profit / salePrice) * 100).toFixed(1) : 0;
+
+  // SKU is NOT compulsory! If provided, use it; if empty, set as undefined
+  const rawSKU = document.getElementById('productSKU')?.value?.trim();
+  const sku = rawSKU || undefined;
 
   const product = {
     ...(state.editingProduct || {}),
     id: state.editingProduct?.id || Date.now(),
     qid: qid,
-    name: document.getElementById('productName').value,
+    name: productName,
     price: salePrice,
     originalPrice: normalPrice,
     cost: productCost,
     profit: profit,
     profitMargin: parseFloat(profitMargin),
-    category: document.getElementById('productCategory').value,
-    type: document.getElementById('productType').value,
-    rating: parseFloat(document.getElementById('productRating').value),
-    description: document.getElementById('productDescription').value || undefined,
+    category: category,
+    type: type,
+    rating: rating,
+    description: document.getElementById('productDescription')?.value || undefined,
     image: convertToRelativePath(state.productForm.images[0]),
     images: state.productForm.images.map(convertToRelativePath),
     sizeChart: state.productForm.sizeChart ? convertToRelativePath(state.productForm.sizeChart) : undefined,
-    sizes: state.productForm.selectedSizes,
+    sizes: sizes,
     colors: state.productForm.selectedColors.map(c => c.name),
     tags: state.productForm.selectedTags.length > 0 ? state.productForm.selectedTags : undefined,
-    // Inventory tracking
-    sku: document.getElementById('productSKU')?.value || undefined,
+    // Inventory tracking - SKU is optional
+    sku: sku,
     stock: parseInt(document.getElementById('productStock')?.value) || 0,
     status: document.getElementById('productStatus')?.value || 'active',
     // Section visibility flags
     showInHome: document.getElementById('showInHome')?.checked !== false,
     showInShop: document.getElementById('showInShop')?.checked !== false,
     showInCollections: document.getElementById('showInCollections')?.checked !== false,
-    isBestSeller: document.getElementById('isBestSeller').checked || undefined,
-    isNew: document.getElementById('isNew').checked || undefined,
+    isBestSeller: document.getElementById('isBestSeller')?.checked || undefined,
+    isNew: document.getElementById('isNew')?.checked || undefined,
     isFeatured: document.getElementById('isFeatured')?.checked || undefined,
     updatedAt: new Date().toISOString()
   };
@@ -3272,7 +3298,29 @@ window.deleteProduct = (id) => {
     state.products = state.products.filter(p => String(p.id) !== String(id));
     saveData();
     renderCurrentView();
-    alert('✅ Product deleted successfully!');
+    showSyncStatus('Product deleted', 'success');
+
+    // Auto-sync constants.ts so storefront reflects deleted products immediately
+    fetch('http://localhost:3001/update-constants', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        products: state.products,
+        collections: state.collections,
+        tags: state.availableTags,
+        categories: state.availableCategories,
+        types: state.availableTypes,
+        colors: state.availableColors
+      })
+    })
+    .then(r => {
+      if (r.ok) {
+        showSyncStatus('✅ Deleted & synced to website!', 'success');
+      }
+    })
+    .catch(() => {
+      console.log('ℹ️ Admin server offline — constants.ts not auto-synced.');
+    });
   }
 };
 

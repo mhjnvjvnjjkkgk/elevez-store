@@ -36,7 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, activeTab, menuItems, onSelec
 
       <div className="sidebar-footer">
         <div>Admin Panel v1.0</div>
-        <div style={{ marginTop: '8px', fontSize: '11px' }}>© 2024</div>
+        <div style={{ marginTop: '8px', fontSize: '11px' }}>© 2026</div>
       </div>
     </aside>
   );
