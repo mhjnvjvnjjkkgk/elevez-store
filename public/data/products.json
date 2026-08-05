@@ -4045,5 +4045,45 @@
     "showInCollections": true,
     "isNew": true,
     "updatedAt": "2026-08-05T21:51:58.944Z"
+  },
+  {
+    "id": 1785969623372,
+    "qid": "ELVZ-MSGO78ZW",
+    "name": "RISE ABOVE SHINE LIGHT",
+    "price": 549,
+    "originalPrice": 1000,
+    "cost": 400,
+    "profit": 149,
+    "profitMargin": 27.1,
+    "category": "Unisex",
+    "type": "T-Shirt",
+    "rating": 4.5,
+    "image": "https://ibb.co/TB5S0qYK",
+    "images": [
+      "https://ibb.co/TB5S0qYK",
+      "https://i.ibb.co/8gbyvmZd/female-mockup-3.jpg",
+      "https://i.ibb.co/nqsP45Z0/female-mockup-2.jpg",
+      "https://i.ibb.co/6ckCrYWN/female-mockup-1.jpg",
+      "https://i.ibb.co/4g4TfsPq/male-mockup-1.jpg"
+    ],
+    "sizes": [
+      "M",
+      "XS",
+      "S",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "Black"
+    ],
+    "stock": 0,
+    "status": "active",
+    "showInHome": true,
+    "showInShop": true,
+    "showInCollections": true,
+    "isNew": true,
+    "isFeatured": true,
+    "updatedAt": "2026-08-05T22:40:23.372Z"
   }
 ]
