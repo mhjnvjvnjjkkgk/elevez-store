@@ -156,38 +156,6 @@
       "isBestSeller": true
     },
     {
-      "id": 4,
-      "description": "High-tech fabric hoodie with moisture-wicking properties. Perfect for active lifestyle.",
-      "sizes": [
-        "S",
-        "M",
-        "L",
-        "XL"
-      ],
-      "originalPrice": 190,
-      "colors": [
-        "Black",
-        "Navy",
-        "Gray"
-      ],
-      "name": "Premium Tech Hoodie",
-      "price": 95,
-      "tags": [
-        "PREMIUM",
-        "NEW"
-      ],
-      "qid": "PTH-004",
-      "category": "Men",
-      "images": [
-        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
-      ],
-      "isNew": true,
-      "type": "Hoodie",
-      "updatedAt": "2026-08-04T20:53:34.892Z",
-      "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-      "rating": 4.8
-    },
-    {
       "id": 5,
       "rating": 4.4,
       "updatedAt": "2026-08-04T20:53:34.892Z",
@@ -4134,6 +4102,45 @@
       "isNew": true,
       "lastSyncedAt": "2025-12-28T18:56:30.855Z",
       "source": "shopify"
+    },
+    {
+      "id": 1765149958744,
+      "stock": 0,
+      "images": [
+        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+        "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+      ],
+      "qid": "NGH-001",
+      "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+      "isNew": true,
+      "rating": 4.5,
+      "profit": 75,
+      "cost": 10,
+      "isBestSeller": true,
+      "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+      "price": 85,
+      "showInHome": true,
+      "originalPrice": 170,
+      "category": "Men",
+      "name": "Neon Glitch Hoodie",
+      "colors": [],
+      "showInCollections": true,
+      "status": "active",
+      "showInShop": true,
+      "updatedAt": "2026-08-04T20:53:34.893Z",
+      "profitMargin": 88.2,
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "type": "Hoodie",
+      "tags": [
+        "TRENDING",
+        "BESTSELLER",
+        "ALL"
+      ]
     }
   ],
   "collections": [
@@ -4144,7 +4151,7 @@
       "name": "All products!",
       "handle": "all-products",
       "order": 0,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
       "sectionMapping": null,
@@ -4213,7 +4220,7 @@
       "image": "",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 1
     },
     {
@@ -4227,7 +4234,7 @@
         "oversized-cute-simple-bunny-tshirt"
       ],
       "productCount": 4,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 2,
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
@@ -4240,7 +4247,7 @@
       "id": "1778682078130-3",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 3,
       "productHandles": [
         "oversized-cute-simple-bunny-tshirt",
@@ -4263,7 +4270,7 @@
       "id": "1778682078130-4",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 4,
       "productHandles": [
         "oversized-cute-simple-bunny-tshirt",
@@ -4288,7 +4295,7 @@
       "description": "Products in the Women collection",
       "handle": "women",
       "name": "Women",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 5,
       "source": "generated",
       "createdAt": "2026-05-13T14:21:18.130Z",
@@ -4321,7 +4328,7 @@
         "youre-aldready-under-my-genjutsu"
       ],
       "order": 6,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "source": "generated",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "isSystem": false,
@@ -4334,7 +4341,7 @@
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
       "order": 7,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "productHandles": [
         "cute-blessed-tshirt-for-girls",
         "japaneese-text-tshirt-cool-front-elevez",
@@ -4396,7 +4403,7 @@
       "image": "",
       "source": "generated",
       "createdAt": "2026-05-13T14:21:18.130Z",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 8
     },
     {
@@ -4424,7 +4431,7 @@
       ],
       "productCount": 13,
       "order": 9,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated"
     },
@@ -4444,7 +4451,7 @@
         "kal-ana-tshirt"
       ],
       "productCount": 5,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 10,
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated"
@@ -4456,7 +4463,7 @@
       "name": "old money",
       "handle": "old-money",
       "order": 11,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "source": "generated",
       "image": "",
@@ -4476,7 +4483,7 @@
       "source": "generated",
       "createdAt": "2026-05-13T14:21:18.130Z",
       "order": 12,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "productCount": 2,
       "productHandles": [
         "paisa-design-stylish-genz-tshirt",
@@ -4493,7 +4500,7 @@
       "id": "shopify-frontpage",
       "shopifyId": "gid://shopify/Collection/306335416459",
       "order": 0,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "source": "shopify",
       "createdAt": "2026-05-13T14:21:25.042Z",
       "sectionMapping": null,
@@ -4519,7 +4526,7 @@
       "createdAt": "2026-05-13T14:21:25.042Z",
       "shopifyId": "gid://shopify/Collection/307465158795",
       "order": 1,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "productCount": 28,
       "productHandles": [
         null,
@@ -4571,7 +4578,7 @@
       ],
       "productCount": 4,
       "order": 2,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "shopifyId": "gid://shopify/Collection/307502022795",
       "createdAt": "2026-05-13T14:21:25.042Z",
       "source": "shopify"
@@ -4591,7 +4598,7 @@
       "source": "shopify",
       "shopifyId": "gid://shopify/Collection/307502973067",
       "order": 3,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "importedAt": "2025-12-28T18:56:29.286Z",
       "name": "Women",
       "handle": "women",
@@ -4603,7 +4610,7 @@
       "source": "shopify",
       "createdAt": "2026-05-13T14:21:25.043Z",
       "shopifyId": "gid://shopify/Collection/307639484555",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 4,
       "productCount": 5,
       "productHandles": [
@@ -4631,7 +4638,7 @@
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify",
       "shopifyId": "gid://shopify/Collection/307639615627",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 5,
       "productHandles": [
         "skull-triangle-oversized-tshirt",
@@ -4655,7 +4662,7 @@
         "oversized-unisex-peace-simple-bird-tshirt"
       ],
       "order": 6,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "shopifyId": "gid://shopify/Collection/307639681163",
       "source": "shopify",
       "createdAt": "2026-05-13T14:21:25.043Z",
@@ -4686,7 +4693,7 @@
       "productCount": 7,
       "shopifyId": "gid://shopify/Collection/307639713931",
       "order": 7,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify"
     },
@@ -4699,7 +4706,7 @@
       "importedAt": "2025-12-28T18:56:29.286Z",
       "shopifyId": "gid://shopify/Collection/307662028939",
       "order": 8,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify",
       "sectionMapping": null,
@@ -4725,7 +4732,7 @@
       "sectionMapping": null,
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 9,
       "shopifyId": "gid://shopify/Collection/307744080011",
       "importedAt": "2025-12-28T18:56:29.286Z",
@@ -4744,7 +4751,7 @@
       "source": "shopify",
       "createdAt": "2026-05-13T14:21:25.043Z",
       "order": 10,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "shopifyId": "gid://shopify/Collection/307744112779",
       "productCount": 3,
       "productHandles": [
@@ -4785,14 +4792,14 @@
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify",
       "order": 11,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "shopifyId": "gid://shopify/Collection/307999441035"
     },
     {
       "id": "shopify-oversized-tshirt",
       "createdAt": "2026-05-13T14:21:25.043Z",
       "source": "shopify",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 12,
       "shopifyId": "gid://shopify/Collection/307999473803",
       "productHandles": [
@@ -4815,7 +4822,7 @@
       "id": "1766960993446-0",
       "createdAt": "2025-12-28T22:29:53.446Z",
       "source": "generated",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 0,
       "productHandles": [
         "oversized-cute-simple-bunny-tshirt",
@@ -4854,7 +4861,7 @@
       "createdAt": "2025-12-28T22:29:53.446Z",
       "source": "generated",
       "order": 1,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "productHandles": [
         "oversized-cute-simple-bunny-tshirt",
         "oversized-unisex-peace-simple-bird-tshirt",
@@ -4887,11 +4894,11 @@
       "source": "generated",
       "createdAt": "2025-12-28T22:29:53.446Z",
       "order": 2,
-      "updatedAt": "2026-08-05T15:58:52.060Z"
+      "updatedAt": "2026-08-05T15:59:01.605Z"
     },
     {
       "id": "1766960993446-3",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 3,
       "createdAt": "2025-12-28T22:29:53.446Z",
       "source": "generated",
@@ -4937,7 +4944,7 @@
         "oversized-unisex-peace-simple-bird-tshirt"
       ],
       "order": 0,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z"
     },
@@ -4949,7 +4956,7 @@
       "description": "Products in the Best Sellers collection",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 1,
       "productCount": 4,
       "productHandles": [
@@ -4974,7 +4981,7 @@
         "kal-ana-tshirt"
       ],
       "productCount": 2,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 10,
       "createdAt": "2026-05-10T20:49:56.513Z",
       "source": "generated"
@@ -4992,7 +4999,7 @@
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
       "order": 11,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "handle": "old-money",
       "name": "old money",
       "isSystem": false,
@@ -5006,7 +5013,7 @@
       "description": "Products in the Home page collection",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 12,
       "productCount": 1,
       "productHandles": [
@@ -5028,7 +5035,7 @@
         "oversized-unisex-peace-simple-bird-tshirt"
       ],
       "productCount": 2,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 2,
       "createdAt": "2026-05-10T20:49:56.513Z",
       "source": "generated"
@@ -5037,7 +5044,7 @@
       "id": "1778446196513-3",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 3,
       "productCount": 3,
       "productHandles": [
@@ -5066,7 +5073,7 @@
         "oversized-unisex-peace-simple-bird-tshirt"
       ],
       "productCount": 3,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 4,
       "createdAt": "2026-05-10T20:49:56.513Z",
       "source": "generated"
@@ -5080,7 +5087,7 @@
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
       "order": 5,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "productCount": 3,
       "productHandles": [
         "cute-blessed-tshirt-for-girls",
@@ -5095,7 +5102,7 @@
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
       "order": 6,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "productCount": 5,
       "productHandles": [
         "cute-blessed-tshirt-for-girls",
@@ -5137,7 +5144,7 @@
         "stylish-buttefly-tshirt"
       ],
       "order": 7,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z"
     },
@@ -5149,7 +5156,7 @@
       "description": "Products in the Under 600 collection",
       "source": "generated",
       "createdAt": "2026-05-10T20:49:56.513Z",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 8,
       "productCount": 5,
       "productHandles": [
@@ -5169,7 +5176,7 @@
       "name": "Below 400",
       "handle": "below-400",
       "order": 9,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "createdAt": "2026-05-10T20:49:56.513Z",
       "source": "generated",
       "sectionMapping": null,
@@ -5190,7 +5197,7 @@
       "isSystem": false,
       "name": "Essential",
       "handle": "essential",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 43,
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
@@ -5207,7 +5214,7 @@
       "isSystem": false,
       "name": "Trending",
       "handle": "trending",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 44,
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
@@ -5224,7 +5231,7 @@
     {
       "id": "tag-1778700075663-2-741",
       "order": 45,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "sectionMapping": null,
@@ -5250,7 +5257,7 @@
       "productHandles": [
         null
       ],
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 46,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z"
@@ -5266,7 +5273,7 @@
       ],
       "productCount": 3,
       "order": 47,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "description": "Curated selection of our bestseller products",
@@ -5281,7 +5288,7 @@
       "handle": "vintage",
       "name": "Vintage",
       "order": 48,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "sectionMapping": null,
@@ -5305,7 +5312,7 @@
       "image": "",
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 49
     },
     {
@@ -5322,7 +5329,7 @@
         "oversized-illuminaty-skull-triangle-design",
         "oversized-cute-simple-bunny-tshirt"
       ],
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 50,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z"
@@ -5344,7 +5351,7 @@
       "sectionMapping": null,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 51,
       "handle": "female",
       "name": "Female",
@@ -5371,7 +5378,7 @@
         "youre-aldready-under-my-genjutsu"
       ],
       "order": 52,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z"
     },
@@ -5389,7 +5396,7 @@
       ],
       "productCount": 6,
       "order": 53,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "description": "Curated selection of our 599 products",
@@ -5402,7 +5409,7 @@
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "order": 54,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "productHandles": [
         "japaneese-text-tshirt-cool-front-elevez",
         "back-dragon-print-epic-design-front-elevez",
@@ -5422,7 +5429,7 @@
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "order": 55,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "productCount": 21,
       "productHandles": [
         "japaneese-text-tshirt-cool-front-elevez",
@@ -5466,7 +5473,7 @@
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "order": 56,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "name": "349",
       "handle": "349",
       "description": "Curated selection of our 349 products",
@@ -5481,7 +5488,7 @@
         "cute-butterfly-croptop-for-women",
         "cute-butterfly-croptop-for-women"
       ],
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 57,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
@@ -5511,7 +5518,7 @@
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "order": 58,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "name": "399",
       "handle": "399",
       "description": "Curated selection of our 399 products",
@@ -5524,7 +5531,7 @@
       "handle": "funny",
       "name": "Funny",
       "order": 59,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "sectionMapping": null,
@@ -5556,7 +5563,7 @@
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "order": 60,
-      "updatedAt": "2026-08-05T15:58:52.060Z"
+      "updatedAt": "2026-08-05T15:59:01.605Z"
     },
     {
       "id": "tag-1778700075663-21-941",
@@ -5576,7 +5583,7 @@
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
       "order": 61,
-      "updatedAt": "2026-08-05T15:58:52.060Z"
+      "updatedAt": "2026-08-05T15:59:01.605Z"
     },
     {
       "id": "tag-1778700075663-22-530",
@@ -5587,7 +5594,7 @@
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "order": 62,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "productCount": 2,
       "productHandles": [
         "grey-hoodie-trident-design",
@@ -5602,7 +5609,7 @@
       "description": "Curated selection of our hoodie products",
       "handle": "hoodie",
       "name": "Hoodie",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 63,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
@@ -5623,7 +5630,7 @@
         "paisa-design-stylish-genz-tshirt",
         "paisa-design-stylish-genz-tshirt"
       ],
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 64,
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
@@ -5647,7 +5654,7 @@
       "sectionMapping": null,
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 65
     },
     {
@@ -5664,7 +5671,7 @@
       "image": "",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 66
     },
     {
@@ -5678,7 +5685,7 @@
       "source": "tag-generated",
       "createdAt": "2026-05-13T19:21:15.663Z",
       "order": 67,
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "handle": "699",
       "name": "699",
       "isSystem": false,
@@ -5694,7 +5701,7 @@
       "sectionMapping": null,
       "createdAt": "2026-05-13T19:21:15.663Z",
       "source": "tag-generated",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 68,
       "name": "Unisex",
       "handle": "unisex",
@@ -5715,7 +5722,7 @@
         "type": "",
         "tags": []
       },
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 66,
       "name": "Men",
       "handle": "men",
@@ -5733,7 +5740,7 @@
       "image": "",
       "source": "generated",
       "createdAt": "2026-05-29T22:44:24.540Z",
-      "updatedAt": "2026-08-05T15:58:52.060Z",
+      "updatedAt": "2026-08-05T15:59:01.605Z",
       "order": 67,
       "filters": {
         "minPrice": 0,
@@ -5748,28 +5755,18 @@
     {
       "id": "fhaMRm7nLLKkSdDLu503",
       "orderId": "ORD-1784193619947",
-      "paymentMethod": "cod",
-      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
-      "phone": "8017561073 / 9830932279",
-      "totalAmount": 479,
-      "createdAt": {
-        "seconds": 1784193619,
-        "nanoseconds": 947000000
-      },
-      "pincode": "700030",
-      "shippingCost": 80,
       "fullName": "Shayak das",
-      "city": "Kolkata",
-      "address": "14/1/V, Birpara Lane Kol-700030, 14/1/V",
+      "email": "lolislolpp@gmail.com",
+      "shippingCost": 80,
       "items": [
         {
-          "quantity": 1,
-          "size": "M",
-          "price": 399,
-          "id": 7915886051467,
           "name": "\"Ami akta dhowa tulsi pata\" Tshirt",
-          "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_s8349vs8349vs834.png?v=1761748512",
+          "quantity": 1,
           "color": "Standard",
+          "price": 399,
+          "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_s8349vs8349vs834.png?v=1761748512",
+          "id": 7915886051467,
+          "size": "M",
           "isNew": true,
           "source": "shopify",
           "stock": 100,
@@ -5925,112 +5922,126 @@
           "orderedColor": "Standard"
         }
       ],
-      "state": "West Bengal",
-      "status": "pending",
       "orderDate": {
         "seconds": 1784193619,
         "nanoseconds": 947000000
       },
-      "email": "lolislolpp@gmail.com",
+      "pincode": "700030",
+      "phone": "8017561073 / 9830932279",
+      "createdAt": {
+        "seconds": 1784193619,
+        "nanoseconds": 947000000
+      },
+      "address": "14/1/V, Birpara Lane Kol-700030, 14/1/V",
       "subtotal": 399,
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "status": "pending",
+      "paymentMethod": "cod",
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "totalAmount": 479,
       "source": "firebase",
       "pointsEarned": 47,
       "orderCost": 160,
       "orderProfit": 239,
       "orderProfitMargin": 49.9,
-      "profitCalculatedAt": "2026-08-05T15:58:47.036Z"
+      "profitCalculatedAt": "2026-08-05T15:58:57.052Z"
     },
     {
       "id": "79VVzYluf7m6teGbA5zr",
       "orderId": "ORD-1781906455646",
-      "totalAmount": 135,
-      "status": "pending",
-      "phone": "0402334567 / 9876543210",
-      "paymentMethod": "upi",
-      "pincode": "500034",
       "createdAt": {
         "seconds": 1781906455,
         "nanoseconds": 646000000
       },
-      "shippingCost": 50,
+      "paymentMethod": "upi",
       "email": "shayakdas6.5.0@gmail.com",
-      "address": "FLAT 402, SUNSHINE HEIGHTS, ROAD NO 4, BANJARA HILLS",
-      "orderDate": {
-        "seconds": 1781906455,
-        "nanoseconds": 646000000
-      },
-      "subtotal": 85,
-      "state": "TELANGANA",
       "items": [
         {
-          "price": 85,
-          "size": "M",
           "name": "Neon Glitch Hoodie",
           "id": 1765149958744,
-          "quantity": 1,
           "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+          "price": 85,
+          "size": "M",
           "color": "Standard",
-          "type": "Hoodie",
+          "quantity": 1,
+          "stock": 0,
+          "images": [
+            "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+            "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+          ],
           "qid": "NGH-001",
-          "status": "active",
-          "showInCollections": true,
-          "profitMargin": 88.2,
+          "isNew": true,
+          "rating": 4.5,
+          "profit": 75,
           "cost": 10,
+          "isBestSeller": true,
+          "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+          "showInHome": true,
+          "originalPrice": 170,
+          "category": "Men",
           "colors": [],
+          "showInCollections": true,
+          "status": "active",
           "showInShop": true,
+          "updatedAt": "2026-08-04T20:53:34.893Z",
+          "profitMargin": 88.2,
           "sizes": [
             "S",
             "M",
             "L",
             "XL"
           ],
-          "rating": 4.5,
-          "profit": 75,
-          "isNew": true,
-          "stock": 0,
-          "isBestSeller": true,
-          "originalPrice": 170,
-          "images": [
-            "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-            "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
-          ],
-          "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
-          "showInHome": true,
+          "type": "Hoodie",
           "tags": [
             "TRENDING",
             "BESTSELLER",
             "ALL"
           ],
-          "category": "Men",
-          "updatedAt": "2026-08-04T20:53:34.893Z",
           "orderedQuantity": 1,
           "orderedSize": "M",
           "orderedColor": "Standard"
         }
       ],
       "fullName": "SHAYAN SEN",
+      "totalAmount": 135,
+      "subtotal": 85,
+      "phone": "0402334567 / 9876543210",
+      "shippingCost": 50,
+      "orderDate": {
+        "seconds": 1781906455,
+        "nanoseconds": 646000000
+      },
+      "status": "pending",
       "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "state": "TELANGANA",
+      "address": "FLAT 402, SUNSHINE HEIGHTS, ROAD NO 4, BANJARA HILLS",
       "city": "HYDERABAD",
+      "pincode": "500034",
       "source": "firebase",
       "pointsEarned": 13,
       "orderCost": 10,
       "orderProfit": 75,
       "orderProfitMargin": 55.6,
-      "profitCalculatedAt": "2026-08-05T15:58:47.036Z"
+      "profitCalculatedAt": "2026-08-05T15:58:57.052Z"
     },
     {
       "id": "su1akl3OqsGfInk5S2OC",
       "orderId": "ORD-1781816427739",
-      "status": "pending",
+      "email": "shayakdas6.5.0@gmail.com",
+      "orderDate": {
+        "seconds": 1781816427,
+        "nanoseconds": 739000000
+      },
       "items": [
         {
           "quantity": 1,
+          "price": 599,
           "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_agh1k8agh1k8agh1.png?v=1761329197",
-          "color": "Black",
-          "name": "\"The Sovereign Serpent\" - Black T-Shirt with Japanese Dragon Back Print",
           "id": 1779147469445,
           "size": "M",
-          "price": 599,
+          "name": "\"The Sovereign Serpent\" - Black T-Shirt with Japanese Dragon Back Print",
+          "color": "Black",
           "status": "active",
           "isNew": true,
           "stock": 100,
@@ -6080,48 +6091,42 @@
           "orderedColor": "Black"
         }
       ],
-      "orderDate": {
-        "seconds": 1781816427,
-        "nanoseconds": 739000000
-      },
-      "city": "HYDERABAD",
-      "email": "shayakdas6.5.0@gmail.com",
-      "address": "FLAT 402, SUNSHINE HEIGHTS, ROAD NO 4, BANJARA HILLS",
-      "state": "TELANGANA",
-      "shippingCost": 50,
-      "paymentMethod": "upi",
-      "phone": "0402334567 / 9876543210",
-      "pincode": "500034",
-      "totalAmount": 649,
       "fullName": "SHAYAN SEN",
+      "paymentMethod": "upi",
+      "city": "HYDERABAD",
       "subtotal": 599,
+      "phone": "0402334567 / 9876543210",
+      "status": "pending",
       "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
       "createdAt": {
         "seconds": 1781816427,
         "nanoseconds": 739000000
       },
+      "state": "TELANGANA",
+      "address": "FLAT 402, SUNSHINE HEIGHTS, ROAD NO 4, BANJARA HILLS",
+      "totalAmount": 649,
+      "shippingCost": 50,
+      "pincode": "500034",
       "source": "firebase",
       "pointsEarned": 64,
       "orderCost": 240,
       "orderProfit": 359,
       "orderProfitMargin": 55.3,
-      "profitCalculatedAt": "2026-08-05T15:58:47.036Z"
+      "profitCalculatedAt": "2026-08-05T15:58:57.052Z"
     },
     {
       "id": "APSEaxACueCCCX1Yguhd",
       "orderId": "ORD-1778350798392",
       "fullName": "Mr Oak GAMING",
-      "email": "lolislolpp@gmail.com",
-      "state": "westbengal",
-      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "pincode": "700050",
       "address": "shayk ",
       "items": [
         {
-          "id": 7916022530187,
-          "price": 449,
-          "size": "M",
           "name": "\"The Ronin Spirit\" Samurai graphic Tee",
+          "price": 449,
+          "id": 7916022530187,
           "quantity": 1,
+          "size": "M",
           "color": "Standard",
           "rating": 4.5,
           "shopifyHandle": "dragon-samurai-main-epic-imp",
@@ -6263,52 +6268,57 @@
           "orderedColor": "Standard"
         }
       ],
-      "totalAmount": 479,
-      "paymentMethod": "cod",
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "status": "pending",
       "orderDate": {
         "seconds": 1778350798,
         "nanoseconds": 392000000
       },
+      "email": "lolislolpp@gmail.com",
+      "paymentMethod": "cod",
+      "state": "westbengal",
+      "city": "kolkata",
       "subtotal": 449,
+      "shippingCost": 30,
       "createdAt": {
         "seconds": 1778350798,
         "nanoseconds": 392000000
       },
       "phone": "8017561073",
-      "shippingCost": 30,
-      "pincode": "700050",
-      "city": "kolkata",
-      "status": "pending",
+      "totalAmount": 479,
       "source": "firebase",
       "pointsEarned": 47,
       "orderCost": 180,
       "orderProfit": 269,
       "orderProfitMargin": 56.2,
-      "profitCalculatedAt": "2026-08-05T15:58:47.036Z"
+      "profitCalculatedAt": "2026-08-05T15:58:57.052Z"
     },
     {
       "id": "7FcrTn2xRBbBhIPUZZQp",
       "orderId": "ORD-1766948811513",
       "state": "West Bengal",
-      "shippingCost": 30,
-      "pincode": "700055",
-      "fullName": "Shayak Das",
-      "email": "shayakdas6.5.0@gmail.com",
       "totalAmount": 568.02,
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
-      "orderDate": {
+      "paymentMethod": "cod",
+      "fullName": "Shayak Das",
+      "phone": "80001812381",
+      "shippingCost": 30,
+      "createdAt": {
         "seconds": 1766948811,
         "nanoseconds": 513000000
       },
+      "status": "pending",
       "subtotal": 549,
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "email": "shayakdas6.5.0@gmail.com",
+      "address": "sdasdada",
       "items": [
         {
           "id": 7915854102667,
-          "quantity": 1,
           "color": "Black",
           "size": "M",
-          "name": "\"PAISA Earn PAISA\" Graphic Gen Z T-Shirt",
           "price": 549,
+          "name": "\"PAISA Earn PAISA\" Graphic Gen Z T-Shirt",
+          "quantity": 1,
           "importedAt": "2025-12-28T18:56:30.854Z",
           "description": "Crafted from premium, ultra-soft fabric, this tee promises unparalleled comfort for all-day wear. Whether you're hustling at the office, meeting friends, or just relaxing, you'll feel great in its breathable and lightweight embrace. The eye-catching design features the word \"PAISA\" (money) repeated in a striking purple hue, with \"Earn\" elegantly scripted in a vibrant orange, creating a dynamic visual that's both modern and inspiring. This creative graphic is a conversation starter, showcasing your drive and unique fashion sense. Key Features: Creative & Stylish Design: A unique graphic that blends ambition with modern aesthetics. Supreme Comfort: Made from high-quality, soft-touch fabric for an exceptional feel. Versatile Wear: Perfect for casual outings, business casual, or as a statement piece. Durable Print: Designed to maintain its vibrant colors wash after wash. Wear your aspirations. Earn your style. The \"Earn PAISA\" t-shirt is more than just an item of clothing—it's a lifestyle statement.",
           "source": "shopify",
@@ -6769,37 +6779,30 @@
           "orderedColor": "Black"
         }
       ],
-      "paymentMethod": "cod",
-      "createdAt": {
+      "orderDate": {
         "seconds": 1766948811,
         "nanoseconds": 513000000
       },
+      "pincode": "700055",
       "city": "koltakata",
-      "address": "sdasdada",
-      "status": "pending",
-      "phone": "80001812381",
       "source": "firebase",
       "pointsEarned": 56,
       "orderCost": 220,
       "orderProfit": 329,
       "orderProfitMargin": 57.9,
-      "profitCalculatedAt": "2026-08-05T15:58:47.036Z"
+      "profitCalculatedAt": "2026-08-05T15:58:57.052Z"
     },
     {
       "id": "2S4PVagw7A2ab4iQLhQA",
       "orderId": "ORD-1765144878816",
-      "email": "shayakdas6.5.0@gmail.com",
-      "subtotal": 85,
-      "pincode": "700055",
-      "state": "West Bengal",
       "items": [
         {
-          "price": 549,
-          "name": "\"PAISA Earn PAISA\" Graphic Gen Z T-Shirt",
-          "quantity": 1,
-          "size": "M",
-          "color": "Black",
           "id": 7915854102667,
+          "color": "Black",
+          "size": "M",
+          "quantity": 1,
+          "name": "\"PAISA Earn PAISA\" Graphic Gen Z T-Shirt",
+          "price": 549,
           "importedAt": "2025-12-28T18:56:30.854Z",
           "description": "Crafted from premium, ultra-soft fabric, this tee promises unparalleled comfort for all-day wear. Whether you're hustling at the office, meeting friends, or just relaxing, you'll feel great in its breathable and lightweight embrace. The eye-catching design features the word \"PAISA\" (money) repeated in a striking purple hue, with \"Earn\" elegantly scripted in a vibrant orange, creating a dynamic visual that's both modern and inspiring. This creative graphic is a conversation starter, showcasing your drive and unique fashion sense. Key Features: Creative & Stylish Design: A unique graphic that blends ambition with modern aesthetics. Supreme Comfort: Made from high-quality, soft-touch fabric for an exceptional feel. Versatile Wear: Perfect for casual outings, business casual, or as a statement piece. Durable Print: Designed to maintain its vibrant colors wash after wash. Wear your aspirations. Earn your style. The \"Earn PAISA\" t-shirt is more than just an item of clothing—it's a lifestyle statement.",
           "source": "shopify",
@@ -7260,53 +7263,65 @@
           "orderedColor": "Black"
         }
       ],
+      "totalAmount": 85,
+      "email": "shayakdas6.5.0@gmail.com",
       "orderDate": {
         "seconds": 1765144878,
         "nanoseconds": 816000000
       },
-      "totalAmount": 85,
-      "paymentMethod": "upi",
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
       "fullName": "Shayak Das",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
       "status": "pending",
+      "pincode": "700055",
+      "paymentMethod": "upi",
+      "phone": "80001812381",
       "createdAt": {
         "seconds": 1765144878,
         "nanoseconds": 816000000
       },
-      "shippingCost": 0,
       "address": "sdasdada",
-      "phone": "80001812381",
       "city": "koltakata",
+      "shippingCost": 0,
+      "state": "West Bengal",
+      "subtotal": 85,
       "source": "firebase",
       "pointsEarned": 8,
       "orderCost": 220,
       "orderProfit": 329,
       "orderProfitMargin": 387.1,
-      "profitCalculatedAt": "2026-08-05T15:58:47.036Z"
+      "profitCalculatedAt": "2026-08-05T15:58:57.052Z"
     },
     {
       "id": "SuTQGC4vIytM2WrHUXzg",
       "orderId": "ORD-1764264646243",
-      "address": "sdasdada",
-      "city": "koltakata",
-      "state": "West Bengal",
+      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
       "paymentMethod": "upi",
+      "address": "sdasdada",
+      "status": "pending",
       "subtotal": 45,
-      "email": "shayakdas6.5.0@gmail.com",
+      "state": "West Bengal",
+      "orderDate": {
+        "seconds": 1764264646,
+        "nanoseconds": 243000000
+      },
+      "pincode": "700055",
+      "totalAmount": 45,
+      "phone": "80001812381",
+      "shippingCost": 0,
+      "fullName": "Shayak Das",
       "createdAt": {
         "seconds": 1764264646,
         "nanoseconds": 243000000
       },
-      "fullName": "Shayak Das",
-      "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "city": "koltakata",
       "items": [
         {
-          "color": "Pink",
-          "quantity": 1,
-          "id": 2,
-          "size": "M",
           "name": "Vintage Crop Top",
           "price": 45,
+          "id": 2,
+          "size": "M",
+          "color": "Pink",
+          "quantity": 1,
           "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
           "category": "Women",
           "isNew": true,
@@ -7339,36 +7354,29 @@
           "orderedColor": "Pink"
         }
       ],
-      "totalAmount": 45,
-      "status": "pending",
-      "orderDate": {
-        "seconds": 1764264646,
-        "nanoseconds": 243000000
-      },
-      "shippingCost": 0,
-      "phone": "80001812381",
-      "pincode": "700055",
+      "email": "shayakdas6.5.0@gmail.com",
       "source": "firebase",
       "pointsEarned": 4,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2026-08-05T15:58:47.036Z"
+      "profitCalculatedAt": "2026-08-05T15:58:57.052Z"
     },
     {
       "id": "FqpUj0HsXXWIFSy1GH6m",
       "orderId": "ORD-1764031459429",
-      "city": "koltakata",
-      "fullName": "Shayak Das",
-      "totalAmount": 85,
+      "orderDate": {
+        "seconds": 1764031459,
+        "nanoseconds": 429000000
+      },
       "items": [
         {
-          "quantity": 1,
+          "name": "\"PAISA Earn PAISA\" Graphic Gen Z T-Shirt",
           "id": 7915854102667,
           "price": 549,
-          "color": "Black",
+          "quantity": 1,
           "size": "M",
-          "name": "\"PAISA Earn PAISA\" Graphic Gen Z T-Shirt",
+          "color": "Black",
           "importedAt": "2025-12-28T18:56:30.854Z",
           "description": "Crafted from premium, ultra-soft fabric, this tee promises unparalleled comfort for all-day wear. Whether you're hustling at the office, meeting friends, or just relaxing, you'll feel great in its breathable and lightweight embrace. The eye-catching design features the word \"PAISA\" (money) repeated in a striking purple hue, with \"Earn\" elegantly scripted in a vibrant orange, creating a dynamic visual that's both modern and inspiring. This creative graphic is a conversation starter, showcasing your drive and unique fashion sense. Key Features: Creative & Stylish Design: A unique graphic that blends ambition with modern aesthetics. Supreme Comfort: Made from high-quality, soft-touch fabric for an exceptional feel. Versatile Wear: Perfect for casual outings, business casual, or as a statement piece. Durable Print: Designed to maintain its vibrant colors wash after wash. Wear your aspirations. Earn your style. The \"Earn PAISA\" t-shirt is more than just an item of clothing—it's a lifestyle statement.",
           "source": "shopify",
@@ -7829,66 +7837,59 @@
           "orderedColor": "Black"
         }
       ],
-      "state": "West Bengal",
+      "city": "koltakata",
+      "fullName": "Shayak Das",
+      "lastUpdated": "2025-11-25T15:53:02.252Z",
+      "email": "shayakdas6.5.0@gmail.com",
+      "pincode": "700055",
+      "address": "sdasdada",
       "userId": "z6TZSHnFe2W1EYmhmOTFsQsMgKP2",
+      "status": "shipped",
       "createdAt": {
         "seconds": 1764031459,
         "nanoseconds": 429000000
       },
       "subtotal": 85,
-      "pincode": "700055",
-      "email": "shayakdas6.5.0@gmail.com",
-      "paymentMethod": "upi",
-      "address": "sdasdada",
-      "lastUpdated": "2025-11-25T15:53:02.252Z",
       "shippingCost": 0,
-      "status": "shipped",
       "phone": "80001812381",
-      "orderDate": {
-        "seconds": 1764031459,
-        "nanoseconds": 429000000
-      },
-      "trackingLink": "https://tracking.com/12345",
       "shippedAt": "2025-11-25T15:53:02.252Z",
+      "totalAmount": 85,
+      "trackingLink": "https://tracking.com/12345",
+      "paymentMethod": "upi",
+      "state": "West Bengal",
       "source": "firebase",
       "pointsEarned": 8,
       "orderCost": 220,
       "orderProfit": 329,
       "orderProfitMargin": 387.1,
-      "profitCalculatedAt": "2026-08-05T15:58:47.036Z"
+      "profitCalculatedAt": "2026-08-05T15:58:57.052Z"
     },
     {
       "id": "mAsVn48LIsf1XLgRVy9r",
       "orderId": "ORD-1763911399446",
+      "state": "West Bengal",
+      "subtotal": 85,
       "totalAmount": 115,
-      "status": "pending",
-      "address": "sdasdada",
       "phone": "80001812381",
-      "createdAt": {
-        "seconds": 1763911399,
-        "nanoseconds": 446000000
-      },
-      "shippingCost": 30,
       "orderDate": {
         "seconds": 1763911399,
         "nanoseconds": 446000000
       },
-      "state": "West Bengal",
-      "subtotal": 85,
-      "paymentMethod": "cod",
-      "city": "koltakata",
-      "pincode": "700055",
-      "email": "lolislolpp@gmail.com",
+      "status": "pending",
       "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
+      "shippingCost": 30,
+      "paymentMethod": "cod",
       "fullName": "Mr Oak GAMING",
+      "address": "sdasdada",
+      "email": "lolislolpp@gmail.com",
       "items": [
         {
+          "color": "Black",
+          "id": 7915854102667,
+          "size": "M",
+          "name": "\"PAISA Earn PAISA\" Graphic Gen Z T-Shirt",
           "price": 549,
           "quantity": 1,
-          "id": 7915854102667,
-          "color": "Black",
-          "name": "\"PAISA Earn PAISA\" Graphic Gen Z T-Shirt",
-          "size": "M",
           "importedAt": "2025-12-28T18:56:30.854Z",
           "description": "Crafted from premium, ultra-soft fabric, this tee promises unparalleled comfort for all-day wear. Whether you're hustling at the office, meeting friends, or just relaxing, you'll feel great in its breathable and lightweight embrace. The eye-catching design features the word \"PAISA\" (money) repeated in a striking purple hue, with \"Earn\" elegantly scripted in a vibrant orange, creating a dynamic visual that's both modern and inspiring. This creative graphic is a conversation starter, showcasing your drive and unique fashion sense. Key Features: Creative & Stylish Design: A unique graphic that blends ambition with modern aesthetics. Supreme Comfort: Made from high-quality, soft-touch fabric for an exceptional feel. Versatile Wear: Perfect for casual outings, business casual, or as a statement piece. Durable Print: Designed to maintain its vibrant colors wash after wash. Wear your aspirations. Earn your style. The \"Earn PAISA\" t-shirt is more than just an item of clothing—it's a lifestyle statement.",
           "source": "shopify",
@@ -8349,44 +8350,38 @@
           "orderedColor": "Black"
         }
       ],
+      "createdAt": {
+        "seconds": 1763911399,
+        "nanoseconds": 446000000
+      },
+      "pincode": "700055",
+      "city": "koltakata",
       "source": "firebase",
       "pointsEarned": 11,
       "orderCost": 220,
       "orderProfit": 329,
       "orderProfitMargin": 286.1,
-      "profitCalculatedAt": "2026-08-05T15:58:47.036Z"
+      "profitCalculatedAt": "2026-08-05T15:58:57.052Z"
     },
     {
       "id": "9uhZ0XRhlS8Z4j6X4Rke",
       "orderId": "ORD-1763906412534",
-      "address": "sdasdada",
-      "shippingCost": 0,
-      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
-      "paymentMethod": "upi",
       "createdAt": {
         "seconds": 1763906412,
         "nanoseconds": 534000000
       },
-      "phone": "80001812381",
       "city": "koltakata",
-      "state": "West Bengal",
-      "email": "lolislolpp@gmail.com",
-      "orderDate": {
-        "seconds": 1763906412,
-        "nanoseconds": 534000000
-      },
-      "subtotal": 45,
-      "fullName": "Mr Oak GAMING",
-      "totalAmount": 45,
       "pincode": "700055",
+      "address": "sdasdada",
+      "subtotal": 45,
       "items": [
         {
-          "size": "M",
-          "name": "Vintage Crop Top",
-          "quantity": 1,
           "color": "Pink",
-          "id": 2,
+          "size": "M",
           "price": 45,
+          "quantity": 1,
+          "id": 2,
+          "name": "Vintage Crop Top",
           "description": "Stylish vintage crop top with retro vibes. Comfortable and trendy.",
           "category": "Women",
           "isNew": true,
@@ -8419,13 +8414,25 @@
           "orderedColor": "Pink"
         }
       ],
+      "email": "lolislolpp@gmail.com",
+      "fullName": "Mr Oak GAMING",
+      "orderDate": {
+        "seconds": 1763906412,
+        "nanoseconds": 534000000
+      },
+      "state": "West Bengal",
+      "shippingCost": 0,
+      "userId": "rsFcpwVM1LSiBehdt2ZxnzFHd5S2",
       "status": "pending",
+      "totalAmount": 45,
+      "phone": "80001812381",
+      "paymentMethod": "upi",
       "source": "firebase",
       "pointsEarned": 4,
       "orderCost": 0,
       "orderProfit": 0,
       "orderProfitMargin": 0,
-      "profitCalculatedAt": "2026-08-05T15:58:47.036Z"
+      "profitCalculatedAt": "2026-08-05T15:58:57.052Z"
     },
     {
       "id": "2S4PVagw7A2ab4iQLhQA",

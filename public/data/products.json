@@ -155,38 +155,6 @@
     "isBestSeller": true
   },
   {
-    "id": 4,
-    "description": "High-tech fabric hoodie with moisture-wicking properties. Perfect for active lifestyle.",
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL"
-    ],
-    "originalPrice": 190,
-    "colors": [
-      "Black",
-      "Navy",
-      "Gray"
-    ],
-    "name": "Premium Tech Hoodie",
-    "price": 95,
-    "tags": [
-      "PREMIUM",
-      "NEW"
-    ],
-    "qid": "PTH-004",
-    "category": "Men",
-    "images": [
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500"
-    ],
-    "isNew": true,
-    "type": "Hoodie",
-    "updatedAt": "2026-08-04T20:53:34.892Z",
-    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
-    "rating": 4.8
-  },
-  {
     "id": 5,
     "rating": 4.4,
     "updatedAt": "2026-08-04T20:53:34.892Z",
@@ -4133,5 +4101,44 @@
     "isNew": true,
     "lastSyncedAt": "2025-12-28T18:56:30.855Z",
     "source": "shopify"
+  },
+  {
+    "id": 1765149958744,
+    "stock": 0,
+    "images": [
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
+    ],
+    "qid": "NGH-001",
+    "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+    "isNew": true,
+    "rating": 4.5,
+    "profit": 75,
+    "cost": 10,
+    "isBestSeller": true,
+    "description": "Premium quality hoodie with neon glitch design. Perfect for streetwear enthusiasts.",
+    "price": 85,
+    "showInHome": true,
+    "originalPrice": 170,
+    "category": "Men",
+    "name": "Neon Glitch Hoodie",
+    "colors": [],
+    "showInCollections": true,
+    "status": "active",
+    "showInShop": true,
+    "updatedAt": "2026-08-04T20:53:34.893Z",
+    "profitMargin": 88.2,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "type": "Hoodie",
+    "tags": [
+      "TRENDING",
+      "BESTSELLER",
+      "ALL"
+    ]
   }
 ]
