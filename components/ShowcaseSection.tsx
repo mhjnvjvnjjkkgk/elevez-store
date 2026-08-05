@@ -36,7 +36,7 @@ export const ShowcaseSection: React.FC = () => {
     },
     {
       title: "NEO TOKYO",
-      subtitle: "URBAN PROTOCOL",
+      subtitle: "URBAN ESSENTIALS",
       image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=1200",
       color: "#ff00ff"
     },

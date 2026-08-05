@@ -23,7 +23,7 @@ export const InfiniteMarquee: React.FC<InfiniteMarqueeProps> = ({
   className = "" 
 }) => {
   // Translate traditional speed parameter into a base velocity step size (higher speed param = slower loop, so inverse)
-  const baseVelocity = speed > 0 ? (60 / speed) : 2.5;
+  const baseVelocity = speed > 0 ? (20 / speed) : 0.8;
 
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();

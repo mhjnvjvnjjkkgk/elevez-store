@@ -2550,9 +2550,9 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           >
             {/* Symmetrical System Active Header */}
             <div className="flex items-center justify-center gap-2 sm:gap-4 mb-4 sm:mb-8 text-black font-black uppercase text-[10px] sm:text-xs md:text-sm tracking-widest border-b-2 sm:border-b-[3px] border-black pb-2 sm:pb-3 w-fit mx-auto select-none">
-              <span>SYSTEM ACTIVE // PROTOCOL 01</span>
-              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#00ff88] border-[1.5px] sm:border-[2px] border-black rounded-full animate-pulse" />
-              <span>SS26 DROP</span>
+              <span>SYSTEM ACTIVE // LIVE DROPS</span>
+              <span className="w-[3px] h-3 bg-black/40" />
+              <span>VERIFIED STREETWEAR</span>
             </div>
 
             <div className="relative flex items-center justify-center w-full my-4 sm:my-6 select-none">
@@ -3850,7 +3850,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
           <ArrowLeft size={16} /> Back to Archives
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start pb-20 lg:pb-0">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start pb-20 lg:pb-0">
           {/* Left Column - sticky, full image with borders always in view */}
           <div className="lg:col-span-6 lg:sticky lg:top-28">
           <div className="bg-white border-[4px] sm:border-[8px] border-black p-2 sm:p-6 md:p-8 shadow-[8px_8px_0px_0px_#000] sm:shadow-[16px_16px_0px_0px_#000] relative flex flex-col h-auto w-full">
@@ -3983,11 +3983,11 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
             </div>
 
             {/* Horizontal Warning Tape */}
-            <div className="my-4 -mx-12 border-y-[3px] border-black bg-yellow-300 text-black py-1.5 overflow-hidden flex-shrink-0 select-none pointer-events-none">
-              <InfiniteMarquee text="⚠️ STREETWEAR PROTOCOL // SS26 DROP // 100% PREMIUM COTTON // HEAVYWEIGHT 240 GSM // NO REPRINTS ⚠️" className="py-0.5 text-black text-[9px] font-black tracking-widest" />
+            <div className="my-3 -mx-12 border-y-[3px] border-black bg-yellow-300 text-black py-1 overflow-hidden flex-shrink-0 select-none pointer-events-none">
+              <InfiniteMarquee text="⚠️ STREETWEAR ESSENTIALS // SS26 DROP // 100% PREMIUM COTTON // HEAVYWEIGHT 180 GSM // LIMITED EDITION ⚠️" speed={60} className="py-0.5 text-black text-[9px] font-black tracking-widest" />
             </div>
 
-            <p className="text-black font-bold uppercase text-xs sm:text-sm leading-snug mb-5 border-l-[4px] border-black pl-4 italic">
+            <p className="text-black font-medium sm:font-bold uppercase text-[11px] sm:text-sm leading-tight sm:leading-snug mb-3 line-clamp-3 sm:line-clamp-none border-l-[3px] sm:border-l-[4px] border-black pl-3 italic">
               {product.description || 'Premium quality streetwear with personality-driven design. Engineered for durability and style in the urban environment.'}
             </p>
 
@@ -4075,8 +4075,8 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                 compact={true}
                 items={[
                   { title: "Product Architecture", content: product.description || "Designed for maximum utility and urban aesthetics. Built with high-grade GSM fabric for durability and comfort." },
-                  { title: "Material Protocol", content: "100% Premium Cotton // 240 GSM // Pre-shrunk // Bio-washed // Sustainably sourced." },
-                  { title: "Shipping Signals", content: "Dispatched within 24-48 hours. Express shipping available. Real-time tracking enabled." }
+                  { title: "Material & Craftsmanship", content: "100% Premium Cotton // 180 GSM // Pre-shrunk // Bio-washed // Sustainably sourced." },
+                  { title: "Shipping & Delivery", content: "Dispatched within 24-48 hours. Express shipping available. Real-time tracking enabled." }
                 ]} 
               />
             </div>
@@ -4119,7 +4119,7 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
                   isWishlisted ? 'bg-[#ff007f] text-white' : 'bg-white text-black'
                 }`}
               >
-                <Heart size={16} className={isWishlisted ? 'fill-current' : ''} />
+                <Heart size={20} className={`transition-transform duration-300 ${isWishlisted ? 'fill-current scale-110' : 'group-hover:scale-110'}`} />
                 {isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}
               </button>
               <button
@@ -4221,12 +4221,12 @@ const ProductDetail = ({ setCursorVariant }: { setCursorVariant: (v: any) => voi
         </div>
 
         {/* More Like This */}
-        <div className="mt-40">
-          <div className="border-b-[4px] border-black pb-4 mb-12 flex justify-between items-end">
-            <h2 className="text-3xl md:text-4xl font-black font-syne uppercase tracking-tighter text-black">
+        <div className="mt-6 sm:mt-10">
+          <div className="border-b-[4px] border-black pb-3 mb-8 flex justify-between items-end">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black font-syne uppercase tracking-tighter text-black">
               More Like This
             </h2>
-            <span className="text-xs font-bold uppercase tracking-widest text-black opacity-60">RECOMMENDED PROTOCOL</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-black opacity-60">YOU MIGHT ALSO LIKE</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 md:gap-6">
             {PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 5).map(p => (
@@ -4352,8 +4352,11 @@ const About = () => {
           viewport={{ once: true }}
           className="mb-20"
         >
-          <div className="inline-block bg-[#00ff88] text-black text-xs font-black uppercase tracking-[0.3em] px-4 py-2 border-[3px] border-black shadow-[4px_4px_0px_0px_#000] mb-6">Objective</div>
-          <VelocityHeader text="Our Mission" className="mb-8" />
+          <InfiniteMarquee text="THE MOVEMENT // THE COMMUNITY // ELEVEZ APPAREL // 180GSM LUXURY FABRIC" speed={40} className="my-12 py-3 bg-black border-y-4 border-black" />
+          
+          <div className="text-center my-8">
+            <VelocityHeader text="The Movement" />
+          </div>
           <p className="text-3xl text-black font-black uppercase leading-tight max-w-2xl">Redefining Streetwear for the Digital Age</p>
         </motion.div>
 

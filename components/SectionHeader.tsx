@@ -33,7 +33,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
         viewport={{ once: false, margin: "-100px" }}
         className="inline-block bg-black text-[#00ff88] text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] sm:tracking-[0.5em] px-3 sm:px-4 py-1 border-[2px] border-black mb-4 sm:mb-6"
       >
-        Protocol: {title.replace(/\s+/g, '_').toUpperCase()}
+        COLLECTION: {title.replace(/\s+/g, '_').toUpperCase()}
       </motion.div>
 
       {/* Massive Interactive Title with Glitch */}

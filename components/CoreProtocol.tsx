@@ -22,7 +22,7 @@ export const CoreProtocol: React.FC = () => {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="mb-32">
-          <VelocityHeader text="Core Protocol" className="text-white !text-8xl md:!text-[12rem]" />
+          <VelocityHeader text="Core Values" className="text-white !text-8xl md:!text-[12rem]" />
           <p className="text-[#00ff88] font-black uppercase tracking-[0.5em] text-xl mt-4">The DNA of the Syndicate</p>
         </div>
 
@@ -36,7 +36,7 @@ export const CoreProtocol: React.FC = () => {
               className="group"
             >
               <div className="text-sm font-black text-[#00ff88] mb-6 flex items-center gap-4">
-                <span className="w-12 h-[2px] bg-[#00ff88]" /> [ PROTOCOL_{p.id} ]
+                <span className="w-12 h-[2px] bg-[#00ff88]" /> [ VALUE_{p.id} ]
               </div>
               <h3 className="text-4xl font-black font-syne mb-8 uppercase group-hover:italic transition-all">
                 {p.title}
