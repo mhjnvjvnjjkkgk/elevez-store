@@ -2548,9 +2548,9 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             style={{ x: heroMoveX, y: heroMoveY }}
             className="flex-1 flex flex-col justify-center"
           >
-            {/* Symmetrical System Active Header */}
+            {/* Symmetrical Header */}
             <div className="flex items-center justify-center gap-2 sm:gap-4 mb-4 sm:mb-8 text-black font-black uppercase text-[10px] sm:text-xs md:text-sm tracking-widest border-b-2 sm:border-b-[3px] border-black pb-2 sm:pb-3 w-fit mx-auto select-none">
-              <span>SYSTEM ACTIVE // LIVE DROPS</span>
+              <span>LIVE DROPS</span>
               <span className="w-[3px] h-3 bg-black/40" />
               <span>VERIFIED STREETWEAR</span>
             </div>
@@ -7409,16 +7409,16 @@ const AnimatedRoutes = ({ setCursorVariant }: { setCursorVariant: (v: any) => vo
   return (
     <AnimatePresence mode="sync">
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageTransition><Home setCursorVariant={setCursorVariant} /></PageTransition>} />
-        <Route path="/shop/:category" element={<PageTransition><Shop setCursorVariant={setCursorVariant} /></PageTransition>} />
-        <Route path="/product/:id" element={<ProductDetail setCursorVariant={setCursorVariant} />} />
+        <Route path="/" element={<PageTransition><ErrorBoundary><Home setCursorVariant={setCursorVariant} /></ErrorBoundary></PageTransition>} />
+        <Route path="/shop/:category" element={<PageTransition><ErrorBoundary><Shop setCursorVariant={setCursorVariant} /></ErrorBoundary></PageTransition>} />
+        <Route path="/product/:id" element={<ErrorBoundary><ProductDetail setCursorVariant={setCursorVariant} /></ErrorBoundary>} />
         <Route path="/checkout" element={<PageTransition><ErrorBoundary><Checkout /></ErrorBoundary></PageTransition>} />
         <Route path="/account" element={<PageTransition><ErrorBoundary><Account setCursorVariant={setCursorVariant} /></ErrorBoundary></PageTransition>} />
         <Route path="/rewards" element={<PageTransition><ErrorBoundary><RewardsRedirect /></ErrorBoundary></PageTransition>} />
-        <Route path="/order/:orderId" element={<PageTransition><OrderDetail /></PageTransition>} />
-        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
-        <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
-        <Route path="/terms" element={<PageTransition><TermsOfService /></PageTransition>} />
+        <Route path="/order/:orderId" element={<PageTransition><ErrorBoundary><OrderDetail /></ErrorBoundary></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><ErrorBoundary><Contact /></ErrorBoundary></PageTransition>} />
+        <Route path="/privacy" element={<PageTransition><ErrorBoundary><PrivacyPolicy /></ErrorBoundary></PageTransition>} />
+        <Route path="/terms" element={<PageTransition><ErrorBoundary><TermsOfService /></ErrorBoundary></PageTransition>} />
       </Routes>
     </AnimatePresence>
   );

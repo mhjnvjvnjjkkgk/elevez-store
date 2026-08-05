@@ -414,49 +414,73 @@ export const localCollectionService = new LocalCollectionService();
  * localStorage + fire elevez_store_updated so every React page re-renders.
  */
 function setupAdminSync(): void {
-    const isDev = (import.meta as any).env.DEV;
-    if (!isDev) {
-        // Production: fall back to polling every 30 seconds
-        setInterval(async () => {
-            console.log('🔄 [Polling] Checking for admin updates...');
-            await localCollectionService.loadFromServer(true);
-        }, 30000);
-        return;
-    }
+    try {
+        if (typeof window === 'undefined') return;
 
-    const ADMIN_SSE_URL = 'http://localhost:3001/api/events';
-    let retryTimeout: ReturnType<typeof setTimeout> | null = null;
+        const isDev = Boolean((import.meta as any)?.env?.DEV);
+        if (!isDev) {
+            setInterval(async () => {
+                try {
+                    console.log('🔄 [Polling] Checking for admin updates...');
+                    await localCollectionService.loadFromServer(true);
+                } catch (e) {
+                    console.warn('⚠️ Background polling check failed silently:', e);
+                }
+            }, 30000);
+            return;
+        }
 
-    function connect() {
-        console.log('📡 [SSE] Connecting to admin server for real-time sync...');
-        const es = new EventSource(ADMIN_SSE_URL);
+        const ADMIN_SSE_URL = 'http://localhost:3001/api/events';
+        let retryTimeout: ReturnType<typeof setTimeout> | null = null;
 
-        es.addEventListener('data_updated', async (e: MessageEvent) => {
-            const payload = JSON.parse(e.data || '{}');
-            console.log('⚡ [SSE] Admin saved data! Force re-fetching storefront...', payload);
-            // Force bypass hasFetchedServer so we always re-load fresh data
-            hasFetchedServer = false;
-            isFetching = false;
-            await localCollectionService.loadFromServer(true);
-        });
+        function connect() {
+            try {
+                console.log('📡 [SSE] Connecting to admin server for real-time sync...');
+                const es = new EventSource(ADMIN_SSE_URL);
 
-        es.onerror = () => {
-            es.close();
-            if (!retryTimeout) {
-                retryTimeout = setTimeout(() => {
-                    retryTimeout = null;
-                    connect();
-                }, 5000); // retry after 5s
+                es.addEventListener('data_updated', async (e: MessageEvent) => {
+                    try {
+                        const payload = JSON.parse(e.data || '{}');
+                        console.log('⚡ [SSE] Admin saved data! Force re-fetching storefront...', payload);
+                        hasFetchedServer = false;
+                        isFetching = false;
+                        await localCollectionService.loadFromServer(true);
+                    } catch (err) {
+                        console.warn('Error handling SSE event:', err);
+                    }
+                });
+
+                es.onerror = () => {
+                    try {
+                        es.close();
+                        if (!retryTimeout) {
+                            retryTimeout = setTimeout(() => {
+                                retryTimeout = null;
+                                connect();
+                            }, 5000);
+                        }
+                    } catch (err) {
+                        // ignore SSE reconnect errors
+                    }
+                };
+
+                es.onopen = () => {
+                    console.log('✅ [SSE] Connected to admin server. Storefront will update instantly on admin saves.');
+                };
+            } catch (err) {
+                console.warn('SSE connection failed silently:', err);
             }
-        };
+        }
 
-        es.onopen = () => {
-            console.log('✅ [SSE] Connected to admin server. Storefront will update instantly on admin saves.');
-        };
+        connect();
+    } catch (error) {
+        console.warn('setupAdminSync failed silently:', error);
     }
-
-    connect();
 }
 
 // Auto-start SSE sync when the service module is loaded
-setupAdminSync();
+try {
+    setupAdminSync();
+} catch (e) {
+    console.warn('Could not auto-start admin sync:', e);
+}
