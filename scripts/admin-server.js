@@ -197,7 +197,7 @@ export function getCollectionProducts(collectionId: string): Product[] {
   connectedClients.forEach(client => {
     if (client.readyState === 1) { // WebSocket.OPEN
       try {
-        client.send(JSON.stringify({ type: 'reload' }));
+        client.send(JSON.stringify({ type: 'reload', isDataSync: true, file: 'constants.ts' }));
       } catch (err) {}
     }
   });
@@ -333,7 +333,7 @@ const server = http.createServer((req, res) => {
       if (fs.existsSync(backupFile)) {
         try {
           dataObj = JSON.parse(fs.readFileSync(backupFile, 'utf8'));
-          if (dataObj && dataObj.products && dataObj.products.length > 6) {
+          if (dataObj && dataObj.products && Array.isArray(dataObj.products)) {
             serveBackup = true;
           }
         } catch (e) {

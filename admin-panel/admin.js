@@ -17,12 +17,16 @@ function setupHotReloadClient() {
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === 'reload') {
-          console.log(`📝 File changed: ${data.file} - Reloading...`);
-          // Reload CSS files without full page reload
-          if (data.file.endsWith('.css')) {
+          const file = (data.file || '').toLowerCase();
+          const isDataFile = data.isDataSync || file.includes('constants.ts') || file.includes('.json') || file.includes('data');
+          if (isDataFile) {
+            console.log(`📝 Data file updated (${data.file || 'sync'}) - Skipping admin page reload`);
+            return;
+          }
+          console.log(`📝 Code file changed: ${data.file} - Reloading...`);
+          if (file.endsWith('.css')) {
             reloadCSS();
           } else {
-            // For JS changes, do a full reload
             setTimeout(() => location.reload(), 500);
           }
         }
@@ -95,11 +99,159 @@ const state = {
   // Undo/Redo functionality
   imageHistory: [],
   historyIndex: -1,
-  selectedImages: new Set()
+  selectedImages: new Set(),
+  undoStack: [],
+  redoStack: []
 };
 
 // Expose state globally so that deferred module scripts can access it reliably
 window.state = state;
+
+// ============================================
+// UNDO / REDO HISTORY SYSTEM
+// ============================================
+const MAX_UNDO_HISTORY = 50;
+
+window.pushStateToHistory = function(actionName = 'Action') {
+  const snapshot = {
+    products: JSON.parse(JSON.stringify(state.products || [])),
+    collections: JSON.parse(JSON.stringify(state.collections || [])),
+    availableTags: JSON.parse(JSON.stringify(state.availableTags || [])),
+    availableCategories: JSON.parse(JSON.stringify(state.availableCategories || [])),
+    availableTypes: JSON.parse(JSON.stringify(state.availableTypes || [])),
+    availableColors: JSON.parse(JSON.stringify(state.availableColors || [])),
+    availableSizes: JSON.parse(JSON.stringify(state.availableSizes || [])),
+    actionName
+  };
+
+  state.undoStack.push(snapshot);
+  if (state.undoStack.length > MAX_UNDO_HISTORY) {
+    state.undoStack.shift();
+  }
+  state.redoStack = [];
+  window.updateUndoRedoUI();
+};
+
+window.performUndo = function() {
+  if (!state.undoStack || state.undoStack.length === 0) {
+    showSyncStatus('Nothing to undo', 'info');
+    return;
+  }
+
+  const currentSnapshot = {
+    products: JSON.parse(JSON.stringify(state.products || [])),
+    collections: JSON.parse(JSON.stringify(state.collections || [])),
+    availableTags: JSON.parse(JSON.stringify(state.availableTags || [])),
+    availableCategories: JSON.parse(JSON.stringify(state.availableCategories || [])),
+    availableTypes: JSON.parse(JSON.stringify(state.availableTypes || [])),
+    availableColors: JSON.parse(JSON.stringify(state.availableColors || [])),
+    availableSizes: JSON.parse(JSON.stringify(state.availableSizes || [])),
+    actionName: 'Current'
+  };
+  state.redoStack.push(currentSnapshot);
+
+  const previousState = state.undoStack.pop();
+  state.products = previousState.products;
+  state.collections = previousState.collections;
+  state.availableTags = previousState.availableTags;
+  state.availableCategories = previousState.availableCategories;
+  state.availableTypes = previousState.availableTypes;
+  state.availableColors = previousState.availableColors;
+  state.availableSizes = previousState.availableSizes;
+
+  localStorage.setItem('elevez_products', JSON.stringify(state.products));
+  localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
+
+  renderCurrentView();
+  window.updateUndoRedoUI();
+  showSyncStatus(`↩️ Undid: ${previousState.actionName || 'Last Action'}`, 'success');
+};
+
+window.performRedo = function() {
+  if (!state.redoStack || state.redoStack.length === 0) {
+    showSyncStatus('Nothing to redo', 'info');
+    return;
+  }
+
+  const currentSnapshot = {
+    products: JSON.parse(JSON.stringify(state.products || [])),
+    collections: JSON.parse(JSON.stringify(state.collections || [])),
+    availableTags: JSON.parse(JSON.stringify(state.availableTags || [])),
+    availableCategories: JSON.parse(JSON.stringify(state.availableCategories || [])),
+    availableTypes: JSON.parse(JSON.stringify(state.availableTypes || [])),
+    availableColors: JSON.parse(JSON.stringify(state.availableColors || [])),
+    availableSizes: JSON.parse(JSON.stringify(state.availableSizes || [])),
+    actionName: 'Current'
+  };
+  state.undoStack.push(currentSnapshot);
+
+  const nextState = state.redoStack.pop();
+  state.products = nextState.products;
+  state.collections = nextState.collections;
+  state.availableTags = nextState.availableTags;
+  state.availableCategories = nextState.availableCategories;
+  state.availableTypes = nextState.availableTypes;
+  state.availableColors = nextState.availableColors;
+  state.availableSizes = nextState.availableSizes;
+
+  localStorage.setItem('elevez_products', JSON.stringify(state.products));
+  localStorage.setItem('elevez_collections', JSON.stringify(state.collections));
+
+  renderCurrentView();
+  window.updateUndoRedoUI();
+  showSyncStatus('↪️ Redid action', 'success');
+};
+
+window.updateUndoRedoUI = function() {
+  const canUndo = state.undoStack && state.undoStack.length > 0;
+  const canRedo = state.redoStack && state.redoStack.length > 0;
+
+  ['undoBtnSidebar', 'undoBtnHeader'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.disabled = !canUndo;
+      btn.style.opacity = canUndo ? '1' : '0.4';
+      btn.style.cursor = canUndo ? 'pointer' : 'not-allowed';
+      btn.title = canUndo ? `Undo (${state.undoStack.length} step${state.undoStack.length > 1 ? 's' : ''}) [Ctrl+Z]` : 'Nothing to Undo';
+    }
+  });
+
+  ['redoBtnSidebar', 'redoBtnHeader'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.disabled = !canRedo;
+      btn.style.opacity = canRedo ? '1' : '0.4';
+      btn.style.cursor = canRedo ? 'pointer' : 'not-allowed';
+      btn.title = canRedo ? `Redo (${state.redoStack.length} step${state.redoStack.length > 1 ? 's' : ''}) [Ctrl+Y]` : 'Nothing to Redo';
+    }
+  });
+};
+
+// Global Keyboard Shortcut listener for Undo / Redo
+window.addEventListener('keydown', (e) => {
+  const activeEl = document.activeElement;
+  const isTextInput = activeEl && (
+    (activeEl.tagName === 'INPUT' && !['checkbox', 'radio', 'button', 'submit'].includes(activeEl.type)) ||
+    activeEl.tagName === 'TEXTAREA'
+  );
+
+  if (isTextInput && activeEl.value && activeEl.value.length > 0) {
+    return;
+  }
+
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+    if (e.shiftKey) {
+      e.preventDefault();
+      window.performRedo();
+    } else {
+      e.preventDefault();
+      window.performUndo();
+    }
+  } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+    e.preventDefault();
+    window.performRedo();
+  }
+});
 
 // Centralized self-contained Firebase initialization
 let adminFirestoreDB = null;
@@ -309,23 +461,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Check for data issues on startup
   checkDataIntegrity();
 
-  // Load Instagram settings on dashboard startup
-  try {
-    const db = await getFirebaseDB();
-    if (db) {
-      const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-      const docSnap = await getDoc(doc(db, 'settings', 'instagram'));
-      if (docSnap.exists()) {
-        const { feedUrl } = docSnap.data();
-        const input = document.getElementById('instaFeedUrl');
-        if (input && feedUrl) {
-          input.value = feedUrl;
-        }
-      }
-    }
-  } catch (err) {
-    console.error('Failed to load Instagram settings:', err);
-  }
+
 
   // Setup Eyedropper custom mouse events
   setupEyedropperInteraction();
@@ -680,10 +816,10 @@ async function loadData() {
     console.warn('⚠️ [SWR Merge] localStorage products parse failed:', err.message);
   }
 
-  // 4. Try Static Catalog JSON file (for self-healing if incomplete)
-  const hasSamuraiInCloudOrLocal = cloudProducts.some(p => String(p.id) === '7916022530187') || localProducts.some(p => String(p.id) === '7916022530187');
-  if (cloudProducts.length < 28 || !hasSamuraiInCloudOrLocal) {
-    console.log('🩹 [SWR Merge] Products catalog is incomplete. Fetching static public catalog for self-healing...');
+  // 4. Only fetch static catalog JSON file as fallback if ALL sources are completely empty (0 products)
+  const totalLoadedSoFar = cloudProducts.length + serverProducts.length + localProducts.length;
+  if (totalLoadedSoFar === 0) {
+    console.log('🩹 [SWR Merge] No product data found anywhere. Fetching static public catalog fallback...');
     try {
       const response = await fetch('/data/products.json?v=' + Date.now());
       if (response.ok) {
@@ -3111,6 +3247,9 @@ function handleProductSubmit(e) {
     updatedAt: new Date().toISOString()
   };
 
+  // Push state to undo history before applying modifications
+  pushStateToHistory(state.editingProduct ? 'Edit Product' : 'Add Product');
+
   if (state.editingProduct) {
     const index = state.products.findIndex(p => String(p.id) === String(state.editingProduct.id));
     if (index > -1) {
@@ -3293,12 +3432,25 @@ window.editProduct = (id) => {
   }
 };
 
-window.deleteProduct = (id) => {
+window.deleteProduct = async (id) => {
   if (confirm('Are you sure you want to delete this product?')) {
+    pushStateToHistory('Delete Product');
     state.products = state.products.filter(p => String(p.id) !== String(id));
     saveData();
     renderCurrentView();
     showSyncStatus('Product deleted', 'success');
+
+    // Also delete from Firestore Cloud
+    try {
+      const db = await getFirebaseDB();
+      if (db) {
+        const { doc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        await deleteDoc(doc(db, 'products', String(id)));
+        console.log(`🔥 Deleted product ${id} from Firestore`);
+      }
+    } catch (e) {
+      console.warn('Could not delete product from Firestore:', e);
+    }
 
     // Auto-sync constants.ts so storefront reflects deleted products immediately
     fetch('http://localhost:3001/update-constants', {
@@ -5988,33 +6140,4 @@ setTimeout(() => {
   refreshAbandonedCarts();
 }, 2000);
 
-window.saveInstagramFeedUrl = async () => {
-  const urlInput = document.getElementById('instaFeedUrl');
-  if (!urlInput) return;
-  const feedUrl = urlInput.value.trim();
-  
-  if (feedUrl && !feedUrl.startsWith('https://')) {
-    alert('❌ Please enter a valid Behold JSON URL starting with https://');
-    return;
-  }
-  
-  try {
-    const db = await getFirebaseDB();
-    if (!db) {
-      alert('❌ Firebase database not initialized');
-      return;
-    }
-    
-    const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-    await setDoc(doc(db, 'settings', 'instagram'), {
-      feedUrl: feedUrl,
-      updatedAt: new Date().toISOString()
-    });
-    
-    showSyncStatus('📸 Instagram Feed URL saved successfully!', 'success');
-    alert('✅ Instagram Feed URL saved successfully!');
-  } catch (error) {
-    console.error('Error saving Instagram settings:', error);
-    alert('❌ Failed to save Instagram settings: ' + error.message);
-  }
-};
+
