@@ -4058,13 +4058,13 @@
     "category": "Unisex",
     "type": "T-Shirt",
     "rating": 4.5,
-    "image": "https://ibb.co/TB5S0qYK",
+    "image": "https://i.ibb.co/8gbyvmZd/female-mockup-3.jpg",
     "images": [
-      "https://ibb.co/TB5S0qYK",
       "https://i.ibb.co/8gbyvmZd/female-mockup-3.jpg",
+      "https://ibb.co/TB5S0qYK",
+      "https://i.ibb.co/4g4TfsPq/male-mockup-1.jpg",
       "https://i.ibb.co/nqsP45Z0/female-mockup-2.jpg",
-      "https://i.ibb.co/6ckCrYWN/female-mockup-1.jpg",
-      "https://i.ibb.co/4g4TfsPq/male-mockup-1.jpg"
+      "https://i.ibb.co/6ckCrYWN/female-mockup-1.jpg"
     ],
     "sizes": [
       "M",
@@ -4084,6 +4084,6 @@
     "showInCollections": true,
     "isNew": true,
     "isFeatured": true,
-    "updatedAt": "2026-08-05T22:40:23.372Z"
+    "updatedAt": "2026-08-05T22:40:55.461Z"
   }
 ]
