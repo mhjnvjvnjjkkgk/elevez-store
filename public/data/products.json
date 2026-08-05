@@ -4085,5 +4085,43 @@
     "isNew": true,
     "isFeatured": true,
     "updatedAt": "2026-08-05T22:40:55.461Z"
+  },
+  {
+    "id": 1785970021553,
+    "qid": "ELVZ-MSGOFS8H",
+    "name": "Forge Ahead with others",
+    "price": 449,
+    "originalPrice": 1000,
+    "cost": 360,
+    "profit": 89,
+    "profitMargin": 19.8,
+    "category": "Unisex",
+    "type": "T-Shirt",
+    "rating": 4.5,
+    "image": "https://i.ibb.co/kVLYP9LR/FEMALE-MOCKUP-1.jpg",
+    "images": [
+      "https://i.ibb.co/kVLYP9LR/FEMALE-MOCKUP-1.jpg",
+      "https://i.ibb.co/84NvD6kx/FEMALE-MOCKUP-3.jpg",
+      "https://i.ibb.co/twNb70t6/FEMALE-MOCKUP-4.jpg",
+      "https://i.ibb.co/JwMcRk0Q/FEMALE-MOCKUP-2.jpg"
+    ],
+    "sizes": [
+      "M",
+      "XS",
+      "S",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "colors": [
+      "White"
+    ],
+    "stock": 0,
+    "status": "active",
+    "showInHome": true,
+    "showInShop": true,
+    "showInCollections": true,
+    "isNew": true,
+    "updatedAt": "2026-08-05T22:47:01.553Z"
   }
 ]
