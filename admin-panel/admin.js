@@ -2351,7 +2351,6 @@ function renderImagePreviews() {
       <div class="image-preview-item ${isSelected ? 'selected' : ''}" draggable="true" data-index="${index}" onclick="toggleImageSelection(${index}, event)">
         <img src="${displayUrl}" 
              alt="Product ${index + 1}" 
-             ${isExternal ? 'crossorigin="anonymous"' : ''}
              loading="lazy"
              referrerpolicy="no-referrer"
              onerror="handleImageError(this, ${index})">
@@ -2417,24 +2416,41 @@ function setupImageDragAndDrop() {
 }
 
 // Handle image loading errors
-window.handleImageError = (imgElement, index) => {
-  console.warn(`⚠️ Image ${index + 1} failed to load:`, state.productForm.images[index]);
+window.handleImageError = async (imgElement, index) => {
+  const url = state.productForm?.images?.[index] || imgElement.src;
+  console.warn(`⚠️ Image ${index + 1} failed to load:`, url);
 
-  // Try without crossorigin
+  // If it's an ibb.co or unresolved page URL, try resolving server-side
+  if (url && (url.includes('ibb.co') || !url.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i))) {
+    try {
+      const res = await fetch(`http://localhost:3001/api/resolve-image-url?url=${encodeURIComponent(url)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.directUrl && data.directUrl !== url) {
+          console.log(`✅ Auto-resolved image ${index + 1}:`, url, '→', data.directUrl);
+          if (state.productForm?.images?.[index]) {
+            state.productForm.images[index] = data.directUrl;
+          }
+          imgElement.onerror = null;
+          imgElement.src = data.directUrl;
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Could not auto-resolve image URL server-side:', e);
+    }
+  }
+
+  // Try without crossorigin if set
   if (imgElement.crossOrigin) {
     imgElement.crossOrigin = null;
-    imgElement.src = state.productForm.images[index];
+    imgElement.src = url;
     return;
   }
 
-  // Show placeholder with URL info
-  const url = state.productForm.images[index];
-  const shortUrl = url.length > 30 ? url.substring(0, 30) + '...' : url;
-
+  // Show SVG placeholder if image cannot be loaded anywhere
   imgElement.onerror = null;
   imgElement.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='250'%3E%3Crect fill='%23333' width='200' height='250'/%3E%3Ctext fill='%2300ff88' x='50%25' y='40%25' text-anchor='middle' font-family='Arial' font-size='14'%3EImage ${index + 1}%3C/text%3E%3Ctext fill='%23666' x='50%25' y='55%25' text-anchor='middle' font-family='Arial' font-size='9'%3EPreview unavailable%3C/text%3E%3Ctext fill='%23888' x='50%25' y='65%25' text-anchor='middle' font-family='Arial' font-size='8'%3EWill work on website%3C/text%3E%3C/svg%3E`;
-
-  console.log('💡 Image will still work on the website, just preview unavailable in admin panel');
 };
 
 // View image URL

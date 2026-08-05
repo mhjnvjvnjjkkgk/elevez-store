@@ -2164,6 +2164,198 @@ const PromoVideoSection = ({ setCursorVariant }: { setCursorVariant: (v: any) =>
   );
 };
 
+const NewArrivalsShowcaseSection = ({
+  products,
+  onQuickView,
+  onProductClick,
+  setCursorVariant
+}: {
+  products: any[];
+  onQuickView: (p: any) => void;
+  onProductClick: (handle: string) => void;
+  setCursorVariant: (v: any) => void;
+}) => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  const targetIds = [1785966718944, 1785969623372, 1785970021553];
+  const newProducts = products.filter(p => targetIds.includes(Number(p.id)));
+  const displayProducts = newProducts.length >= 3 ? newProducts : products.slice(0, 3);
+
+  const productMetaMap: Record<number, { tag: string; tagBg: string; stockText: string }> = {
+    1785966718944: {
+      tag: "🔥 HOT DROP",
+      tagBg: "bg-red-600 text-white",
+      stockText: "SELLING FAST // 12 LEFT"
+    },
+    1785969623372: {
+      tag: "💥 SELLING OUT",
+      tagBg: "bg-[#00ff88] text-black font-black",
+      stockText: "LIMITED DROP // 7 LEFT IN STOCK"
+    },
+    1785970021553: {
+      tag: "⭐ JUST DROPPED",
+      tagBg: "bg-cyan-400 text-black font-black",
+      stockText: "FRESH ARRIVAL // INTRO PRICING"
+    }
+  };
+
+  useEffect(() => {
+    if (!sectionRef.current || !cardsRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".new-arrivals-title-char",
+        { opacity: 0, y: 40, rotateX: -90 },
+        {
+          opacity: 1,
+          y: 0,
+          rotateX: 0,
+          stagger: 0.04,
+          duration: 0.8,
+          ease: "back.out(1.7)",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%"
+          }
+        }
+      );
+
+      gsap.fromTo(
+        ".new-arrival-card",
+        { opacity: 0, y: 80, scale: 0.92, rotateY: -10 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotateY: 0,
+          stagger: 0.15,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: cardsRef.current,
+            start: "top 85%"
+          }
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section ref={sectionRef} className="py-16 sm:py-28 bg-black text-white relative z-30 overflow-hidden border-t-4 border-b-4 border-black">
+      <div className="absolute inset-0 bg-[radial-gradient(#00ff88_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
+
+      <div className="container mx-auto px-4 max-w-6xl relative z-10">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 border-b-2 border-white/20 pb-6 gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="w-3 h-3 bg-[#00ff88] rounded-full animate-ping" />
+              <span className="text-[#00ff88] font-mono text-xs sm:text-sm font-black uppercase tracking-widest">
+                SS26 // EXCLUSIVE NEW DROPS
+              </span>
+            </div>
+            <h2 className="text-3xl sm:text-6xl font-black uppercase tracking-tighter font-syne text-white flex flex-wrap gap-[0.15em] perspective-1000">
+              {"NEW ARRIVALS".split("").map((char, index) => (
+                <span
+                  key={index}
+                  className="new-arrivals-title-char inline-block"
+                >
+                  {char === " " ? "\u00A0" : char}
+                </span>
+              ))}
+            </h2>
+          </div>
+
+          <div className="bg-[#00ff88] text-black border-2 border-black px-4 py-2 font-mono text-xs font-black uppercase tracking-wider shadow-[4px_4px_0px_0px_#fff]">
+            ⚡ 180GSM PURE COTTON COLLECTION
+          </div>
+        </div>
+
+        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          {displayProducts.map((product, idx) => {
+            const meta = productMetaMap[Number(product.id)] || {
+              tag: "🔥 NEW DROP",
+              tagBg: "bg-[#00ff88] text-black",
+              stockText: "LIMITED STOCK // HIGH DEMAND"
+            };
+
+            const mainImage = product.image || (product.images && product.images[0]);
+            const secondaryImage = (product.images && product.images[1]) || mainImage;
+            const handle = product.handle || product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+            return (
+              <motion.div
+                key={product.id || idx}
+                whileHover={{ y: -8, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="new-arrival-card bg-neutral-900 border-[3px] border-white/20 hover:border-[#00ff88] p-4 relative flex flex-col justify-between shadow-[8px_8px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] transition-all duration-300 group cursor-pointer"
+                onMouseEnter={() => setCursorVariant('hover')}
+                onMouseLeave={() => setCursorVariant('default')}
+                onClick={() => onProductClick(handle)}
+              >
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className={`text-[10px] sm:text-xs font-black px-2.5 py-1 uppercase tracking-wider border border-black shadow-[2px_2px_0px_0px_#000] ${meta.tagBg}`}>
+                      {meta.tag}
+                    </span>
+                    <span className="text-[10px] font-mono text-[#00ff88] font-bold tracking-tight">
+                      ₹{product.price} <span className="line-through text-gray-500 text-[9px]">₹{product.originalPrice || 1000}</span>
+                    </span>
+                  </div>
+
+                  <div className="relative aspect-[3/4] bg-black border-2 border-white/10 overflow-hidden mb-4 group-hover:border-[#00ff88] transition-colors">
+                    <img
+                      src={mainImage}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 group-hover:opacity-0 absolute inset-0"
+                      loading="lazy"
+                    />
+                    <img
+                      src={secondaryImage}
+                      alt={`${product.name} alternate`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-0 group-hover:opacity-100 absolute inset-0"
+                      loading="lazy"
+                    />
+
+                    <div className="absolute bottom-2 left-2 right-2 bg-black/90 backdrop-blur-md border border-[#00ff88]/40 px-2 py-1 flex items-center justify-between text-[9px] font-mono text-gray-300">
+                      <span className="flex items-center gap-1.5 text-[#00ff88]">
+                        <span className="w-1.5 h-1.5 bg-[#00ff88] rounded-full animate-ping" />
+                        {meta.stockText}
+                      </span>
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl font-black uppercase text-white font-syne mb-1 tracking-tight group-hover:text-[#00ff88] transition-colors line-clamp-1">
+                    {product.name}
+                  </h3>
+                  <p className="text-xs text-gray-400 font-medium mb-3 line-clamp-2 leading-relaxed">
+                    {product.description}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2 mt-2">
+                  <span className="text-[10px] font-mono uppercase text-gray-400">180GSM PURE FABRIC</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onQuickView(product);
+                    }}
+                    className="bg-[#00ff88] text-black font-black text-xs px-3 py-1.5 uppercase tracking-wider border border-black shadow-[2px_2px_0px_0px_#000] hover:bg-white transition-colors"
+                  >
+                    QUICK VIEW
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
   useSEO({
     title: 'Elevez | Elevate Your Style',
@@ -2451,6 +2643,14 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
       {/* Promo Video Film */}
       <PromoVideoSection setCursorVariant={setCursorVariant} />
+
+      {/* New Arrivals Animated Showcase */}
+      <NewArrivalsShowcaseSection
+        products={allProducts}
+        onQuickView={setSelectedProduct}
+        onProductClick={(handle) => navigate(`/product/${handle}`)}
+        setCursorVariant={setCursorVariant}
+      />
 
       {/* Symmetrical X-Shaped Crossing Marquees */}
       <div className="relative w-full h-40 sm:h-80 z-40 flex items-center justify-center -my-8 sm:-my-16 pointer-events-none select-none">

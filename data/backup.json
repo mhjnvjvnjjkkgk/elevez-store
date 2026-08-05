@@ -4011,7 +4011,7 @@
     {
       "id": 1785966718944,
       "qid": "ELVZ-MSGMGZXB",
-      "name": "FEARLESS DIVE TSHIRT",
+      "name": "\"FEARLESS DIVE\"",
       "price": 499,
       "originalPrice": 1000,
       "cost": 400,
@@ -4045,12 +4045,13 @@
       "showInShop": true,
       "showInCollections": true,
       "isNew": true,
-      "updatedAt": "2026-08-05T23:02:52.017Z"
+      "updatedAt": "2026-08-05T23:21:44.705Z",
+      "description": "Some soul-defining moments require no permission—only the courage to jump into the deep end. \"The Fearless Leap\" is crafted for those who leap before doubt creeps in. Made from 100% Super-Combed 180 GSM Pure Cotton, this oversized beige tee whispers quiet confidence against your skin. High-density reactive dyeing ensures it retains its warm sand tone wash after wash, while pre-shrunk bio-washed fabric offers a buttery soft touch that feels like a second skin. When you put this on, you don't just wear fabric; you wear a promise to yourself—to never look back, to dive into the unknown, and to conquer the waters below."
     },
     {
       "id": 1785969623372,
       "qid": "ELVZ-MSGO78ZW",
-      "name": "RISE ABOVE SHINE LIGHT",
+      "name": "\"RISE ABOVE SHINE LIGHT\"",
       "price": 499,
       "originalPrice": 1000,
       "cost": 400,
@@ -4062,7 +4063,7 @@
       "image": "https://i.ibb.co/8gbyvmZd/female-mockup-3.jpg",
       "images": [
         "https://i.ibb.co/8gbyvmZd/female-mockup-3.jpg",
-        "https://ibb.co/TB5S0qYK",
+        "https://i.ibb.co/PZ8nWzFT/male-mockup-2.jpg",
         "https://i.ibb.co/4g4TfsPq/male-mockup-1.jpg",
         "https://i.ibb.co/nqsP45Z0/female-mockup-2.jpg",
         "https://i.ibb.co/6ckCrYWN/female-mockup-1.jpg"
@@ -4085,12 +4086,13 @@
       "showInCollections": true,
       "isNew": true,
       "isFeatured": true,
-      "updatedAt": "2026-08-05T23:02:44.377Z"
+      "updatedAt": "2026-08-05T23:21:44.705Z",
+      "description": "Out of the darkest nights come the brightest stars. \"Ignite the Shadow\" is designed as a beacon for the relentless dreamers who illuminate their own path when the world dims. Engineered with 180 GSM Ultra-Pure Ring-Spun Cotton and featuring breathable high-definition screen printing, this black tee offers structured drape with zero stiffness. Double-needle stitched hems and ribbed lycra neckbands ensure it retains its shape through every storm. It carries a silent monologue: \"Rise above the noise, let your light shine through the shadows, and illuminate the world around you.\" Wear it when you need a reminder of the fire that burns within."
     },
     {
       "id": 1785970021553,
       "qid": "ELVZ-MSGOFS8H",
-      "name": "Forge Ahead with others",
+      "name": "\"FORGE AHEAD WITH OTHERS\"",
       "price": 449,
       "originalPrice": 1000,
       "cost": 360,
@@ -4099,11 +4101,11 @@
       "category": "Unisex",
       "type": "T-Shirt",
       "rating": 4.5,
-      "image": "https://ibb.co/QvLynSjq",
+      "image": "https://i.ibb.co/tpgVcjPN/FEMALE-MOCKUP-1.jpg",
       "images": [
-        "https://ibb.co/QvLynSjq",
-        "https://ibb.co/TDRjdjN8",
-        "https://ibb.co/23NdcTK9",
+        "https://i.ibb.co/tpgVcjPN/FEMALE-MOCKUP-1.jpg",
+        "https://i.ibb.co/nqfdtdKc/FEMALE-MOCKUP-2-2.jpg",
+        "https://i.ibb.co/QvdMY4mg/FEMALE-MOCKUP-2-1.jpg",
         "https://i.ibb.co/G3rHbZdh/FEMALE-MOCKUP-4.jpg"
       ],
       "sizes": [
@@ -4123,7 +4125,8 @@
       "showInShop": true,
       "showInCollections": true,
       "isNew": true,
-      "updatedAt": "2026-08-05T23:01:30.658Z"
+      "updatedAt": "2026-08-05T23:21:44.705Z",
+      "description": "Great empires are never built alone—they are forged shoulder-to-shoulder with those who share your vision. \"The Vanguard Syndicate\" is an ode to unity, loyalty, and collective triumph. Spun from 100% Breathable 180 GSM Fine Cotton, this pure white statement tee delivers effortless streetwear elegance with a relaxed drop-shoulder silhouette. Silky smooth to the touch and tailored for all-day ventilation, it speaks to the tribe you carry with you: \"Forge ahead together, break boundaries together, leave an indelible mark together.\" A timeless wardrobe essential that speaks volumes without saying a word."
     }
   ],
   "collections": [
