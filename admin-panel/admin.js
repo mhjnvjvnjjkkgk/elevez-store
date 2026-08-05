@@ -2042,19 +2042,30 @@ async function fetchDirectImageUrl(pageUrl) {
       return directUrl;
     }
 
-    // Special handling for ImgBB page URLs
+    // Check if server-side resolution is available for non-direct links (e.g., ibb.co, postimg.cc)
+    try {
+      const res = await fetch(`http://localhost:3001/api/resolve-image-url?url=${encodeURIComponent(pageUrl)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.directUrl) {
+          console.log('✅ Server resolved direct image URL:', pageUrl, '→', data.directUrl);
+          return data.directUrl;
+        }
+      }
+    } catch (e) {
+      console.warn('⚠️ Server URL resolver offline, trying client fallback');
+    }
+
+    // Special handling for ImgBB page URLs fallback
     const urlObj = new URL(pageUrl);
-    if (urlObj.hostname.includes('ibb.co') && !urlObj.hostname.startsWith('i.')) {
+    if ((urlObj.hostname.includes('ibb.co') || urlObj.hostname.includes('imgbb')) && !urlObj.hostname.startsWith('i.')) {
       console.log('🔄 Fetching ImgBB direct URL from page...');
       showSyncStatus('🔄 Fetching ImgBB image...', 'success');
 
       try {
-        // Fetch the page HTML
         const response = await fetch(pageUrl);
         const html = await response.text();
 
-        // Extract direct image URL from HTML
-        // ImgBB embeds the direct URL in meta tags and data attributes
         const ogImageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
         const dataUrlMatch = html.match(/data-url="([^"]+)"/);
         const imgSrcMatch = html.match(/<img[^>]+src="(https:\/\/i\.ibb\.co\/[^"]+)"/);
@@ -2064,15 +2075,9 @@ async function fetchDirectImageUrl(pageUrl) {
         if (extractedUrl) {
           console.log('✅ Extracted ImgBB direct URL:', extractedUrl);
           return extractedUrl;
-        } else {
-          console.warn('⚠️ Could not extract direct URL from ImgBB page');
-          alert(`⚠️ Could not extract direct image URL from ImgBB page.\n\nPlease use the "Direct link" from ImgBB instead:\n1. Open image on ImgBB\n2. Click "Get share links"\n3. Copy "Direct link"\n4. Paste that URL instead`);
-          return null;
         }
       } catch (fetchError) {
-        console.error('❌ Error fetching ImgBB page:', fetchError);
-        alert(`❌ Could not fetch ImgBB page (CORS restriction).\n\nPlease use the "Direct link" from ImgBB:\n1. Open image on ImgBB\n2. Click "Get share links"\n3. Copy "Direct link" (starts with https://i.ibb.co/)\n4. Paste that URL instead`);
-        return null;
+        console.warn('⚠️ Client fetch failed (CORS), returning original page URL:', fetchError);
       }
     }
 
@@ -2291,6 +2296,7 @@ function extractImageUrls(text) {
         urlObj.hostname.includes('postimg') || // PostImage
         urlObj.hostname.includes('imgur') || // Imgur
         urlObj.hostname.includes('imgbb') || // ImgBB
+        urlObj.hostname.includes('ibb.co') || // ImgBB (ibb.co short links)
         urlObj.hostname.includes('unsplash') || // Unsplash
         urlObj.hostname.includes('cloudinary') || // Cloudinary
         urlObj.hostname.includes('images') // Generic image CDN

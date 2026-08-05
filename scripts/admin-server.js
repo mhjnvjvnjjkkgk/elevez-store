@@ -324,6 +324,62 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // GET /api/resolve-image-url?url=... - Resolve ImgBB or other page URLs to direct image URLs server-side
+  if (req.method === 'GET' && req.url.startsWith('/api/resolve-image-url')) {
+    try {
+      const urlParams = new URLSearchParams(req.url.split('?')[1] || '');
+      const targetUrl = urlParams.get('url');
+
+      if (!targetUrl) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: 'Missing url parameter' }));
+        return;
+      }
+
+      console.log(`🔍 [Resolve Image] Resolving page URL server-side: ${targetUrl}`);
+
+      if (targetUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i) || targetUrl.includes('i.ibb.co') || targetUrl.includes('i.imgur.com')) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, directUrl: targetUrl }));
+        return;
+      }
+
+      fetch(targetUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+      })
+      .then(r => r.text())
+      .then(html => {
+        const ogImageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
+        const dataUrlMatch = html.match(/data-url="([^"]+)"/);
+        const imgSrcMatch = html.match(/<img[^>]+src="(https:\/\/i\.ibb\.co\/[^"]+)"/);
+        const genericIbbMatch = html.match(/(https:\/\/i\.ibb\.co\/[^\s"'>]+)/);
+
+        const extractedUrl = ogImageMatch?.[1] || dataUrlMatch?.[1] || imgSrcMatch?.[1] || genericIbbMatch?.[1];
+
+        if (extractedUrl) {
+          console.log(`✅ [Resolve Image] Successfully resolved ${targetUrl} → ${extractedUrl}`);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true, directUrl: extractedUrl }));
+        } else {
+          console.warn(`⚠️ [Resolve Image] Could not find direct image URL in HTML for ${targetUrl}`);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, error: 'Could not extract direct image URL', fallbackUrl: targetUrl }));
+        }
+      })
+      .catch(err => {
+        console.error(`❌ [Resolve Image] Fetch error for ${targetUrl}:`, err.message);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message, fallbackUrl: targetUrl }));
+      });
+    } catch (error) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, error: error.message }));
+    }
+    return;
+  }
+
   // GET /api/products - Load from backup (with auto-sync from constants.ts if backup is empty or has only trial products)
   if (req.method === 'GET' && req.url === '/api/products') {
     try {

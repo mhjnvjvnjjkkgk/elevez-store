@@ -4,19 +4,17 @@ export const BRAND_NAME = "ELEVEZ";
 export const ACCENT_COLOR = "#00ff88";
 
 // Products - Auto-synced from Admin Panel
-// Last update: 6/8/2026, 2:57:55 am
+// Last update: 6/8/2026, 3:21:59 am
 export const PRODUCTS: Product[] = [
   {
     "id": 1765149944844,
-    "profit": 50,
+    "category": "Men",
+    "stock": 100,
     "image": "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
-    "originalPrice": 1500,
     "qid": "1222",
-    "showInShop": true,
     "showInCollections": true,
-    "profitMargin": 5.9,
-    "updatedAt": "2026-08-05T16:00:19.867Z",
-    "status": "active",
+    "originalPrice": 1500,
+    "isBestSeller": true,
     "showInHome": true,
     "sizes": [
       "M",
@@ -26,57 +24,49 @@ export const PRODUCTS: Product[] = [
       "XL",
       "XXL"
     ],
-    "isBestSeller": true,
-    "colors": [
-      "Black"
-    ],
+    "profit": 50,
     "type": "Hoodie",
-    "rating": 4.5,
-    "cost": 800,
     "name": "Dont Look back hoodie",
-    "tags": [
-      "ALL"
-    ],
-    "price": 850,
-    "stock": 100,
-    "category": "Men",
+    "cost": 800,
+    "rating": 4.5,
+    "showInShop": true,
+    "profitMargin": 5.9,
     "images": [
       "https://i.ibb.co/350ZYs3N/Gemini-Generated-Image-8udrlp8udrlp8udr.png",
       "https://i.ibb.co/svktk85k/Gemini-Generated-Image-gpaa7hgpaa7hgpaa.png",
       "https://i.ibb.co/FbLmZBJg/use-fo-carousal.png",
       "https://i.ibb.co/gFM8kzCT/Gemini-Generated-Image-k4d9bck4d9bck4d9.png"
-    ]
+    ],
+    "tags": [
+      "ALL"
+    ],
+    "status": "active",
+    "updatedAt": "2026-08-05T21:27:51.636Z",
+    "colors": [
+      "Black"
+    ],
+    "price": 850
   },
   {
     "id": 1779147469445,
-    "isBestSeller": true,
-    "profit": 359,
-    "type": "tee",
-    "showInShop": true,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_agh1k8agh1k8agh1.png?v=1761329197",
     "cost": 240,
-    "category": "Topwear",
-    "stock": 100,
-    "rating": 4.9,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "isBestSeller": true,
     "originalPrice": 899,
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_agh1k8agh1k8agh1.png?v=1761329197",
+    "stock": 100,
+    "sku": "MRnHs-Bk-XS-dragonprintingfinalwithpng(1)-Bkelevezmainwhitelogo(1)-Lp-ca",
     "colors": [
       "Black",
       "White"
     ],
-    "isNew": true,
-    "name": "\"The Sovereign Serpent\" - Black T-Shirt with Japanese Dragon Back Print",
-    "showInCollections": true,
-    "tags": [
-      "599",
-      "back design",
-      "male"
-    ],
-    "showInHome": true,
-    "status": "active",
-    "updatedAt": "2026-08-05T16:00:19.869Z",
-    "price": 599,
-    "description": "Embrace the power of the Ryūjin, the Dragon God of the sea. This striking design, set against the backdrop of a setting sun over Mount Fuji, tells a story of ancient myth and modern spirit. The great Sovereign Serpent rises from the serene coastal landscape of Tokyo, Japan. Its scales shimmer in deep indigo and royal violet, colors of the deep ocean and imperial nobility. More than just a mythical beast, this dragon is a force of nature—it commands the tides, brings forth the thunder, and symbolizes unyielding strength, wisdom, and good fortune. The cherry blossoms, or sakura, drift in its wake, representing the beauty and transient nature of life, while the towering palms hint at an eternal, tropical peace that the dragon guards. This T-shirt is not just a piece of apparel; it is a wearable piece of Japanese mythology, a tribute to the enduring spirit of its culture, and a bold statement for those who walk their own path. Wear the Sovereign Serpent and carry a legend on your back.",
-    "qid": "SHOP-7915885199499",
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_agh1k8agh1k8agh1.png?v=1761329197",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_jxm73mjxm73mjxm7.png?v=1761329197",
@@ -87,33 +77,30 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sdpltnsdpltnsdpl.png?v=1761329197"
     ],
     "profitMargin": 59.9,
-    "sizes": [
-      "XS",
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
+    "qid": "SHOP-7915885199499",
+    "updatedAt": "2026-08-05T21:27:51.636Z",
+    "category": "Topwear",
+    "profit": 359,
+    "showInCollections": true,
+    "name": "\"The Sovereign Serpent\" - Black T-Shirt with Japanese Dragon Back Print",
+    "showInShop": true,
+    "type": "tee",
+    "tags": [
+      "599",
+      "back design",
+      "male"
     ],
-    "sku": "MRnHs-Bk-XS-dragonprintingfinalwithpng(1)-Bkelevezmainwhitelogo(1)-Lp-ca"
+    "status": "active",
+    "description": "Embrace the power of the Ryūjin, the Dragon God of the sea. This striking design, set against the backdrop of a setting sun over Mount Fuji, tells a story of ancient myth and modern spirit. The great Sovereign Serpent rises from the serene coastal landscape of Tokyo, Japan. Its scales shimmer in deep indigo and royal violet, colors of the deep ocean and imperial nobility. More than just a mythical beast, this dragon is a force of nature—it commands the tides, brings forth the thunder, and symbolizes unyielding strength, wisdom, and good fortune. The cherry blossoms, or sakura, drift in its wake, representing the beauty and transient nature of life, while the towering palms hint at an eternal, tropical peace that the dragon guards. This T-shirt is not just a piece of apparel; it is a wearable piece of Japanese mythology, a tribute to the enduring spirit of its culture, and a bold statement for those who walk their own path. Wear the Sovereign Serpent and carry a legend on your back.",
+    "price": 599,
+    "rating": 4.9,
+    "showInHome": true,
+    "isNew": true
   },
   {
     "id": 7915854102667,
-    "inStock": true,
-    "shopifyId": "gid://shopify/Product/7915854102667",
-    "originalPrice": 699,
-    "tags": [
-      "549",
-      "male",
-      "stylish",
-      "typography"
-    ],
-    "price": 549,
-    "description": "Crafted from premium, ultra-soft fabric, this tee promises unparalleled comfort for all-day wear. Whether you're hustling at the office, meeting friends, or just relaxing, you'll feel great in its breathable and lightweight embrace. The eye-catching design features the word \"PAISA\" (money) repeated in a striking purple hue, with \"Earn\" elegantly scripted in a vibrant orange, creating a dynamic visual that's both modern and inspiring. This creative graphic is a conversation starter, showcasing your drive and unique fashion sense. Key Features: Creative & Stylish Design: A unique graphic that blends ambition with modern aesthetics. Supreme Comfort: Made from high-quality, soft-touch fabric for an exceptional feel. Versatile Wear: Perfect for casual outings, business casual, or as a statement piece. Durable Print: Designed to maintain its vibrant colors wash after wash. Wear your aspirations. Earn your style. The \"Earn PAISA\" t-shirt is more than just an item of clothing—it's a lifestyle statement.",
-    "name": "\"PAISA Earn PAISA\" Graphic Gen Z T-Shirt",
+    "cost": 220,
     "importedAt": "2025-12-28T18:56:30.854Z",
-    "isFeatured": false,
-    "rating": 4.2,
     "sizes": [
       "XS",
       "S",
@@ -127,60 +114,15 @@ export const PRODUCTS: Product[] = [
       "7XL",
       "5XL"
     ],
-    "lastSyncedAt": "2025-12-28T18:56:30.854Z",
-    "colors": [
-      "Black",
-      "White"
-    ],
-    "source": "shopify",
-    "updatedAt": "2026-08-05T16:00:19.867Z",
-    "qid": "SHOP-7915854102667",
-    "shopifyHandle": "paisa-design-stylish-genz-tshirt",
-    "descriptionHtml": "<p><span class=\"\">Crafted from premium,</span><span class=\"\"> ultra-soft fabric,</span><span class=\"\"> this tee promises unparalleled comfort for all-day wear.</span><span class=\"\"> Whether you're hustling at the office,</span><span class=\"\"> meeting friends,</span><span class=\"\"> or just relaxing,</span><span class=\"\"> you'll feel great in its breathable and lightweight embrace.</span></p>\n<p><span>The eye-catching design features the word \"PAISA\" (money) repeated in a striking purple hue,</span><span> with \"Earn\" elegantly scripted in a vibrant orange,</span><span> creating a dynamic visual that's both modern and inspiring.</span><span> This creative graphic is a conversation starter,</span><span> showcasing your drive and unique fashion sense.</span></p>\n<p><b>Key Features:</b></p>\n<ul>\n<li>\n<p><b>Creative &amp; Stylish Design:</b><span> A unique graphic that blends ambition with modern aesthetics.</span></p>\n</li>\n<li>\n<p><b>Supreme Comfort:</b><span> Made from high-quality,</span><span> soft-touch fabric for an exceptional feel.</span></p>\n</li>\n<li>\n<p><b>Versatile Wear:</b><span> Perfect for casual outings,</span><span> business casual,</span><span> or as a statement piece.</span></p>\n</li>\n<li>\n<p><b>Durable Print:</b><span> Designed to maintain its vibrant colors wash after wash.</span></p>\n</li>\n</ul>\n<p><span>Wear your aspirations.</span><span> Earn your style.</span><span> The \"Earn PAISA\" t-shirt is more than just an item of clothing—it's a lifestyle statement.</span></p>",
-    "sku": "MRnHs-Bk-XS-NewProject(11)-Fr-ca",
+    "shopifyId": "gid://shopify/Product/7915854102667",
     "isBestSeller": false,
-    "collections": [
-      "Home page",
-      "All products!",
-      "Under 600",
-      "Tshirt"
-    ],
-    "category": "Topwear",
+    "originalPrice": 699,
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-round-sunglasses-in-front-o.png?v=1761157561",
-    "stock": 100,
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-round-sunglasses-in-front-o.png?v=1761157561",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-round-sunglasses-in-front-o_2.png?v=1761157561",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-round-sunglasses-in-front-o.jpg?v=1761157561",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-round-sunglasses-in-front-o_1.png?v=1761157561"
-    ],
-    "type": "tee",
-    "isNew": true,
-    "reviews": 33,
-    "cost": 220,
     "variants": [
       {
-        "options": [
-          {
-            "value": "Black",
-            "name": "color"
-          },
-          {
-            "value": "XS",
-            "name": "size"
-          }
-        ],
-        "availableForSale": true,
-        "compareAtPrice": 699,
-        "price": 549,
+        "id": "gid://shopify/ProductVariant/44279760879755",
         "title": "Black / XS",
-        "sku": "MRnHs-Bk-XS-NewProject(11)-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279760879755"
-      },
-      {
-        "price": 549,
-        "id": "gid://shopify/ProductVariant/44279760912523",
-        "title": "Black / S",
+        "availableForSale": true,
         "options": [
           {
             "value": "Black",
@@ -188,15 +130,38 @@ export const PRODUCTS: Product[] = [
           },
           {
             "name": "size",
-            "value": "S"
+            "value": "XS"
           }
         ],
-        "compareAtPrice": 699,
-        "sku": "MRnHs-Bk-S-NewProject(11)-Fr-ca",
-        "availableForSale": true
+        "sku": "MRnHs-Bk-XS-NewProject(11)-Fr-ca",
+        "price": 549,
+        "compareAtPrice": 699
       },
       {
+        "price": 549,
+        "sku": "MRnHs-Bk-S-NewProject(11)-Fr-ca",
+        "options": [
+          {
+            "name": "color",
+            "value": "Black"
+          },
+          {
+            "value": "S",
+            "name": "size"
+          }
+        ],
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279760912523",
+        "title": "Black / S",
+        "compareAtPrice": 699
+      },
+      {
+        "sku": "MRnHs-Bk-M-NewProject(11)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279760945291",
         "title": "Black / M",
+        "compareAtPrice": 699,
+        "price": 549,
+        "availableForSale": true,
         "options": [
           {
             "name": "color",
@@ -206,38 +171,31 @@ export const PRODUCTS: Product[] = [
             "name": "size",
             "value": "M"
           }
-        ],
-        "id": "gid://shopify/ProductVariant/44279760945291",
-        "price": 549,
-        "compareAtPrice": 699,
-        "availableForSale": true,
-        "sku": "MRnHs-Bk-M-NewProject(11)-Fr-ca"
+        ]
       },
       {
-        "title": "Black / L",
-        "availableForSale": true,
-        "price": 549,
-        "id": "gid://shopify/ProductVariant/44279760978059",
         "compareAtPrice": 699,
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279760978059",
+        "title": "Black / L",
         "sku": "MRnHs-Bk-L-NewProject(11)-Fr-ca",
+        "price": 549,
         "options": [
           {
-            "name": "color",
-            "value": "Black"
+            "value": "Black",
+            "name": "color"
           },
           {
-            "value": "L",
-            "name": "size"
+            "name": "size",
+            "value": "L"
           }
         ]
       },
       {
-        "price": 549,
-        "sku": "MRnHs-Bk-XL-NewProject(11)-Fr-ca",
         "title": "Black / XL",
-        "id": "gid://shopify/ProductVariant/44279761010827",
-        "availableForSale": true,
         "compareAtPrice": 699,
+        "availableForSale": true,
+        "price": 549,
         "options": [
           {
             "value": "Black",
@@ -247,14 +205,51 @@ export const PRODUCTS: Product[] = [
             "value": "XL",
             "name": "size"
           }
-        ]
+        ],
+        "sku": "MRnHs-Bk-XL-NewProject(11)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279761010827"
       },
       {
         "price": 549,
-        "title": "Black / XXL",
-        "id": "gid://shopify/ProductVariant/44279761043595",
+        "availableForSale": true,
         "sku": "MRnHs-Bk-XXL-NewProject(11)-Fr-ca",
+        "options": [
+          {
+            "name": "color",
+            "value": "Black"
+          },
+          {
+            "name": "size",
+            "value": "XXL"
+          }
+        ],
         "compareAtPrice": 699,
+        "title": "Black / XXL",
+        "id": "gid://shopify/ProductVariant/44279761043595"
+      },
+      {
+        "compareAtPrice": 699,
+        "options": [
+          {
+            "name": "color",
+            "value": "Black"
+          },
+          {
+            "value": "3XL",
+            "name": "size"
+          }
+        ],
+        "price": 549,
+        "sku": "MRnHs-Bk-3XL-NewProject(11)-Fr-ca",
+        "availableForSale": true,
+        "title": "Black / 3XL",
+        "id": "gid://shopify/ProductVariant/44279761076363"
+      },
+      {
+        "sku": "MRnHs-Bk-6XL-NewProject(11)-Fr-ca",
+        "compareAtPrice": 699,
+        "title": "Black / 6XL",
+        "price": 549,
         "options": [
           {
             "value": "Black",
@@ -262,52 +257,19 @@ export const PRODUCTS: Product[] = [
           },
           {
             "name": "size",
-            "value": "XXL"
+            "value": "6XL"
           }
         ],
+        "id": "gid://shopify/ProductVariant/44279761109131",
         "availableForSale": true
       },
       {
-        "sku": "MRnHs-Bk-3XL-NewProject(11)-Fr-ca",
-        "options": [
-          {
-            "name": "color",
-            "value": "Black"
-          },
-          {
-            "name": "size",
-            "value": "3XL"
-          }
-        ],
-        "compareAtPrice": 699,
-        "title": "Black / 3XL",
-        "id": "gid://shopify/ProductVariant/44279761076363",
-        "availableForSale": true,
-        "price": 549
-      },
-      {
         "price": 549,
-        "title": "Black / 6XL",
-        "options": [
-          {
-            "name": "color",
-            "value": "Black"
-          },
-          {
-            "value": "6XL",
-            "name": "size"
-          }
-        ],
-        "sku": "MRnHs-Bk-6XL-NewProject(11)-Fr-ca",
         "compareAtPrice": 699,
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279761109131"
-      },
-      {
-        "sku": "MRnHs-Bk-4XL-NewProject(11)-Fr-ca",
-        "price": 549,
         "id": "gid://shopify/ProductVariant/44279761141899",
         "title": "Black / 4XL",
+        "sku": "MRnHs-Bk-4XL-NewProject(11)-Fr-ca",
+        "availableForSale": true,
         "options": [
           {
             "name": "color",
@@ -317,81 +279,43 @@ export const PRODUCTS: Product[] = [
             "name": "size",
             "value": "4XL"
           }
-        ],
-        "compareAtPrice": 699,
-        "availableForSale": true
+        ]
       },
       {
+        "id": "gid://shopify/ProductVariant/44279761174667",
         "title": "Black / 7XL",
+        "sku": "MRnHs-Bk-7XL-NewProject(11)-Fr-ca",
+        "availableForSale": true,
         "compareAtPrice": 699,
         "price": 549,
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279761174667",
         "options": [
           {
             "value": "Black",
             "name": "color"
           },
           {
-            "name": "size",
-            "value": "7XL"
+            "value": "7XL",
+            "name": "size"
           }
-        ],
-        "sku": "MRnHs-Bk-7XL-NewProject(11)-Fr-ca"
+        ]
       },
       {
-        "title": "Black / 5XL",
+        "compareAtPrice": 699,
+        "price": 549,
         "options": [
           {
-            "name": "color",
-            "value": "Black"
+            "value": "Black",
+            "name": "color"
           },
           {
             "value": "5XL",
             "name": "size"
           }
         ],
-        "price": 549,
-        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279761207435",
         "sku": "MRnHs-Bk-5XL-NewProject(11)-Fr-ca",
-        "compareAtPrice": 699,
-        "id": "gid://shopify/ProductVariant/44279761207435"
-      },
-      {
-        "sku": "MRnHs-Wh-XS-NewProject(11)-Fr-ca",
-        "price": 549,
-        "id": "gid://shopify/ProductVariant/44279761240203",
-        "title": "White / XS",
         "availableForSale": true,
-        "options": [
-          {
-            "name": "color",
-            "value": "White"
-          },
-          {
-            "value": "XS",
-            "name": "size"
-          }
-        ],
-        "compareAtPrice": 699
-      },
-      {
-        "sku": "MRnHs-Wh-S-NewProject(11)-Fr-ca",
-        "compareAtPrice": 699,
-        "availableForSale": true,
-        "options": [
-          {
-            "name": "color",
-            "value": "White"
-          },
-          {
-            "name": "size",
-            "value": "S"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279761272971",
-        "title": "White / S",
-        "price": 549
+        "title": "Black / 5XL"
       },
       {
         "options": [
@@ -400,22 +324,58 @@ export const PRODUCTS: Product[] = [
             "name": "color"
           },
           {
-            "value": "M",
+            "value": "XS",
             "name": "size"
           }
         ],
-        "compareAtPrice": 699,
-        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279761240203",
         "price": 549,
-        "title": "White / M",
-        "sku": "MRnHs-Wh-M-NewProject(11)-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279761305739"
+        "title": "White / XS",
+        "sku": "MRnHs-Wh-XS-NewProject(11)-Fr-ca",
+        "availableForSale": true,
+        "compareAtPrice": 699
       },
       {
+        "sku": "MRnHs-Wh-S-NewProject(11)-Fr-ca",
+        "availableForSale": true,
+        "compareAtPrice": 699,
+        "title": "White / S",
+        "price": 549,
+        "id": "gid://shopify/ProductVariant/44279761272971",
+        "options": [
+          {
+            "value": "White",
+            "name": "color"
+          },
+          {
+            "name": "size",
+            "value": "S"
+          }
+        ]
+      },
+      {
+        "compareAtPrice": 699,
         "options": [
           {
             "name": "color",
             "value": "White"
+          },
+          {
+            "value": "M",
+            "name": "size"
+          }
+        ],
+        "availableForSale": true,
+        "price": 549,
+        "title": "White / M",
+        "id": "gid://shopify/ProductVariant/44279761305739",
+        "sku": "MRnHs-Wh-M-NewProject(11)-Fr-ca"
+      },
+      {
+        "options": [
+          {
+            "value": "White",
+            "name": "color"
           },
           {
             "value": "L",
@@ -423,33 +383,36 @@ export const PRODUCTS: Product[] = [
           }
         ],
         "title": "White / L",
-        "price": 549,
+        "id": "gid://shopify/ProductVariant/44279761338507",
         "compareAtPrice": 699,
         "availableForSale": true,
         "sku": "MRnHs-Wh-L-NewProject(11)-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279761338507"
+        "price": 549
       },
       {
-        "price": 549,
-        "id": "gid://shopify/ProductVariant/44279761371275",
-        "availableForSale": true,
         "title": "White / XL",
-        "compareAtPrice": 699,
-        "sku": "MRnHs-Wh-XL-NewProject(11)-Fr-ca",
         "options": [
           {
-            "name": "color",
-            "value": "White"
+            "value": "White",
+            "name": "color"
           },
           {
-            "name": "size",
-            "value": "XL"
+            "value": "XL",
+            "name": "size"
           }
-        ]
+        ],
+        "price": 549,
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279761371275",
+        "compareAtPrice": 699,
+        "sku": "MRnHs-Wh-XL-NewProject(11)-Fr-ca"
       },
       {
-        "id": "gid://shopify/ProductVariant/44279761404043",
         "compareAtPrice": 699,
+        "sku": "MRnHs-Wh-XXL-NewProject(11)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279761404043",
+        "price": 549,
+        "availableForSale": true,
         "options": [
           {
             "value": "White",
@@ -460,12 +423,12 @@ export const PRODUCTS: Product[] = [
             "value": "XXL"
           }
         ],
-        "title": "White / XXL",
-        "sku": "MRnHs-Wh-XXL-NewProject(11)-Fr-ca",
-        "availableForSale": true,
-        "price": 549
+        "title": "White / XXL"
       },
       {
+        "sku": "MRnHs-Wh-3XL-NewProject(11)-Fr-ca",
+        "title": "White / 3XL",
+        "price": 549,
         "options": [
           {
             "name": "color",
@@ -476,30 +439,63 @@ export const PRODUCTS: Product[] = [
             "name": "size"
           }
         ],
-        "title": "White / 3XL",
-        "availableForSale": true,
-        "price": 549,
         "compareAtPrice": 699,
-        "sku": "MRnHs-Wh-3XL-NewProject(11)-Fr-ca",
+        "availableForSale": true,
         "id": "gid://shopify/ProductVariant/44279761436811"
       },
       {
+        "title": "White / 5XL",
         "options": [
           {
-            "name": "color",
-            "value": "White"
+            "value": "White",
+            "name": "color"
           },
           {
             "name": "size",
             "value": "5XL"
           }
         ],
-        "id": "gid://shopify/ProductVariant/44279761469579",
-        "sku": "MRnHs-Wh-5XL-NewProject(11)-Fr-ca",
-        "compareAtPrice": 699,
-        "price": 549,
         "availableForSale": true,
-        "title": "White / 5XL"
+        "price": 549,
+        "compareAtPrice": 699,
+        "sku": "MRnHs-Wh-5XL-NewProject(11)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279761469579"
+      },
+      {
+        "sku": "MRnHs-Wh-6XL-NewProject(11)-Fr-ca",
+        "compareAtPrice": 699,
+        "title": "White / 6XL",
+        "id": "gid://shopify/ProductVariant/44279761502347",
+        "price": 549,
+        "options": [
+          {
+            "value": "White",
+            "name": "color"
+          },
+          {
+            "name": "size",
+            "value": "6XL"
+          }
+        ],
+        "availableForSale": true
+      },
+      {
+        "sku": "MRnHs-Wh-4XL-NewProject(11)-Fr-ca",
+        "compareAtPrice": 699,
+        "title": "White / 4XL",
+        "options": [
+          {
+            "value": "White",
+            "name": "color"
+          },
+          {
+            "name": "size",
+            "value": "4XL"
+          }
+        ],
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279761535115",
+        "price": 549
       },
       {
         "options": [
@@ -508,242 +504,77 @@ export const PRODUCTS: Product[] = [
             "value": "White"
           },
           {
-            "value": "6XL",
-            "name": "size"
-          }
-        ],
-        "title": "White / 6XL",
-        "compareAtPrice": 699,
-        "price": 549,
-        "sku": "MRnHs-Wh-6XL-NewProject(11)-Fr-ca",
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279761502347"
-      },
-      {
-        "compareAtPrice": 699,
-        "availableForSale": true,
-        "price": 549,
-        "options": [
-          {
-            "value": "White",
-            "name": "color"
-          },
-          {
-            "value": "4XL",
-            "name": "size"
-          }
-        ],
-        "title": "White / 4XL",
-        "id": "gid://shopify/ProductVariant/44279761535115",
-        "sku": "MRnHs-Wh-4XL-NewProject(11)-Fr-ca"
-      },
-      {
-        "compareAtPrice": 699,
-        "id": "gid://shopify/ProductVariant/44279761567883",
-        "sku": "MRnHs-Wh-7XL-NewProject(11)-Fr-ca",
-        "title": "White / 7XL",
-        "availableForSale": true,
-        "options": [
-          {
-            "value": "White",
-            "name": "color"
-          },
-          {
-            "name": "size",
-            "value": "7XL"
-          }
-        ],
-        "price": 549
-      }
-    ]
-  },
-  {
-    "id": 7915855806603,
-    "isNew": true,
-    "importedAt": "2025-12-28T18:56:30.854Z",
-    "updatedAt": "2026-08-05T16:00:19.867Z",
-    "source": "shopify",
-    "lastSyncedAt": "2025-12-28T18:56:30.854Z",
-    "variants": [
-      {
-        "sku": "MRnHs-Bk-XS-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279764811915",
-        "options": [
-          {
-            "value": "XS",
-            "name": "Size"
-          }
-        ],
-        "availableForSale": true,
-        "title": "XS",
-        "price": 499,
-        "compareAtPrice": 799
-      },
-      {
-        "price": 499,
-        "id": "gid://shopify/ProductVariant/44279764844683",
-        "options": [
-          {
-            "value": "S",
-            "name": "Size"
-          }
-        ],
-        "title": "S",
-        "availableForSale": true,
-        "sku": "MRnHs-Bk-S-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
-        "compareAtPrice": 799
-      },
-      {
-        "compareAtPrice": 799,
-        "price": 499,
-        "sku": "MRnHs-Bk-M-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
-        "title": "M",
-        "options": [
-          {
-            "value": "M",
-            "name": "Size"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279764877451",
-        "availableForSale": true
-      },
-      {
-        "sku": "MRnHs-Bk-L-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
-        "title": "L",
-        "id": "gid://shopify/ProductVariant/44279764910219",
-        "price": 499,
-        "options": [
-          {
-            "name": "Size",
-            "value": "L"
-          }
-        ],
-        "compareAtPrice": 799,
-        "availableForSale": true
-      },
-      {
-        "options": [
-          {
-            "value": "XL",
-            "name": "Size"
-          }
-        ],
-        "price": 499,
-        "availableForSale": true,
-        "compareAtPrice": 799,
-        "title": "XL",
-        "id": "gid://shopify/ProductVariant/44279764942987",
-        "sku": "MRnHs-Bk-XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca"
-      },
-      {
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279764975755",
-        "title": "XXL",
-        "sku": "MRnHs-Bk-XXL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
-        "compareAtPrice": 799,
-        "price": 499,
-        "options": [
-          {
-            "value": "XXL",
-            "name": "Size"
-          }
-        ]
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279765008523",
-        "options": [
-          {
-            "value": "3XL",
-            "name": "Size"
-          }
-        ],
-        "compareAtPrice": 799,
-        "sku": "MRnHs-Bk-3XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
-        "title": "3XL",
-        "availableForSale": true,
-        "price": 499
-      },
-      {
-        "price": 499,
-        "id": "gid://shopify/ProductVariant/44279765041291",
-        "title": "4XL",
-        "availableForSale": true,
-        "sku": "MRnHs-Bk-4XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
-        "options": [
-          {
-            "value": "4XL",
-            "name": "Size"
-          }
-        ],
-        "compareAtPrice": 799
-      },
-      {
-        "price": 499,
-        "title": "5XL",
-        "compareAtPrice": 799,
-        "sku": "MRnHs-Bk-5XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
-        "options": [
-          {
-            "value": "5XL",
-            "name": "Size"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279765074059",
-        "availableForSale": true
-      },
-      {
-        "compareAtPrice": 799,
-        "title": "6XL",
-        "sku": "MRnHs-Bk-6XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
-        "availableForSale": true,
-        "price": 499,
-        "options": [
-          {
-            "value": "6XL",
-            "name": "Size"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279765106827"
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279765139595",
-        "title": "7XL",
-        "price": 499,
-        "compareAtPrice": 799,
-        "availableForSale": true,
-        "sku": "MRnHs-Bk-7XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
-        "options": [
-          {
             "value": "7XL",
-            "name": "Size"
+            "name": "size"
           }
-        ]
+        ],
+        "title": "White / 7XL",
+        "sku": "MRnHs-Wh-7XL-NewProject(11)-Fr-ca",
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279761567883",
+        "price": 549,
+        "compareAtPrice": 699
       }
     ],
     "stock": 100,
     "isFeatured": false,
-    "description": "In an ancient lore, it is said that the most profound transformations do not happen in quiet cocoons, but in moments of beautiful, intense rupture. The 'Shattered Wings' butterfly emerged from this belief—a creature born not of gentle unfurling, but of powerful, geometric reshaping. Each fragment in its wings represents a challenge overcome, a doubt shattered, a fear broken apart to reveal strength. This Geometric Butterfly T-shirt is more than just a garment; it's a symbol of your own unfolding journey. The sharp, striking lines of its design reflect the courage it takes to break free from limitations, to embrace change, and to find beauty in the evolving self. Wear it as a testament to your resilience, your ongoing metamorphosis, and the fragmented experiences that make you uniquely whole. Let the 'Metamorphosis Echoes' remind you that true beauty lies in the courage to transform.",
-    "reviews": 120,
-    "name": "Metamorphosis Echoes: Geometric Butterfly Tee",
-    "tags": [
-      "499",
-      "male"
+    "source": "shopify",
+    "sku": "MRnHs-Bk-XS-NewProject(11)-Fr-ca",
+    "colors": [
+      "Black",
+      "White"
     ],
-    "shopifyHandle": "stylish-buttefly-tshirt",
-    "qid": "SHOP-7915855806603",
+    "descriptionHtml": "<p><span class=\"\">Crafted from premium,</span><span class=\"\"> ultra-soft fabric,</span><span class=\"\"> this tee promises unparalleled comfort for all-day wear.</span><span class=\"\"> Whether you're hustling at the office,</span><span class=\"\"> meeting friends,</span><span class=\"\"> or just relaxing,</span><span class=\"\"> you'll feel great in its breathable and lightweight embrace.</span></p>\n<p><span>The eye-catching design features the word \"PAISA\" (money) repeated in a striking purple hue,</span><span> with \"Earn\" elegantly scripted in a vibrant orange,</span><span> creating a dynamic visual that's both modern and inspiring.</span><span> This creative graphic is a conversation starter,</span><span> showcasing your drive and unique fashion sense.</span></p>\n<p><b>Key Features:</b></p>\n<ul>\n<li>\n<p><b>Creative &amp; Stylish Design:</b><span> A unique graphic that blends ambition with modern aesthetics.</span></p>\n</li>\n<li>\n<p><b>Supreme Comfort:</b><span> Made from high-quality,</span><span> soft-touch fabric for an exceptional feel.</span></p>\n</li>\n<li>\n<p><b>Versatile Wear:</b><span> Perfect for casual outings,</span><span> business casual,</span><span> or as a statement piece.</span></p>\n</li>\n<li>\n<p><b>Durable Print:</b><span> Designed to maintain its vibrant colors wash after wash.</span></p>\n</li>\n</ul>\n<p><span>Wear your aspirations.</span><span> Earn your style.</span><span> The \"Earn PAISA\" t-shirt is more than just an item of clothing—it's a lifestyle statement.</span></p>",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_gonw9sgonw9sgonw.png?v=1760954859",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1o9pkq1o9pkq1o9p.png?v=1760954885",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/butterfly_designed_mockup.jpg?v=1760954957",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-black-tshirt-filled-with-air--in-a-forest--thund.jpg?v=1760954726",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-black-tshirt-filled-with-air--in-front-of-a-snow.jpg?v=1760954726",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-black-tshirt-filled-with-air--in-the-middle-of-a.jpg?v=1760954726",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/black-tshirt-worn-by-man--front-of-a-wall--using-t.jpg?v=1760954726",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1oxj8l1oxj8l1oxj.png?v=1760955018"
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-round-sunglasses-in-front-o.png?v=1761157561",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-round-sunglasses-in-front-o_2.png?v=1761157561",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-round-sunglasses-in-front-o.jpg?v=1761157561",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-round-sunglasses-in-front-o_1.png?v=1761157561"
     ],
+    "qid": "SHOP-7915854102667",
+    "updatedAt": "2026-08-05T21:27:51.637Z",
     "category": "Topwear",
+    "shopifyHandle": "paisa-design-stylish-genz-tshirt",
+    "inStock": true,
+    "reviews": 33,
+    "name": "\"PAISA Earn PAISA\" Graphic Gen Z T-Shirt",
+    "type": "tee",
+    "lastSyncedAt": "2025-12-28T18:56:30.854Z",
+    "tags": [
+      "549",
+      "male",
+      "stylish",
+      "typography"
+    ],
+    "description": "Crafted from premium, ultra-soft fabric, this tee promises unparalleled comfort for all-day wear. Whether you're hustling at the office, meeting friends, or just relaxing, you'll feel great in its breathable and lightweight embrace. The eye-catching design features the word \"PAISA\" (money) repeated in a striking purple hue, with \"Earn\" elegantly scripted in a vibrant orange, creating a dynamic visual that's both modern and inspiring. This creative graphic is a conversation starter, showcasing your drive and unique fashion sense. Key Features: Creative & Stylish Design: A unique graphic that blends ambition with modern aesthetics. Supreme Comfort: Made from high-quality, soft-touch fabric for an exceptional feel. Versatile Wear: Perfect for casual outings, business casual, or as a statement piece. Durable Print: Designed to maintain its vibrant colors wash after wash. Wear your aspirations. Earn your style. The \"Earn PAISA\" t-shirt is more than just an item of clothing—it's a lifestyle statement.",
+    "price": 549,
+    "rating": 4.2,
+    "collections": [
+      "Home page",
+      "All products!",
+      "Under 600",
+      "Tshirt"
+    ],
+    "isNew": true
+  },
+  {
+    "id": 7915855806603,
+    "cost": 200,
+    "lastSyncedAt": "2025-12-28T18:56:30.854Z",
+    "isFeatured": false,
+    "rating": 4.6,
+    "importedAt": "2025-12-28T18:56:30.854Z",
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_gonw9sgonw9sgonw.png?v=1760954859",
+    "description": "In an ancient lore, it is said that the most profound transformations do not happen in quiet cocoons, but in moments of beautiful, intense rupture. The 'Shattered Wings' butterfly emerged from this belief—a creature born not of gentle unfurling, but of powerful, geometric reshaping. Each fragment in its wings represents a challenge overcome, a doubt shattered, a fear broken apart to reveal strength. This Geometric Butterfly T-shirt is more than just a garment; it's a symbol of your own unfolding journey. The sharp, striking lines of its design reflect the courage it takes to break free from limitations, to embrace change, and to find beauty in the evolving self. Wear it as a testament to your resilience, your ongoing metamorphosis, and the fragmented experiences that make you uniquely whole. Let the 'Metamorphosis Echoes' remind you that true beauty lies in the courage to transform.",
     "sku": "MRnHs-Bk-XS-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
+    "stock": 100,
+    "descriptionHtml": "<p>In an ancient lore, it is said that the most profound transformations do not happen in quiet cocoons, but in moments of beautiful, intense rupture. The 'Shattered Wings' butterfly emerged from this belief—a creature born not of gentle unfurling, but of powerful, geometric reshaping. Each fragment in its wings represents a challenge overcome, a doubt shattered, a fear broken apart to reveal strength.</p>\n<p>This Geometric Butterfly T-shirt is more than just a garment; it's a symbol of your own unfolding journey. The sharp, striking lines of its design reflect the courage it takes to break free from limitations, to embrace change, and to find beauty in the evolving self. Wear it as a testament to your resilience, your ongoing metamorphosis, and the fragmented experiences that make you uniquely whole. Let the 'Metamorphosis Echoes' remind you that true beauty lies in the courage to transform.</p>",
+    "collections": [
+      "All products!",
+      "Under 500",
+      "Tshirt"
+    ],
+    "qid": "SHOP-7915855806603",
     "sizes": [
       "XS",
       "S",
@@ -757,78 +588,214 @@ export const PRODUCTS: Product[] = [
       "6XL",
       "7XL"
     ],
-    "price": 499,
-    "shopifyId": "gid://shopify/Product/7915855806603",
-    "isBestSeller": false,
-    "descriptionHtml": "<p>In an ancient lore, it is said that the most profound transformations do not happen in quiet cocoons, but in moments of beautiful, intense rupture. The 'Shattered Wings' butterfly emerged from this belief—a creature born not of gentle unfurling, but of powerful, geometric reshaping. Each fragment in its wings represents a challenge overcome, a doubt shattered, a fear broken apart to reveal strength.</p>\n<p>This Geometric Butterfly T-shirt is more than just a garment; it's a symbol of your own unfolding journey. The sharp, striking lines of its design reflect the courage it takes to break free from limitations, to embrace change, and to find beauty in the evolving self. Wear it as a testament to your resilience, your ongoing metamorphosis, and the fragmented experiences that make you uniquely whole. Let the 'Metamorphosis Echoes' remind you that true beauty lies in the courage to transform.</p>",
-    "collections": [
-      "All products!",
-      "Under 500",
-      "Tshirt"
-    ],
-    "inStock": true,
-    "type": "tee",
-    "colors": [],
     "originalPrice": 799,
-    "cost": 200,
-    "rating": 4.6
+    "variants": [
+      {
+        "options": [
+          {
+            "name": "Size",
+            "value": "XS"
+          }
+        ],
+        "title": "XS",
+        "compareAtPrice": 799,
+        "availableForSale": true,
+        "price": 499,
+        "sku": "MRnHs-Bk-XS-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279764811915"
+      },
+      {
+        "sku": "MRnHs-Bk-S-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279764844683",
+        "compareAtPrice": 799,
+        "price": 499,
+        "availableForSale": true,
+        "title": "S",
+        "options": [
+          {
+            "name": "Size",
+            "value": "S"
+          }
+        ]
+      },
+      {
+        "options": [
+          {
+            "value": "M",
+            "name": "Size"
+          }
+        ],
+        "title": "M",
+        "compareAtPrice": 799,
+        "sku": "MRnHs-Bk-M-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
+        "price": 499,
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279764877451"
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279764910219",
+        "sku": "MRnHs-Bk-L-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
+        "price": 499,
+        "compareAtPrice": 799,
+        "availableForSale": true,
+        "options": [
+          {
+            "value": "L",
+            "name": "Size"
+          }
+        ],
+        "title": "L"
+      },
+      {
+        "price": 499,
+        "compareAtPrice": 799,
+        "sku": "MRnHs-Bk-XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279764942987",
+        "options": [
+          {
+            "name": "Size",
+            "value": "XL"
+          }
+        ],
+        "title": "XL"
+      },
+      {
+        "availableForSale": true,
+        "options": [
+          {
+            "name": "Size",
+            "value": "XXL"
+          }
+        ],
+        "compareAtPrice": 799,
+        "title": "XXL",
+        "price": 499,
+        "id": "gid://shopify/ProductVariant/44279764975755",
+        "sku": "MRnHs-Bk-XXL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca"
+      },
+      {
+        "sku": "MRnHs-Bk-3XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279765008523",
+        "compareAtPrice": 799,
+        "availableForSale": true,
+        "title": "3XL",
+        "price": 499,
+        "options": [
+          {
+            "value": "3XL",
+            "name": "Size"
+          }
+        ]
+      },
+      {
+        "compareAtPrice": 799,
+        "options": [
+          {
+            "value": "4XL",
+            "name": "Size"
+          }
+        ],
+        "title": "4XL",
+        "availableForSale": true,
+        "price": 499,
+        "id": "gid://shopify/ProductVariant/44279765041291",
+        "sku": "MRnHs-Bk-4XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca"
+      },
+      {
+        "sku": "MRnHs-Bk-5XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
+        "title": "5XL",
+        "options": [
+          {
+            "value": "5XL",
+            "name": "Size"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44279765074059",
+        "compareAtPrice": 799,
+        "availableForSale": true,
+        "price": 499
+      },
+      {
+        "price": 499,
+        "sku": "MRnHs-Bk-6XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279765106827",
+        "options": [
+          {
+            "value": "6XL",
+            "name": "Size"
+          }
+        ],
+        "title": "6XL",
+        "compareAtPrice": 799,
+        "availableForSale": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279765139595",
+        "price": 499,
+        "options": [
+          {
+            "name": "Size",
+            "value": "7XL"
+          }
+        ],
+        "availableForSale": true,
+        "sku": "MRnHs-Bk-7XL-openart9812886f5fb24ed993b5f243f952f770_raw(1)-Fr-ca",
+        "compareAtPrice": 799,
+        "title": "7XL"
+      }
+    ],
+    "isBestSeller": false,
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_gonw9sgonw9sgonw.png?v=1760954859",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1o9pkq1o9pkq1o9p.png?v=1760954885",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/butterfly_designed_mockup.jpg?v=1760954957",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-black-tshirt-filled-with-air--in-a-forest--thund.jpg?v=1760954726",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-black-tshirt-filled-with-air--in-front-of-a-snow.jpg?v=1760954726",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-black-tshirt-filled-with-air--in-the-middle-of-a.jpg?v=1760954726",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/black-tshirt-worn-by-man--front-of-a-wall--using-t.jpg?v=1760954726",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1oxj8l1oxj8l1oxj.png?v=1760955018"
+    ],
+    "type": "tee",
+    "name": "Metamorphosis Echoes: Geometric Butterfly Tee",
+    "source": "shopify",
+    "isNew": true,
+    "shopifyId": "gid://shopify/Product/7915855806603",
+    "colors": [],
+    "price": 499,
+    "tags": [
+      "499",
+      "male"
+    ],
+    "updatedAt": "2026-08-05T21:27:51.637Z",
+    "category": "Topwear",
+    "shopifyHandle": "stylish-buttefly-tshirt",
+    "reviews": 120,
+    "inStock": true
   },
   {
     "id": 7915859968139,
-    "description": "This isn't just a t-shirt; it's a wearable testament to the resilience of the human spirit. Born from an old Seoul street artist's meditation on contrasting realities, the \"Peace & Roses\" design captures a moment of tranquil defiance. The oversized, premium cotton serves as a canvas for a modern-day icon: a majestic dove in mid-flight, its wings a white-hot beacon of hope. This dove doesn't just symbolize peace; it embodies the hard-won serenity found only after navigating the noise of the urban world. Flanking the dove are two blood-red roses—symbols of passion, beauty, and the thorny commitment required to protect one's inner peace. The bold, stark white word \"PEACE\" is not a plea, but a powerful declaration.",
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "showInHome": true,
-    "stock": 100,
-    "name": "\"Peace & Roses\" Premium Oversized T-Shirt - The Serenity Streetwear Tee",
-    "shopifyHandle": "oversized-unisex-peace-simple-bird-tshirt",
-    "tags": [
-      "699",
-      "female",
-      "oversized"
+    "status": "active",
+    "collections": [
+      "All products!",
+      "Women",
+      "Below 699",
+      "oversized",
+      "Oversized Tshirt"
     ],
-    "profit": 419,
-    "isNew": true,
-    "shopifyId": "gid://shopify/Product/7915859968139",
-    "profitMargin": 59.9,
+    "showInCollections": true,
+    "descriptionHtml": "<p>This isn't just a t-shirt; it's a wearable testament to the resilience of the human spirit.</p>\n<p>Born from an old Seoul street artist's meditation on contrasting realities, the <b>\"Peace &amp; Roses\"</b> design captures a moment of tranquil defiance. The <b>oversized, premium cotton</b> serves as a canvas for a modern-day icon: a majestic <b>dove</b> in mid-flight, its wings a white-hot beacon of hope. This dove doesn't just symbolize peace; it embodies the hard-won serenity found only after navigating the noise of the urban world.</p>\n<p>Flanking the dove are two blood-red <b>roses</b>—symbols of passion, beauty, and the thorny commitment required to protect one's inner peace. The bold, stark white word <b>\"PEACE\"</b> is not a plea, but a powerful declaration.</p>",
+    "category": "Topwear",
     "lastSyncedAt": "2025-12-28T18:56:30.855Z",
     "rating": 4,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_7lss1o7lss1o7lss.png?v=1760955431",
-    "reviews": 68,
-    "colors": [
-      "Lavender"
-    ],
-    "originalPrice": 1099,
-    "type": "tee",
-    "source": "shopify",
-    "price": 699,
-    "qid": "SHOP-7915859968139",
-    "category": "Topwear",
-    "inStock": true,
-    "updatedAt": "2026-08-05T16:00:19.868Z",
-    "showInCollections": true,
+    "description": "This isn't just a t-shirt; it's a wearable testament to the resilience of the human spirit. Born from an old Seoul street artist's meditation on contrasting realities, the \"Peace & Roses\" design captures a moment of tranquil defiance. The oversized, premium cotton serves as a canvas for a modern-day icon: a majestic dove in mid-flight, its wings a white-hot beacon of hope. This dove doesn't just symbolize peace; it embodies the hard-won serenity found only after navigating the noise of the urban world. Flanking the dove are two blood-red roses—symbols of passion, beauty, and the thorny commitment required to protect one's inner peace. The bold, stark white word \"PEACE\" is not a plea, but a powerful declaration.",
     "cost": 280,
-    "descriptionHtml": "<p>This isn't just a t-shirt; it's a wearable testament to the resilience of the human spirit.</p>\n<p>Born from an old Seoul street artist's meditation on contrasting realities, the <b>\"Peace &amp; Roses\"</b> design captures a moment of tranquil defiance. The <b>oversized, premium cotton</b> serves as a canvas for a modern-day icon: a majestic <b>dove</b> in mid-flight, its wings a white-hot beacon of hope. This dove doesn't just symbolize peace; it embodies the hard-won serenity found only after navigating the noise of the urban world.</p>\n<p>Flanking the dove are two blood-red <b>roses</b>—symbols of passion, beauty, and the thorny commitment required to protect one's inner peace. The bold, stark white word <b>\"PEACE\"</b> is not a plea, but a powerful declaration.</p>",
-    "status": "active",
-    "sizes": [
-      "XS",
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
-    ],
-    "showInShop": true,
-    "sku": "UOsMRnHs-Lv-XS-oversizedbirdflowertshirt-Fr-ca",
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_7lss1o7lss1o7lss.png?v=1760955431",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_lk9jwqlk9jwqlk9j.png?v=1760955807",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_nfn659nfn659nfn6.png?v=1760955846",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_smtyuvsmtyuvsmty.png?v=1760955885"
-    ],
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "price": 699,
+    "profit": 419,
     "variants": [
       {
-        "id": "gid://shopify/ProductVariant/44279773659275",
-        "sku": "UOsMRnHs-Lv-XS-oversizedbirdflowertshirt-Fr-ca",
+        "title": "Lavender / XS",
         "options": [
           {
             "value": "Lavender",
@@ -839,17 +806,31 @@ export const PRODUCTS: Product[] = [
             "value": "XS"
           }
         ],
-        "price": 699,
         "compareAtPrice": 1099,
-        "title": "Lavender / XS",
-        "availableForSale": true
+        "sku": "UOsMRnHs-Lv-XS-oversizedbirdflowertshirt-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279773659275",
+        "availableForSale": true,
+        "price": 699
       },
       {
+        "title": "Lavender / S",
         "sku": "UOsMRnHs-Lv-S-oversizedbirdflowertshirt-Fr-ca",
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279773692043",
         "compareAtPrice": 1099,
-        "price": 699,
+        "availableForSale": true,
+        "options": [
+          {
+            "name": "color",
+            "value": "Lavender"
+          },
+          {
+            "value": "S",
+            "name": "size"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44279773692043",
+        "price": 699
+      },
+      {
         "options": [
           {
             "value": "Lavender",
@@ -857,46 +838,33 @@ export const PRODUCTS: Product[] = [
           },
           {
             "name": "size",
-            "value": "S"
+            "value": "M"
           }
         ],
-        "title": "Lavender / S"
+        "availableForSale": true,
+        "sku": "UOsMRnHs-Lv-M-oversizedbirdflowertshirt-Fr-ca",
+        "title": "Lavender / M",
+        "id": "gid://shopify/ProductVariant/44279773757579",
+        "compareAtPrice": 1099,
+        "price": 699
       },
       {
-        "title": "Lavender / M",
-        "availableForSale": true,
         "price": 699,
-        "sku": "UOsMRnHs-Lv-M-oversizedbirdflowertshirt-Fr-ca",
+        "availableForSale": true,
+        "title": "Lavender / L",
         "options": [
           {
             "name": "color",
             "value": "Lavender"
-          },
-          {
-            "value": "M",
-            "name": "size"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279773757579",
-        "compareAtPrice": 1099
-      },
-      {
-        "title": "Lavender / L",
-        "price": 699,
-        "compareAtPrice": 1099,
-        "availableForSale": true,
-        "options": [
-          {
-            "value": "Lavender",
-            "name": "color"
           },
           {
             "name": "size",
             "value": "L"
           }
         ],
-        "sku": "UOsMRnHs-Lv-L-oversizedbirdflowertshirt-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279773823115"
+        "compareAtPrice": 1099,
+        "id": "gid://shopify/ProductVariant/44279773823115",
+        "sku": "UOsMRnHs-Lv-L-oversizedbirdflowertshirt-Fr-ca"
       },
       {
         "options": [
@@ -905,24 +873,180 @@ export const PRODUCTS: Product[] = [
             "value": "Lavender"
           },
           {
+            "name": "size",
+            "value": "XL"
+          }
+        ],
+        "title": "Lavender / XL",
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279773921419",
+        "price": 699,
+        "sku": "UOsMRnHs-Lv-XL-oversizedbirdflowertshirt-Fr-ca",
+        "compareAtPrice": 1099
+      },
+      {
+        "title": "Lavender / XXL",
+        "sku": "UOsMRnHs-Lv-XXL-oversizedbirdflowertshirt-Fr-ca",
+        "availableForSale": true,
+        "price": 699,
+        "compareAtPrice": 1099,
+        "options": [
+          {
+            "value": "Lavender",
+            "name": "color"
+          },
+          {
+            "value": "XXL",
+            "name": "size"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44279773954187"
+      }
+    ],
+    "originalPrice": 1099,
+    "isNew": true,
+    "colors": [
+      "Lavender"
+    ],
+    "tags": [
+      "699",
+      "female",
+      "oversized"
+    ],
+    "source": "shopify",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_7lss1o7lss1o7lss.png?v=1760955431",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_lk9jwqlk9jwqlk9j.png?v=1760955807",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_nfn659nfn659nfn6.png?v=1760955846",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_smtyuvsmtyuvsmty.png?v=1760955885"
+    ],
+    "shopifyId": "gid://shopify/Product/7915859968139",
+    "reviews": 68,
+    "inStock": true,
+    "name": "\"Peace & Roses\" Premium Oversized T-Shirt - The Serenity Streetwear Tee",
+    "stock": 100,
+    "type": "tee",
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_7lss1o7lss1o7lss.png?v=1760955431",
+    "showInHome": true,
+    "showInShop": true,
+    "qid": "SHOP-7915859968139",
+    "updatedAt": "2026-08-05T21:27:51.637Z",
+    "sku": "UOsMRnHs-Lv-XS-oversizedbirdflowertshirt-Fr-ca",
+    "shopifyHandle": "oversized-unisex-peace-simple-bird-tshirt",
+    "profitMargin": 59.9
+  },
+  {
+    "id": 7915861377163,
+    "originalPrice": 999,
+    "updatedAt": "2026-08-05T21:27:51.637Z",
+    "reviews": 47,
+    "inStock": true,
+    "sku": "UOsMRnHs-Bk-XS-womenflowermain-Fr-ca",
+    "variants": [
+      {
+        "options": [
+          {
+            "value": "Black",
+            "name": "color"
+          },
+          {
+            "name": "size",
+            "value": "XS"
+          }
+        ],
+        "availableForSale": true,
+        "sku": "UOsMRnHs-Bk-XS-womenflowermain-Fr-ca",
+        "compareAtPrice": 999,
+        "title": "Black / XS",
+        "price": 649,
+        "id": "gid://shopify/ProductVariant/44279775723659"
+      },
+      {
+        "price": 649,
+        "availableForSale": true,
+        "options": [
+          {
+            "name": "color",
+            "value": "Black"
+          },
+          {
+            "value": "S",
+            "name": "size"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44279775756427",
+        "title": "Black / S",
+        "sku": "UOsMRnHs-Bk-S-womenflowermain-Fr-ca",
+        "compareAtPrice": 999
+      },
+      {
+        "sku": "UOsMRnHs-Bk-M-womenflowermain-Fr-ca",
+        "compareAtPrice": 999,
+        "title": "Black / M",
+        "id": "gid://shopify/ProductVariant/44279775789195",
+        "availableForSale": true,
+        "options": [
+          {
+            "name": "color",
+            "value": "Black"
+          },
+          {
+            "value": "M",
+            "name": "size"
+          }
+        ],
+        "price": 649
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279775821963",
+        "price": 649,
+        "sku": "UOsMRnHs-Bk-L-womenflowermain-Fr-ca",
+        "title": "Black / L",
+        "availableForSale": true,
+        "options": [
+          {
+            "name": "color",
+            "value": "Black"
+          },
+          {
+            "name": "size",
+            "value": "L"
+          }
+        ],
+        "compareAtPrice": 999
+      },
+      {
+        "price": 649,
+        "sku": "UOsMRnHs-Bk-XL-womenflowermain-Fr-ca",
+        "availableForSale": true,
+        "compareAtPrice": 999,
+        "title": "Black / XL",
+        "options": [
+          {
+            "value": "Black",
+            "name": "color"
+          },
+          {
             "value": "XL",
             "name": "size"
           }
         ],
-        "compareAtPrice": 1099,
-        "sku": "UOsMRnHs-Lv-XL-oversizedbirdflowertshirt-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279773921419",
-        "availableForSale": true,
-        "price": 699,
-        "title": "Lavender / XL"
+        "id": "gid://shopify/ProductVariant/44279775854731"
       },
       {
-        "sku": "UOsMRnHs-Lv-XXL-oversizedbirdflowertshirt-Fr-ca",
-        "compareAtPrice": 1099,
-        "title": "Lavender / XXL",
+        "compareAtPrice": 999,
+        "sku": "UOsMRnHs-Bk-XXL-womenflowermain-Fr-ca",
         "options": [
           {
-            "value": "Lavender",
+            "value": "Black",
             "name": "color"
           },
           {
@@ -930,22 +1054,134 @@ export const PRODUCTS: Product[] = [
             "value": "XXL"
           }
         ],
-        "price": 699,
-        "id": "gid://shopify/ProductVariant/44279773954187",
+        "title": "Black / XXL",
+        "id": "gid://shopify/ProductVariant/44279775887499",
+        "price": 649,
         "availableForSale": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279775920267",
+        "sku": "UOsMRnHs-Wh-XS-womenflowermain-Fr-ca",
+        "compareAtPrice": 999,
+        "price": 649,
+        "options": [
+          {
+            "name": "color",
+            "value": "White"
+          },
+          {
+            "name": "size",
+            "value": "XS"
+          }
+        ],
+        "title": "White / XS",
+        "availableForSale": true
+      },
+      {
+        "price": 649,
+        "sku": "UOsMRnHs-Wh-S-womenflowermain-Fr-ca",
+        "options": [
+          {
+            "value": "White",
+            "name": "color"
+          },
+          {
+            "value": "S",
+            "name": "size"
+          }
+        ],
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279775953035",
+        "title": "White / S",
+        "compareAtPrice": 999
+      },
+      {
+        "title": "White / M",
+        "compareAtPrice": 999,
+        "options": [
+          {
+            "value": "White",
+            "name": "color"
+          },
+          {
+            "value": "M",
+            "name": "size"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44279775985803",
+        "availableForSale": true,
+        "sku": "UOsMRnHs-Wh-M-womenflowermain-Fr-ca",
+        "price": 649
+      },
+      {
+        "availableForSale": true,
+        "price": 649,
+        "options": [
+          {
+            "value": "White",
+            "name": "color"
+          },
+          {
+            "name": "size",
+            "value": "L"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44279776018571",
+        "sku": "UOsMRnHs-Wh-L-womenflowermain-Fr-ca",
+        "title": "White / L",
+        "compareAtPrice": 999
+      },
+      {
+        "title": "White / XL",
+        "availableForSale": true,
+        "compareAtPrice": 999,
+        "options": [
+          {
+            "value": "White",
+            "name": "color"
+          },
+          {
+            "value": "XL",
+            "name": "size"
+          }
+        ],
+        "price": 649,
+        "id": "gid://shopify/ProductVariant/44279776051339",
+        "sku": "UOsMRnHs-Wh-XL-womenflowermain-Fr-ca"
+      },
+      {
+        "price": 649,
+        "availableForSale": true,
+        "options": [
+          {
+            "name": "color",
+            "value": "White"
+          },
+          {
+            "name": "size",
+            "value": "XXL"
+          }
+        ],
+        "sku": "UOsMRnHs-Wh-XXL-womenflowermain-Fr-ca",
+        "compareAtPrice": 999,
+        "id": "gid://shopify/ProductVariant/44279776084107",
+        "title": "White / XXL"
       }
     ],
-    "collections": [
-      "All products!",
-      "Women",
-      "Below 699",
-      "oversized",
-      "Oversized Tshirt"
-    ]
-  },
-  {
-    "id": 7915861377163,
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "tags": [
+      "649",
+      "female",
+      "oversized"
+    ],
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "type": "tee",
+    "qid": "SHOP-7915861377163",
+    "name": "\"Dragon Blossom Oversized Tee: Embrace the Spirit of the Serpent Empress\"",
+    "isNew": true,
+    "category": "Topwear",
+    "shopifyId": "gid://shopify/Product/7915861377163",
+    "isBestSeller": true,
+    "price": 649,
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1e3bze1e3bze1e3b.png?v=1761748465",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_v37f2av37f2av37f.png?v=1760956530",
@@ -953,13 +1189,43 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_6hrf9b6hrf9b6hrf.png?v=1760956732",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_xjpnxaxjpnxaxjpn.png?v=1760956765"
     ],
+    "source": "shopify",
+    "isFeatured": false,
+    "colors": [
+      "Black",
+      "White"
+    ],
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1e3bze1e3bze1e3b.png?v=1761748465",
+    "stock": 100,
+    "cost": 260,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "shopifyHandle": "oversized-cute-simple-bunny-tshirt",
+    "descriptionHtml": "<p>Unleash your inner legend with our Dragon Blossom Oversized Tee. This statement piece combines ultimate comfort with a striking, narrative-rich design that's sure to turn heads. Crafted from premium, soft-touch fabric, this oversized t-shirt offers a relaxed fit that's perfect for effortless streetwear style.</p>\n<p>The captivating graphic features a stoic, ethereal figure with a gaze that pierces through realms, adorned with vibrant red blossoms that symbolize passion and resilience. Coiled around her is a magnificent white dragon, its scales rendered with intricate detail, embodying power, wisdom, and transformation. The subtle red accents within the dragon and the figure’s attire create a harmonious balance, suggesting a deep, intertwined destiny. This tee isn't just clothing; it's a wearable piece of art that tells a story.</p>",
+    "collections": [
+      "All products!",
+      "Best Sellers",
+      "Below 699",
+      "oversized",
+      "Oversized Tshirt"
+    ],
+    "rating": 4.3,
+    "description": "Unleash your inner legend with our Dragon Blossom Oversized Tee. This statement piece combines ultimate comfort with a striking, narrative-rich design that's sure to turn heads. Crafted from premium, soft-touch fabric, this oversized t-shirt offers a relaxed fit that's perfect for effortless streetwear style. The captivating graphic features a stoic, ethereal figure with a gaze that pierces through realms, adorned with vibrant red blossoms that symbolize passion and resilience. Coiled around her is a magnificent white dragon, its scales rendered with intricate detail, embodying power, wisdom, and transformation. The subtle red accents within the dragon and the figure’s attire create a harmonious balance, suggesting a deep, intertwined destiny. This tee isn't just clothing; it's a wearable piece of art that tells a story.",
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z"
+  },
+  {
+    "id": 7915870158987,
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "descriptionHtml": "<p>This is more than a piece of fabric; it's a <b>mantra for the motivated soul</b>. The <b>\"Memento Mori, Memento Vivere\"</b> Tee is designed for those who understand that true liberation lies in embracing the duality of existence.</p>\n<p>The skull, surrounded by delicate life, is a quiet reminder (<b>Memento Mori</b>) of the ultimate certainty. It is not a symbol of fear, but a boundary—a horizon that makes every second before it precious. This awareness, in turn, fuels the vibrant flora and the transforming butterfly, compelling you to seize the present moment (<b>Memento Vivere</b>).</p>\n<p>Wear this oversized tee as a daily pledge to live boldly, to chase beauty without hesitation, and to make every breath count. It’s an elegant, stark reminder: <b>Because time is finite, life is infinite in its possibility.</b></p>",
+    "price": 649,
     "variants": [
       {
-        "sku": "UOsMRnHs-Bk-XS-womenflowermain-Fr-ca",
-        "compareAtPrice": 999,
-        "price": 649,
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279775723659",
         "title": "Black / XS",
         "options": [
           {
@@ -967,15 +1233,20 @@ export const PRODUCTS: Product[] = [
             "value": "Black"
           },
           {
-            "value": "XS",
-            "name": "size"
+            "name": "size",
+            "value": "XS"
           }
-        ]
+        ],
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279790928011",
+        "sku": "UOsMRnHs-Bk-XS-skullflowermain-Fr-ca",
+        "compareAtPrice": 999,
+        "price": 649
       },
       {
-        "availableForSale": true,
+        "title": "Black / S",
         "compareAtPrice": 999,
-        "id": "gid://shopify/ProductVariant/44279775756427",
+        "sku": "UOsMRnHs-Bk-S-skullflowermain-Fr-ca",
         "options": [
           {
             "value": "Black",
@@ -986,32 +1257,29 @@ export const PRODUCTS: Product[] = [
             "value": "S"
           }
         ],
-        "title": "Black / S",
-        "sku": "UOsMRnHs-Bk-S-womenflowermain-Fr-ca",
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279790960779",
         "price": 649
       },
       {
-        "compareAtPrice": 999,
+        "price": 649,
+        "availableForSale": true,
+        "sku": "UOsMRnHs-Bk-M-skullflowermain-Fr-ca",
         "options": [
           {
-            "name": "color",
-            "value": "Black"
+            "value": "Black",
+            "name": "color"
           },
           {
-            "value": "M",
-            "name": "size"
+            "name": "size",
+            "value": "M"
           }
         ],
-        "price": 649,
-        "id": "gid://shopify/ProductVariant/44279775789195",
-        "availableForSale": true,
+        "compareAtPrice": 999,
         "title": "Black / M",
-        "sku": "UOsMRnHs-Bk-M-womenflowermain-Fr-ca"
+        "id": "gid://shopify/ProductVariant/44279790993547"
       },
       {
-        "id": "gid://shopify/ProductVariant/44279775821963",
-        "compareAtPrice": 999,
-        "availableForSale": true,
         "options": [
           {
             "name": "color",
@@ -1022,15 +1290,20 @@ export const PRODUCTS: Product[] = [
             "name": "size"
           }
         ],
-        "price": 649,
-        "sku": "UOsMRnHs-Bk-L-womenflowermain-Fr-ca",
-        "title": "Black / L"
+        "title": "Black / L",
+        "sku": "UOsMRnHs-Bk-L-skullflowermain-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279791026315",
+        "availableForSale": true,
+        "compareAtPrice": 999,
+        "price": 649
       },
       {
-        "price": 649,
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279775854731",
+        "id": "gid://shopify/ProductVariant/44279791059083",
+        "sku": "UOsMRnHs-Bk-XL-skullflowermain-Fr-ca",
         "title": "Black / XL",
+        "availableForSale": true,
+        "compareAtPrice": 999,
+        "price": 649,
         "options": [
           {
             "name": "color",
@@ -1040,317 +1313,30 @@ export const PRODUCTS: Product[] = [
             "value": "XL",
             "name": "size"
           }
-        ],
-        "sku": "UOsMRnHs-Bk-XL-womenflowermain-Fr-ca",
-        "compareAtPrice": 999
+        ]
       },
       {
-        "sku": "UOsMRnHs-Bk-XXL-womenflowermain-Fr-ca",
+        "price": 649,
+        "id": "gid://shopify/ProductVariant/44279791091851",
+        "title": "Black / XXL",
+        "availableForSale": true,
+        "sku": "UOsMRnHs-Bk-XXL-skullflowermain-Fr-ca",
         "compareAtPrice": 999,
-        "id": "gid://shopify/ProductVariant/44279775887499",
         "options": [
           {
             "value": "Black",
-            "name": "color"
-          },
-          {
-            "name": "size",
-            "value": "XXL"
-          }
-        ],
-        "price": 649,
-        "availableForSale": true,
-        "title": "Black / XXL"
-      },
-      {
-        "sku": "UOsMRnHs-Wh-XS-womenflowermain-Fr-ca",
-        "price": 649,
-        "availableForSale": true,
-        "options": [
-          {
-            "name": "color",
-            "value": "White"
-          },
-          {
-            "name": "size",
-            "value": "XS"
-          }
-        ],
-        "compareAtPrice": 999,
-        "id": "gid://shopify/ProductVariant/44279775920267",
-        "title": "White / XS"
-      },
-      {
-        "compareAtPrice": 999,
-        "price": 649,
-        "options": [
-          {
-            "name": "color",
-            "value": "White"
-          },
-          {
-            "value": "S",
-            "name": "size"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279775953035",
-        "title": "White / S",
-        "availableForSale": true,
-        "sku": "UOsMRnHs-Wh-S-womenflowermain-Fr-ca"
-      },
-      {
-        "options": [
-          {
-            "value": "White",
-            "name": "color"
-          },
-          {
-            "value": "M",
-            "name": "size"
-          }
-        ],
-        "sku": "UOsMRnHs-Wh-M-womenflowermain-Fr-ca",
-        "title": "White / M",
-        "price": 649,
-        "id": "gid://shopify/ProductVariant/44279775985803",
-        "compareAtPrice": 999,
-        "availableForSale": true
-      },
-      {
-        "sku": "UOsMRnHs-Wh-L-womenflowermain-Fr-ca",
-        "availableForSale": true,
-        "compareAtPrice": 999,
-        "options": [
-          {
-            "value": "White",
-            "name": "color"
-          },
-          {
-            "name": "size",
-            "value": "L"
-          }
-        ],
-        "price": 649,
-        "id": "gid://shopify/ProductVariant/44279776018571",
-        "title": "White / L"
-      },
-      {
-        "title": "White / XL",
-        "options": [
-          {
-            "name": "color",
-            "value": "White"
-          },
-          {
-            "value": "XL",
-            "name": "size"
-          }
-        ],
-        "price": 649,
-        "compareAtPrice": 999,
-        "sku": "UOsMRnHs-Wh-XL-womenflowermain-Fr-ca",
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279776051339"
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279776084107",
-        "availableForSale": true,
-        "options": [
-          {
-            "value": "White",
             "name": "color"
           },
           {
             "value": "XXL",
             "name": "size"
           }
-        ],
-        "price": 649,
-        "sku": "UOsMRnHs-Wh-XXL-womenflowermain-Fr-ca",
-        "compareAtPrice": 999,
-        "title": "White / XXL"
-      }
-    ],
-    "description": "Unleash your inner legend with our Dragon Blossom Oversized Tee. This statement piece combines ultimate comfort with a striking, narrative-rich design that's sure to turn heads. Crafted from premium, soft-touch fabric, this oversized t-shirt offers a relaxed fit that's perfect for effortless streetwear style. The captivating graphic features a stoic, ethereal figure with a gaze that pierces through realms, adorned with vibrant red blossoms that symbolize passion and resilience. Coiled around her is a magnificent white dragon, its scales rendered with intricate detail, embodying power, wisdom, and transformation. The subtle red accents within the dragon and the figure’s attire create a harmonious balance, suggesting a deep, intertwined destiny. This tee isn't just clothing; it's a wearable piece of art that tells a story.",
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "price": 649,
-    "shopifyHandle": "oversized-cute-simple-bunny-tshirt",
-    "sku": "UOsMRnHs-Bk-XS-womenflowermain-Fr-ca",
-    "name": "\"Dragon Blossom Oversized Tee: Embrace the Spirit of the Serpent Empress\"",
-    "tags": [
-      "649",
-      "female",
-      "oversized"
-    ],
-    "source": "shopify",
-    "updatedAt": "2026-08-05T16:00:19.868Z",
-    "reviews": 47,
-    "category": "Topwear",
-    "sizes": [
-      "XS",
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
-    ],
-    "qid": "SHOP-7915861377163",
-    "isFeatured": false,
-    "inStock": true,
-    "rating": 4.3,
-    "colors": [
-      "Black",
-      "White"
-    ],
-    "descriptionHtml": "<p>Unleash your inner legend with our Dragon Blossom Oversized Tee. This statement piece combines ultimate comfort with a striking, narrative-rich design that's sure to turn heads. Crafted from premium, soft-touch fabric, this oversized t-shirt offers a relaxed fit that's perfect for effortless streetwear style.</p>\n<p>The captivating graphic features a stoic, ethereal figure with a gaze that pierces through realms, adorned with vibrant red blossoms that symbolize passion and resilience. Coiled around her is a magnificent white dragon, its scales rendered with intricate detail, embodying power, wisdom, and transformation. The subtle red accents within the dragon and the figure’s attire create a harmonious balance, suggesting a deep, intertwined destiny. This tee isn't just clothing; it's a wearable piece of art that tells a story.</p>",
-    "collections": [
-      "All products!",
-      "Best Sellers",
-      "Below 699",
-      "oversized",
-      "Oversized Tshirt"
-    ],
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1e3bze1e3bze1e3b.png?v=1761748465",
-    "shopifyId": "gid://shopify/Product/7915861377163",
-    "stock": 100,
-    "isNew": true,
-    "cost": 260,
-    "originalPrice": 999,
-    "isBestSeller": true,
-    "type": "tee"
-  },
-  {
-    "id": 7915870158987,
-    "collections": [
-      "All products!",
-      "Below 699",
-      "oversized",
-      "Oversized Tshirt"
-    ],
-    "shopifyId": "gid://shopify/Product/7915870158987",
-    "isNew": true,
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "reviews": 105,
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "category": "Topwear",
-    "isFeatured": false,
-    "stock": 100,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_8zhu4u8zhu4u8zhu.png?v=1761126098",
-    "colors": [
-      "Black",
-      "White"
-    ],
-    "originalPrice": 999,
-    "variants": [
-      {
-        "availableForSale": true,
-        "title": "Black / XS",
-        "compareAtPrice": 999,
-        "sku": "UOsMRnHs-Bk-XS-skullflowermain-Fr-ca",
-        "price": 649,
-        "options": [
-          {
-            "value": "Black",
-            "name": "color"
-          },
-          {
-            "value": "XS",
-            "name": "size"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279790928011"
-      },
-      {
-        "options": [
-          {
-            "name": "color",
-            "value": "Black"
-          },
-          {
-            "value": "S",
-            "name": "size"
-          }
-        ],
-        "compareAtPrice": 999,
-        "title": "Black / S",
-        "id": "gid://shopify/ProductVariant/44279790960779",
-        "availableForSale": true,
-        "price": 649,
-        "sku": "UOsMRnHs-Bk-S-skullflowermain-Fr-ca"
-      },
-      {
-        "compareAtPrice": 999,
-        "availableForSale": true,
-        "options": [
-          {
-            "value": "Black",
-            "name": "color"
-          },
-          {
-            "value": "M",
-            "name": "size"
-          }
-        ],
-        "sku": "UOsMRnHs-Bk-M-skullflowermain-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279790993547",
-        "title": "Black / M",
-        "price": 649
-      },
-      {
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279791026315",
-        "compareAtPrice": 999,
-        "title": "Black / L",
-        "sku": "UOsMRnHs-Bk-L-skullflowermain-Fr-ca",
-        "price": 649,
-        "options": [
-          {
-            "value": "Black",
-            "name": "color"
-          },
-          {
-            "name": "size",
-            "value": "L"
-          }
         ]
       },
       {
-        "compareAtPrice": 999,
-        "sku": "UOsMRnHs-Bk-XL-skullflowermain-Fr-ca",
-        "title": "Black / XL",
-        "id": "gid://shopify/ProductVariant/44279791059083",
-        "price": 649,
+        "id": "gid://shopify/ProductVariant/44279791124619",
+        "title": "White / XS",
         "availableForSale": true,
-        "options": [
-          {
-            "value": "Black",
-            "name": "color"
-          },
-          {
-            "value": "XL",
-            "name": "size"
-          }
-        ]
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279791091851",
-        "price": 649,
-        "sku": "UOsMRnHs-Bk-XXL-skullflowermain-Fr-ca",
-        "compareAtPrice": 999,
-        "title": "Black / XXL",
-        "options": [
-          {
-            "name": "color",
-            "value": "Black"
-          },
-          {
-            "name": "size",
-            "value": "XXL"
-          }
-        ],
-        "availableForSale": true
-      },
-      {
         "options": [
           {
             "value": "White",
@@ -1363,69 +1349,65 @@ export const PRODUCTS: Product[] = [
         ],
         "price": 649,
         "sku": "UOsMRnHs-Wh-XS-skullflowermain-Fr-ca",
-        "compareAtPrice": 999,
-        "title": "White / XS",
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279791124619"
-      },
-      {
-        "title": "White / S",
-        "options": [
-          {
-            "name": "color",
-            "value": "White"
-          },
-          {
-            "name": "size",
-            "value": "S"
-          }
-        ],
-        "compareAtPrice": 999,
-        "id": "gid://shopify/ProductVariant/44279791157387",
-        "price": 649,
-        "availableForSale": true,
-        "sku": "UOsMRnHs-Wh-S-skullflowermain-Fr-ca"
-      },
-      {
-        "availableForSale": true,
-        "sku": "UOsMRnHs-Wh-M-skullflowermain-Fr-ca",
-        "title": "White / M",
-        "id": "gid://shopify/ProductVariant/44279791190155",
-        "price": 649,
-        "options": [
-          {
-            "name": "color",
-            "value": "White"
-          },
-          {
-            "name": "size",
-            "value": "M"
-          }
-        ],
         "compareAtPrice": 999
       },
       {
-        "id": "gid://shopify/ProductVariant/44279791222923",
-        "sku": "UOsMRnHs-Wh-L-skullflowermain-Fr-ca",
+        "availableForSale": true,
+        "compareAtPrice": 999,
+        "price": 649,
+        "sku": "UOsMRnHs-Wh-S-skullflowermain-Fr-ca",
         "options": [
           {
             "value": "White",
             "name": "color"
           },
           {
+            "value": "S",
+            "name": "size"
+          }
+        ],
+        "title": "White / S",
+        "id": "gid://shopify/ProductVariant/44279791157387"
+      },
+      {
+        "title": "White / M",
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279791190155",
+        "compareAtPrice": 999,
+        "sku": "UOsMRnHs-Wh-M-skullflowermain-Fr-ca",
+        "options": [
+          {
+            "value": "White",
+            "name": "color"
+          },
+          {
+            "name": "size",
+            "value": "M"
+          }
+        ],
+        "price": 649
+      },
+      {
+        "availableForSale": true,
+        "compareAtPrice": 999,
+        "id": "gid://shopify/ProductVariant/44279791222923",
+        "options": [
+          {
+            "name": "color",
+            "value": "White"
+          },
+          {
             "value": "L",
             "name": "size"
           }
         ],
-        "availableForSale": true,
-        "compareAtPrice": 999,
         "price": 649,
-        "title": "White / L"
+        "title": "White / L",
+        "sku": "UOsMRnHs-Wh-L-skullflowermain-Fr-ca"
       },
       {
-        "id": "gid://shopify/ProductVariant/44279791255691",
-        "compareAtPrice": 999,
         "title": "White / XL",
+        "compareAtPrice": 999,
         "sku": "UOsMRnHs-Wh-XL-skullflowermain-Fr-ca",
         "options": [
           {
@@ -1433,39 +1415,67 @@ export const PRODUCTS: Product[] = [
             "name": "color"
           },
           {
-            "value": "XL",
-            "name": "size"
+            "name": "size",
+            "value": "XL"
           }
         ],
-        "price": 649,
-        "availableForSale": true
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279791255691",
+        "price": 649
       },
       {
+        "price": 649,
+        "sku": "UOsMRnHs-Wh-XXL-skullflowermain-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279791288459",
         "options": [
           {
-            "name": "color",
-            "value": "White"
+            "value": "White",
+            "name": "color"
           },
           {
             "value": "XXL",
             "name": "size"
           }
         ],
-        "id": "gid://shopify/ProductVariant/44279791288459",
         "compareAtPrice": 999,
-        "sku": "UOsMRnHs-Wh-XXL-skullflowermain-Fr-ca",
         "title": "White / XXL",
-        "availableForSale": true,
-        "price": 649
+        "availableForSale": true
       }
     ],
+    "type": "tee",
+    "description": "This is more than a piece of fabric; it's a mantra for the motivated soul. The \"Memento Mori, Memento Vivere\" Tee is designed for those who understand that true liberation lies in embracing the duality of existence. The skull, surrounded by delicate life, is a quiet reminder (Memento Mori) of the ultimate certainty. It is not a symbol of fear, but a boundary—a horizon that makes every second before it precious. This awareness, in turn, fuels the vibrant flora and the transforming butterfly, compelling you to seize the present moment (Memento Vivere). Wear this oversized tee as a daily pledge to live boldly, to chase beauty without hesitation, and to make every breath count. It’s an elegant, stark reminder: Because time is finite, life is infinite in its possibility.",
+    "importedAt": "2025-12-28T18:56:30.855Z",
     "name": "\"Memento Mori, Memento Vivere\" Oversized Tee, Stylish",
-    "rating": 4.5,
+    "collections": [
+      "All products!",
+      "Below 699",
+      "oversized",
+      "Oversized Tshirt"
+    ],
+    "shopifyId": "gid://shopify/Product/7915870158987",
+    "shopifyHandle": "oversized-illuminaty-skull-triangle-design",
+    "isNew": true,
     "tags": [
       "649",
       "oversized",
       "unisex"
     ],
+    "isFeatured": false,
+    "category": "Topwear",
+    "rating": 4.5,
+    "updatedAt": "2026-08-05T21:27:51.637Z",
+    "cost": 260,
+    "sku": "UOsMRnHs-Bk-XS-skullflowermain-Fr-ca",
+    "originalPrice": 999,
+    "isBestSeller": false,
+    "qid": "SHOP-7915870158987",
+    "source": "shopify",
+    "colors": [
+      "Black",
+      "White"
+    ],
+    "inStock": true,
+    "reviews": 105,
     "sizes": [
       "XS",
       "S",
@@ -1474,12 +1484,6 @@ export const PRODUCTS: Product[] = [
       "XL",
       "XXL"
     ],
-    "source": "shopify",
-    "updatedAt": "2026-08-05T16:00:19.868Z",
-    "price": 649,
-    "shopifyHandle": "oversized-illuminaty-skull-triangle-design",
-    "cost": 260,
-    "isBestSeller": false,
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_8zhu4u8zhu4u8zhu.png?v=1761126098",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Untitled_Project_-_Smartboard_2.png?v=1762619624",
@@ -1489,23 +1493,37 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ck8e2bck8e2bck8e.png?v=1762619624",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_x619c8x619c8x619.png?v=1762619624"
     ],
-    "type": "tee",
-    "sku": "UOsMRnHs-Bk-XS-skullflowermain-Fr-ca",
-    "description": "This is more than a piece of fabric; it's a mantra for the motivated soul. The \"Memento Mori, Memento Vivere\" Tee is designed for those who understand that true liberation lies in embracing the duality of existence. The skull, surrounded by delicate life, is a quiet reminder (Memento Mori) of the ultimate certainty. It is not a symbol of fear, but a boundary—a horizon that makes every second before it precious. This awareness, in turn, fuels the vibrant flora and the transforming butterfly, compelling you to seize the present moment (Memento Vivere). Wear this oversized tee as a daily pledge to live boldly, to chase beauty without hesitation, and to make every breath count. It’s an elegant, stark reminder: Because time is finite, life is infinite in its possibility.",
-    "qid": "SHOP-7915870158987",
-    "inStock": true,
-    "descriptionHtml": "<p>This is more than a piece of fabric; it's a <b>mantra for the motivated soul</b>. The <b>\"Memento Mori, Memento Vivere\"</b> Tee is designed for those who understand that true liberation lies in embracing the duality of existence.</p>\n<p>The skull, surrounded by delicate life, is a quiet reminder (<b>Memento Mori</b>) of the ultimate certainty. It is not a symbol of fear, but a boundary—a horizon that makes every second before it precious. This awareness, in turn, fuels the vibrant flora and the transforming butterfly, compelling you to seize the present moment (<b>Memento Vivere</b>).</p>\n<p>Wear this oversized tee as a daily pledge to live boldly, to chase beauty without hesitation, and to make every breath count. It’s an elegant, stark reminder: <b>Because time is finite, life is infinite in its possibility.</b></p>"
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_8zhu4u8zhu4u8zhu.png?v=1761126098",
+    "stock": 100
   },
   {
     "id": 7915871076491,
-    "category": "Topwear",
     "collections": [
       "All products!",
       "Women",
       "Under 500",
       "Tshirt"
     ],
+    "sku": "FRnHs-Bk-XS-blessedbirdmain-Fr-ca",
+    "rating": 4.4,
+    "isNew": true,
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "qid": "SHOP-7915871076491",
+    "price": 449,
+    "description": "The \"Blessed Ascent\" Tee: Crafted from premium, soft-touch cotton, this black tee offers a relaxed fit that drapes beautifully. The striking graphic features an exquisitely detailed, ornate golden cross, symbolizing faith and heritage, from which a majestic white dove takes flight – an emblem of peace, new beginnings, and spiritual uplift. The word \"BLESSED\" is subtly integrated into the background, adding a profound layer of meaning to this powerful visual. Perfect for layering or making a standalone statement, this tee is a versatile addition to any wardrobe, blending spiritual symbolism with cutting-edge streetwear aesthetics.",
+    "importedAt": "2025-12-28T18:56:30.855Z",
     "descriptionHtml": "<p><b class=\"\">The \"Blessed Ascent\"  Tee:</b><span class=\"\"> Crafted from premium,</span><span class=\"\"> soft-touch cotton,</span><span class=\"\"> this black tee offers a relaxed fit that drapes beautifully.</span><span class=\"\"> The striking graphic features an exquisitely detailed,</span><span class=\"\"> ornate golden cross,</span><span class=\"\"> symbolizing faith and heritage,</span><span class=\"\"> from which a majestic white dove takes flight – an emblem of peace,</span><span class=\"\"> new beginnings,</span><span class=\"\"> and spiritual uplift.</span><span class=\"\"> The word \"BLESSED\" is subtly integrated into the background,</span><span class=\"\"> adding a profound layer of meaning to this powerful visual.</span><span class=\"\"> Perfect for layering or making a standalone statement,</span><span class=\"\"> this tee is a versatile addition to any wardrobe,</span><span class=\"\"> blending spiritual symbolism with cutting-edge streetwear aesthetics.</span></p>",
+    "name": "\"Blessed Ascent\" Black Premium Tee",
+    "originalPrice": 799,
+    "type": "tee",
+    "reviews": 98,
+    "inStock": true,
+    "isFeatured": false,
+    "tags": [
+      "449",
+      "female"
+    ],
+    "category": "Topwear",
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_zeptcbzeptcbzept.png?v=1761752100",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_wmy191wmy191wmy1.png?v=1761690827",
@@ -1514,72 +1532,184 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-woman-wearing-a--black-t-shirt-with-a-whi_1.png?v=1760965173",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-woman-wearing-a--black-t-shirt-with-a-whi_2.png?v=1760965173"
     ],
-    "updatedAt": "2026-08-05T16:00:19.868Z",
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "isBestSeller": false,
+    "source": "shopify",
+    "shopifyId": "gid://shopify/Product/7915871076491",
+    "colors": [],
     "variants": [
       {
+        "price": 449,
         "availableForSale": true,
         "compareAtPrice": 799,
         "sku": "FRnHs-Bk-XS-blessedbirdmain-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279792238731",
-        "price": 449,
-        "title": "XS",
         "options": [
           {
-            "value": "XS",
-            "name": "Size"
-          }
-        ]
-      },
-      {
-        "title": "S",
-        "id": "gid://shopify/ProductVariant/44279792271499",
-        "price": 449,
-        "options": [
-          {
-            "value": "S",
-            "name": "Size"
+            "name": "Size",
+            "value": "XS"
           }
         ],
-        "availableForSale": true,
-        "compareAtPrice": 799,
-        "sku": "FRnHs-Bk-S-blessedbirdmain-Fr-ca"
+        "id": "gid://shopify/ProductVariant/44279792238731",
+        "title": "XS"
       },
       {
-        "title": "M",
+        "compareAtPrice": 799,
         "price": 449,
-        "id": "gid://shopify/ProductVariant/44279792304267",
         "availableForSale": true,
-        "sku": "FRnHs-Bk-M-blessedbirdmain-Fr-ca",
+        "options": [
+          {
+            "name": "Size",
+            "value": "S"
+          }
+        ],
+        "title": "S",
+        "sku": "FRnHs-Bk-S-blessedbirdmain-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279792271499"
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279792304267",
+        "price": 449,
+        "compareAtPrice": 799,
         "options": [
           {
             "name": "Size",
             "value": "M"
           }
         ],
+        "sku": "FRnHs-Bk-M-blessedbirdmain-Fr-ca",
+        "title": "M",
+        "availableForSale": true
+      },
+      {
+        "title": "L",
+        "sku": "FRnHs-Bk-L-blessedbirdmain-Fr-ca",
+        "options": [
+          {
+            "name": "Size",
+            "value": "L"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44279792337035",
+        "availableForSale": true,
+        "price": 449,
         "compareAtPrice": 799
       },
       {
-        "compareAtPrice": 799,
-        "title": "L",
-        "id": "gid://shopify/ProductVariant/44279792337035",
+        "sku": "FRnHs-Bk-XL-blessedbirdmain-Fr-ca",
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279792369803",
         "price": 449,
+        "compareAtPrice": 799,
+        "title": "XL",
+        "options": [
+          {
+            "name": "Size",
+            "value": "XL"
+          }
+        ]
+      },
+      {
         "availableForSale": true,
         "options": [
           {
-            "value": "L",
+            "value": "XXL",
             "name": "Size"
           }
         ],
-        "sku": "FRnHs-Bk-L-blessedbirdmain-Fr-ca"
+        "sku": "FRnHs-Bk-XXL-blessedbirdmain-Fr-ca",
+        "compareAtPrice": 799,
+        "price": 449,
+        "id": "gid://shopify/ProductVariant/44279792402571",
+        "title": "XXL"
+      }
+    ],
+    "cost": 180,
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_zeptcbzeptcbzept.png?v=1761752100",
+    "stock": 100,
+    "updatedAt": "2026-08-05T21:27:51.637Z",
+    "shopifyHandle": "cute-blessed-tshirt-for-girls",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ]
+  },
+  {
+    "id": 7915884839051,
+    "category": "Topwear",
+    "shopifyId": "gid://shopify/Product/7915884839051",
+    "qid": "SHOP-7915884839051",
+    "cost": 240,
+    "originalPrice": 899,
+    "sku": "MRnHs-Bk-XS-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
+    "updatedAt": "2026-08-05T21:27:51.637Z",
+    "rating": 4.2,
+    "variants": [
+      {
+        "price": 599,
+        "sku": "MRnHs-Bk-XS-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
+        "options": [
+          {
+            "name": "Size",
+            "value": "XS"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44279807148171",
+        "availableForSale": true,
+        "title": "XS",
+        "compareAtPrice": 899
       },
       {
-        "compareAtPrice": 799,
+        "options": [
+          {
+            "value": "S",
+            "name": "Size"
+          }
+        ],
+        "compareAtPrice": 899,
+        "sku": "MRnHs-Bk-S-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
+        "title": "S",
+        "price": 599,
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279807180939"
+      },
+      {
+        "sku": "MRnHs-Bk-M-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
+        "price": 599,
+        "compareAtPrice": 899,
+        "options": [
+          {
+            "name": "Size",
+            "value": "M"
+          }
+        ],
+        "availableForSale": true,
+        "title": "M",
+        "id": "gid://shopify/ProductVariant/44279807213707"
+      },
+      {
+        "title": "L",
+        "availableForSale": true,
+        "compareAtPrice": 899,
+        "price": 599,
+        "options": [
+          {
+            "name": "Size",
+            "value": "L"
+          }
+        ],
+        "sku": "MRnHs-Bk-L-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
+        "id": "gid://shopify/ProductVariant/44279807246475"
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279807279243",
+        "price": 599,
+        "sku": "MRnHs-Bk-XL-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
         "availableForSale": true,
         "title": "XL",
-        "id": "gid://shopify/ProductVariant/44279792369803",
-        "price": 449,
-        "sku": "FRnHs-Bk-XL-blessedbirdmain-Fr-ca",
+        "compareAtPrice": 899,
         "options": [
           {
             "value": "XL",
@@ -1588,20 +1718,23 @@ export const PRODUCTS: Product[] = [
         ]
       },
       {
-        "sku": "FRnHs-Bk-XXL-blessedbirdmain-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279792402571",
-        "compareAtPrice": 799,
-        "availableForSale": true,
-        "title": "XXL",
         "options": [
           {
             "value": "XXL",
             "name": "Size"
           }
         ],
-        "price": 449
+        "title": "XXL",
+        "sku": "MRnHs-Bk-XXL-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
+        "compareAtPrice": 899,
+        "availableForSale": true,
+        "price": 599,
+        "id": "gid://shopify/ProductVariant/44279807312011"
       }
     ],
+    "price": 599,
+    "isBestSeller": false,
+    "isNew": true,
     "sizes": [
       "XS",
       "S",
@@ -1610,47 +1743,29 @@ export const PRODUCTS: Product[] = [
       "XL",
       "XXL"
     ],
-    "qid": "SHOP-7915871076491",
-    "price": 449,
-    "shopifyHandle": "cute-blessed-tshirt-for-girls",
-    "type": "tee",
-    "inStock": true,
-    "source": "shopify",
-    "sku": "FRnHs-Bk-XS-blessedbirdmain-Fr-ca",
-    "cost": 180,
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "reviews": 98,
-    "colors": [],
-    "shopifyId": "gid://shopify/Product/7915871076491",
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_zeptcbzeptcbzept.png?v=1761752100",
-    "rating": 4.4,
-    "isFeatured": false,
-    "name": "\"Blessed Ascent\" Black Premium Tee",
-    "originalPrice": 799,
-    "isNew": true,
     "tags": [
-      "449",
-      "female"
+      "599",
+      "back design",
+      "male"
     ],
-    "description": "The \"Blessed Ascent\" Tee: Crafted from premium, soft-touch cotton, this black tee offers a relaxed fit that drapes beautifully. The striking graphic features an exquisitely detailed, ornate golden cross, symbolizing faith and heritage, from which a majestic white dove takes flight – an emblem of peace, new beginnings, and spiritual uplift. The word \"BLESSED\" is subtly integrated into the background, adding a profound layer of meaning to this powerful visual. Perfect for layering or making a standalone statement, this tee is a versatile addition to any wardrobe, blending spiritual symbolism with cutting-edge streetwear aesthetics.",
-    "stock": 100,
-    "isBestSeller": false
-  },
-  {
-    "id": 7915884839051,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_edywhedywhedywhe.png?v=1761328771",
-    "qid": "SHOP-7915884839051",
-    "originalPrice": 899,
-    "reviews": 79,
-    "isBestSeller": false,
-    "sku": "MRnHs-Bk-XS-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
-    "source": "shopify",
-    "shopifyId": "gid://shopify/Product/7915884839051",
-    "type": "tee",
-    "isNew": true,
-    "cost": 240,
+    "shopifyHandle": "japaneese-text-tshirt-cool-front-elevez",
     "description": "Unleash your inner resilience. The K-Street Samurai tee isn't just a shirt—it's a wearable statement of disciplined strength fused with the raw, vibrant energy of modern Korean street culture. Crafted from heavy-duty, premium 180gsm cotton, this t-shirt is built for comfort, durability, and a clean, structured drape. The centerpiece is the bold, disruptive design on the back: a powerful Kanji symbol rendered in stark white and grey, signifying \"Health\" or \"Vigor\". This classical stroke is violently overlaid and encircled by an aggressive, blood-red graffiti and splatter motif, creating a powerful contrast between ancient focus and contemporary chaos. This shirt is for the one who walks the line—who embraces luxury and quality while navigating the grit of the everyday. Pair it with your best accessories and step out; the K-Street Samurai is your armor for the urban jungle.",
     "stock": 100,
+    "collections": [
+      "All products!",
+      "Under 600",
+      "Tshirt"
+    ],
+    "inStock": true,
+    "reviews": 79,
+    "type": "tee",
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_edywhedywhedywhe.png?v=1761328771",
+    "name": "\"K-Street Samurai\" | Graffiti Kanji 180gsm T-Shirt (Back Print)",
+    "descriptionHtml": "<p>Unleash your inner resilience. The <b>K-Street Samurai</b> tee isn't just a shirt—it's a wearable statement of disciplined strength fused with the raw, vibrant energy of modern Korean street culture.</p>\n<p>Crafted from heavy-duty, <b>premium 180gsm cotton</b>, this t-shirt is built for comfort, durability, and a clean, structured drape. The centerpiece is the bold, disruptive design on the back: a powerful <b>Kanji symbol</b> rendered in stark white and grey, signifying <b>\"Health\" or \"Vigor\"</b>. This classical stroke is violently overlaid and encircled by an aggressive, blood-red <b>graffiti and splatter motif</b>, creating a powerful contrast between ancient focus and contemporary chaos.</p>\n<p>This shirt is for the one who walks the line—who embraces luxury and quality while navigating the grit of the everyday. Pair it with your best accessories and step out; the <b>K-Street Samurai</b> is your armor for the urban jungle.</p>",
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "colors": [],
+    "source": "shopify",
+    "isFeatured": false,
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_edywhedywhedywhe.png?v=1761328771",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_6bn3mz6bn3mz6bn3.png?v=1761328771",
@@ -1658,163 +1773,23 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_j5d84ej5d84ej5d8.png?v=1761328771",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fnf96ufnf96ufnf9.png?v=1761044221"
     ],
-    "shopifyHandle": "japaneese-text-tshirt-cool-front-elevez",
-    "collections": [
-      "All products!",
-      "Under 600",
-      "Tshirt"
-    ],
-    "category": "Topwear",
-    "sizes": [
-      "XS",
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
-    ],
-    "colors": [],
-    "inStock": true,
-    "rating": 4.2,
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "descriptionHtml": "<p>Unleash your inner resilience. The <b>K-Street Samurai</b> tee isn't just a shirt—it's a wearable statement of disciplined strength fused with the raw, vibrant energy of modern Korean street culture.</p>\n<p>Crafted from heavy-duty, <b>premium 180gsm cotton</b>, this t-shirt is built for comfort, durability, and a clean, structured drape. The centerpiece is the bold, disruptive design on the back: a powerful <b>Kanji symbol</b> rendered in stark white and grey, signifying <b>\"Health\" or \"Vigor\"</b>. This classical stroke is violently overlaid and encircled by an aggressive, blood-red <b>graffiti and splatter motif</b>, creating a powerful contrast between ancient focus and contemporary chaos.</p>\n<p>This shirt is for the one who walks the line—who embraces luxury and quality while navigating the grit of the everyday. Pair it with your best accessories and step out; the <b>K-Street Samurai</b> is your armor for the urban jungle.</p>",
-    "updatedAt": "2026-08-05T16:00:19.868Z",
-    "name": "\"K-Street Samurai\" | Graffiti Kanji 180gsm T-Shirt (Back Print)",
-    "isFeatured": false,
-    "tags": [
-      "599",
-      "back design",
-      "male"
-    ],
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "price": 599,
-    "variants": [
-      {
-        "title": "XS",
-        "availableForSale": true,
-        "price": 599,
-        "options": [
-          {
-            "name": "Size",
-            "value": "XS"
-          }
-        ],
-        "sku": "MRnHs-Bk-XS-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
-        "id": "gid://shopify/ProductVariant/44279807148171",
-        "compareAtPrice": 899
-      },
-      {
-        "title": "S",
-        "availableForSale": true,
-        "options": [
-          {
-            "name": "Size",
-            "value": "S"
-          }
-        ],
-        "price": 599,
-        "id": "gid://shopify/ProductVariant/44279807180939",
-        "compareAtPrice": 899,
-        "sku": "MRnHs-Bk-S-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca"
-      },
-      {
-        "sku": "MRnHs-Bk-M-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
-        "options": [
-          {
-            "name": "Size",
-            "value": "M"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279807213707",
-        "availableForSale": true,
-        "price": 599,
-        "compareAtPrice": 899,
-        "title": "M"
-      },
-      {
-        "sku": "MRnHs-Bk-L-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
-        "title": "L",
-        "price": 599,
-        "id": "gid://shopify/ProductVariant/44279807246475",
-        "compareAtPrice": 899,
-        "options": [
-          {
-            "name": "Size",
-            "value": "L"
-          }
-        ],
-        "availableForSale": true
-      },
-      {
-        "availableForSale": true,
-        "sku": "MRnHs-Bk-XL-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
-        "compareAtPrice": 899,
-        "id": "gid://shopify/ProductVariant/44279807279243",
-        "price": 599,
-        "title": "XL",
-        "options": [
-          {
-            "value": "XL",
-            "name": "Size"
-          }
-        ]
-      },
-      {
-        "price": 599,
-        "availableForSale": true,
-        "title": "XXL",
-        "options": [
-          {
-            "name": "Size",
-            "value": "XXL"
-          }
-        ],
-        "compareAtPrice": 899,
-        "sku": "MRnHs-Bk-XXL-pixelcutexport(11)-Bkelevezmainwhitelogo(1)-Lp-ca",
-        "id": "gid://shopify/ProductVariant/44279807312011"
-      }
-    ]
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z"
   },
   {
     "id": 7915885625483,
-    "shopifyHandle": "cute-butterfly-croptop-for-women",
     "collections": [
       "All products!",
       "Women",
       "Below 400"
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_u9g2euu9g2euu9g2.png?v=1761748319",
-    "importedAt": "2025-12-28T18:56:30.855Z",
+    "shopifyId": "gid://shopify/Product/7915885625483",
     "isFeatured": false,
     "inStock": true,
-    "source": "shopify",
-    "isNew": true,
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "cost": 140,
-    "updatedAt": "2026-08-05T16:00:19.869Z",
-    "stock": 100,
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_u9g2euu9g2euu9g2.png?v=1761748319",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/l.png?v=1761046421",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_p6eambp6eambp6ea.png?v=1761046450",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_86euef86euef86eu.png?v=1761046485",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-women-wearing-a-light-baby-pink-crop-top-half-sl_2.png?v=1761046378",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-women-wearing-a-white-crop-top-half-sleeves-roun_2.png?v=1761046378"
-    ],
-    "type": "tee",
-    "descriptionHtml": "<p>The <b>\"Monarch Shadow\"</b> design is more than just a graphic—it’s a symbol of transformation and bold beauty. This striking <b>grayscale butterfly</b>, centered on our premium, <b>super-soft crop top</b>, represents the captivating duality of nature: delicate wings that carry immense power, and ephemeral beauty that leaves a lasting impression.</p>\n<p>Legend has it that this specific butterfly, seen only in moments of intense sunlight, guides its wearers toward their most authentic, confident selves. The <b>detailed, high-quality print</b> captures every minute scale of the wings, creating a stunning, realistic effect that pops against the fabric.</p>",
-    "sku": "FCpTp-Wh-XS-maincroptopbutteflypng_1-Fr-ca",
-    "isBestSeller": false,
-    "originalPrice": 649,
-    "category": "Topwear",
-    "qid": "SHOP-7915885625483",
-    "shopifyId": "gid://shopify/Product/7915885625483",
-    "colors": [
-      "White",
-      "Light Baby Pink"
-    ],
     "reviews": 113,
-    "name": "\"Monarch Shadow\" Premium Butterfly Crop Top",
+    "rating": 4.6,
+    "descriptionHtml": "<p>The <b>\"Monarch Shadow\"</b> design is more than just a graphic—it’s a symbol of transformation and bold beauty. This striking <b>grayscale butterfly</b>, centered on our premium, <b>super-soft crop top</b>, represents the captivating duality of nature: delicate wings that carry immense power, and ephemeral beauty that leaves a lasting impression.</p>\n<p>Legend has it that this specific butterfly, seen only in moments of intense sunlight, guides its wearers toward their most authentic, confident selves. The <b>detailed, high-quality print</b> captures every minute scale of the wings, creating a stunning, realistic effect that pops against the fabric.</p>",
+    "description": "The \"Monarch Shadow\" design is more than just a graphic—it’s a symbol of transformation and bold beauty. This striking grayscale butterfly, centered on our premium, super-soft crop top, represents the captivating duality of nature: delicate wings that carry immense power, and ephemeral beauty that leaves a lasting impression. Legend has it that this specific butterfly, seen only in moments of intense sunlight, guides its wearers toward their most authentic, confident selves. The detailed, high-quality print captures every minute scale of the wings, creating a stunning, realistic effect that pops against the fabric.",
+    "category": "Topwear",
     "sizes": [
       "XS",
       "S",
@@ -1823,35 +1798,15 @@ export const PRODUCTS: Product[] = [
       "XL",
       "XXL"
     ],
-    "rating": 4.6,
-    "tags": [
-      "349",
-      "croptop",
-      "female"
-    ],
+    "cost": 140,
+    "isBestSeller": false,
+    "updatedAt": "2026-08-05T21:27:51.637Z",
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "stock": 100,
     "variants": [
       {
-        "availableForSale": true,
-        "compareAtPrice": 649,
-        "price": 349,
-        "options": [
-          {
-            "name": "color",
-            "value": "White"
-          },
-          {
-            "name": "size",
-            "value": "XS"
-          }
-        ],
         "id": "gid://shopify/ProductVariant/44279808753803",
-        "sku": "FCpTp-Wh-XS-maincroptopbutteflypng_1-Fr-ca",
-        "title": "White / XS"
-      },
-      {
         "price": 349,
-        "id": "gid://shopify/ProductVariant/44279808786571",
-        "title": "White / S",
         "compareAtPrice": 649,
         "options": [
           {
@@ -1859,54 +1814,75 @@ export const PRODUCTS: Product[] = [
             "name": "color"
           },
           {
+            "value": "XS",
+            "name": "size"
+          }
+        ],
+        "sku": "FCpTp-Wh-XS-maincroptopbutteflypng_1-Fr-ca",
+        "availableForSale": true,
+        "title": "White / XS"
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279808786571",
+        "availableForSale": true,
+        "price": 349,
+        "title": "White / S",
+        "sku": "FCpTp-Wh-S-maincroptopbutteflypng_1-Fr-ca",
+        "options": [
+          {
+            "name": "color",
+            "value": "White"
+          },
+          {
             "name": "size",
             "value": "S"
           }
         ],
-        "availableForSale": true,
-        "sku": "FCpTp-Wh-S-maincroptopbutteflypng_1-Fr-ca"
+        "compareAtPrice": 649
       },
       {
-        "availableForSale": true,
-        "compareAtPrice": 649,
         "sku": "FCpTp-Wh-M-maincroptopbutteflypng_1-Fr-ca",
+        "compareAtPrice": 649,
+        "id": "gid://shopify/ProductVariant/44279808819339",
+        "title": "White / M",
+        "availableForSale": true,
         "options": [
           {
-            "name": "color",
-            "value": "White"
+            "value": "White",
+            "name": "color"
           },
           {
-            "value": "M",
-            "name": "size"
+            "name": "size",
+            "value": "M"
           }
         ],
-        "id": "gid://shopify/ProductVariant/44279808819339",
-        "price": 349,
-        "title": "White / M"
+        "price": 349
       },
       {
-        "options": [
-          {
-            "name": "color",
-            "value": "White"
-          },
-          {
-            "value": "L",
-            "name": "size"
-          }
-        ],
         "compareAtPrice": 649,
         "price": 349,
         "sku": "FCpTp-Wh-L-maincroptopbutteflypng_1-Fr-ca",
+        "options": [
+          {
+            "value": "White",
+            "name": "color"
+          },
+          {
+            "name": "size",
+            "value": "L"
+          }
+        ],
         "title": "White / L",
         "availableForSale": true,
         "id": "gid://shopify/ProductVariant/44279808852107"
       },
       {
+        "sku": "FCpTp-Wh-XL-maincroptopbutteflypng_1-Fr-ca",
+        "price": 349,
         "options": [
           {
-            "name": "color",
-            "value": "White"
+            "value": "White",
+            "name": "color"
           },
           {
             "name": "size",
@@ -1915,35 +1891,29 @@ export const PRODUCTS: Product[] = [
         ],
         "id": "gid://shopify/ProductVariant/44279808884875",
         "title": "White / XL",
-        "price": 349,
-        "availableForSale": true,
         "compareAtPrice": 649,
-        "sku": "FCpTp-Wh-XL-maincroptopbutteflypng_1-Fr-ca"
+        "availableForSale": true
       },
       {
-        "sku": "FCpTp-Wh-XXL-maincroptopbutteflypng_1-Fr-ca",
-        "price": 349,
-        "compareAtPrice": 649,
         "title": "White / XXL",
-        "id": "gid://shopify/ProductVariant/44279808917643",
+        "availableForSale": true,
         "options": [
           {
             "name": "color",
             "value": "White"
           },
           {
-            "name": "size",
-            "value": "XXL"
+            "value": "XXL",
+            "name": "size"
           }
         ],
-        "availableForSale": true
+        "id": "gid://shopify/ProductVariant/44279808917643",
+        "compareAtPrice": 649,
+        "sku": "FCpTp-Wh-XXL-maincroptopbutteflypng_1-Fr-ca",
+        "price": 349
       },
       {
         "price": 349,
-        "availableForSale": true,
-        "title": "Light Baby Pink / XS",
-        "compareAtPrice": 649,
-        "id": "gid://shopify/ProductVariant/44279808950411",
         "options": [
           {
             "name": "color",
@@ -1954,30 +1924,31 @@ export const PRODUCTS: Product[] = [
             "value": "XS"
           }
         ],
-        "sku": "FCpTp-LBp-XS-maincroptopbutteflypng_1-Fr-ca"
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279808950411",
+        "title": "Light Baby Pink / XS",
+        "sku": "FCpTp-LBp-XS-maincroptopbutteflypng_1-Fr-ca",
+        "compareAtPrice": 649
       },
       {
-        "id": "gid://shopify/ProductVariant/44279808983179",
-        "sku": "FCpTp-LBp-S-maincroptopbutteflypng_1-Fr-ca",
-        "compareAtPrice": 649,
-        "availableForSale": true,
         "price": 349,
+        "id": "gid://shopify/ProductVariant/44279808983179",
+        "compareAtPrice": 649,
+        "title": "Light Baby Pink / S",
+        "sku": "FCpTp-LBp-S-maincroptopbutteflypng_1-Fr-ca",
         "options": [
           {
-            "value": "Light Baby Pink",
-            "name": "color"
+            "name": "color",
+            "value": "Light Baby Pink"
           },
           {
-            "name": "size",
-            "value": "S"
+            "value": "S",
+            "name": "size"
           }
         ],
-        "title": "Light Baby Pink / S"
+        "availableForSale": true
       },
       {
-        "sku": "FCpTp-LBp-M-maincroptopbutteflypng_1-Fr-ca",
-        "compareAtPrice": 649,
-        "availableForSale": true,
         "options": [
           {
             "name": "color",
@@ -1988,15 +1959,55 @@ export const PRODUCTS: Product[] = [
             "name": "size"
           }
         ],
+        "title": "Light Baby Pink / M",
+        "compareAtPrice": 649,
         "id": "gid://shopify/ProductVariant/44279809015947",
-        "price": 349,
-        "title": "Light Baby Pink / M"
+        "availableForSale": true,
+        "sku": "FCpTp-LBp-M-maincroptopbutteflypng_1-Fr-ca",
+        "price": 349
       },
       {
         "availableForSale": true,
-        "compareAtPrice": 649,
+        "id": "gid://shopify/ProductVariant/44279809048715",
         "title": "Light Baby Pink / L",
+        "options": [
+          {
+            "value": "Light Baby Pink",
+            "name": "color"
+          },
+          {
+            "value": "L",
+            "name": "size"
+          }
+        ],
+        "compareAtPrice": 649,
         "sku": "FCpTp-LBp-L-maincroptopbutteflypng_1-Fr-ca",
+        "price": 349
+      },
+      {
+        "availableForSale": true,
+        "title": "Light Baby Pink / XL",
+        "options": [
+          {
+            "value": "Light Baby Pink",
+            "name": "color"
+          },
+          {
+            "value": "XL",
+            "name": "size"
+          }
+        ],
+        "compareAtPrice": 649,
+        "id": "gid://shopify/ProductVariant/44279809081483",
+        "sku": "FCpTp-LBp-XL-maincroptopbutteflypng_1-Fr-ca",
+        "price": 349
+      },
+      {
+        "title": "Light Baby Pink / XXL",
+        "availableForSale": true,
+        "sku": "FCpTp-LBp-XXL-maincroptopbutteflypng_1-Fr-ca",
+        "compareAtPrice": 649,
+        "id": "gid://shopify/ProductVariant/44279809114251",
         "price": 349,
         "options": [
           {
@@ -2004,84 +2015,43 @@ export const PRODUCTS: Product[] = [
             "name": "color"
           },
           {
-            "name": "size",
-            "value": "L"
+            "value": "XXL",
+            "name": "size"
           }
-        ],
-        "id": "gid://shopify/ProductVariant/44279809048715"
-      },
-      {
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279809081483",
-        "compareAtPrice": 649,
-        "options": [
-          {
-            "name": "color",
-            "value": "Light Baby Pink"
-          },
-          {
-            "name": "size",
-            "value": "XL"
-          }
-        ],
-        "title": "Light Baby Pink / XL",
-        "sku": "FCpTp-LBp-XL-maincroptopbutteflypng_1-Fr-ca",
-        "price": 349
-      },
-      {
-        "compareAtPrice": 649,
-        "id": "gid://shopify/ProductVariant/44279809114251",
-        "sku": "FCpTp-LBp-XXL-maincroptopbutteflypng_1-Fr-ca",
-        "availableForSale": true,
-        "title": "Light Baby Pink / XXL",
-        "options": [
-          {
-            "name": "color",
-            "value": "Light Baby Pink"
-          },
-          {
-            "name": "size",
-            "value": "XXL"
-          }
-        ],
-        "price": 349
+        ]
       }
     ],
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_u9g2euu9g2euu9g2.png?v=1761748319",
+    "originalPrice": 649,
+    "colors": [
+      "White",
+      "Light Baby Pink"
+    ],
+    "source": "shopify",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_u9g2euu9g2euu9g2.png?v=1761748319",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/l.png?v=1761046421",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_p6eambp6eambp6ea.png?v=1761046450",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_86euef86euef86eu.png?v=1761046485",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-women-wearing-a-light-baby-pink-crop-top-half-sl_2.png?v=1761046378",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-women-wearing-a-white-crop-top-half-sleeves-roun_2.png?v=1761046378"
+    ],
     "price": 349,
-    "description": "The \"Monarch Shadow\" design is more than just a graphic—it’s a symbol of transformation and bold beauty. This striking grayscale butterfly, centered on our premium, super-soft crop top, represents the captivating duality of nature: delicate wings that carry immense power, and ephemeral beauty that leaves a lasting impression. Legend has it that this specific butterfly, seen only in moments of intense sunlight, guides its wearers toward their most authentic, confident selves. The detailed, high-quality print captures every minute scale of the wings, creating a stunning, realistic effect that pops against the fabric."
+    "isNew": true,
+    "type": "tee",
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "name": "\"Monarch Shadow\" Premium Butterfly Crop Top",
+    "shopifyHandle": "cute-butterfly-croptop-for-women",
+    "qid": "SHOP-7915885625483",
+    "tags": [
+      "349",
+      "croptop",
+      "female"
+    ],
+    "sku": "FCpTp-Wh-XS-maincroptopbutteflypng_1-Fr-ca"
   },
   {
     "id": 7915886051467,
-    "rating": 4.5,
-    "stock": 100,
-    "originalPrice": 599,
-    "colors": [],
-    "isNew": true,
-    "description": "Embrace the meme, the mystery, and the message with our \"Ami Akta Dhowa Tulsi Pata\" Tshirt Every leaf of Tulsi, or Holy Basil, is considered sacred—a symbol of purity, devotion, and life itself. But what happens when that leaf is taken, gently washed, and held up to the world? It becomes an emblem of absolute, undeniable innocence The \"Ami Akta Dhowa Tulsi Pata\" tee is more than just a piece of clothing; it's a statement born from modern South Asian internet culture and deeply rooted in tradition. The phrase, which literally means \"I am a washed Holy Basil leaf,\" is an ironic declaration of purity. It’s what you say when you want to signal that you’re untouched, untainted, and completely blameless... even if the situation suggests otherwise.",
-    "shopifyId": "gid://shopify/Product/7915886051467",
-    "inStock": true,
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "isFeatured": false,
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "cost": 160,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_s8349vs8349vs834.png?v=1761748512",
-    "type": "tee",
-    "sku": "MRnHs-Wh-XS-amiaktadhowatulsipata-Fr-ca",
-    "price": 399,
-    "updatedAt": "2026-08-05T16:00:19.869Z",
-    "isBestSeller": false,
-    "category": "Topwear",
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_s8349vs8349vs834.png?v=1761748512",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_15bku915bku915bk.png?v=1761478775",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_9mu3rr9mu3rr9mu3.png?v=1761047124",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ameuz5ameuz5ameu.png?v=1761047124",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-a-studio-in-front-_3.png?v=1761047124",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-a-studio-in-front-_4.png?v=1761047124"
-    ],
-    "reviews": 82,
-    "qid": "SHOP-7915886051467",
-    "shopifyHandle": "ami-akta-dhowa-tulsi-pata-tshirt",
     "sizes": [
       "XS",
       "S",
@@ -2091,165 +2061,326 @@ export const PRODUCTS: Product[] = [
       "XXL",
       "7XL"
     ],
-    "descriptionHtml": "<p>Embrace the meme, the mystery, and the message with our <b>\"Ami Akta Dhowa Tulsi Pata\" Tshirt<br></b></p>\n<p><span class=\"citation-3 citation-end-3\">Every leaf of Tulsi, or Holy Basil, is considered sacred—a symbol of purity, devotion, and life itself.<sup class=\"superscript\" data-turn-source-index=\"1\"><!----></sup></span> But what happens when that leaf is taken, gently washed, and held up to the world? It becomes an emblem of <b>absolute, undeniable innocence</b><!----><!----><!----><!----></p>\n<p><b><!----><!----><!----><!----><!----><!----><!----><!----></b></p>\n<p>The <b>\"Ami Akta Dhowa Tulsi Pata\"</b> tee is more than just a piece of clothing; it's a statement born from modern South Asian internet culture and deeply rooted in tradition. The phrase, which literally means <b>\"I am a washed Holy Basil leaf,\"</b> is an <b>ironic declaration of purity.</b> It’s what you say when you want to signal that you’re untouched, untainted, and completely blameless... <i>even if the situation suggests otherwise.</i></p>\n<p><b><br></b></p>",
-    "tags": [
-      "399",
-      "funny",
-      "male"
-    ],
     "variants": [
       {
-        "id": "gid://shopify/ProductVariant/44279810687115",
-        "sku": "MRnHs-Wh-XS-amiaktadhowatulsipata-Fr-ca",
         "compareAtPrice": 599,
         "price": 399,
-        "title": "XS",
-        "options": [
-          {
-            "value": "XS",
-            "name": "Size"
-          }
-        ],
-        "availableForSale": true
-      },
-      {
-        "compareAtPrice": 599,
-        "sku": "MRnHs-Wh-S-amiaktadhowatulsipata-Fr-ca",
+        "sku": "MRnHs-Wh-XS-amiaktadhowatulsipata-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279810687115",
         "options": [
           {
             "name": "Size",
-            "value": "S"
+            "value": "XS"
           }
         ],
-        "price": 399,
-        "id": "gid://shopify/ProductVariant/44279810719883",
-        "title": "S",
-        "availableForSale": true
+        "availableForSale": true,
+        "title": "XS"
       },
       {
-        "availableForSale": true,
-        "sku": "MRnHs-Wh-M-amiaktadhowatulsipata-Fr-ca",
-        "compareAtPrice": 599,
-        "id": "gid://shopify/ProductVariant/44279810752651",
-        "title": "M",
         "options": [
           {
-            "value": "M",
+            "value": "S",
             "name": "Size"
           }
         ],
-        "price": 399
+        "title": "S",
+        "id": "gid://shopify/ProductVariant/44279810719883",
+        "price": 399,
+        "availableForSale": true,
+        "compareAtPrice": 599,
+        "sku": "MRnHs-Wh-S-amiaktadhowatulsipata-Fr-ca"
       },
       {
-        "sku": "MRnHs-Wh-L-amiaktadhowatulsipata-Fr-ca",
         "availableForSale": true,
+        "price": 399,
+        "sku": "MRnHs-Wh-M-amiaktadhowatulsipata-Fr-ca",
+        "title": "M",
+        "compareAtPrice": 599,
+        "options": [
+          {
+            "name": "Size",
+            "value": "M"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44279810752651"
+      },
+      {
+        "title": "L",
         "id": "gid://shopify/ProductVariant/44279810785419",
         "compareAtPrice": 599,
-        "price": 399,
         "options": [
           {
             "name": "Size",
             "value": "L"
           }
         ],
-        "title": "L"
+        "price": 399,
+        "sku": "MRnHs-Wh-L-amiaktadhowatulsipata-Fr-ca",
+        "availableForSale": true
       },
       {
-        "id": "gid://shopify/ProductVariant/44279810818187",
         "availableForSale": true,
-        "price": 399,
-        "options": [
-          {
-            "name": "Size",
-            "value": "XL"
-          }
-        ],
         "sku": "MRnHs-Wh-XL-amiaktadhowatulsipata-Fr-ca",
-        "title": "XL",
-        "compareAtPrice": 599
-      },
-      {
-        "sku": "MRnHs-Wh-XXL-amiaktadhowatulsipata-Fr-ca",
+        "compareAtPrice": 599,
+        "id": "gid://shopify/ProductVariant/44279810818187",
         "price": 399,
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279810850955",
-        "title": "XXL",
         "options": [
           {
-            "value": "XXL",
+            "value": "XL",
             "name": "Size"
           }
         ],
+        "title": "XL"
+      },
+      {
+        "title": "XXL",
+        "sku": "MRnHs-Wh-XXL-amiaktadhowatulsipata-Fr-ca",
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279810850955",
+        "options": [
+          {
+            "name": "Size",
+            "value": "XXL"
+          }
+        ],
+        "price": 399,
         "compareAtPrice": 599
       },
       {
         "availableForSale": true,
-        "sku": "MRnHs-Wh-7XL-amiaktadhowatulsipata-Fr-ca",
         "title": "7XL",
-        "compareAtPrice": 599,
-        "id": "gid://shopify/ProductVariant/44279810883723",
         "options": [
           {
             "value": "7XL",
             "name": "Size"
           }
         ],
-        "price": 399
+        "compareAtPrice": 599,
+        "price": 399,
+        "id": "gid://shopify/ProductVariant/44279810883723",
+        "sku": "MRnHs-Wh-7XL-amiaktadhowatulsipata-Fr-ca"
       }
     ],
+    "stock": 100,
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_s8349vs8349vs834.png?v=1761748512",
+    "tags": [
+      "399",
+      "funny",
+      "male"
+    ],
+    "colors": [],
+    "shopifyHandle": "ami-akta-dhowa-tulsi-pata-tshirt",
+    "qid": "SHOP-7915886051467",
+    "source": "shopify",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_s8349vs8349vs834.png?v=1761748512",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_15bku915bku915bk.png?v=1761478775",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_9mu3rr9mu3rr9mu3.png?v=1761047124",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ameuz5ameuz5ameu.png?v=1761047124",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-a-studio-in-front-_3.png?v=1761047124",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-a-studio-in-front-_4.png?v=1761047124"
+    ],
+    "descriptionHtml": "<p>Embrace the meme, the mystery, and the message with our <b>\"Ami Akta Dhowa Tulsi Pata\" Tshirt<br></b></p>\n<p><span class=\"citation-3 citation-end-3\">Every leaf of Tulsi, or Holy Basil, is considered sacred—a symbol of purity, devotion, and life itself.<sup class=\"superscript\" data-turn-source-index=\"1\"><!----></sup></span> But what happens when that leaf is taken, gently washed, and held up to the world? It becomes an emblem of <b>absolute, undeniable innocence</b><!----><!----><!----><!----></p>\n<p><b><!----><!----><!----><!----><!----><!----><!----><!----></b></p>\n<p>The <b>\"Ami Akta Dhowa Tulsi Pata\"</b> tee is more than just a piece of clothing; it's a statement born from modern South Asian internet culture and deeply rooted in tradition. The phrase, which literally means <b>\"I am a washed Holy Basil leaf,\"</b> is an <b>ironic declaration of purity.</b> It’s what you say when you want to signal that you’re untouched, untainted, and completely blameless... <i>even if the situation suggests otherwise.</i></p>\n<p><b><br></b></p>",
+    "name": "\"Ami akta dhowa tulsi pata\" Tshirt",
+    "sku": "MRnHs-Wh-XS-amiaktadhowatulsipata-Fr-ca",
+    "type": "tee",
+    "category": "Topwear",
+    "reviews": 82,
+    "inStock": true,
+    "description": "Embrace the meme, the mystery, and the message with our \"Ami Akta Dhowa Tulsi Pata\" Tshirt Every leaf of Tulsi, or Holy Basil, is considered sacred—a symbol of purity, devotion, and life itself. But what happens when that leaf is taken, gently washed, and held up to the world? It becomes an emblem of absolute, undeniable innocence The \"Ami Akta Dhowa Tulsi Pata\" tee is more than just a piece of clothing; it's a statement born from modern South Asian internet culture and deeply rooted in tradition. The phrase, which literally means \"I am a washed Holy Basil leaf,\" is an ironic declaration of purity. It’s what you say when you want to signal that you’re untouched, untainted, and completely blameless... even if the situation suggests otherwise.",
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "shopifyId": "gid://shopify/Product/7915886051467",
+    "isBestSeller": false,
     "collections": [
       "All products!",
       "Below 400",
       "Bold and vibrant",
       "Tshirt"
     ],
-    "name": "\"Ami akta dhowa tulsi pata\" Tshirt",
-    "source": "shopify"
+    "price": 399,
+    "isFeatured": false,
+    "isNew": true,
+    "rating": 4.5,
+    "originalPrice": 599,
+    "updatedAt": "2026-08-05T21:27:51.637Z",
+    "cost": 160
   },
   {
     "id": 7915971805323,
-    "description": "In a village full of gossip and busybodies, there was an old saying passed down through generations of weavers: \"Nijer Chorkae Tel De.\" The \"Chorka\" is the spinning wheel—a device that requires constant care and oiling to turn smoothly and produce fine thread. If a weaver neglects their own wheel to watch and criticize how another's is turning, their thread breaks, and their work stops. This T-shirt is for the Focused Few—the ones who understand that the most productive work is done when you keep your eyes on your own craft. It's a humorous yet powerful mantra for modern life, a reminder to:",
-    "importedAt": "2025-12-28T18:56:30.855Z",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/44279897489547",
+        "price": 399,
+        "options": [
+          {
+            "name": "Size",
+            "value": "XS"
+          }
+        ],
+        "sku": "MRnHs-Wh-XS-nijerchorkaetelde-Fr-ca",
+        "compareAtPrice": 599,
+        "availableForSale": true,
+        "title": "XS"
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279897522315",
+        "price": 399,
+        "options": [
+          {
+            "value": "S",
+            "name": "Size"
+          }
+        ],
+        "availableForSale": true,
+        "sku": "MRnHs-Wh-S-nijerchorkaetelde-Fr-ca",
+        "title": "S",
+        "compareAtPrice": 599
+      },
+      {
+        "options": [
+          {
+            "value": "M",
+            "name": "Size"
+          }
+        ],
+        "compareAtPrice": 599,
+        "sku": "MRnHs-Wh-M-nijerchorkaetelde-Fr-ca",
+        "title": "M",
+        "price": 399,
+        "id": "gid://shopify/ProductVariant/44279897555083",
+        "availableForSale": true
+      },
+      {
+        "title": "L",
+        "compareAtPrice": 599,
+        "options": [
+          {
+            "value": "L",
+            "name": "Size"
+          }
+        ],
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279897587851",
+        "sku": "MRnHs-Wh-L-nijerchorkaetelde-Fr-ca",
+        "price": 399
+      },
+      {
+        "title": "XL",
+        "id": "gid://shopify/ProductVariant/44279897620619",
+        "price": 399,
+        "options": [
+          {
+            "value": "XL",
+            "name": "Size"
+          }
+        ],
+        "sku": "MRnHs-Wh-XL-nijerchorkaetelde-Fr-ca",
+        "availableForSale": true,
+        "compareAtPrice": 599
+      },
+      {
+        "options": [
+          {
+            "value": "XXL",
+            "name": "Size"
+          }
+        ],
+        "availableForSale": true,
+        "compareAtPrice": 599,
+        "title": "XXL",
+        "sku": "MRnHs-Wh-XXL-nijerchorkaetelde-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279897653387",
+        "price": 399
+      },
+      {
+        "sku": "MRnHs-Wh-3XL-nijerchorkaetelde-Fr-ca",
+        "title": "3XL",
+        "compareAtPrice": 599,
+        "id": "gid://shopify/ProductVariant/44279897686155",
+        "availableForSale": true,
+        "price": 399,
+        "options": [
+          {
+            "value": "3XL",
+            "name": "Size"
+          }
+        ]
+      },
+      {
+        "compareAtPrice": 599,
+        "title": "4XL",
+        "sku": "MRnHs-Wh-4XL-nijerchorkaetelde-Fr-ca",
+        "options": [
+          {
+            "name": "Size",
+            "value": "4XL"
+          }
+        ],
+        "price": 399,
+        "id": "gid://shopify/ProductVariant/44279897718923",
+        "availableForSale": true
+      },
+      {
+        "title": "5XL",
+        "availableForSale": true,
+        "options": [
+          {
+            "value": "5XL",
+            "name": "Size"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44279897751691",
+        "compareAtPrice": 599,
+        "price": 399,
+        "sku": "MRnHs-Wh-5XL-nijerchorkaetelde-Fr-ca"
+      },
+      {
+        "options": [
+          {
+            "value": "6XL",
+            "name": "Size"
+          }
+        ],
+        "compareAtPrice": 599,
+        "title": "6XL",
+        "availableForSale": true,
+        "price": 399,
+        "sku": "MRnHs-Wh-6XL-nijerchorkaetelde-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279897784459"
+      },
+      {
+        "price": 399,
+        "sku": "MRnHs-Wh-7XL-nijerchorkaetelde-Fr-ca",
+        "options": [
+          {
+            "value": "7XL",
+            "name": "Size"
+          }
+        ],
+        "compareAtPrice": 599,
+        "availableForSale": true,
+        "title": "7XL",
+        "id": "gid://shopify/ProductVariant/44279897817227"
+      }
+    ],
+    "updatedAt": "2026-08-05T21:27:51.638Z",
     "rating": 4.7,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fwo9vgfwo9vgfwo9.png?v=1761047723",
-    "shopifyId": "gid://shopify/Product/7915971805323",
-    "reviews": 82,
     "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "colors": [],
-    "isFeatured": false,
-    "stock": 100,
-    "tags": [
-      "399",
-      "funny"
-    ],
-    "isNew": true,
-    "originalPrice": 599,
-    "name": "\"Nijer Chorkae Tel De\" Tshirt",
-    "updatedAt": "2026-08-05T16:00:19.869Z",
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fwo9vgfwo9vgfwo9.png?v=1761047723",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_inate3inate3inat.png?v=1761047743",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_svrv0esvrv0esvrv.png?v=1761047788",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-a-studio-in-front-_6.png?v=1761047555",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-a-studio-in-front-_4_3d6cc9b6-18bd-4663-9d5d-c5f26cc4b16f.png?v=1761047448",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fdv34xfdv34xfdv3.png?v=1761047591"
-    ],
     "category": "Topwear",
-    "cost": 160,
-    "sku": "MRnHs-Wh-XS-nijerchorkaetelde-Fr-ca",
-    "source": "shopify",
-    "inStock": true,
-    "type": "tee",
-    "shopifyHandle": "ami-akta-dhowa-tulsi-pata-funky",
-    "price": 399,
-    "isBestSeller": false,
-    "qid": "SHOP-7915971805323",
     "collections": [
       "All products!",
       "Below 400",
       "Bold and vibrant",
       "Tshirt"
     ],
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fwo9vgfwo9vgfwo9.png?v=1761047723",
+    "type": "tee",
+    "stock": 100,
+    "shopifyId": "gid://shopify/Product/7915971805323",
+    "name": "\"Nijer Chorkae Tel De\" Tshirt",
+    "originalPrice": 599,
+    "description": "In a village full of gossip and busybodies, there was an old saying passed down through generations of weavers: \"Nijer Chorkae Tel De.\" The \"Chorka\" is the spinning wheel—a device that requires constant care and oiling to turn smoothly and produce fine thread. If a weaver neglects their own wheel to watch and criticize how another's is turning, their thread breaks, and their work stops. This T-shirt is for the Focused Few—the ones who understand that the most productive work is done when you keep your eyes on your own craft. It's a humorous yet powerful mantra for modern life, a reminder to:",
     "sizes": [
       "XS",
       "S",
@@ -2263,207 +2394,132 @@ export const PRODUCTS: Product[] = [
       "6XL",
       "7XL"
     ],
+    "tags": [
+      "399",
+      "funny"
+    ],
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fwo9vgfwo9vgfwo9.png?v=1761047723",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_inate3inate3inat.png?v=1761047743",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_svrv0esvrv0esvrv.png?v=1761047788",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-a-studio-in-front-_6.png?v=1761047555",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-a-studio-in-front-_4_3d6cc9b6-18bd-4663-9d5d-c5f26cc4b16f.png?v=1761047448",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fdv34xfdv34xfdv3.png?v=1761047591"
+    ],
+    "source": "shopify",
+    "colors": [],
+    "isNew": true,
     "descriptionHtml": "<p>In a village full of gossip and busybodies, there was an old saying passed down through generations of weavers: <b>\"Nijer Chorkae Tel De.\"</b></p>\n<p><span class=\"citation-5\">The </span><b><span class=\"citation-5\">\"Chorka\"</span></b><span class=\"citation-5 citation-end-5\"> is the spinning wheel—a device that requires constant care and oiling to turn smoothly and produce fine thread.<sup class=\"superscript\" data-turn-source-index=\"1\"><!----></sup></span> If a weaver neglects their own wheel to watch and criticize how another's is turning, their thread breaks, and their work stops.<!----><!----><!----><!----></p>\n<p><!----><!----><!----><!----><!----><!----><!----><!----></p>\n<p>This T-shirt is for the <b>Focused Few</b>—the ones who understand that the most productive work is done when you keep your eyes on your own craft. It's a humorous yet powerful mantra for modern life, a reminder to:</p>",
+    "isBestSeller": false,
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "price": 399,
+    "cost": 160,
+    "shopifyHandle": "ami-akta-dhowa-tulsi-pata-funky",
+    "sku": "MRnHs-Wh-XS-nijerchorkaetelde-Fr-ca",
+    "inStock": true,
+    "reviews": 82,
+    "qid": "SHOP-7915971805323",
+    "isFeatured": false
+  },
+  {
+    "id": 7916017713291,
+    "category": "Topwear",
+    "shopifyId": "gid://shopify/Product/7916017713291",
+    "qid": "SHOP-7916017713291",
+    "cost": 160,
+    "originalPrice": 599,
+    "sku": "MRnHs-Wh-XS-NewProject(12)-Fr-ca",
+    "updatedAt": "2026-08-05T21:27:51.638Z",
+    "rating": 4.6,
+    "price": 399,
     "variants": [
       {
-        "title": "XS",
-        "price": 399,
         "options": [
           {
-            "value": "XS",
-            "name": "Size"
+            "name": "Size",
+            "value": "XS"
           }
         ],
-        "availableForSale": true,
-        "sku": "MRnHs-Wh-XS-nijerchorkaetelde-Fr-ca",
-        "compareAtPrice": 599,
-        "id": "gid://shopify/ProductVariant/44279897489547"
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279897522315",
-        "sku": "MRnHs-Wh-S-nijerchorkaetelde-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279945724043",
+        "title": "XS",
+        "sku": "MRnHs-Wh-XS-NewProject(12)-Fr-ca",
         "price": 399,
         "availableForSale": true,
-        "title": "S",
-        "compareAtPrice": 599,
+        "compareAtPrice": 599
+      },
+      {
+        "price": 399,
+        "availableForSale": true,
         "options": [
           {
             "name": "Size",
             "value": "S"
           }
-        ]
+        ],
+        "sku": "MRnHs-Wh-S-NewProject(12)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279945756811",
+        "compareAtPrice": 599,
+        "title": "S"
       },
       {
-        "availableForSale": true,
+        "sku": "MRnHs-Wh-M-NewProject(12)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279945789579",
+        "title": "M",
         "price": 399,
-        "sku": "MRnHs-Wh-M-nijerchorkaetelde-Fr-ca",
         "options": [
           {
             "value": "M",
             "name": "Size"
           }
         ],
-        "title": "M",
-        "compareAtPrice": 599,
-        "id": "gid://shopify/ProductVariant/44279897555083"
+        "availableForSale": true,
+        "compareAtPrice": 599
       },
       {
-        "id": "gid://shopify/ProductVariant/44279897587851",
-        "compareAtPrice": 599,
-        "sku": "MRnHs-Wh-L-nijerchorkaetelde-Fr-ca",
-        "availableForSale": true,
         "price": 399,
+        "compareAtPrice": 599,
+        "sku": "MRnHs-Wh-L-NewProject(12)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279945822347",
+        "availableForSale": true,
+        "title": "L",
         "options": [
           {
-            "value": "L",
-            "name": "Size"
+            "name": "Size",
+            "value": "L"
           }
-        ],
-        "title": "L"
+        ]
       },
       {
-        "id": "gid://shopify/ProductVariant/44279897620619",
         "compareAtPrice": 599,
-        "availableForSale": true,
         "price": 399,
-        "sku": "MRnHs-Wh-XL-nijerchorkaetelde-Fr-ca",
-        "title": "XL",
+        "availableForSale": true,
         "options": [
           {
             "value": "XL",
             "name": "Size"
           }
-        ]
+        ],
+        "sku": "MRnHs-Wh-XL-NewProject(12)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279945855115",
+        "title": "XL"
       },
       {
-        "price": 399,
+        "id": "gid://shopify/ProductVariant/44279945887883",
         "compareAtPrice": 599,
+        "title": "XXL",
+        "sku": "MRnHs-Wh-XXL-NewProject(12)-Fr-ca",
+        "price": 399,
         "options": [
           {
             "value": "XXL",
             "name": "Size"
           }
         ],
-        "title": "XXL",
-        "availableForSale": true,
-        "sku": "MRnHs-Wh-XXL-nijerchorkaetelde-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279897653387"
-      },
-      {
-        "availableForSale": true,
-        "sku": "MRnHs-Wh-3XL-nijerchorkaetelde-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279897686155",
-        "compareAtPrice": 599,
-        "price": 399,
-        "options": [
-          {
-            "value": "3XL",
-            "name": "Size"
-          }
-        ],
-        "title": "3XL"
-      },
-      {
-        "sku": "MRnHs-Wh-4XL-nijerchorkaetelde-Fr-ca",
-        "compareAtPrice": 599,
-        "title": "4XL",
-        "id": "gid://shopify/ProductVariant/44279897718923",
-        "price": 399,
-        "availableForSale": true,
-        "options": [
-          {
-            "value": "4XL",
-            "name": "Size"
-          }
-        ]
-      },
-      {
-        "options": [
-          {
-            "value": "5XL",
-            "name": "Size"
-          }
-        ],
-        "price": 399,
-        "compareAtPrice": 599,
-        "sku": "MRnHs-Wh-5XL-nijerchorkaetelde-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279897751691",
-        "title": "5XL",
         "availableForSale": true
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279897784459",
-        "sku": "MRnHs-Wh-6XL-nijerchorkaetelde-Fr-ca",
-        "options": [
-          {
-            "name": "Size",
-            "value": "6XL"
-          }
-        ],
-        "compareAtPrice": 599,
-        "availableForSale": true,
-        "title": "6XL",
-        "price": 399
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279897817227",
-        "price": 399,
-        "sku": "MRnHs-Wh-7XL-nijerchorkaetelde-Fr-ca",
-        "options": [
-          {
-            "name": "Size",
-            "value": "7XL"
-          }
-        ],
-        "availableForSale": true,
-        "compareAtPrice": 599,
-        "title": "7XL"
       }
-    ]
-  },
-  {
-    "id": 7916017713291,
-    "description": "",
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "rating": 4.6,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sjay11sjay11sjay.png?v=1761048243",
-    "shopifyId": "gid://shopify/Product/7916017713291",
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "reviews": 103,
-    "colors": [],
-    "isFeatured": false,
-    "stock": 100,
-    "tags": [
-      "399",
-      "funny"
     ],
-    "isNew": true,
-    "originalPrice": 599,
-    "name": "\"Kal Ana\" tshirt",
-    "updatedAt": "2026-08-05T16:00:19.869Z",
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sjay11sjay11sjay.png?v=1761048243",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_it0gplit0gplit0g.png?v=1761048264",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_egrgfhegrgfhegrg.png?v=1761048396",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-posing-in-front-of-a-white-background-wearin_4.png?v=1761048396",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-posing-in-front-of-a-white-background-wearin_5.png?v=1761048396"
-    ],
-    "category": "Topwear",
-    "cost": 160,
-    "sku": "MRnHs-Wh-XS-NewProject(12)-Fr-ca",
-    "source": "shopify",
-    "inStock": true,
-    "type": "tee",
-    "shopifyHandle": "kal-ana-tshirt",
-    "price": 399,
     "isBestSeller": false,
-    "collections": [
-      "All products!",
-      "Below 400",
-      "Bold and vibrant",
-      "Tshirt"
-    ],
-    "qid": "SHOP-7916017713291",
+    "isNew": true,
     "sizes": [
       "XS",
       "S",
@@ -2472,98 +2528,48 @@ export const PRODUCTS: Product[] = [
       "XL",
       "XXL"
     ],
+    "tags": [
+      "399",
+      "funny"
+    ],
+    "shopifyHandle": "kal-ana-tshirt",
+    "description": "",
+    "stock": 100,
+    "collections": [
+      "All products!",
+      "Below 400",
+      "Bold and vibrant",
+      "Tshirt"
+    ],
+    "inStock": true,
+    "reviews": 103,
+    "type": "tee",
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sjay11sjay11sjay.png?v=1761048243",
+    "name": "\"Kal Ana\" tshirt",
     "descriptionHtml": "",
-    "variants": [
-      {
-        "id": "gid://shopify/ProductVariant/44279945724043",
-        "availableForSale": true,
-        "compareAtPrice": 599,
-        "price": 399,
-        "sku": "MRnHs-Wh-XS-NewProject(12)-Fr-ca",
-        "options": [
-          {
-            "name": "Size",
-            "value": "XS"
-          }
-        ],
-        "title": "XS"
-      },
-      {
-        "options": [
-          {
-            "name": "Size",
-            "value": "S"
-          }
-        ],
-        "title": "S",
-        "compareAtPrice": 599,
-        "availableForSale": true,
-        "price": 399,
-        "sku": "MRnHs-Wh-S-NewProject(12)-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279945756811"
-      },
-      {
-        "compareAtPrice": 599,
-        "options": [
-          {
-            "value": "M",
-            "name": "Size"
-          }
-        ],
-        "title": "M",
-        "id": "gid://shopify/ProductVariant/44279945789579",
-        "price": 399,
-        "availableForSale": true,
-        "sku": "MRnHs-Wh-M-NewProject(12)-Fr-ca"
-      },
-      {
-        "options": [
-          {
-            "name": "Size",
-            "value": "L"
-          }
-        ],
-        "sku": "MRnHs-Wh-L-NewProject(12)-Fr-ca",
-        "price": 399,
-        "id": "gid://shopify/ProductVariant/44279945822347",
-        "title": "L",
-        "compareAtPrice": 599,
-        "availableForSale": true
-      },
-      {
-        "compareAtPrice": 599,
-        "title": "XL",
-        "price": 399,
-        "sku": "MRnHs-Wh-XL-NewProject(12)-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279945855115",
-        "options": [
-          {
-            "value": "XL",
-            "name": "Size"
-          }
-        ],
-        "availableForSale": true
-      },
-      {
-        "title": "XXL",
-        "compareAtPrice": 599,
-        "options": [
-          {
-            "name": "Size",
-            "value": "XXL"
-          }
-        ],
-        "price": 399,
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279945887883",
-        "sku": "MRnHs-Wh-XXL-NewProject(12)-Fr-ca"
-      }
-    ]
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "colors": [],
+    "source": "shopify",
+    "isFeatured": false,
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sjay11sjay11sjay.png?v=1761048243",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_it0gplit0gplit0g.png?v=1761048264",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_egrgfhegrgfhegrg.png?v=1761048396",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-posing-in-front-of-a-white-background-wearin_4.png?v=1761048396",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-posing-in-front-of-a-white-background-wearin_5.png?v=1761048396"
+    ],
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z"
   },
   {
     "id": 7916018237579,
-    "profit": 239,
-    "qid": "SHOP-7916018237579",
+    "category": "Topwear",
+    "showInCollections": true,
+    "collections": [
+      "All products!",
+      "Below 400",
+      "old money",
+      "Tshirt"
+    ],
     "sizes": [
       "XS",
       "S",
@@ -2577,236 +2583,219 @@ export const PRODUCTS: Product[] = [
       "7XL",
       "4XL"
     ],
-    "collections": [
-      "All products!",
-      "Below 400",
-      "old money",
-      "Tshirt"
-    ],
-    "price": 399,
     "sku": "MRnHs-Nb-XS-elevezmainwhitelogo(1)-Lp-ca",
-    "type": "tee",
-    "shopifyId": "gid://shopify/Product/7916018237579",
-    "variants": [
-      {
-        "title": "XS",
-        "compareAtPrice": 799,
-        "id": "gid://shopify/ProductVariant/44279949230219",
-        "options": [
-          {
-            "value": "XS",
-            "name": "Size"
-          }
-        ],
-        "price": 399,
-        "sku": "MRnHs-Nb-XS-elevezmainwhitelogo(1)-Lp-ca",
-        "availableForSale": true
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279949262987",
-        "title": "S",
-        "sku": "MRnHs-Nb-S-elevezmainwhitelogo(1)-Lp-ca",
-        "price": 399,
-        "compareAtPrice": 799,
-        "options": [
-          {
-            "name": "Size",
-            "value": "S"
-          }
-        ],
-        "availableForSale": true
-      },
-      {
-        "price": 399,
-        "title": "M",
-        "id": "gid://shopify/ProductVariant/44279949295755",
-        "sku": "MRnHs-Nb-M-elevezmainwhitelogo(1)-Lp-ca",
-        "options": [
-          {
-            "name": "Size",
-            "value": "M"
-          }
-        ],
-        "compareAtPrice": 799,
-        "availableForSale": true
-      },
-      {
-        "availableForSale": true,
-        "compareAtPrice": 799,
-        "options": [
-          {
-            "name": "Size",
-            "value": "L"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279949328523",
-        "price": 399,
-        "sku": "MRnHs-Nb-L-elevezmainwhitelogo(1)-Lp-ca",
-        "title": "L"
-      },
-      {
-        "compareAtPrice": 799,
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279949361291",
-        "sku": "MRnHs-Nb-XL-elevezmainwhitelogo(1)-Lp-ca",
-        "title": "XL",
-        "options": [
-          {
-            "name": "Size",
-            "value": "XL"
-          }
-        ],
-        "price": 399
-      },
-      {
-        "price": 399,
-        "sku": "MRnHs-Nb-XXL-elevezmainwhitelogo(1)-Lp-ca",
-        "id": "gid://shopify/ProductVariant/44279949394059",
-        "availableForSale": true,
-        "title": "XXL",
-        "options": [
-          {
-            "value": "XXL",
-            "name": "Size"
-          }
-        ],
-        "compareAtPrice": 799
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279949426827",
-        "availableForSale": true,
-        "price": 399,
-        "sku": "MRnHs-Nb-3XL-elevezmainwhitelogo(1)-Lp-ca",
-        "compareAtPrice": 799,
-        "title": "3XL",
-        "options": [
-          {
-            "name": "Size",
-            "value": "3XL"
-          }
-        ]
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279949459595",
-        "compareAtPrice": 799,
-        "options": [
-          {
-            "name": "Size",
-            "value": "5XL"
-          }
-        ],
-        "title": "5XL",
-        "availableForSale": true,
-        "sku": "MRnHs-Nb-5XL-elevezmainwhitelogo(1)-Lp-ca",
-        "price": 399
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279949492363",
-        "options": [
-          {
-            "value": "6XL",
-            "name": "Size"
-          }
-        ],
-        "sku": "MRnHs-Nb-6XL-elevezmainwhitelogo(1)-Lp-ca",
-        "compareAtPrice": 799,
-        "title": "6XL",
-        "availableForSale": true,
-        "price": 399
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279949525131",
-        "availableForSale": true,
-        "compareAtPrice": 799,
-        "options": [
-          {
-            "name": "Size",
-            "value": "7XL"
-          }
-        ],
-        "title": "7XL",
-        "sku": "MRnHs-Nb-7XL-elevezmainwhitelogo(1)-Lp-ca",
-        "price": 399
-      },
-      {
-        "title": "4XL",
-        "options": [
-          {
-            "value": "4XL",
-            "name": "Size"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279949557899",
-        "price": 399,
-        "sku": "MRnHs-Nb-4XL-elevezmainwhitelogo(1)-Lp-ca",
-        "compareAtPrice": 799,
-        "availableForSale": true
-      }
-    ],
-    "originalPrice": 799,
-    "showInHome": true,
     "cost": 160,
-    "importedAt": "2025-12-28T18:56:30.855Z",
+    "source": "shopify",
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_o396y4o396y4o396.png?v=1761049036",
     "colors": [
       "Navy Blue"
     ],
-    "descriptionHtml": "<p>Embrace the essence of enduring style with the <b>Elevéz Heritage Navy Tee</b>. This isn't just a T-shirt; it's a staple of sophisticated simplicity, designed for those who appreciate understated luxury and impeccable quality. Crafted from premium <b>180 GSM cotton</b>, this tee offers a substantial yet breathable feel, drapes elegantly, and maintains its shape and color wash after wash.</p>\n<p>The rich navy hue provides a versatile foundation for any discerning wardrobe, while the subtle Elevéz logo, meticulously placed on the left chest, signifies a commitment to quiet confidence and timeless design. This tee speaks volumes without saying a word, embodying the refined taste of classic elegance.</p>\n<p><b>Key Features:</b></p>\n<ul>\n<li>\n<p><b>Timeless Elegance:</b> A rich navy color and minimalist design for enduring style.</p>\n</li>\n<li>\n<p><b>Premium Comfort &amp; Quality:</b> Made from substantial <b>180 GSM cotton</b> for a luxurious feel and lasting wear.</p>\n</li>\n<li>\n<p><b>Subtle Sophistication:</b> Discreet Elevéz logo on the left chest signifies exclusivity and taste.</p>\n</li>\n<li>\n<p><b>Versatile Wardrobe Essential:</b> Perfect for elevated casual wear or layering under blazers and fine knits.</p>\n</li>\n</ul>\n<p>Invest in a piece that transcends trends and becomes a cornerstone of your distinguished style.</p>",
-    "rating": 4.6,
-    "reviews": 65,
-    "category": "Topwear",
-    "tags": [
-      "399",
-      "male",
-      "old money"
-    ],
-    "updatedAt": "2026-08-05T16:00:19.869Z",
-    "name": "Navy Blue Premium Old money Tshirt",
-    "inStock": true,
-    "isNew": true,
-    "showInShop": true,
-    "shopifyHandle": "navy-blue-premium-tshirt",
     "stock": 100,
-    "status": "active",
-    "source": "shopify",
-    "showInCollections": true,
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_o396y4o396y4o396.png?v=1761049036",
-    "profitMargin": 59.9,
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "description": "Embrace the essence of enduring style with the Elevéz Heritage Navy Tee. This isn't just a T-shirt; it's a staple of sophisticated simplicity, designed for those who appreciate understated luxury and impeccable quality. Crafted from premium 180 GSM cotton, this tee offers a substantial yet breathable feel, drapes elegantly, and maintains its shape and color wash after wash. The rich navy hue provides a versatile foundation for any discerning wardrobe, while the subtle Elevéz logo, meticulously placed on the left chest, signifies a commitment to quiet confidence and timeless design. This tee speaks volumes without saying a word, embodying the refined taste of classic elegance. Key Features: Timeless Elegance: A rich navy color and minimalist design for enduring style. Premium Comfort & Quality: Made from substantial 180 GSM cotton for a luxurious feel and lasting wear. Subtle Sophistication: Discreet Elevéz logo on the left chest signifies exclusivity and taste. Versatile Wardrobe Essential: Perfect for elevated casual wear or layering under blazers and fine knits. Invest in a piece that transcends trends and becomes a cornerstone of your distinguished style.",
+    "originalPrice": 799,
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_o396y4o396y4o396.png?v=1761049036",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_dc4qiydc4qiydc4q.png?v=1761049036",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_cchfgzcchfgzcchf.png?v=1761049036",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-picture-of-a-man-wearing-a-navy-blue-tshirt-with_6.png?v=1761049036"
     ],
-    "description": "Embrace the essence of enduring style with the Elevéz Heritage Navy Tee. This isn't just a T-shirt; it's a staple of sophisticated simplicity, designed for those who appreciate understated luxury and impeccable quality. Crafted from premium 180 GSM cotton, this tee offers a substantial yet breathable feel, drapes elegantly, and maintains its shape and color wash after wash. The rich navy hue provides a versatile foundation for any discerning wardrobe, while the subtle Elevéz logo, meticulously placed on the left chest, signifies a commitment to quiet confidence and timeless design. This tee speaks volumes without saying a word, embodying the refined taste of classic elegance. Key Features: Timeless Elegance: A rich navy color and minimalist design for enduring style. Premium Comfort & Quality: Made from substantial 180 GSM cotton for a luxurious feel and lasting wear. Subtle Sophistication: Discreet Elevéz logo on the left chest signifies exclusivity and taste. Versatile Wardrobe Essential: Perfect for elevated casual wear or layering under blazers and fine knits. Invest in a piece that transcends trends and becomes a cornerstone of your distinguished style."
+    "qid": "SHOP-7916018237579",
+    "variants": [
+      {
+        "sku": "MRnHs-Nb-XS-elevezmainwhitelogo(1)-Lp-ca",
+        "compareAtPrice": 799,
+        "price": 399,
+        "id": "gid://shopify/ProductVariant/44279949230219",
+        "title": "XS",
+        "availableForSale": true,
+        "options": [
+          {
+            "name": "Size",
+            "value": "XS"
+          }
+        ]
+      },
+      {
+        "title": "S",
+        "availableForSale": true,
+        "compareAtPrice": 799,
+        "id": "gid://shopify/ProductVariant/44279949262987",
+        "options": [
+          {
+            "value": "S",
+            "name": "Size"
+          }
+        ],
+        "sku": "MRnHs-Nb-S-elevezmainwhitelogo(1)-Lp-ca",
+        "price": 399
+      },
+      {
+        "compareAtPrice": 799,
+        "options": [
+          {
+            "value": "M",
+            "name": "Size"
+          }
+        ],
+        "price": 399,
+        "title": "M",
+        "availableForSale": true,
+        "sku": "MRnHs-Nb-M-elevezmainwhitelogo(1)-Lp-ca",
+        "id": "gid://shopify/ProductVariant/44279949295755"
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279949328523",
+        "options": [
+          {
+            "value": "L",
+            "name": "Size"
+          }
+        ],
+        "compareAtPrice": 799,
+        "price": 399,
+        "title": "L",
+        "sku": "MRnHs-Nb-L-elevezmainwhitelogo(1)-Lp-ca",
+        "availableForSale": true
+      },
+      {
+        "title": "XL",
+        "compareAtPrice": 799,
+        "id": "gid://shopify/ProductVariant/44279949361291",
+        "availableForSale": true,
+        "sku": "MRnHs-Nb-XL-elevezmainwhitelogo(1)-Lp-ca",
+        "price": 399,
+        "options": [
+          {
+            "name": "Size",
+            "value": "XL"
+          }
+        ]
+      },
+      {
+        "sku": "MRnHs-Nb-XXL-elevezmainwhitelogo(1)-Lp-ca",
+        "id": "gid://shopify/ProductVariant/44279949394059",
+        "compareAtPrice": 799,
+        "options": [
+          {
+            "name": "Size",
+            "value": "XXL"
+          }
+        ],
+        "price": 399,
+        "title": "XXL",
+        "availableForSale": true
+      },
+      {
+        "compareAtPrice": 799,
+        "id": "gid://shopify/ProductVariant/44279949426827",
+        "price": 399,
+        "availableForSale": true,
+        "options": [
+          {
+            "name": "Size",
+            "value": "3XL"
+          }
+        ],
+        "sku": "MRnHs-Nb-3XL-elevezmainwhitelogo(1)-Lp-ca",
+        "title": "3XL"
+      },
+      {
+        "availableForSale": true,
+        "price": 399,
+        "options": [
+          {
+            "name": "Size",
+            "value": "5XL"
+          }
+        ],
+        "compareAtPrice": 799,
+        "title": "5XL",
+        "sku": "MRnHs-Nb-5XL-elevezmainwhitelogo(1)-Lp-ca",
+        "id": "gid://shopify/ProductVariant/44279949459595"
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279949492363",
+        "availableForSale": true,
+        "title": "6XL",
+        "options": [
+          {
+            "name": "Size",
+            "value": "6XL"
+          }
+        ],
+        "sku": "MRnHs-Nb-6XL-elevezmainwhitelogo(1)-Lp-ca",
+        "price": 399,
+        "compareAtPrice": 799
+      },
+      {
+        "availableForSale": true,
+        "options": [
+          {
+            "value": "7XL",
+            "name": "Size"
+          }
+        ],
+        "sku": "MRnHs-Nb-7XL-elevezmainwhitelogo(1)-Lp-ca",
+        "price": 399,
+        "id": "gid://shopify/ProductVariant/44279949525131",
+        "title": "7XL",
+        "compareAtPrice": 799
+      },
+      {
+        "compareAtPrice": 799,
+        "availableForSale": true,
+        "price": 399,
+        "title": "4XL",
+        "id": "gid://shopify/ProductVariant/44279949557899",
+        "options": [
+          {
+            "value": "4XL",
+            "name": "Size"
+          }
+        ],
+        "sku": "MRnHs-Nb-4XL-elevezmainwhitelogo(1)-Lp-ca"
+      }
+    ],
+    "profitMargin": 59.9,
+    "rating": 4.6,
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "shopifyId": "gid://shopify/Product/7916018237579",
+    "shopifyHandle": "navy-blue-premium-tshirt",
+    "tags": [
+      "399",
+      "male",
+      "old money"
+    ],
+    "inStock": true,
+    "reviews": 65,
+    "showInShop": true,
+    "status": "active",
+    "type": "tee",
+    "name": "Navy Blue Premium Old money Tshirt",
+    "price": 399,
+    "updatedAt": "2026-08-05T21:27:51.638Z",
+    "showInHome": true,
+    "profit": 239,
+    "isNew": true,
+    "descriptionHtml": "<p>Embrace the essence of enduring style with the <b>Elevéz Heritage Navy Tee</b>. This isn't just a T-shirt; it's a staple of sophisticated simplicity, designed for those who appreciate understated luxury and impeccable quality. Crafted from premium <b>180 GSM cotton</b>, this tee offers a substantial yet breathable feel, drapes elegantly, and maintains its shape and color wash after wash.</p>\n<p>The rich navy hue provides a versatile foundation for any discerning wardrobe, while the subtle Elevéz logo, meticulously placed on the left chest, signifies a commitment to quiet confidence and timeless design. This tee speaks volumes without saying a word, embodying the refined taste of classic elegance.</p>\n<p><b>Key Features:</b></p>\n<ul>\n<li>\n<p><b>Timeless Elegance:</b> A rich navy color and minimalist design for enduring style.</p>\n</li>\n<li>\n<p><b>Premium Comfort &amp; Quality:</b> Made from substantial <b>180 GSM cotton</b> for a luxurious feel and lasting wear.</p>\n</li>\n<li>\n<p><b>Subtle Sophistication:</b> Discreet Elevéz logo on the left chest signifies exclusivity and taste.</p>\n</li>\n<li>\n<p><b>Versatile Wardrobe Essential:</b> Perfect for elevated casual wear or layering under blazers and fine knits.</p>\n</li>\n</ul>\n<p>Invest in a piece that transcends trends and becomes a cornerstone of your distinguished style.</p>"
   },
   {
     "id": 7916018761867,
-    "source": "shopify",
-    "stock": 100,
-    "descriptionHtml": "<p>Crafted from a substantial <b>180 GSM cotton blend</b>, this deep heather grey tee provides a premium, comfortable fit that holds its shape through the day. The subdued, <b>masculine grey tone</b> is the perfect counterpoint to bold accessories and dynamic backdrops. The iconic <b>Elevéz</b> logo is subtly placed, a mark of quality and discerning taste that speaks quietly amid the visual noise of the city.</p>\n<p><b>Key Features:</b></p>\n<ul>\n<li>\n<p><b>Elevated Fabric:</b> Premium <b>180 GSM cotton blend</b> for a durable feel and superior drape.</p>\n</li>\n<li>\n<p><b>Urban Aesthetic:</b> The cool grey tone pairs perfectly with accessories and layered street-style looks.</p>\n</li>\n<li>\n<p><b>Discreet Branding:</b> Features the classic <b>Elevéz</b> logo, symbolizing sophistication without shouting.</p>\n</li>\n<li>\n<p><b>Versatile Fit:</b> A comfortable, structured cut that looks sharp whether worn alone or under a jacket.</p>\n</li>\n</ul>",
-    "qid": "SHOP-7916018761867",
-    "isBestSeller": false,
-    "shopifyId": "gid://shopify/Product/7916018761867",
-    "reviews": 106,
-    "sku": "MRnHs-Gm-XS-elevezlogoblack_1-Lp-ca",
-    "isNew": true,
-    "type": "tee",
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_mk1cf9mk1cf9mk1c.png?v=1761054296",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_y9flkqy9flkqy9fl_1.png?v=1761054296",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_q2akitq2akitq2ak.png?v=1761054296",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_vi8591vi8591vi85.png?v=1761054296",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-picture-of-a-man-wearing-a-steel-gray--deep-tshi_5.png?v=1761054296"
+    "collections": [
+      "All products!",
+      "Below 400",
+      "old money",
+      "Tshirt"
     ],
-    "description": "Crafted from a substantial 180 GSM cotton blend, this deep heather grey tee provides a premium, comfortable fit that holds its shape through the day. The subdued, masculine grey tone is the perfect counterpoint to bold accessories and dynamic backdrops. The iconic Elevéz logo is subtly placed, a mark of quality and discerning taste that speaks quietly amid the visual noise of the city. Key Features: Elevated Fabric: Premium 180 GSM cotton blend for a durable feel and superior drape. Urban Aesthetic: The cool grey tone pairs perfectly with accessories and layered street-style looks. Discreet Branding: Features the classic Elevéz logo, symbolizing sophistication without shouting. Versatile Fit: A comfortable, structured cut that looks sharp whether worn alone or under a jacket.",
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "cost": 160,
-    "shopifyHandle": "grey-melange-tshirt",
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_mk1cf9mk1cf9mk1c.png?v=1761054296",
+    "shopifyId": "gid://shopify/Product/7916018761867",
     "isFeatured": false,
-    "updatedAt": "2026-08-05T16:00:19.869Z",
-    "price": 399,
+    "reviews": 106,
+    "inStock": true,
+    "rating": 5,
+    "descriptionHtml": "<p>Crafted from a substantial <b>180 GSM cotton blend</b>, this deep heather grey tee provides a premium, comfortable fit that holds its shape through the day. The subdued, <b>masculine grey tone</b> is the perfect counterpoint to bold accessories and dynamic backdrops. The iconic <b>Elevéz</b> logo is subtly placed, a mark of quality and discerning taste that speaks quietly amid the visual noise of the city.</p>\n<p><b>Key Features:</b></p>\n<ul>\n<li>\n<p><b>Elevated Fabric:</b> Premium <b>180 GSM cotton blend</b> for a durable feel and superior drape.</p>\n</li>\n<li>\n<p><b>Urban Aesthetic:</b> The cool grey tone pairs perfectly with accessories and layered street-style looks.</p>\n</li>\n<li>\n<p><b>Discreet Branding:</b> Features the classic <b>Elevéz</b> logo, symbolizing sophistication without shouting.</p>\n</li>\n<li>\n<p><b>Versatile Fit:</b> A comfortable, structured cut that looks sharp whether worn alone or under a jacket.</p>\n</li>\n</ul>",
+    "description": "Crafted from a substantial 180 GSM cotton blend, this deep heather grey tee provides a premium, comfortable fit that holds its shape through the day. The subdued, masculine grey tone is the perfect counterpoint to bold accessories and dynamic backdrops. The iconic Elevéz logo is subtly placed, a mark of quality and discerning taste that speaks quietly amid the visual noise of the city. Key Features: Elevated Fabric: Premium 180 GSM cotton blend for a durable feel and superior drape. Urban Aesthetic: The cool grey tone pairs perfectly with accessories and layered street-style looks. Discreet Branding: Features the classic Elevéz logo, symbolizing sophistication without shouting. Versatile Fit: A comfortable, structured cut that looks sharp whether worn alone or under a jacket.",
+    "category": "Topwear",
     "sizes": [
       "XS",
       "S",
@@ -2815,209 +2804,84 @@ export const PRODUCTS: Product[] = [
       "XL",
       "XXL"
     ],
-    "collections": [
-      "All products!",
-      "Below 400",
-      "old money",
-      "Tshirt"
-    ],
-    "category": "Topwear",
-    "originalPrice": 799,
-    "inStock": true,
-    "name": "Grey Melange Premium Old money tshirt",
-    "rating": 5,
-    "tags": [
-      "399",
-      "male",
-      "old money"
-    ],
-    "colors": [],
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "variants": [
-      {
-        "options": [
-          {
-            "name": "Size",
-            "value": "XS"
-          }
-        ],
-        "compareAtPrice": 799,
-        "sku": "MRnHs-Gm-XS-elevezlogoblack_1-Lp-ca",
-        "id": "gid://shopify/ProductVariant/44279953522827",
-        "availableForSale": true,
-        "price": 399,
-        "title": "XS"
-      },
-      {
-        "price": 399,
-        "title": "S",
-        "options": [
-          {
-            "value": "S",
-            "name": "Size"
-          }
-        ],
-        "availableForSale": true,
-        "compareAtPrice": 799,
-        "id": "gid://shopify/ProductVariant/44279953555595",
-        "sku": "MRnHs-Gm-S-elevezlogoblack_1-Lp-ca"
-      },
-      {
-        "title": "M",
-        "options": [
-          {
-            "value": "M",
-            "name": "Size"
-          }
-        ],
-        "price": 399,
-        "availableForSale": true,
-        "compareAtPrice": 799,
-        "id": "gid://shopify/ProductVariant/44279953588363",
-        "sku": "MRnHs-Gm-M-elevezlogoblack_1-Lp-ca"
-      },
-      {
-        "options": [
-          {
-            "value": "L",
-            "name": "Size"
-          }
-        ],
-        "title": "L",
-        "id": "gid://shopify/ProductVariant/44279953621131",
-        "price": 399,
-        "availableForSale": true,
-        "sku": "MRnHs-Gm-L-elevezlogoblack_1-Lp-ca",
-        "compareAtPrice": 799
-      },
-      {
-        "compareAtPrice": 799,
-        "availableForSale": true,
-        "title": "XL",
-        "id": "gid://shopify/ProductVariant/44279953653899",
-        "options": [
-          {
-            "value": "XL",
-            "name": "Size"
-          }
-        ],
-        "price": 399,
-        "sku": "MRnHs-Gm-XL-elevezlogoblack_1-Lp-ca"
-      },
-      {
-        "sku": "MRnHs-Gm-XXL-elevezlogoblack_1-Lp-ca",
-        "title": "XXL",
-        "id": "gid://shopify/ProductVariant/44279953686667",
-        "price": 399,
-        "availableForSale": true,
-        "options": [
-          {
-            "value": "XXL",
-            "name": "Size"
-          }
-        ],
-        "compareAtPrice": 799
-      }
-    ]
-  },
-  {
-    "id": 7916019744907,
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_cas5tgcas5tgcas5.png?v=1761057299",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_4u16rp4u16rp4u16.png?v=1761057407",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_alxlfnalxlfnalxl.png?v=1761057569",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ehhx5tehhx5tehhx.png?v=1761057653"
-    ],
-    "reviews": 108,
+    "cost": 160,
     "isBestSeller": false,
-    "updatedAt": "2026-08-05T16:00:19.869Z",
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_cas5tgcas5tgcas5.png?v=1761057299",
-    "tags": [
-      "399",
-      "old money"
-    ],
-    "description": "The Elevéz Dark Roast Rebel Tee isn't merely clothing; it's the color of late-night ideas, strong foundations, and a quiet, unshakeable confidence. While others chase fleeting trends, this shade of deep brown—the color of rich soil and powerful, concentrated coffee—grounds the wearer in a sense of timeless strength. In the urban sprawl where graffiti marks the territory of expression, this tee is the anchor. The Coffee Brown hue represents the deep, complex history of the streets and the unyielding energy needed to navigate them. It’s the color of authenticity, a stark contrast to the neon chaos around it.",
-    "stock": 100,
-    "source": "shopify",
-    "qid": "SHOP-7916019744907",
-    "name": "Coffee brown premium tshirt",
-    "sku": "MRnHs-bn-XS-elevezmainwhitelogo(1)_1-Lp-ca",
-    "isNew": true,
-    "originalPrice": 799,
+    "updatedAt": "2026-08-05T21:27:51.638Z",
     "importedAt": "2025-12-28T18:56:30.855Z",
+    "stock": 100,
     "variants": [
       {
+        "price": 399,
+        "sku": "MRnHs-Gm-XS-elevezlogoblack_1-Lp-ca",
+        "availableForSale": true,
         "options": [
           {
             "value": "XS",
             "name": "Size"
           }
         ],
-        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279953522827",
         "compareAtPrice": 799,
-        "price": 399,
-        "id": "gid://shopify/ProductVariant/44279959879819",
-        "title": "XS",
-        "sku": "MRnHs-bn-XS-elevezmainwhitelogo(1)_1-Lp-ca"
+        "title": "XS"
       },
       {
+        "price": 399,
+        "compareAtPrice": 799,
+        "sku": "MRnHs-Gm-S-elevezlogoblack_1-Lp-ca",
         "title": "S",
         "availableForSale": true,
-        "price": 399,
-        "sku": "MRnHs-bn-S-elevezmainwhitelogo(1)_1-Lp-ca",
-        "options": [
-          {
-            "value": "S",
-            "name": "Size"
-          }
-        ],
-        "compareAtPrice": 799,
-        "id": "gid://shopify/ProductVariant/44279959912587"
-      },
-      {
-        "availableForSale": true,
-        "compareAtPrice": 799,
-        "id": "gid://shopify/ProductVariant/44279959945355",
-        "title": "M",
-        "sku": "MRnHs-bn-M-elevezmainwhitelogo(1)_1-Lp-ca",
-        "price": 399,
+        "id": "gid://shopify/ProductVariant/44279953555595",
         "options": [
           {
             "name": "Size",
-            "value": "M"
+            "value": "S"
           }
         ]
       },
       {
+        "compareAtPrice": 799,
+        "title": "M",
         "availableForSale": true,
+        "sku": "MRnHs-Gm-M-elevezlogoblack_1-Lp-ca",
+        "id": "gid://shopify/ProductVariant/44279953588363",
         "options": [
           {
-            "name": "Size",
-            "value": "L"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279959978123",
-        "price": 399,
-        "sku": "MRnHs-bn-L-elevezmainwhitelogo(1)_1-Lp-ca",
-        "title": "L",
-        "compareAtPrice": 799
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279960010891",
-        "availableForSale": true,
-        "options": [
-          {
-            "value": "XL",
+            "value": "M",
             "name": "Size"
           }
         ],
-        "price": 399,
-        "sku": "MRnHs-bn-XL-elevezmainwhitelogo(1)_1-Lp-ca",
-        "compareAtPrice": 799,
-        "title": "XL"
+        "price": 399
       },
       {
+        "id": "gid://shopify/ProductVariant/44279953621131",
+        "sku": "MRnHs-Gm-L-elevezlogoblack_1-Lp-ca",
+        "price": 399,
         "compareAtPrice": 799,
+        "options": [
+          {
+            "value": "L",
+            "name": "Size"
+          }
+        ],
+        "availableForSale": true,
+        "title": "L"
+      },
+      {
+        "availableForSale": true,
+        "title": "XL",
+        "sku": "MRnHs-Gm-XL-elevezlogoblack_1-Lp-ca",
+        "price": 399,
+        "id": "gid://shopify/ProductVariant/44279953653899",
+        "compareAtPrice": 799,
+        "options": [
+          {
+            "name": "Size",
+            "value": "XL"
+          }
+        ]
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279953686667",
         "availableForSale": true,
         "price": 399,
         "options": [
@@ -3026,29 +2890,164 @@ export const PRODUCTS: Product[] = [
             "value": "XXL"
           }
         ],
-        "title": "XXL",
-        "id": "gid://shopify/ProductVariant/44279960043659",
-        "sku": "MRnHs-bn-XXL-elevezmainwhitelogo(1)_1-Lp-ca"
+        "sku": "MRnHs-Gm-XXL-elevezlogoblack_1-Lp-ca",
+        "compareAtPrice": 799,
+        "title": "XXL"
       }
     ],
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_mk1cf9mk1cf9mk1c.png?v=1761054296",
+    "originalPrice": 799,
+    "colors": [],
+    "source": "shopify",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_mk1cf9mk1cf9mk1c.png?v=1761054296",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_y9flkqy9flkqy9fl_1.png?v=1761054296",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_q2akitq2akitq2ak.png?v=1761054296",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_vi8591vi8591vi85.png?v=1761054296",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-picture-of-a-man-wearing-a-steel-gray--deep-tshi_5.png?v=1761054296"
+    ],
+    "price": 399,
+    "isNew": true,
+    "type": "tee",
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "name": "Grey Melange Premium Old money tshirt",
+    "shopifyHandle": "grey-melange-tshirt",
+    "qid": "SHOP-7916018761867",
+    "tags": [
+      "399",
+      "male",
+      "old money"
+    ],
+    "sku": "MRnHs-Gm-XS-elevezlogoblack_1-Lp-ca"
+  },
+  {
+    "id": 7916019744907,
+    "inStock": true,
+    "reviews": 108,
+    "isNew": true,
+    "isFeatured": false,
+    "price": 399,
+    "updatedAt": "2026-08-05T21:27:51.638Z",
+    "category": "Topwear",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_cas5tgcas5tgcas5.png?v=1761057299",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_4u16rp4u16rp4u16.png?v=1761057407",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_alxlfnalxlfnalxl.png?v=1761057569",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ehhx5tehhx5tehhx.png?v=1761057653"
+    ],
+    "shopifyHandle": "coffee-brown-premium-tshirt",
+    "type": "tee",
+    "source": "shopify",
+    "name": "Coffee brown premium tshirt",
+    "colors": [],
+    "importedAt": "2025-12-28T18:56:30.855Z",
     "shopifyId": "gid://shopify/Product/7916019744907",
+    "isBestSeller": false,
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/44279959879819",
+        "compareAtPrice": 799,
+        "options": [
+          {
+            "name": "Size",
+            "value": "XS"
+          }
+        ],
+        "price": 399,
+        "sku": "MRnHs-bn-XS-elevezmainwhitelogo(1)_1-Lp-ca",
+        "title": "XS",
+        "availableForSale": true
+      },
+      {
+        "price": 399,
+        "options": [
+          {
+            "value": "S",
+            "name": "Size"
+          }
+        ],
+        "compareAtPrice": 799,
+        "title": "S",
+        "id": "gid://shopify/ProductVariant/44279959912587",
+        "availableForSale": true,
+        "sku": "MRnHs-bn-S-elevezmainwhitelogo(1)_1-Lp-ca"
+      },
+      {
+        "sku": "MRnHs-bn-M-elevezmainwhitelogo(1)_1-Lp-ca",
+        "price": 399,
+        "options": [
+          {
+            "name": "Size",
+            "value": "M"
+          }
+        ],
+        "compareAtPrice": 799,
+        "id": "gid://shopify/ProductVariant/44279959945355",
+        "availableForSale": true,
+        "title": "M"
+      },
+      {
+        "price": 399,
+        "options": [
+          {
+            "value": "L",
+            "name": "Size"
+          }
+        ],
+        "compareAtPrice": 799,
+        "availableForSale": true,
+        "title": "L",
+        "sku": "MRnHs-bn-L-elevezmainwhitelogo(1)_1-Lp-ca",
+        "id": "gid://shopify/ProductVariant/44279959978123"
+      },
+      {
+        "options": [
+          {
+            "name": "Size",
+            "value": "XL"
+          }
+        ],
+        "price": 399,
+        "title": "XL",
+        "compareAtPrice": 799,
+        "id": "gid://shopify/ProductVariant/44279960010891",
+        "availableForSale": true,
+        "sku": "MRnHs-bn-XL-elevezmainwhitelogo(1)_1-Lp-ca"
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44279960043659",
+        "price": 399,
+        "title": "XXL",
+        "compareAtPrice": 799,
+        "sku": "MRnHs-bn-XXL-elevezmainwhitelogo(1)_1-Lp-ca",
+        "availableForSale": true,
+        "options": [
+          {
+            "name": "Size",
+            "value": "XXL"
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "399",
+      "old money"
+    ],
+    "description": "The Elevéz Dark Roast Rebel Tee isn't merely clothing; it's the color of late-night ideas, strong foundations, and a quiet, unshakeable confidence. While others chase fleeting trends, this shade of deep brown—the color of rich soil and powerful, concentrated coffee—grounds the wearer in a sense of timeless strength. In the urban sprawl where graffiti marks the territory of expression, this tee is the anchor. The Coffee Brown hue represents the deep, complex history of the streets and the unyielding energy needed to navigate them. It’s the color of authenticity, a stark contrast to the neon chaos around it.",
     "collections": [
       "All products!",
       "Below 400",
       "old money",
       "Tshirt"
     ],
-    "rating": 4.8,
-    "descriptionHtml": "<p>The <b>Elevéz Dark Roast Rebel Tee</b> isn't merely clothing; it's the color of late-night ideas, strong foundations, and a quiet, unshakeable confidence. While others chase fleeting trends, this shade of deep brown—the color of rich soil and powerful, concentrated coffee—grounds the wearer in a sense of timeless strength.</p>\n<p>In the urban sprawl where graffiti marks the territory of expression, this tee is the anchor. The <b>Coffee Brown</b> hue represents the deep, complex history of the streets and the unyielding energy needed to navigate them. It’s the color of authenticity, a stark contrast to the neon chaos around it.</p>",
-    "isFeatured": false,
-    "colors": [],
-    "category": "Topwear",
-    "price": 399,
-    "shopifyHandle": "coffee-brown-premium-tshirt",
-    "type": "tee",
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
     "cost": 160,
-    "inStock": true,
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_cas5tgcas5tgcas5.png?v=1761057299",
+    "descriptionHtml": "<p>The <b>Elevéz Dark Roast Rebel Tee</b> isn't merely clothing; it's the color of late-night ideas, strong foundations, and a quiet, unshakeable confidence. While others chase fleeting trends, this shade of deep brown—the color of rich soil and powerful, concentrated coffee—grounds the wearer in a sense of timeless strength.</p>\n<p>In the urban sprawl where graffiti marks the territory of expression, this tee is the anchor. The <b>Coffee Brown</b> hue represents the deep, complex history of the streets and the unyielding energy needed to navigate them. It’s the color of authenticity, a stark contrast to the neon chaos around it.</p>",
+    "stock": 100,
+    "sku": "MRnHs-bn-XS-elevezmainwhitelogo(1)_1-Lp-ca",
+    "originalPrice": 799,
+    "rating": 4.8,
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
     "sizes": [
       "XS",
       "S",
@@ -3056,13 +3055,131 @@ export const PRODUCTS: Product[] = [
       "L",
       "XL",
       "XXL"
-    ]
+    ],
+    "qid": "SHOP-7916019744907"
   },
   {
     "id": 7916022530187,
-    "category": "Topwear",
-    "descriptionHtml": "<p>Unleash your inner strength with the <b>Ronin Spirit Graphic Tee</b>. <span class=\"citation-9\">This T-shirt is a striking fusion of timeless </span><b><span class=\"citation-9\">Samurai mythology</span></b><span class=\"citation-9\"> and contemporary </span><b><span class=\"citation-9\">streetwear aesthetic</span></b><span class=\"citation-9 citation-end-9\">.<sup class=\"superscript\" data-turn-source-index=\"1\"><!----></sup></span> It features a powerful, elongated graphic of a legendary warrior—the <b>Ronin</b> (masterless samurai)—set against a clean white backdrop, symbolizing a blend of discipline and fearless individuality.</p>\n<p>Crafted from soft, durable <b>180 GSM cotton</b>, this tee offers a comfortable, substantial fit that holds its structure. The high-quality print is designed to stand out, making a bold, art-driven statement. This shirt isn't just a piece of apparel; it's armor for the modern-day pathfinder who honors tradition while forging their own way.</p>",
+    "shopifyId": "gid://shopify/Product/7916022530187",
+    "inStock": true,
+    "reviews": 71,
+    "originalPrice": 899,
+    "isFeatured": false,
+    "updatedAt": "2026-08-05T21:27:51.638Z",
+    "isNew": true,
     "qid": "SHOP-7916022530187",
+    "rating": 4.5,
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "price": 449,
+    "cost": 180,
+    "sku": "MRnHs-Wh-XS-longsamuraimainwithllogo-Fr-ca",
+    "stock": 100,
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_icts81icts81icts.png?v=1761063305",
+    "variants": [
+      {
+        "compareAtPrice": 899,
+        "options": [
+          {
+            "name": "Size",
+            "value": "XS"
+          }
+        ],
+        "sku": "MRnHs-Wh-XS-longsamuraimainwithllogo-Fr-ca",
+        "price": 449,
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44279969480843",
+        "title": "XS"
+      },
+      {
+        "price": 449,
+        "sku": "MRnHs-Wh-S-longsamuraimainwithllogo-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279969513611",
+        "compareAtPrice": 899,
+        "options": [
+          {
+            "value": "S",
+            "name": "Size"
+          }
+        ],
+        "availableForSale": true,
+        "title": "S"
+      },
+      {
+        "compareAtPrice": 899,
+        "title": "M",
+        "sku": "MRnHs-Wh-M-longsamuraimainwithllogo-Fr-ca",
+        "options": [
+          {
+            "value": "M",
+            "name": "Size"
+          }
+        ],
+        "availableForSale": true,
+        "price": 449,
+        "id": "gid://shopify/ProductVariant/44279969546379"
+      },
+      {
+        "options": [
+          {
+            "value": "L",
+            "name": "Size"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44279969579147",
+        "title": "L",
+        "availableForSale": true,
+        "sku": "MRnHs-Wh-L-longsamuraimainwithllogo-Fr-ca",
+        "price": 449,
+        "compareAtPrice": 899
+      },
+      {
+        "availableForSale": true,
+        "title": "XL",
+        "id": "gid://shopify/ProductVariant/44279969611915",
+        "sku": "MRnHs-Wh-XL-longsamuraimainwithllogo-Fr-ca",
+        "price": 449,
+        "options": [
+          {
+            "value": "XL",
+            "name": "Size"
+          }
+        ],
+        "compareAtPrice": 899
+      },
+      {
+        "title": "XXL",
+        "options": [
+          {
+            "value": "XXL",
+            "name": "Size"
+          }
+        ],
+        "compareAtPrice": 899,
+        "availableForSale": true,
+        "sku": "MRnHs-Wh-XXL-longsamuraimainwithllogo-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279969644683",
+        "price": 449
+      }
+    ],
+    "descriptionHtml": "<p>Unleash your inner strength with the <b>Ronin Spirit Graphic Tee</b>. <span class=\"citation-9\">This T-shirt is a striking fusion of timeless </span><b><span class=\"citation-9\">Samurai mythology</span></b><span class=\"citation-9\"> and contemporary </span><b><span class=\"citation-9\">streetwear aesthetic</span></b><span class=\"citation-9 citation-end-9\">.<sup class=\"superscript\" data-turn-source-index=\"1\"><!----></sup></span> It features a powerful, elongated graphic of a legendary warrior—the <b>Ronin</b> (masterless samurai)—set against a clean white backdrop, symbolizing a blend of discipline and fearless individuality.</p>\n<p>Crafted from soft, durable <b>180 GSM cotton</b>, this tee offers a comfortable, substantial fit that holds its structure. The high-quality print is designed to stand out, making a bold, art-driven statement. This shirt isn't just a piece of apparel; it's armor for the modern-day pathfinder who honors tradition while forging their own way.</p>",
+    "shopifyHandle": "dragon-samurai-main-epic-imp",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "description": "Unleash your inner strength with the Ronin Spirit Graphic Tee. This T-shirt is a striking fusion of timeless Samurai mythology and contemporary streetwear aesthetic. It features a powerful, elongated graphic of a legendary warrior—the Ronin (masterless samurai)—set against a clean white backdrop, symbolizing a blend of discipline and fearless individuality. Crafted from soft, durable 180 GSM cotton, this tee offers a comfortable, substantial fit that holds its structure. The high-quality print is designed to stand out, making a bold, art-driven statement. This shirt isn't just a piece of apparel; it's armor for the modern-day pathfinder who honors tradition while forging their own way.",
+    "category": "Topwear",
+    "isBestSeller": true,
+    "tags": [
+      "449",
+      "best",
+      "male"
+    ],
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_icts81icts81icts.png?v=1761063305",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_48i4ro48i4ro48i4.png?v=1761063305",
@@ -3071,135 +3188,154 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-in-a-white-background-wearing-a-white-tshirt_5.png?v=1761058587"
     ],
     "type": "tee",
-    "cost": 180,
-    "sku": "MRnHs-Wh-XS-longsamuraimainwithllogo-Fr-ca",
-    "originalPrice": 899,
-    "price": 449,
+    "name": "\"The Ronin Spirit\" Samurai graphic Tee",
+    "colors": [],
+    "source": "shopify",
+    "collections": [
+      "All products!",
+      "Best Sellers",
+      "Under 500",
+      "Tshirt"
+    ]
+  },
+  {
+    "id": 7916024234123,
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "cost": 220,
+    "isNew": true,
+    "originalPrice": 699,
+    "isBestSeller": false,
+    "price": 549,
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sgt3bosgt3bosgt3.png?v=1761061548",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1259lk1259lk1259.png?v=1761062465",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ueyc61ueyc61ueyc.png?v=1761062586",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_cnh5hqcnh5hqcnh5.png?v=1761062782",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_kdqa3zkdqa3zkdqa.png?v=1761062850",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_pc4sszpc4sszpc4s.png?v=1761062911"
+    ],
+    "descriptionHtml": "<p>This garment tells the tale of the <b>Sentinel of the Split Gate</b>, a warrior whose very essence is a fusion of primal fury and disciplined honor. It represents the internal struggle and the ultimate balance found on the path of the sword.</p>\n<p>On the <b>left</b>, the fierce crimson half is fueled by the <b>Dragon's Fire</b>—raw, untamed power, and the shadow of destruction. This side is the <b>Ronin</b>, a mercenary of necessity, swift and unforgiving, acting on pure, battle-hardened instinct.</p>\n<p>On the <b>right</b>, the tranquil white light embodies the <b>Spirit of Bushido</b>—discipline, clarity, and noble purpose. This is the <b>Samurai</b>, guided by a strict code of honor, whose mastery is not just in killing, but in knowing when <i>not</i> to.</p>\n<p>The dividing line, crossed by the blade, is the <b>balance</b> Kenshin must maintain. To wear this shirt is to carry the knowledge that true strength lies not in choosing one side, but in mastering the duality of both—harnessing the dragon's power without being consumed by its flame.</p>\n<p><b>Choose your strength. Master your balance.</b></p>\n<p> </p>",
+    "qid": "SHOP-7916024234123",
+    "colors": [],
+    "source": "shopify",
+    "isFeatured": false,
+    "sku": "MRnHs-Bk-XS-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
+    "inStock": true,
+    "reviews": 219,
+    "type": "tee",
+    "category": "Topwear",
+    "name": "\"Kenshin's Duality\" Premium Tshirt",
+    "tags": [
+      "549",
+      "male"
+    ],
+    "shopifyHandle": "guy-sitting-between-sun-and-moon-circuler-tshirt",
+    "shopifyId": "gid://shopify/Product/7916024234123",
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
     "variants": [
       {
-        "price": 449,
+        "sku": "MRnHs-Bk-XS-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
+        "price": 549,
+        "id": "gid://shopify/ProductVariant/44279976034443",
         "options": [
           {
-            "value": "XS",
-            "name": "Size"
+            "name": "Size",
+            "value": "XS"
           }
         ],
-        "title": "XS",
         "availableForSale": true,
-        "compareAtPrice": 899,
-        "sku": "MRnHs-Wh-XS-longsamuraimainwithllogo-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279969480843"
+        "title": "XS",
+        "compareAtPrice": 699
       },
       {
-        "availableForSale": true,
-        "sku": "MRnHs-Wh-S-longsamuraimainwithllogo-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279976067211",
+        "price": 549,
+        "compareAtPrice": 699,
         "options": [
           {
             "value": "S",
             "name": "Size"
           }
         ],
-        "compareAtPrice": 899,
+        "sku": "MRnHs-Bk-S-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
         "title": "S",
-        "price": 449,
-        "id": "gid://shopify/ProductVariant/44279969513611"
+        "availableForSale": true
       },
       {
-        "title": "M",
-        "price": 449,
-        "compareAtPrice": 899,
-        "id": "gid://shopify/ProductVariant/44279969546379",
+        "price": 549,
         "availableForSale": true,
-        "sku": "MRnHs-Wh-M-longsamuraimainwithllogo-Fr-ca",
+        "sku": "MRnHs-Bk-M-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279976099979",
         "options": [
           {
-            "value": "M",
-            "name": "Size"
+            "name": "Size",
+            "value": "M"
           }
-        ]
+        ],
+        "compareAtPrice": 699,
+        "title": "M"
       },
       {
-        "compareAtPrice": 899,
+        "id": "gid://shopify/ProductVariant/44279976132747",
+        "price": 549,
+        "sku": "MRnHs-Bk-L-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
+        "title": "L",
+        "availableForSale": true,
         "options": [
           {
             "value": "L",
             "name": "Size"
           }
         ],
-        "title": "L",
-        "price": 449,
-        "sku": "MRnHs-Wh-L-longsamuraimainwithllogo-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279969579147",
-        "availableForSale": true
+        "compareAtPrice": 699
       },
       {
-        "sku": "MRnHs-Wh-XL-longsamuraimainwithllogo-Fr-ca",
-        "title": "XL",
+        "price": 549,
+        "sku": "MRnHs-Bk-XL-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
         "options": [
           {
             "value": "XL",
             "name": "Size"
           }
         ],
-        "id": "gid://shopify/ProductVariant/44279969611915",
-        "price": 449,
-        "availableForSale": true,
-        "compareAtPrice": 899
+        "compareAtPrice": 699,
+        "id": "gid://shopify/ProductVariant/44279976165515",
+        "title": "XL",
+        "availableForSale": true
       },
       {
-        "sku": "MRnHs-Wh-XXL-longsamuraimainwithllogo-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279969644683",
-        "compareAtPrice": 899,
         "title": "XXL",
         "availableForSale": true,
+        "compareAtPrice": 699,
         "options": [
           {
-            "value": "XXL",
+            "name": "Size",
+            "value": "XXL"
+          }
+        ],
+        "price": 549,
+        "sku": "MRnHs-Bk-XXL-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279976198283"
+      },
+      {
+        "options": [
+          {
+            "value": "7XL",
             "name": "Size"
           }
         ],
-        "price": 449
+        "title": "7XL",
+        "availableForSale": true,
+        "compareAtPrice": 699,
+        "sku": "MRnHs-Bk-7XL-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44279976231051",
+        "price": 549
       }
     ],
-    "updatedAt": "2026-08-05T16:00:19.870Z",
-    "inStock": true,
-    "source": "shopify",
-    "sizes": [
-      "XS",
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
-    ],
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "collections": [
-      "All products!",
-      "Best Sellers",
-      "Under 500",
-      "Tshirt"
-    ],
-    "name": "\"The Ronin Spirit\" Samurai graphic Tee",
-    "reviews": 71,
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "tags": [
-      "449",
-      "best",
-      "male"
-    ],
-    "rating": 4.5,
-    "description": "Unleash your inner strength with the Ronin Spirit Graphic Tee. This T-shirt is a striking fusion of timeless Samurai mythology and contemporary streetwear aesthetic. It features a powerful, elongated graphic of a legendary warrior—the Ronin (masterless samurai)—set against a clean white backdrop, symbolizing a blend of discipline and fearless individuality. Crafted from soft, durable 180 GSM cotton, this tee offers a comfortable, substantial fit that holds its structure. The high-quality print is designed to stand out, making a bold, art-driven statement. This shirt isn't just a piece of apparel; it's armor for the modern-day pathfinder who honors tradition while forging their own way.",
-    "colors": [],
-    "shopifyHandle": "dragon-samurai-main-epic-imp",
-    "isBestSeller": true,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_icts81icts81icts.png?v=1761063305",
-    "isFeatured": false,
+    "description": "This garment tells the tale of the Sentinel of the Split Gate, a warrior whose very essence is a fusion of primal fury and disciplined honor. It represents the internal struggle and the ultimate balance found on the path of the sword. On the left, the fierce crimson half is fueled by the Dragon's Fire—raw, untamed power, and the shadow of destruction. This side is the Ronin, a mercenary of necessity, swift and unforgiving, acting on pure, battle-hardened instinct. On the right, the tranquil white light embodies the Spirit of Bushido—discipline, clarity, and noble purpose. This is the Samurai, guided by a strict code of honor, whose mastery is not just in killing, but in knowing when not to. The dividing line, crossed by the blade, is the balance Kenshin must maintain. To wear this shirt is to carry the knowledge that true strength lies not in choosing one side, but in mastering the duality of both—harnessing the dragon's power without being consumed by its flame. Choose your strength. Master your balance.",
     "stock": 100,
-    "isNew": true,
-    "shopifyId": "gid://shopify/Product/7916022530187"
-  },
-  {
-    "id": 7916024234123,
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sgt3bosgt3bosgt3.png?v=1761061548",
+    "updatedAt": "2026-08-05T21:27:51.638Z",
     "sizes": [
       "XS",
       "S",
@@ -3209,162 +3345,15 @@ export const PRODUCTS: Product[] = [
       "XXL",
       "7XL"
     ],
-    "price": 549,
-    "source": "shopify",
-    "tags": [
-      "549",
-      "male"
-    ],
-    "name": "\"Kenshin's Duality\" Premium Tshirt",
-    "inStock": true,
-    "originalPrice": 699,
-    "description": "This garment tells the tale of the Sentinel of the Split Gate, a warrior whose very essence is a fusion of primal fury and disciplined honor. It represents the internal struggle and the ultimate balance found on the path of the sword. On the left, the fierce crimson half is fueled by the Dragon's Fire—raw, untamed power, and the shadow of destruction. This side is the Ronin, a mercenary of necessity, swift and unforgiving, acting on pure, battle-hardened instinct. On the right, the tranquil white light embodies the Spirit of Bushido—discipline, clarity, and noble purpose. This is the Samurai, guided by a strict code of honor, whose mastery is not just in killing, but in knowing when not to. The dividing line, crossed by the blade, is the balance Kenshin must maintain. To wear this shirt is to carry the knowledge that true strength lies not in choosing one side, but in mastering the duality of both—harnessing the dragon's power without being consumed by its flame. Choose your strength. Master your balance.",
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "updatedAt": "2026-08-05T16:00:19.870Z",
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sgt3bosgt3bosgt3.png?v=1761061548",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_1259lk1259lk1259.png?v=1761062465",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ueyc61ueyc61ueyc.png?v=1761062586",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_cnh5hqcnh5hqcnh5.png?v=1761062782",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_kdqa3zkdqa3zkdqa.png?v=1761062850",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_pc4sszpc4sszpc4s.png?v=1761062911"
-    ],
+    "rating": 4.5,
     "collections": [
       "All products!",
       "Under 600",
       "Tshirt"
-    ],
-    "qid": "SHOP-7916024234123",
-    "isNew": true,
-    "descriptionHtml": "<p>This garment tells the tale of the <b>Sentinel of the Split Gate</b>, a warrior whose very essence is a fusion of primal fury and disciplined honor. It represents the internal struggle and the ultimate balance found on the path of the sword.</p>\n<p>On the <b>left</b>, the fierce crimson half is fueled by the <b>Dragon's Fire</b>—raw, untamed power, and the shadow of destruction. This side is the <b>Ronin</b>, a mercenary of necessity, swift and unforgiving, acting on pure, battle-hardened instinct.</p>\n<p>On the <b>right</b>, the tranquil white light embodies the <b>Spirit of Bushido</b>—discipline, clarity, and noble purpose. This is the <b>Samurai</b>, guided by a strict code of honor, whose mastery is not just in killing, but in knowing when <i>not</i> to.</p>\n<p>The dividing line, crossed by the blade, is the <b>balance</b> Kenshin must maintain. To wear this shirt is to carry the knowledge that true strength lies not in choosing one side, but in mastering the duality of both—harnessing the dragon's power without being consumed by its flame.</p>\n<p><b>Choose your strength. Master your balance.</b></p>\n<p> </p>",
-    "category": "Topwear",
-    "stock": 100,
-    "sku": "MRnHs-Bk-XS-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
-    "reviews": 219,
-    "isBestSeller": false,
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "colors": [],
-    "variants": [
-      {
-        "title": "XS",
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44279976034443",
-        "options": [
-          {
-            "value": "XS",
-            "name": "Size"
-          }
-        ],
-        "price": 549,
-        "compareAtPrice": 699,
-        "sku": "MRnHs-Bk-XS-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca"
-      },
-      {
-        "availableForSale": true,
-        "price": 549,
-        "title": "S",
-        "sku": "MRnHs-Bk-S-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44279976067211",
-        "options": [
-          {
-            "value": "S",
-            "name": "Size"
-          }
-        ],
-        "compareAtPrice": 699
-      },
-      {
-        "availableForSale": true,
-        "price": 549,
-        "sku": "MRnHs-Bk-M-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
-        "title": "M",
-        "id": "gid://shopify/ProductVariant/44279976099979",
-        "compareAtPrice": 699,
-        "options": [
-          {
-            "name": "Size",
-            "value": "M"
-          }
-        ]
-      },
-      {
-        "sku": "MRnHs-Bk-L-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
-        "compareAtPrice": 699,
-        "id": "gid://shopify/ProductVariant/44279976132747",
-        "options": [
-          {
-            "name": "Size",
-            "value": "L"
-          }
-        ],
-        "title": "L",
-        "availableForSale": true,
-        "price": 549
-      },
-      {
-        "compareAtPrice": 699,
-        "title": "XL",
-        "id": "gid://shopify/ProductVariant/44279976165515",
-        "options": [
-          {
-            "name": "Size",
-            "value": "XL"
-          }
-        ],
-        "price": 549,
-        "availableForSale": true,
-        "sku": "MRnHs-Bk-XL-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca"
-      },
-      {
-        "id": "gid://shopify/ProductVariant/44279976198283",
-        "price": 549,
-        "sku": "MRnHs-Bk-XXL-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
-        "options": [
-          {
-            "value": "XXL",
-            "name": "Size"
-          }
-        ],
-        "availableForSale": true,
-        "compareAtPrice": 699,
-        "title": "XXL"
-      },
-      {
-        "sku": "MRnHs-Bk-7XL-guysittingonmoonfinalwithlogoqikink(1)-Fr-ca",
-        "compareAtPrice": 699,
-        "options": [
-          {
-            "value": "7XL",
-            "name": "Size"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44279976231051",
-        "availableForSale": true,
-        "title": "7XL",
-        "price": 549
-      }
-    ],
-    "shopifyId": "gid://shopify/Product/7916024234123",
-    "rating": 4.5,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_sgt3bosgt3bosgt3.png?v=1761061548",
-    "type": "tee",
-    "cost": 220,
-    "isFeatured": false,
-    "shopifyHandle": "guy-sitting-between-sun-and-moon-circuler-tshirt"
+    ]
   },
   {
     "id": 7963978137739,
-    "type": "tee",
-    "inStock": true,
-    "cost": 440,
-    "description": "The Serpent's Key is an echo of an ancient power—a sigil whispered to grant passage through the unseen. In a world of concrete and fleeting moments, this design binds the modern spirit to the eternal mystery. The script, coiling and unbroken, is a calligraphy of elevation and unbinding, a hidden map for those who seek to rise above the noise. This hoodie is forged for the urban wanderer, the one who knows that the true path is always found off the beaten track. Wear it as your shield in the harsh light of the city and as your sigil of intent. It is more than just fabric; it is a vow to unlock your own legend.",
-    "updatedAt": "2026-08-05T16:00:19.870Z",
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "qid": "SHOP-7963978137739",
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "price": 1099,
-    "originalPrice": 1799,
-    "isFeatured": false,
     "sizes": [
       "XS",
       "S",
@@ -3374,42 +3363,40 @@ export const PRODUCTS: Product[] = [
       "XXL",
       "3XL"
     ],
-    "rating": 4,
-    "sku": "UHd-Gm-XS-NewProject(12)_1-Bk-ca",
-    "colors": [],
-    "source": "shopify",
     "variants": [
       {
+        "price": 1099,
         "id": "gid://shopify/ProductVariant/44398855192715",
+        "compareAtPrice": 1799,
+        "availableForSale": true,
+        "sku": "UHd-Gm-XS-NewProject(12)_1-Bk-ca",
+        "title": "XS",
+        "options": [
+          {
+            "value": "XS",
+            "name": "Size"
+          }
+        ]
+      },
+      {
+        "availableForSale": true,
+        "compareAtPrice": 1799,
+        "title": "S",
+        "sku": "UHd-Gm-S-NewProject(12)_1-Bk-ca",
         "options": [
           {
             "name": "Size",
-            "value": "XS"
+            "value": "S"
           }
         ],
+        "price": 1099,
+        "id": "gid://shopify/ProductVariant/44398855225483"
+      },
+      {
         "availableForSale": true,
-        "title": "XS",
-        "sku": "UHd-Gm-XS-NewProject(12)_1-Bk-ca",
-        "price": 1099,
-        "compareAtPrice": 1799
-      },
-      {
-        "options": [
-          {
-            "value": "S",
-            "name": "Size"
-          }
-        ],
-        "sku": "UHd-Gm-S-NewProject(12)_1-Bk-ca",
-        "price": 1099,
-        "id": "gid://shopify/ProductVariant/44398855225483",
-        "title": "S",
+        "title": "M",
+        "id": "gid://shopify/ProductVariant/44398855258251",
         "compareAtPrice": 1799,
-        "availableForSale": true
-      },
-      {
-        "compareAtPrice": 1799,
-        "price": 1099,
         "options": [
           {
             "name": "Size",
@@ -3417,78 +3404,74 @@ export const PRODUCTS: Product[] = [
           }
         ],
         "sku": "UHd-Gm-M-NewProject(12)_1-Bk-ca",
-        "title": "M",
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44398855258251"
+        "price": 1099
       },
       {
-        "price": 1099,
-        "id": "gid://shopify/ProductVariant/44398855291019",
-        "compareAtPrice": 1799,
-        "title": "L",
         "options": [
           {
-            "value": "L",
-            "name": "Size"
+            "name": "Size",
+            "value": "L"
           }
         ],
         "sku": "UHd-Gm-L-NewProject(12)_1-Bk-ca",
-        "availableForSale": true
+        "id": "gid://shopify/ProductVariant/44398855291019",
+        "title": "L",
+        "availableForSale": true,
+        "price": 1099,
+        "compareAtPrice": 1799
       },
       {
-        "sku": "UHd-Gm-XL-NewProject(12)_1-Bk-ca",
         "compareAtPrice": 1799,
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44398855323787",
         "title": "XL",
-        "price": 1099,
         "options": [
           {
             "name": "Size",
             "value": "XL"
           }
-        ]
+        ],
+        "availableForSale": true,
+        "sku": "UHd-Gm-XL-NewProject(12)_1-Bk-ca",
+        "id": "gid://shopify/ProductVariant/44398855323787",
+        "price": 1099
       },
       {
         "title": "XXL",
-        "availableForSale": true,
         "sku": "UHd-Gm-XXL-NewProject(12)_1-Bk-ca",
-        "price": 1099,
         "compareAtPrice": 1799,
+        "price": 1099,
+        "id": "gid://shopify/ProductVariant/44398855356555",
         "options": [
           {
-            "name": "Size",
-            "value": "XXL"
+            "value": "XXL",
+            "name": "Size"
           }
         ],
-        "id": "gid://shopify/ProductVariant/44398855356555"
+        "availableForSale": true
       },
       {
-        "price": 1099,
-        "title": "3XL",
         "availableForSale": true,
+        "price": 1099,
+        "compareAtPrice": null,
         "options": [
           {
-            "name": "Size",
-            "value": "3XL"
+            "value": "3XL",
+            "name": "Size"
           }
         ],
-        "compareAtPrice": null,
-        "sku": "UHd-Gm-3XL-NewProject(12)_1-Bk-ca",
-        "id": "gid://shopify/ProductVariant/44398855389323"
+        "id": "gid://shopify/ProductVariant/44398855389323",
+        "title": "3XL",
+        "sku": "UHd-Gm-3XL-NewProject(12)_1-Bk-ca"
       }
     ],
-    "isBestSeller": false,
-    "shopifyId": "gid://shopify/Product/7963978137739",
-    "tags": [
-      "1099",
-      "hoodie"
-    ],
-    "name": "\"The serpent's Key\" Melange Hoodie",
+    "sku": "UHd-Gm-XS-NewProject(12)_1-Bk-ca",
+    "source": "shopify",
+    "cost": 440,
     "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ihtljwihtljwihtl.png?v=1761125938",
-    "collections": [
-      "All products!"
-    ],
+    "colors": [],
+    "shopifyHandle": "grey-hoodie-trident-design",
+    "reviews": 67,
+    "inStock": true,
+    "stock": 100,
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ihtljwihtljwihtl.png?v=1761125938",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_4kd7w84kd7w84kd7_1.png?v=1761125938",
@@ -3496,34 +3479,48 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_r3nsxhr3nsxhr3ns.png?v=1761125938",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_lb9ffrlb9ffrlb9f.png?v=1761125938"
     ],
-    "stock": 100,
+    "qid": "SHOP-7963978137739",
+    "importedAt": "2025-12-28T18:56:30.855Z",
     "category": "Topwear",
     "descriptionHtml": "<p>The <b>Serpent's Key</b> is an echo of an ancient power—a sigil whispered to grant passage through the unseen. In a world of concrete and fleeting moments, this design binds the modern spirit to the eternal mystery. The script, coiling and unbroken, is a calligraphy of <b>elevation</b> and <b>unbinding</b>, a hidden map for those who seek to rise above the noise.</p>\n<p>This hoodie is forged for the urban wanderer, the one who knows that the true path is always found off the beaten track. Wear it as your shield in the harsh light of the city and as your sigil of intent. It is more than just fabric; it is a vow to <b>unlock your own legend</b>.</p>",
-    "reviews": 67,
-    "shopifyHandle": "grey-hoodie-trident-design",
+    "isFeatured": false,
+    "isBestSeller": false,
+    "originalPrice": 1799,
+    "rating": 4,
+    "tags": [
+      "1099",
+      "hoodie"
+    ],
+    "type": "tee",
+    "shopifyId": "gid://shopify/Product/7963978137739",
+    "name": "\"The serpent's Key\" Melange Hoodie",
+    "price": 1099,
+    "description": "The Serpent's Key is an echo of an ancient power—a sigil whispered to grant passage through the unseen. In a world of concrete and fleeting moments, this design binds the modern spirit to the eternal mystery. The script, coiling and unbroken, is a calligraphy of elevation and unbinding, a hidden map for those who seek to rise above the noise. This hoodie is forged for the urban wanderer, the one who knows that the true path is always found off the beaten track. Wear it as your shield in the harsh light of the city and as your sigil of intent. It is more than just fabric; it is a vow to unlock your own legend.",
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "updatedAt": "2026-08-05T21:27:51.638Z",
+    "collections": [
+      "All products!"
+    ],
     "isNew": true
   },
   {
     "id": 7963979251851,
-    "rating": 4.3,
-    "stock": 100,
-    "originalPrice": 899,
-    "colors": [],
-    "isNew": true,
-    "description": "Beneath the defiant glow of the Crimson Dawn, a legend is forged in fire and shadow. The Crimson Dawn Samurai embodies the warrior spirit—a solitary figure standing firm, his resolve as unyielding as the mountains, his spirit infused with the primal strength of the Eastern Dragon. This isn't just a battle; it's a testament to resilience, honor, and the unwavering pursuit of one's destiny. This design speaks to those who face their own dragons, who find their strength in adversity, and whose spirit, like the rising sun, always finds a way to break through the darkness. Wear the Crimson Dawn Samurai and carry the power of ancient legends into your modern journey. Let it be a reminder that even in the toughest battles, your inner warrior can rise, vigilant and victorious.",
     "shopifyId": "gid://shopify/Product/7963979251851",
-    "inStock": true,
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "isFeatured": false,
-    "importedAt": "2025-12-28T18:56:30.855Z",
+    "collections": [
+      "All products!",
+      "Best Sellers",
+      "Under 500",
+      "Tshirt"
+    ],
     "cost": 180,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ov1ns9ov1ns9ov1n.png?v=1761064023",
-    "type": "tee",
-    "sku": "MRnHs-Wh-S-dragonsamuraiwithlogo-Fr-ca",
-    "price": 449,
-    "updatedAt": "2026-08-05T16:00:19.870Z",
+    "importedAt": "2025-12-28T18:56:30.855Z",
     "isBestSeller": true,
-    "category": "Topwear",
+    "description": "Beneath the defiant glow of the Crimson Dawn, a legend is forged in fire and shadow. The Crimson Dawn Samurai embodies the warrior spirit—a solitary figure standing firm, his resolve as unyielding as the mountains, his spirit infused with the primal strength of the Eastern Dragon. This isn't just a battle; it's a testament to resilience, honor, and the unwavering pursuit of one's destiny. This design speaks to those who face their own dragons, who find their strength in adversity, and whose spirit, like the rising sun, always finds a way to break through the darkness. Wear the Crimson Dawn Samurai and carry the power of ancient legends into your modern journey. Let it be a reminder that even in the toughest battles, your inner warrior can rise, vigilant and victorious.",
+    "descriptionHtml": "<p>Beneath the defiant glow of the <b>Crimson Dawn</b>, a legend is forged in fire and shadow. The <b>Crimson Dawn Samurai</b> embodies the warrior spirit—a solitary figure standing firm, his resolve as unyielding as the mountains, his spirit infused with the primal strength of the <b>Eastern Dragon</b>. This isn't just a battle; it's a testament to resilience, honor, and the unwavering pursuit of one's destiny.</p>\n<p>This design speaks to those who face their own dragons, who find their strength in adversity, and whose spirit, like the rising sun, always finds a way to break through the darkness. Wear the <b>Crimson Dawn Samurai</b> and carry the power of ancient legends into your modern journey. Let it be a reminder that even in the toughest battles, your inner warrior can rise, vigilant and victorious.</p>",
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ov1ns9ov1ns9ov1n.png?v=1761064023",
+    "updatedAt": "2026-08-05T21:27:51.638Z",
+    "stock": 100,
+    "isFeatured": false,
     "images": [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_ov1ns9ov1ns9ov1n.png?v=1761064023",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_3mlgu53mlgu53mlg.png?v=1761064023",
@@ -3531,9 +3528,9 @@ export const PRODUCTS: Product[] = [
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_rvmpjrrvmpjrrvmp.png?v=1761064023",
       "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_tqzd0ktqzd0ktqzd.png?v=1761064023"
     ],
-    "reviews": 90,
-    "qid": "SHOP-7963979251851",
-    "shopifyHandle": "samurai-dragon-2nd-tshirt",
+    "source": "shopify",
+    "colors": [],
+    "originalPrice": 899,
     "sizes": [
       "S",
       "M",
@@ -3541,330 +3538,220 @@ export const PRODUCTS: Product[] = [
       "XL",
       "XXL"
     ],
-    "descriptionHtml": "<p>Beneath the defiant glow of the <b>Crimson Dawn</b>, a legend is forged in fire and shadow. The <b>Crimson Dawn Samurai</b> embodies the warrior spirit—a solitary figure standing firm, his resolve as unyielding as the mountains, his spirit infused with the primal strength of the <b>Eastern Dragon</b>. This isn't just a battle; it's a testament to resilience, honor, and the unwavering pursuit of one's destiny.</p>\n<p>This design speaks to those who face their own dragons, who find their strength in adversity, and whose spirit, like the rising sun, always finds a way to break through the darkness. Wear the <b>Crimson Dawn Samurai</b> and carry the power of ancient legends into your modern journey. Let it be a reminder that even in the toughest battles, your inner warrior can rise, vigilant and victorious.</p>",
+    "sku": "MRnHs-Wh-S-dragonsamuraiwithlogo-Fr-ca",
+    "reviews": 90,
+    "inStock": true,
+    "name": "\"The Kenshō\" Premium Graphic Tee",
+    "type": "tee",
+    "isNew": true,
+    "qid": "SHOP-7963979251851",
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
     "tags": [
       "449",
       "best",
       "male"
     ],
-    "variants": [
-      {
-        "compareAtPrice": 899,
-        "sku": "MRnHs-Wh-S-dragonsamuraiwithlogo-Fr-ca",
-        "options": [
-          {
-            "value": "S",
-            "name": "Size"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44398883176587",
-        "price": 449,
-        "availableForSale": true,
-        "title": "S"
-      },
-      {
-        "availableForSale": true,
-        "options": [
-          {
-            "name": "Size",
-            "value": "M"
-          }
-        ],
-        "price": 449,
-        "title": "M",
-        "sku": "MRnHs-Wh-M-dragonsamuraiwithlogo-Fr-ca",
-        "compareAtPrice": 899,
-        "id": "gid://shopify/ProductVariant/44398883209355"
-      },
-      {
-        "compareAtPrice": 899,
-        "id": "gid://shopify/ProductVariant/44398883242123",
-        "price": 449,
-        "availableForSale": true,
-        "sku": "MRnHs-Wh-L-dragonsamuraiwithlogo-Fr-ca",
-        "title": "L",
-        "options": [
-          {
-            "name": "Size",
-            "value": "L"
-          }
-        ]
-      },
-      {
-        "compareAtPrice": 899,
-        "availableForSale": true,
-        "options": [
-          {
-            "name": "Size",
-            "value": "XL"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44398883274891",
-        "title": "XL",
-        "sku": "MRnHs-Wh-XL-dragonsamuraiwithlogo-Fr-ca",
-        "price": 449
-      },
-      {
-        "options": [
-          {
-            "name": "Size",
-            "value": "XXL"
-          }
-        ],
-        "availableForSale": true,
-        "price": 449,
-        "compareAtPrice": 899,
-        "sku": "MRnHs-Wh-XXL-dragonsamuraiwithlogo-Fr-ca",
-        "title": "XXL",
-        "id": "gid://shopify/ProductVariant/44398883307659"
-      }
-    ],
-    "collections": [
-      "All products!",
-      "Best Sellers",
-      "Under 500",
-      "Tshirt"
-    ],
-    "name": "\"The Kenshō\" Premium Graphic Tee",
-    "source": "shopify"
-  },
-  {
-    "id": 7963981807755,
-    "qid": "SHOP-7963981807755",
-    "colors": [],
-    "category": "Topwear",
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "shopifyId": "gid://shopify/Product/7963981807755",
-    "rating": 4.5,
-    "description": "True power doesn't roar; it whispers, unseen, into the depths of the mind. The Mind Weaver Tee is more than just apparel; it's a testament to the subtle art of perception and influence. At its core, a mesmerizing, crimson-and-black ocular design pierces through, a symbol of profound insight and the ability to bend reality through sheer will. It's a visual anchor for the chillingly confident declaration above: \"You're Already Under My Genjutsu.\" This isn't just a statement; it's the signature of a master illusionist, a subtle hint that the world around you is merely a canvas for your influence. When you wear the Mind Weaver Tee, you don't just walk into a room; you cast an ambiance. The soft, breathable fabric ensures comfort, allowing you to move with the effortless grace of someone who holds all the strings. The design itself seems to shift and pulse with an inner energy, an optical illusion that catches the eye and holds it, just as a powerful mental technique captures attention.",
-    "isNew": true,
-    "sku": "MRnHs-Wh-S-youarealdreadyundermygenjutsu-Fr-ca",
-    "stock": 100,
-    "variants": [
-      {
-        "id": "gid://shopify/ProductVariant/44398902771851",
-        "availableForSale": true,
-        "sku": "MRnHs-Wh-S-youarealdreadyundermygenjutsu-Fr-ca",
-        "title": "S",
-        "compareAtPrice": 699,
-        "price": 449,
-        "options": [
-          {
-            "value": "S",
-            "name": "Size"
-          }
-        ]
-      },
-      {
-        "price": 449,
-        "id": "gid://shopify/ProductVariant/44398902804619",
-        "title": "M",
-        "options": [
-          {
-            "value": "M",
-            "name": "Size"
-          }
-        ],
-        "compareAtPrice": 699,
-        "sku": "MRnHs-Wh-M-youarealdreadyundermygenjutsu-Fr-ca",
-        "availableForSale": true
-      },
-      {
-        "sku": "MRnHs-Wh-L-youarealdreadyundermygenjutsu-Fr-ca",
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44398902837387",
-        "price": 449,
-        "options": [
-          {
-            "value": "L",
-            "name": "Size"
-          }
-        ],
-        "compareAtPrice": 699,
-        "title": "L"
-      },
-      {
-        "sku": "MRnHs-Wh-XL-youarealdreadyundermygenjutsu-Fr-ca",
-        "compareAtPrice": 699,
-        "title": "XL",
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44398902870155",
-        "price": 449,
-        "options": [
-          {
-            "value": "XL",
-            "name": "Size"
-          }
-        ]
-      },
-      {
-        "price": 449,
-        "availableForSale": true,
-        "options": [
-          {
-            "value": "XXL",
-            "name": "Size"
-          }
-        ],
-        "title": "XXL",
-        "id": "gid://shopify/ProductVariant/44398902902923",
-        "compareAtPrice": 699,
-        "sku": "MRnHs-Wh-XXL-youarealdreadyundermygenjutsu-Fr-ca"
-      }
-    ],
-    "shopifyHandle": "youre-aldready-under-my-genjutsu",
-    "reviews": 200,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_1.png?v=1761154062",
-    "tags": [
-      "449",
-      "male"
-    ],
-    "name": "\"You're aldready under my genjutsu\" tshirt",
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
-    ],
-    "descriptionHtml": "<p>True power doesn't roar; it whispers, unseen, into the depths of the mind. The <b>Mind Weaver Tee</b> is more than just apparel; it's a testament to the subtle art of perception and influence.</p>\n<p>At its core, a mesmerizing, crimson-and-black ocular design pierces through, a symbol of profound insight and the ability to bend reality through sheer will. It's a visual anchor for the chillingly confident declaration above: \"<b>You're Already Under My Genjutsu.</b>\" This isn't just a statement; it's the signature of a master illusionist, a subtle hint that the world around you is merely a canvas for your influence.</p>\n<p>When you wear the <b>Mind Weaver Tee</b>, you don't just walk into a room; you cast an ambiance. The soft, breathable fabric ensures comfort, allowing you to move with the effortless grace of someone who holds all the strings. The design itself seems to shift and pulse with an inner energy, an optical illusion that catches the eye and holds it, just as a powerful mental technique captures attention.</p>",
-    "inStock": true,
     "price": 449,
-    "updatedAt": "2026-08-05T16:00:19.870Z",
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_1.png?v=1761154062",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_2.png?v=1761154063",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_3.png?v=1761154063",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_4.png?v=1761154063"
-    ],
-    "type": "tee",
-    "isFeatured": false,
-    "cost": 180,
-    "isBestSeller": false,
-    "originalPrice": 699,
-    "collections": [
-      "All products!",
-      "Under 500",
-      "Tshirt"
-    ],
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "source": "shopify"
-  },
-  {
-    "id": 7963996455051,
-    "isNew": true,
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "updatedAt": "2026-08-05T16:00:19.870Z",
-    "source": "shopify",
     "variants": [
       {
-        "availableForSale": true,
-        "sku": "UOsMRnHs-Wh-XS-designfinal_1-Fr-ca",
-        "options": [
-          {
-            "value": "XS",
-            "name": "Size"
-          }
-        ],
-        "id": "gid://shopify/ProductVariant/44398979481739",
-        "compareAtPrice": 999,
-        "price": 599,
-        "title": "XS"
-      },
-      {
-        "availableForSale": true,
+        "title": "S",
         "options": [
           {
             "name": "Size",
             "value": "S"
           }
         ],
-        "compareAtPrice": 999,
-        "sku": "UOsMRnHs-Wh-S-designfinal_1-Fr-ca",
-        "price": 599,
-        "id": "gid://shopify/ProductVariant/44398979514507",
-        "title": "S"
+        "compareAtPrice": 899,
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44398883176587",
+        "price": 449,
+        "sku": "MRnHs-Wh-S-dragonsamuraiwithlogo-Fr-ca"
       },
       {
-        "title": "M",
         "options": [
           {
             "name": "Size",
             "value": "M"
           }
         ],
-        "availableForSale": true,
-        "price": 599,
-        "compareAtPrice": 999,
-        "sku": "UOsMRnHs-Wh-M-designfinal_1-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44398979547275"
+        "title": "M",
+        "compareAtPrice": 899,
+        "id": "gid://shopify/ProductVariant/44398883209355",
+        "price": 449,
+        "sku": "MRnHs-Wh-M-dragonsamuraiwithlogo-Fr-ca",
+        "availableForSale": true
       },
       {
-        "availableForSale": true,
-        "title": "L",
-        "sku": "UOsMRnHs-Wh-L-designfinal_1-Fr-ca",
+        "price": 449,
+        "sku": "MRnHs-Wh-L-dragonsamuraiwithlogo-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44398883242123",
+        "compareAtPrice": 899,
         "options": [
           {
-            "value": "L",
-            "name": "Size"
+            "name": "Size",
+            "value": "L"
           }
         ],
-        "price": 599,
-        "compareAtPrice": 999,
-        "id": "gid://shopify/ProductVariant/44398979580043"
+        "availableForSale": true,
+        "title": "L"
       },
       {
-        "title": "XL",
-        "price": 599,
-        "id": "gid://shopify/ProductVariant/44398979612811",
+        "price": 449,
+        "id": "gid://shopify/ProductVariant/44398883274891",
+        "compareAtPrice": 899,
         "availableForSale": true,
-        "sku": "UOsMRnHs-Wh-XL-designfinal_1-Fr-ca",
-        "compareAtPrice": 999,
+        "sku": "MRnHs-Wh-XL-dragonsamuraiwithlogo-Fr-ca",
         "options": [
           {
-            "value": "XL",
-            "name": "Size"
+            "name": "Size",
+            "value": "XL"
           }
-        ]
+        ],
+        "title": "XL"
       },
       {
-        "availableForSale": true,
-        "id": "gid://shopify/ProductVariant/44398979645579",
-        "compareAtPrice": 999,
-        "price": 599,
+        "id": "gid://shopify/ProductVariant/44398883307659",
+        "price": 449,
         "options": [
           {
             "name": "Size",
             "value": "XXL"
           }
         ],
-        "sku": "UOsMRnHs-Wh-XXL-designfinal_1-Fr-ca",
-        "title": "XXL"
+        "availableForSale": true,
+        "title": "XXL",
+        "sku": "MRnHs-Wh-XXL-dragonsamuraiwithlogo-Fr-ca",
+        "compareAtPrice": 899
       }
     ],
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "stock": 100,
-    "isFeatured": false,
-    "description": "Remember that feeling of pure, unadulterated joy when a tiny, fluffy creature peeks out to greet you? The Heart-Eared Companion Tee captures that exact moment of innocent wonder and unconditional affection. This tee isn't just about a cute bunny; it's about the universal language of love and surprise. With its oversized, soulful eyes, our charming rabbit friend peeks playfully from the hem, ready to bring a smile to anyone who sees it. Its ears, perfectly forming a little heart, are a gentle reminder that kindness and warmth are always in season. Crafted from the softest, breathable cotton, this shirt feels like a gentle hug against your skin, perfect for days when you want to carry a little extra happiness with you. The vibrant, detailed print of our fluffy companion is durable and cheerful, a constant source of positive energy.",
-    "reviews": 96,
-    "name": "The Heart-Eared bunny Companion oversized Tee",
-    "tags": [
-      "female",
-      "oversized"
-    ],
-    "shopifyHandle": "oversized-cute-bunny-tshirt-for-women",
-    "qid": "SHOP-7963996455051",
+    "rating": 4.3,
+    "shopifyHandle": "samurai-dragon-2nd-tshirt",
+    "category": "Topwear"
+  },
+  {
+    "id": 7963981807755,
     "category": "Topwear",
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_4.png?v=1761748282",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_1.png?v=1761748282",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_5.png?v=1761154444",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_6.png?v=1761154444",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_7.png?v=1761154444",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a.png?v=1761154444"
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_4.png?v=1761748282",
-    "sku": "UOsMRnHs-Wh-XS-designfinal_1-Fr-ca",
+    "collections": [
+      "All products!",
+      "Under 500",
+      "Tshirt"
+    ],
+    "isBestSeller": false,
+    "sku": "MRnHs-Wh-S-youarealdreadyundermygenjutsu-Fr-ca",
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_1.png?v=1761154062",
+    "source": "shopify",
+    "cost": 180,
+    "colors": [],
+    "stock": 100,
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "description": "True power doesn't roar; it whispers, unseen, into the depths of the mind. The Mind Weaver Tee is more than just apparel; it's a testament to the subtle art of perception and influence. At its core, a mesmerizing, crimson-and-black ocular design pierces through, a symbol of profound insight and the ability to bend reality through sheer will. It's a visual anchor for the chillingly confident declaration above: \"You're Already Under My Genjutsu.\" This isn't just a statement; it's the signature of a master illusionist, a subtle hint that the world around you is merely a canvas for your influence. When you wear the Mind Weaver Tee, you don't just walk into a room; you cast an ambiance. The soft, breathable fabric ensures comfort, allowing you to move with the effortless grace of someone who holds all the strings. The design itself seems to shift and pulse with an inner energy, an optical illusion that catches the eye and holds it, just as a powerful mental technique captures attention.",
+    "originalPrice": 699,
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_1.png?v=1761154062",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_2.png?v=1761154063",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_3.png?v=1761154063",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-man-wearing-a-white-tshirt-in-front-of-a-white-b_4.png?v=1761154063"
+    ],
+    "qid": "SHOP-7963981807755",
+    "variants": [
+      {
+        "title": "S",
+        "compareAtPrice": 699,
+        "options": [
+          {
+            "name": "Size",
+            "value": "S"
+          }
+        ],
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44398902771851",
+        "sku": "MRnHs-Wh-S-youarealdreadyundermygenjutsu-Fr-ca",
+        "price": 449
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44398902804619",
+        "title": "M",
+        "compareAtPrice": 699,
+        "availableForSale": true,
+        "options": [
+          {
+            "value": "M",
+            "name": "Size"
+          }
+        ],
+        "sku": "MRnHs-Wh-M-youarealdreadyundermygenjutsu-Fr-ca",
+        "price": 449
+      },
+      {
+        "title": "L",
+        "sku": "MRnHs-Wh-L-youarealdreadyundermygenjutsu-Fr-ca",
+        "options": [
+          {
+            "name": "Size",
+            "value": "L"
+          }
+        ],
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44398902837387",
+        "compareAtPrice": 699,
+        "price": 449
+      },
+      {
+        "options": [
+          {
+            "name": "Size",
+            "value": "XL"
+          }
+        ],
+        "sku": "MRnHs-Wh-XL-youarealdreadyundermygenjutsu-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44398902870155",
+        "price": 449,
+        "compareAtPrice": 699,
+        "availableForSale": true,
+        "title": "XL"
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44398902902923",
+        "title": "XXL",
+        "availableForSale": true,
+        "compareAtPrice": 699,
+        "sku": "MRnHs-Wh-XXL-youarealdreadyundermygenjutsu-Fr-ca",
+        "options": [
+          {
+            "value": "XXL",
+            "name": "Size"
+          }
+        ],
+        "price": 449
+      }
+    ],
+    "isFeatured": false,
+    "rating": 4.5,
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "shopifyId": "gid://shopify/Product/7963981807755",
+    "tags": [
+      "449",
+      "male"
+    ],
+    "shopifyHandle": "youre-aldready-under-my-genjutsu",
+    "inStock": true,
+    "reviews": 200,
+    "type": "tee",
+    "name": "\"You're aldready under my genjutsu\" tshirt",
+    "updatedAt": "2026-08-05T21:27:51.638Z",
+    "price": 449,
+    "isNew": true,
+    "descriptionHtml": "<p>True power doesn't roar; it whispers, unseen, into the depths of the mind. The <b>Mind Weaver Tee</b> is more than just apparel; it's a testament to the subtle art of perception and influence.</p>\n<p>At its core, a mesmerizing, crimson-and-black ocular design pierces through, a symbol of profound insight and the ability to bend reality through sheer will. It's a visual anchor for the chillingly confident declaration above: \"<b>You're Already Under My Genjutsu.</b>\" This isn't just a statement; it's the signature of a master illusionist, a subtle hint that the world around you is merely a canvas for your influence.</p>\n<p>When you wear the <b>Mind Weaver Tee</b>, you don't just walk into a room; you cast an ambiance. The soft, breathable fabric ensures comfort, allowing you to move with the effortless grace of someone who holds all the strings. The design itself seems to shift and pulse with an inner energy, an optical illusion that catches the eye and holds it, just as a powerful mental technique captures attention.</p>"
+  },
+  {
+    "id": 7963996455051,
     "sizes": [
       "XS",
       "S",
@@ -3873,100 +3760,48 @@ export const PRODUCTS: Product[] = [
       "XL",
       "XXL"
     ],
-    "price": 599,
-    "shopifyId": "gid://shopify/Product/7963996455051",
-    "isBestSeller": false,
-    "descriptionHtml": "<p>Remember that feeling of pure, unadulterated joy when a tiny, fluffy creature peeks out to greet you? The <b>Heart-Eared Companion Tee</b> captures that exact moment of innocent wonder and unconditional affection.</p>\n<p>This tee isn't just about a cute bunny; it's about the universal language of love and surprise. With its oversized, soulful eyes, our charming rabbit friend peeks playfully from the hem, ready to bring a smile to anyone who sees it. Its ears, perfectly forming a little heart, are a gentle reminder that kindness and warmth are always in season.</p>\n<p>Crafted from the softest, breathable cotton, this shirt feels like a gentle hug against your skin, perfect for days when you want to carry a little extra happiness with you. The vibrant, detailed print of our fluffy companion is durable and cheerful, a constant source of positive energy.</p>",
-    "inStock": true,
-    "collections": [
-      "All products!",
-      "Women",
-      "oversized",
-      "Oversized Tshirt"
-    ],
-    "type": "tee",
-    "originalPrice": 999,
-    "colors": [],
-    "cost": 240,
-    "rating": 4.1
-  },
-  {
-    "id": 7964010676363,
-    "importedAt": "2025-12-28T18:56:30.855Z",
-    "shopifyHandle": "skull-triangle-oversized-tshirt",
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
-    ],
-    "cost": 240,
-    "price": 599,
-    "inStock": true,
-    "source": "shopify",
-    "type": "tee",
-    "isFeatured": false,
-    "collections": [
-      "All products!",
-      "Under 600",
-      "oversized",
-      "Oversized Tshirt"
-    ],
-    "shopifyId": "gid://shopify/Product/7964010676363",
-    "isBestSeller": false,
-    "images": [
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fvti68fvti68fvti.png?v=1761741294",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_vhkfrfvhkfrfvhkf.png?v=1761741317",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-woman-wearing-a-oversized-black-t-shirt-w_2.png?v=1761741340",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-woman-wearing-a-oversized-black-t-shirt-w_3.png?v=1761156382",
-      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-oversized-black-t-shirt-wit.png?v=1761156382"
-    ],
-    "descriptionHtml": "<p>The most potent element is the <b>Ascension Hand</b>. This hand, reaching upward from the center, is a silent command: <b>\"Rise.\"</b> It represents the wearer's personal will, their refusal to be kept down, and their power to pull themselves towards a higher plane of style and self-awareness.</p>\n<p>Wearing the <b>Hex-Hand Ascension Tee</b> is wearing a secret society's crest. It's a non-verbal code recognized by the bold, the creatives, and the true rebels. It is your manifesto of comfort, style, and absolute freedom.<br>\"Decipher the street. Command your ascent.\"<br></p>",
-    "isNew": true,
-    "tags": [
-      "599",
-      "oversized"
-    ],
-    "name": "\"Hex-Hand Ascension\" Oversized Tee",
-    "stock": 100,
-    "category": "Topwear",
-    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
-    "originalPrice": 999,
-    "sku": "UOsMRnHs-Bk-S-NewProject(19)-Fr-ca",
-    "colors": [],
-    "reviews": 69,
-    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fvti68fvti68fvti.png?v=1761741294",
-    "description": "The most potent element is the Ascension Hand. This hand, reaching upward from the center, is a silent command: \"Rise.\" It represents the wearer's personal will, their refusal to be kept down, and their power to pull themselves towards a higher plane of style and self-awareness. Wearing the Hex-Hand Ascension Tee is wearing a secret society's crest. It's a non-verbal code recognized by the bold, the creatives, and the true rebels. It is your manifesto of comfort, style, and absolute freedom.\"Decipher the street. Command your ascent.\"",
-    "rating": 4.8,
     "variants": [
       {
+        "price": 599,
+        "sku": "UOsMRnHs-Wh-XS-designfinal_1-Fr-ca",
+        "availableForSale": true,
+        "title": "XS",
         "options": [
           {
             "name": "Size",
-            "value": "S"
+            "value": "XS"
           }
         ],
-        "sku": "UOsMRnHs-Bk-S-NewProject(19)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44398979481739",
+        "compareAtPrice": 999
+      },
+      {
+        "title": "S",
+        "options": [
+          {
+            "value": "S",
+            "name": "Size"
+          }
+        ],
+        "id": "gid://shopify/ProductVariant/44398979514507",
         "availableForSale": true,
         "compareAtPrice": 999,
-        "title": "S",
-        "id": "gid://shopify/ProductVariant/44399058419851",
+        "sku": "UOsMRnHs-Wh-S-designfinal_1-Fr-ca",
         "price": 599
       },
       {
-        "title": "M",
-        "id": "gid://shopify/ProductVariant/44399058452619",
-        "compareAtPrice": 999,
         "price": 599,
+        "availableForSale": true,
+        "sku": "UOsMRnHs-Wh-M-designfinal_1-Fr-ca",
+        "compareAtPrice": 999,
+        "id": "gid://shopify/ProductVariant/44398979547275",
+        "title": "M",
         "options": [
           {
-            "name": "Size",
-            "value": "M"
+            "value": "M",
+            "name": "Size"
           }
-        ],
-        "availableForSale": true,
-        "sku": "UOsMRnHs-Bk-M-NewProject(19)-Fr-ca"
+        ]
       },
       {
         "options": [
@@ -3975,44 +3810,248 @@ export const PRODUCTS: Product[] = [
             "name": "Size"
           }
         ],
-        "compareAtPrice": 999,
         "title": "L",
+        "sku": "UOsMRnHs-Wh-L-designfinal_1-Fr-ca",
         "availableForSale": true,
+        "compareAtPrice": 999,
         "price": 599,
-        "sku": "UOsMRnHs-Bk-L-NewProject(19)-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44399058485387"
+        "id": "gid://shopify/ProductVariant/44398979580043"
       },
       {
-        "compareAtPrice": 999,
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44398979612811",
         "options": [
           {
-            "name": "Size",
-            "value": "XL"
+            "value": "XL",
+            "name": "Size"
           }
         ],
-        "title": "XL",
-        "id": "gid://shopify/ProductVariant/44399058518155",
-        "availableForSale": true,
         "price": 599,
-        "sku": "UOsMRnHs-Bk-XL-NewProject(19)-Fr-ca"
+        "compareAtPrice": 999,
+        "sku": "UOsMRnHs-Wh-XL-designfinal_1-Fr-ca",
+        "title": "XL"
       },
       {
+        "id": "gid://shopify/ProductVariant/44398979645579",
+        "price": 599,
         "availableForSale": true,
-        "sku": "UOsMRnHs-Bk-XXL-NewProject(19)-Fr-ca",
-        "id": "gid://shopify/ProductVariant/44399058550923",
-        "compareAtPrice": 999,
+        "sku": "UOsMRnHs-Wh-XXL-designfinal_1-Fr-ca",
         "options": [
           {
             "value": "XXL",
             "name": "Size"
           }
         ],
-        "price": 599,
-        "title": "XXL"
+        "title": "XXL",
+        "compareAtPrice": 999
       }
     ],
+    "sku": "UOsMRnHs-Wh-XS-designfinal_1-Fr-ca",
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_4.png?v=1761748282",
+    "cost": 240,
+    "source": "shopify",
+    "shopifyHandle": "oversized-cute-bunny-tshirt-for-women",
+    "inStock": true,
+    "reviews": 96,
+    "colors": [],
+    "stock": 100,
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_4.png?v=1761748282",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_1.png?v=1761748282",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_5.png?v=1761154444",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_6.png?v=1761154444",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a_7.png?v=1761154444",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-women-wearing-a-oversized-white-t-shirt-a.png?v=1761154444"
+    ],
+    "qid": "SHOP-7963996455051",
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "category": "Topwear",
+    "descriptionHtml": "<p>Remember that feeling of pure, unadulterated joy when a tiny, fluffy creature peeks out to greet you? The <b>Heart-Eared Companion Tee</b> captures that exact moment of innocent wonder and unconditional affection.</p>\n<p>This tee isn't just about a cute bunny; it's about the universal language of love and surprise. With its oversized, soulful eyes, our charming rabbit friend peeks playfully from the hem, ready to bring a smile to anyone who sees it. Its ears, perfectly forming a little heart, are a gentle reminder that kindness and warmth are always in season.</p>\n<p>Crafted from the softest, breathable cotton, this shirt feels like a gentle hug against your skin, perfect for days when you want to carry a little extra happiness with you. The vibrant, detailed print of our fluffy companion is durable and cheerful, a constant source of positive energy.</p>",
+    "isFeatured": false,
+    "isBestSeller": false,
+    "originalPrice": 999,
+    "rating": 4.1,
+    "tags": [
+      "female",
+      "oversized"
+    ],
+    "type": "tee",
+    "shopifyId": "gid://shopify/Product/7963996455051",
+    "name": "The Heart-Eared bunny Companion oversized Tee",
+    "price": 599,
+    "description": "Remember that feeling of pure, unadulterated joy when a tiny, fluffy creature peeks out to greet you? The Heart-Eared Companion Tee captures that exact moment of innocent wonder and unconditional affection. This tee isn't just about a cute bunny; it's about the universal language of love and surprise. With its oversized, soulful eyes, our charming rabbit friend peeks playfully from the hem, ready to bring a smile to anyone who sees it. Its ears, perfectly forming a little heart, are a gentle reminder that kindness and warmth are always in season. Crafted from the softest, breathable cotton, this shirt feels like a gentle hug against your skin, perfect for days when you want to carry a little extra happiness with you. The vibrant, detailed print of our fluffy companion is durable and cheerful, a constant source of positive energy.",
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "collections": [
+      "All products!",
+      "Women",
+      "oversized",
+      "Oversized Tshirt"
+    ],
+    "updatedAt": "2026-08-05T21:27:51.638Z",
+    "isNew": true
+  },
+  {
+    "id": 7964010676363,
+    "collections": [
+      "All products!",
+      "Under 600",
+      "oversized",
+      "Oversized Tshirt"
+    ],
+    "shopifyId": "gid://shopify/Product/7964010676363",
+    "isFeatured": false,
+    "inStock": true,
+    "reviews": 69,
+    "rating": 4.8,
+    "descriptionHtml": "<p>The most potent element is the <b>Ascension Hand</b>. This hand, reaching upward from the center, is a silent command: <b>\"Rise.\"</b> It represents the wearer's personal will, their refusal to be kept down, and their power to pull themselves towards a higher plane of style and self-awareness.</p>\n<p>Wearing the <b>Hex-Hand Ascension Tee</b> is wearing a secret society's crest. It's a non-verbal code recognized by the bold, the creatives, and the true rebels. It is your manifesto of comfort, style, and absolute freedom.<br>\"Decipher the street. Command your ascent.\"<br></p>",
+    "description": "The most potent element is the Ascension Hand. This hand, reaching upward from the center, is a silent command: \"Rise.\" It represents the wearer's personal will, their refusal to be kept down, and their power to pull themselves towards a higher plane of style and self-awareness. Wearing the Hex-Hand Ascension Tee is wearing a secret society's crest. It's a non-verbal code recognized by the bold, the creatives, and the true rebels. It is your manifesto of comfort, style, and absolute freedom.\"Decipher the street. Command your ascent.\"",
+    "category": "Topwear",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "cost": 240,
+    "updatedAt": "2026-08-05T21:27:51.638Z",
+    "isBestSeller": false,
+    "importedAt": "2025-12-28T18:56:30.855Z",
+    "stock": 100,
+    "variants": [
+      {
+        "options": [
+          {
+            "value": "S",
+            "name": "Size"
+          }
+        ],
+        "title": "S",
+        "availableForSale": true,
+        "id": "gid://shopify/ProductVariant/44399058419851",
+        "price": 599,
+        "sku": "UOsMRnHs-Bk-S-NewProject(19)-Fr-ca",
+        "compareAtPrice": 999
+      },
+      {
+        "options": [
+          {
+            "name": "Size",
+            "value": "M"
+          }
+        ],
+        "availableForSale": true,
+        "title": "M",
+        "sku": "UOsMRnHs-Bk-M-NewProject(19)-Fr-ca",
+        "price": 599,
+        "id": "gid://shopify/ProductVariant/44399058452619",
+        "compareAtPrice": 999
+      },
+      {
+        "title": "L",
+        "id": "gid://shopify/ProductVariant/44399058485387",
+        "options": [
+          {
+            "name": "Size",
+            "value": "L"
+          }
+        ],
+        "availableForSale": true,
+        "compareAtPrice": 999,
+        "sku": "UOsMRnHs-Bk-L-NewProject(19)-Fr-ca",
+        "price": 599
+      },
+      {
+        "title": "XL",
+        "sku": "UOsMRnHs-Bk-XL-NewProject(19)-Fr-ca",
+        "id": "gid://shopify/ProductVariant/44399058518155",
+        "availableForSale": true,
+        "options": [
+          {
+            "value": "XL",
+            "name": "Size"
+          }
+        ],
+        "price": 599,
+        "compareAtPrice": 999
+      },
+      {
+        "id": "gid://shopify/ProductVariant/44399058550923",
+        "title": "XXL",
+        "sku": "UOsMRnHs-Bk-XXL-NewProject(19)-Fr-ca",
+        "availableForSale": true,
+        "price": 599,
+        "compareAtPrice": 999,
+        "options": [
+          {
+            "value": "XXL",
+            "name": "Size"
+          }
+        ]
+      }
+    ],
+    "image": "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fvti68fvti68fvti.png?v=1761741294",
+    "originalPrice": 999,
+    "colors": [],
+    "source": "shopify",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_fvti68fvti68fvti.png?v=1761741294",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/Gemini_Generated_Image_vhkfrfvhkfrfvhkf.png?v=1761741317",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-woman-wearing-a-oversized-black-t-shirt-w_2.png?v=1761741340",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-woman-wearing-a-oversized-black-t-shirt-w_3.png?v=1761156382",
+      "https://cdn.shopify.com/s/files/1/0704/4933/2363/files/a-korean-man-wearing-a-oversized-black-t-shirt-wit.png?v=1761156382"
+    ],
+    "price": 599,
+    "isNew": true,
+    "lastSyncedAt": "2025-12-28T18:56:30.855Z",
+    "type": "tee",
+    "name": "\"Hex-Hand Ascension\" Oversized Tee",
+    "shopifyHandle": "skull-triangle-oversized-tshirt",
     "qid": "SHOP-7964010676363",
-    "updatedAt": "2026-08-05T16:00:19.870Z"
+    "tags": [
+      "599",
+      "oversized"
+    ],
+    "sku": "UOsMRnHs-Bk-S-NewProject(19)-Fr-ca"
+  },
+  {
+    "id": 1785966718944,
+    "qid": "ELVZ-MSGMGZXB",
+    "name": "FEARLESS DIVE TSHIRT",
+    "price": 549,
+    "originalPrice": 1000,
+    "cost": 400,
+    "profit": 149,
+    "profitMargin": 27.1,
+    "category": "Unisex",
+    "type": "T-Shirt",
+    "rating": 4.5,
+    "image": "https://i.ibb.co/0pfgR4mX/female-mockup-3.jpg",
+    "images": [
+      "https://i.ibb.co/0pfgR4mX/female-mockup-3.jpg",
+      "https://i.ibb.co/HTRQ5CCW/male-mokcup-2.jpg",
+      "https://i.ibb.co/hx6YVXsS/female-mockup-2.jpg",
+      "https://i.ibb.co/5gLX6ZdQ/female-mockup-1.jpg",
+      "https://i.ibb.co/PZsF8TyY/male-mockup-3.jpg",
+      "https://i.ibb.co/B2k0gxBH/male-mockup-1.jpg"
+    ],
+    "sizes": [
+      "M",
+      "XS",
+      "S",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "BEIGE"
+    ],
+    "stock": 0,
+    "status": "active",
+    "showInHome": true,
+    "showInShop": true,
+    "showInCollections": true,
+    "isNew": true,
+    "updatedAt": "2026-08-05T21:51:58.944Z"
   }
 ];
 
@@ -4025,7 +4064,7 @@ export const COLLECTIONS = [
     "name": "All products!",
     "handle": "all-products",
     "order": 0,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated",
     "sectionMapping": null,
@@ -4094,7 +4133,7 @@ export const COLLECTIONS = [
     "image": "",
     "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 1
   },
   {
@@ -4108,7 +4147,7 @@ export const COLLECTIONS = [
       "oversized-cute-simple-bunny-tshirt"
     ],
     "productCount": 4,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 2,
     "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated",
@@ -4121,7 +4160,7 @@ export const COLLECTIONS = [
     "id": "1778682078130-3",
     "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 3,
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
@@ -4144,7 +4183,7 @@ export const COLLECTIONS = [
     "id": "1778682078130-4",
     "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 4,
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
@@ -4169,7 +4208,7 @@ export const COLLECTIONS = [
     "description": "Products in the Women collection",
     "handle": "women",
     "name": "Women",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 5,
     "source": "generated",
     "createdAt": "2026-05-13T14:21:18.130Z",
@@ -4202,7 +4241,7 @@ export const COLLECTIONS = [
       "youre-aldready-under-my-genjutsu"
     ],
     "order": 6,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "source": "generated",
     "createdAt": "2026-05-13T14:21:18.130Z",
     "isSystem": false,
@@ -4215,7 +4254,7 @@ export const COLLECTIONS = [
     "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated",
     "order": 7,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
       "japaneese-text-tshirt-cool-front-elevez",
@@ -4277,7 +4316,7 @@ export const COLLECTIONS = [
     "image": "",
     "source": "generated",
     "createdAt": "2026-05-13T14:21:18.130Z",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 8
   },
   {
@@ -4305,7 +4344,7 @@ export const COLLECTIONS = [
     ],
     "productCount": 13,
     "order": 9,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated"
   },
@@ -4325,7 +4364,7 @@ export const COLLECTIONS = [
       "kal-ana-tshirt"
     ],
     "productCount": 5,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 10,
     "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated"
@@ -4337,7 +4376,7 @@ export const COLLECTIONS = [
     "name": "old money",
     "handle": "old-money",
     "order": 11,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "createdAt": "2026-05-13T14:21:18.130Z",
     "source": "generated",
     "image": "",
@@ -4357,7 +4396,7 @@ export const COLLECTIONS = [
     "source": "generated",
     "createdAt": "2026-05-13T14:21:18.130Z",
     "order": 12,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "productCount": 2,
     "productHandles": [
       "paisa-design-stylish-genz-tshirt",
@@ -4374,7 +4413,7 @@ export const COLLECTIONS = [
     "id": "shopify-frontpage",
     "shopifyId": "gid://shopify/Collection/306335416459",
     "order": 0,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "source": "shopify",
     "createdAt": "2026-05-13T14:21:25.042Z",
     "sectionMapping": null,
@@ -4400,7 +4439,7 @@ export const COLLECTIONS = [
     "createdAt": "2026-05-13T14:21:25.042Z",
     "shopifyId": "gid://shopify/Collection/307465158795",
     "order": 1,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "productCount": 28,
     "productHandles": [
       null,
@@ -4452,7 +4491,7 @@ export const COLLECTIONS = [
     ],
     "productCount": 4,
     "order": 2,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "shopifyId": "gid://shopify/Collection/307502022795",
     "createdAt": "2026-05-13T14:21:25.042Z",
     "source": "shopify"
@@ -4472,7 +4511,7 @@ export const COLLECTIONS = [
     "source": "shopify",
     "shopifyId": "gid://shopify/Collection/307502973067",
     "order": 3,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "importedAt": "2025-12-28T18:56:29.286Z",
     "name": "Women",
     "handle": "women",
@@ -4484,7 +4523,7 @@ export const COLLECTIONS = [
     "source": "shopify",
     "createdAt": "2026-05-13T14:21:25.043Z",
     "shopifyId": "gid://shopify/Collection/307639484555",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 4,
     "productCount": 5,
     "productHandles": [
@@ -4512,7 +4551,7 @@ export const COLLECTIONS = [
     "createdAt": "2026-05-13T14:21:25.043Z",
     "source": "shopify",
     "shopifyId": "gid://shopify/Collection/307639615627",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 5,
     "productHandles": [
       "skull-triangle-oversized-tshirt",
@@ -4536,7 +4575,7 @@ export const COLLECTIONS = [
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
     "order": 6,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "shopifyId": "gid://shopify/Collection/307639681163",
     "source": "shopify",
     "createdAt": "2026-05-13T14:21:25.043Z",
@@ -4567,7 +4606,7 @@ export const COLLECTIONS = [
     "productCount": 7,
     "shopifyId": "gid://shopify/Collection/307639713931",
     "order": 7,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "createdAt": "2026-05-13T14:21:25.043Z",
     "source": "shopify"
   },
@@ -4580,7 +4619,7 @@ export const COLLECTIONS = [
     "importedAt": "2025-12-28T18:56:29.286Z",
     "shopifyId": "gid://shopify/Collection/307662028939",
     "order": 8,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "createdAt": "2026-05-13T14:21:25.043Z",
     "source": "shopify",
     "sectionMapping": null,
@@ -4606,7 +4645,7 @@ export const COLLECTIONS = [
     "sectionMapping": null,
     "createdAt": "2026-05-13T14:21:25.043Z",
     "source": "shopify",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 9,
     "shopifyId": "gid://shopify/Collection/307744080011",
     "importedAt": "2025-12-28T18:56:29.286Z",
@@ -4625,7 +4664,7 @@ export const COLLECTIONS = [
     "source": "shopify",
     "createdAt": "2026-05-13T14:21:25.043Z",
     "order": 10,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "shopifyId": "gid://shopify/Collection/307744112779",
     "productCount": 3,
     "productHandles": [
@@ -4666,14 +4705,14 @@ export const COLLECTIONS = [
     "createdAt": "2026-05-13T14:21:25.043Z",
     "source": "shopify",
     "order": 11,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "shopifyId": "gid://shopify/Collection/307999441035"
   },
   {
     "id": "shopify-oversized-tshirt",
     "createdAt": "2026-05-13T14:21:25.043Z",
     "source": "shopify",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 12,
     "shopifyId": "gid://shopify/Collection/307999473803",
     "productHandles": [
@@ -4696,7 +4735,7 @@ export const COLLECTIONS = [
     "id": "1766960993446-0",
     "createdAt": "2025-12-28T22:29:53.446Z",
     "source": "generated",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 0,
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
@@ -4735,7 +4774,7 @@ export const COLLECTIONS = [
     "createdAt": "2025-12-28T22:29:53.446Z",
     "source": "generated",
     "order": 1,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "productHandles": [
       "oversized-cute-simple-bunny-tshirt",
       "oversized-unisex-peace-simple-bird-tshirt",
@@ -4768,11 +4807,11 @@ export const COLLECTIONS = [
     "source": "generated",
     "createdAt": "2025-12-28T22:29:53.446Z",
     "order": 2,
-    "updatedAt": "2026-08-05T21:27:51.224Z"
+    "updatedAt": "2026-08-05T21:51:59.011Z"
   },
   {
     "id": "1766960993446-3",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 3,
     "createdAt": "2025-12-28T22:29:53.446Z",
     "source": "generated",
@@ -4818,7 +4857,7 @@ export const COLLECTIONS = [
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
     "order": 0,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "source": "generated",
     "createdAt": "2026-05-10T20:49:56.513Z"
   },
@@ -4830,7 +4869,7 @@ export const COLLECTIONS = [
     "description": "Products in the Best Sellers collection",
     "source": "generated",
     "createdAt": "2026-05-10T20:49:56.513Z",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 1,
     "productCount": 4,
     "productHandles": [
@@ -4855,7 +4894,7 @@ export const COLLECTIONS = [
       "kal-ana-tshirt"
     ],
     "productCount": 2,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 10,
     "createdAt": "2026-05-10T20:49:56.513Z",
     "source": "generated"
@@ -4873,7 +4912,7 @@ export const COLLECTIONS = [
     "source": "generated",
     "createdAt": "2026-05-10T20:49:56.513Z",
     "order": 11,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "handle": "old-money",
     "name": "old money",
     "isSystem": false,
@@ -4887,7 +4926,7 @@ export const COLLECTIONS = [
     "description": "Products in the Home page collection",
     "source": "generated",
     "createdAt": "2026-05-10T20:49:56.513Z",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 12,
     "productCount": 1,
     "productHandles": [
@@ -4909,7 +4948,7 @@ export const COLLECTIONS = [
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
     "productCount": 2,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 2,
     "createdAt": "2026-05-10T20:49:56.513Z",
     "source": "generated"
@@ -4918,7 +4957,7 @@ export const COLLECTIONS = [
     "id": "1778446196513-3",
     "source": "generated",
     "createdAt": "2026-05-10T20:49:56.513Z",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 3,
     "productCount": 3,
     "productHandles": [
@@ -4947,7 +4986,7 @@ export const COLLECTIONS = [
       "oversized-unisex-peace-simple-bird-tshirt"
     ],
     "productCount": 3,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 4,
     "createdAt": "2026-05-10T20:49:56.513Z",
     "source": "generated"
@@ -4961,7 +5000,7 @@ export const COLLECTIONS = [
     "source": "generated",
     "createdAt": "2026-05-10T20:49:56.513Z",
     "order": 5,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "productCount": 3,
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
@@ -4976,7 +5015,7 @@ export const COLLECTIONS = [
     "source": "generated",
     "createdAt": "2026-05-10T20:49:56.513Z",
     "order": 6,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "productCount": 5,
     "productHandles": [
       "cute-blessed-tshirt-for-girls",
@@ -5018,7 +5057,7 @@ export const COLLECTIONS = [
       "stylish-buttefly-tshirt"
     ],
     "order": 7,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "source": "generated",
     "createdAt": "2026-05-10T20:49:56.513Z"
   },
@@ -5030,7 +5069,7 @@ export const COLLECTIONS = [
     "description": "Products in the Under 600 collection",
     "source": "generated",
     "createdAt": "2026-05-10T20:49:56.513Z",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 8,
     "productCount": 5,
     "productHandles": [
@@ -5050,7 +5089,7 @@ export const COLLECTIONS = [
     "name": "Below 400",
     "handle": "below-400",
     "order": 9,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "createdAt": "2026-05-10T20:49:56.513Z",
     "source": "generated",
     "sectionMapping": null,
@@ -5071,7 +5110,7 @@ export const COLLECTIONS = [
     "isSystem": false,
     "name": "Essential",
     "handle": "essential",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 43,
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
@@ -5088,7 +5127,7 @@ export const COLLECTIONS = [
     "isSystem": false,
     "name": "Trending",
     "handle": "trending",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 44,
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
@@ -5105,7 +5144,7 @@ export const COLLECTIONS = [
   {
     "id": "tag-1778700075663-2-741",
     "order": 45,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
     "sectionMapping": null,
@@ -5131,7 +5170,7 @@ export const COLLECTIONS = [
     "productHandles": [
       null
     ],
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 46,
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z"
@@ -5147,7 +5186,7 @@ export const COLLECTIONS = [
     ],
     "productCount": 3,
     "order": 47,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
     "description": "Curated selection of our bestseller products",
@@ -5162,7 +5201,7 @@ export const COLLECTIONS = [
     "handle": "vintage",
     "name": "Vintage",
     "order": 48,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z",
     "sectionMapping": null,
@@ -5186,7 +5225,7 @@ export const COLLECTIONS = [
     "image": "",
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 49
   },
   {
@@ -5203,7 +5242,7 @@ export const COLLECTIONS = [
       "oversized-illuminaty-skull-triangle-design",
       "oversized-cute-simple-bunny-tshirt"
     ],
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 50,
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z"
@@ -5225,7 +5264,7 @@ export const COLLECTIONS = [
     "sectionMapping": null,
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 51,
     "handle": "female",
     "name": "Female",
@@ -5252,7 +5291,7 @@ export const COLLECTIONS = [
       "youre-aldready-under-my-genjutsu"
     ],
     "order": 52,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z"
   },
@@ -5270,7 +5309,7 @@ export const COLLECTIONS = [
     ],
     "productCount": 6,
     "order": 53,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
     "description": "Curated selection of our 599 products",
@@ -5283,7 +5322,7 @@ export const COLLECTIONS = [
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
     "order": 54,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "productHandles": [
       "japaneese-text-tshirt-cool-front-elevez",
       "back-dragon-print-epic-design-front-elevez",
@@ -5303,7 +5342,7 @@ export const COLLECTIONS = [
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z",
     "order": 55,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "productCount": 21,
     "productHandles": [
       "japaneese-text-tshirt-cool-front-elevez",
@@ -5347,7 +5386,7 @@ export const COLLECTIONS = [
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
     "order": 56,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "name": "349",
     "handle": "349",
     "description": "Curated selection of our 349 products",
@@ -5362,7 +5401,7 @@ export const COLLECTIONS = [
       "cute-butterfly-croptop-for-women",
       "cute-butterfly-croptop-for-women"
     ],
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 57,
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z",
@@ -5392,7 +5431,7 @@ export const COLLECTIONS = [
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
     "order": 58,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "name": "399",
     "handle": "399",
     "description": "Curated selection of our 399 products",
@@ -5405,7 +5444,7 @@ export const COLLECTIONS = [
     "handle": "funny",
     "name": "Funny",
     "order": 59,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z",
     "sectionMapping": null,
@@ -5437,7 +5476,7 @@ export const COLLECTIONS = [
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
     "order": 60,
-    "updatedAt": "2026-08-05T21:27:51.224Z"
+    "updatedAt": "2026-08-05T21:51:59.011Z"
   },
   {
     "id": "tag-1778700075663-21-941",
@@ -5457,7 +5496,7 @@ export const COLLECTIONS = [
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
     "order": 61,
-    "updatedAt": "2026-08-05T21:27:51.224Z"
+    "updatedAt": "2026-08-05T21:51:59.011Z"
   },
   {
     "id": "tag-1778700075663-22-530",
@@ -5468,7 +5507,7 @@ export const COLLECTIONS = [
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z",
     "order": 62,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "productCount": 2,
     "productHandles": [
       "grey-hoodie-trident-design",
@@ -5483,7 +5522,7 @@ export const COLLECTIONS = [
     "description": "Curated selection of our hoodie products",
     "handle": "hoodie",
     "name": "Hoodie",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 63,
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z",
@@ -5504,7 +5543,7 @@ export const COLLECTIONS = [
       "paisa-design-stylish-genz-tshirt",
       "paisa-design-stylish-genz-tshirt"
     ],
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 64,
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z",
@@ -5528,7 +5567,7 @@ export const COLLECTIONS = [
     "sectionMapping": null,
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 65
   },
   {
@@ -5545,7 +5584,7 @@ export const COLLECTIONS = [
     "image": "",
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 66
   },
   {
@@ -5559,7 +5598,7 @@ export const COLLECTIONS = [
     "source": "tag-generated",
     "createdAt": "2026-05-13T19:21:15.663Z",
     "order": 67,
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "handle": "699",
     "name": "699",
     "isSystem": false,
@@ -5575,7 +5614,7 @@ export const COLLECTIONS = [
     "sectionMapping": null,
     "createdAt": "2026-05-13T19:21:15.663Z",
     "source": "tag-generated",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 68,
     "name": "Unisex",
     "handle": "unisex",
@@ -5596,7 +5635,7 @@ export const COLLECTIONS = [
       "type": "",
       "tags": []
     },
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 66,
     "name": "Men",
     "handle": "men",
@@ -5614,7 +5653,7 @@ export const COLLECTIONS = [
     "image": "",
     "source": "generated",
     "createdAt": "2026-05-29T22:44:24.540Z",
-    "updatedAt": "2026-08-05T21:27:51.224Z",
+    "updatedAt": "2026-08-05T21:51:59.011Z",
     "order": 67,
     "filters": {
       "minPrice": 0,
@@ -5737,6 +5776,10 @@ export const AVAILABLE_COLORS = [
   {
     "name": "Lavender",
     "code": "#e5ccff"
+  },
+  {
+    "name": "BEIGE",
+    "code": "#d9b789"
   }
 ];
 
