@@ -59,7 +59,7 @@ class SyncDeployManager {
 
   // Save products before deploying
   async saveProducts() {
-    // Get products from window (synced from admin.js state) or fall back to localStorage
+    // Strictly use current admin state products to ensure deletions & edits are respected
     let products = window.state?.products || window.products || [];
     let collections = window.state?.collections || window.collections || [];
     let orders = window.state?.orders || window.orders || [];
@@ -68,36 +68,12 @@ class SyncDeployManager {
     let types = window.state?.availableTypes || [];
     let colors = window.state?.availableColors || [];
 
-    // If window.products is empty or only has the default 6, use localStorage
-    if (products.length <= 6) {
-      const storedProducts = localStorage.getItem('elevez_products');
-      if (storedProducts) {
-        try {
-          const parsedProducts = JSON.parse(storedProducts);
-          if (parsedProducts.length > products.length) {
-            console.log(`📦 Using localStorage products (${parsedProducts.length}) instead of window.products (${products.length})`);
-            products = parsedProducts;
-          }
-        } catch (e) {
-          console.warn('Could not parse localStorage products:', e);
-        }
-      }
-    }
-
-    // Fallback for collections if empty
-    if (!collections || collections.length === 0) {
-      const storedCollections = localStorage.getItem('elevez_collections');
-      if (storedCollections) {
-        try {
-          const parsedCollections = JSON.parse(storedCollections);
-          if (parsedCollections && parsedCollections.length > 0) {
-            console.log(`📦 Using localStorage collections (${parsedCollections.length}) instead of empty array`);
-            collections = parsedCollections;
-          }
-        } catch (e) {
-          console.warn('Could not parse localStorage collections:', e);
-        }
-      }
+    // Keep localStorage synced with current state
+    try {
+      localStorage.setItem('elevez_products', JSON.stringify(products));
+      localStorage.setItem('elevez_collections', JSON.stringify(collections));
+    } catch (e) {
+      console.warn('Could not update localStorage backup:', e);
     }
 
     console.log(`💾 Saving ${products.length} products and ${collections.length} collections for deployment...`);
