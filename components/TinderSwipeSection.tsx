@@ -294,11 +294,11 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
             <div className="relative w-full max-w-[270px] sm:max-w-sm aspect-[3/4] max-h-[340px] sm:max-h-[440px] mb-4 sm:mb-8">
               {/* Peek Background Card for Depth */}
               {peekProduct && (
-                <div className="absolute inset-0 bg-neutral-900 border-[3px] border-white/20 rounded-2xl scale-[0.93] translate-y-3 opacity-50 shadow-lg pointer-events-none overflow-hidden">
+                <div className="absolute inset-0 bg-neutral-900 border-[3px] border-white/20 rounded-2xl scale-[0.93] translate-y-3 opacity-50 shadow-lg pointer-events-none overflow-hidden flex items-center justify-center p-2">
                   <img
                     src={peekProduct.image || (peekProduct.images && peekProduct.images[0])}
                     alt="next card peek"
-                    className="w-full h-full object-cover grayscale opacity-30"
+                    className="max-h-full max-w-full object-contain filter grayscale opacity-30"
                   />
                 </div>
               )}
@@ -337,12 +337,12 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
                   NOPE ❌
                 </motion.div>
 
-                {/* Product Image */}
-                <div className="relative w-full h-[58%] bg-black overflow-hidden">
+                {/* Product Image - Contain Scaling */}
+                <div className="relative w-full h-[58%] bg-neutral-950 overflow-hidden flex items-center justify-center p-2">
                   <img
                     src={currentProduct.image || (currentProduct.images && currentProduct.images[0])}
                     alt={currentProduct.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none"
+                    className="max-h-full max-w-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)] group-hover:scale-105 transition-transform duration-500 pointer-events-none"
                   />
                   <div className="absolute top-2.5 right-2.5 bg-black text-[#00ff88] border-2 border-black font-mono text-[11px] sm:text-xs font-black px-2 py-0.5 uppercase tracking-wider shadow-[2px_2px_0px_0px_#fff]">
                     ₹{currentProduct.price}
@@ -459,11 +459,11 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
                         </span>
                       </div>
 
-                      <div className="relative aspect-[3/4] bg-neutral-900 border border-white/10 overflow-hidden mb-2 group-hover:border-[#00ff88] transition-colors">
+                      <div className="relative aspect-[3/4] bg-neutral-950 border border-white/10 overflow-hidden mb-2 group-hover:border-[#00ff88] transition-colors flex items-center justify-center p-1.5">
                         <img
                           src={mainImage}
                           alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                          className="max-h-full max-w-full object-contain group-hover:scale-108 transition-transform duration-500 filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]"
                         />
                       </div>
 
