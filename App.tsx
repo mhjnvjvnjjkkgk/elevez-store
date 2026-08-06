@@ -2166,15 +2166,14 @@ const PromoVideoSection = ({ setCursorVariant }: { setCursorVariant: (v: any) =>
 
 const NewArrivalsShowcaseSection = ({
   products,
-  onQuickView,
   onProductClick,
   setCursorVariant
 }: {
   products: any[];
-  onQuickView: (p: any) => void;
   onProductClick: (handle: string) => void;
   setCursorVariant: (v: any) => void;
 }) => {
+  const { openQuickView } = useQuickView();
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
@@ -2340,7 +2339,7 @@ const NewArrivalsShowcaseSection = ({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      onQuickView(product);
+                      openQuickView(product);
                     }}
                     className="bg-[#00ff88] text-black font-black text-xs px-3 py-1.5 uppercase tracking-wider border border-black shadow-[2px_2px_0px_0px_#000] hover:bg-white transition-colors"
                   >
@@ -2647,7 +2646,6 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
       {/* New Arrivals Animated Showcase */}
       <NewArrivalsShowcaseSection
         products={allProducts}
-        onQuickView={setSelectedProduct}
         onProductClick={(handle) => navigate(`/product/${handle}`)}
         setCursorVariant={setCursorVariant}
       />
