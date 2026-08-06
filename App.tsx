@@ -2097,7 +2097,7 @@ const PromoVideoSection = ({ setCursorVariant }: { setCursorVariant: (v: any) =>
         <div className="flex items-center justify-between mb-6 text-black font-black uppercase text-[10px] sm:text-xs tracking-widest border-b-[3px] border-black pb-3 select-none">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 bg-red-600 rounded-full animate-pulse" />
-            <span>LIVE BROADCAST // SS26</span>
+            <span>LIVE BROADCAST // ELEVEZ 2.0</span>
           </div>
           <span className="text-gray-400">PROMO FILM: FINALE</span>
         </div>
@@ -2155,7 +2155,7 @@ const PromoVideoSection = ({ setCursorVariant }: { setCursorVariant: (v: any) =>
             </button>
             
             <div className="hidden sm:block bg-black text-white px-2 py-1 font-mono text-[9px] font-black uppercase tracking-widest border border-white/20">
-              VERIFIED // SS26_CAMPAIGN_01
+              VERIFIED // ELEVEZ_2.0_CAMPAIGN
             </div>
           </div>
         </div>
@@ -2222,14 +2222,14 @@ const NewArrivalsShowcaseSection = ({
 
       gsap.fromTo(
         ".new-arrival-card",
-        { opacity: 0, y: 80, scale: 0.92, rotateY: -10 },
+        { opacity: 0, y: 80, scale: 0.9, rotateY: -12 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
           rotateY: 0,
-          stagger: 0.15,
-          duration: 0.9,
+          stagger: 0.12,
+          duration: 0.85,
           ease: "power3.out",
           scrollTrigger: {
             trigger: cardsRef.current,
@@ -2237,25 +2237,37 @@ const NewArrivalsShowcaseSection = ({
           }
         }
       );
+
+      gsap.to(".new-arrival-card", {
+        y: "-=6",
+        duration: 2.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.easeInOut",
+        stagger: {
+          each: 0.4,
+          from: "random"
+        }
+      });
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-16 sm:py-28 bg-black text-white relative z-30 overflow-hidden border-t-4 border-b-4 border-black">
-      <div className="absolute inset-0 bg-[radial-gradient(#00ff88_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
+    <section ref={sectionRef} className="py-12 sm:py-28 bg-black text-white relative z-30 overflow-hidden border-t-4 border-b-4 border-black">
+      <div className="absolute inset-0 bg-[radial-gradient(#00ff88_1px,transparent_1px)] [background-size:20px_20px] opacity-15 pointer-events-none" />
 
-      <div className="container mx-auto px-4 max-w-6xl relative z-10">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 border-b-2 border-white/20 pb-6 gap-4">
+      <div className="container mx-auto px-3 sm:px-4 max-w-6xl relative z-10">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 sm:mb-12 border-b-2 border-white/20 pb-4 sm:pb-6 gap-3">
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <span className="w-3 h-3 bg-[#00ff88] rounded-full animate-ping" />
-              <span className="text-[#00ff88] font-mono text-xs sm:text-sm font-black uppercase tracking-widest">
-                SS26 // EXCLUSIVE NEW DROPS
+            <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+              <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#00ff88] rounded-full animate-ping" />
+              <span className="text-[#00ff88] font-mono text-[10px] sm:text-sm font-black uppercase tracking-widest">
+                ELEVEZ 2.0 // EXCLUSIVE NEW DROPS
               </span>
             </div>
-            <h2 className="text-3xl sm:text-6xl font-black uppercase tracking-tighter font-syne text-white flex flex-wrap gap-[0.15em] perspective-1000">
+            <h2 className="text-2xl sm:text-6xl font-black uppercase tracking-tighter font-syne text-white flex flex-wrap gap-[0.12em] perspective-1000">
               {"NEW ARRIVALS".split("").map((char, index) => (
                 <span
                   key={index}
@@ -2267,12 +2279,12 @@ const NewArrivalsShowcaseSection = ({
             </h2>
           </div>
 
-          <div className="bg-[#00ff88] text-black border-2 border-black px-4 py-2 font-mono text-xs font-black uppercase tracking-wider shadow-[4px_4px_0px_0px_#fff]">
-            ⚡ 180GSM PURE COTTON COLLECTION
+          <div className="bg-[#00ff88] text-black border-2 border-black px-3 py-1.5 sm:px-4 sm:py-2 font-mono text-[10px] sm:text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_0px_#fff]">
+            ⚡ PURE COTTON COLLECTION
           </div>
         </div>
 
-        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        <div ref={cardsRef} className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-8">
           {displayProducts.map((product, idx) => {
             const meta = productMetaMap[Number(product.id)] || {
               tag: "🔥 NEW DROP",
@@ -2287,61 +2299,61 @@ const NewArrivalsShowcaseSection = ({
             return (
               <motion.div
                 key={product.id || idx}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="new-arrival-card bg-neutral-900 border-[3px] border-white/20 hover:border-[#00ff88] p-4 relative flex flex-col justify-between shadow-[8px_8px_0px_0px_#000] hover:shadow-[12px_12px_0px_0px_#00ff88] transition-all duration-300 group cursor-pointer"
+                whileHover={{ y: -10, scale: 1.03 }}
+                transition={{ type: "spring", stiffness: 350, damping: 22 }}
+                className="new-arrival-card bg-neutral-900 border-[2px] sm:border-[3px] border-white/20 hover:border-[#00ff88] p-2.5 sm:p-4 relative flex flex-col justify-between shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#00ff88] sm:hover:shadow-[14px_14px_0px_0px_#00ff88] transition-all duration-300 group cursor-pointer"
                 onMouseEnter={() => setCursorVariant('hover')}
                 onMouseLeave={() => setCursorVariant('default')}
                 onClick={() => onProductClick(handle)}
               >
                 <div>
-                  <div className="flex justify-between items-center mb-3">
-                    <span className={`text-[10px] sm:text-xs font-black px-2.5 py-1 uppercase tracking-wider border border-black shadow-[2px_2px_0px_0px_#000] ${meta.tagBg}`}>
+                  <div className="flex flex-wrap justify-between items-center mb-2 gap-1">
+                    <span className={`text-[8px] sm:text-xs font-black px-1.5 py-0.5 sm:px-2.5 sm:py-1 uppercase tracking-wider border border-black shadow-[1.5px_1.5px_0px_0px_#000] ${meta.tagBg}`}>
                       {meta.tag}
                     </span>
-                    <span className="text-[10px] font-mono text-[#00ff88] font-bold tracking-tight">
-                      ₹{product.price} <span className="line-through text-gray-500 text-[9px]">₹{product.originalPrice || 1000}</span>
+                    <span className="text-[9px] sm:text-xs font-mono text-[#00ff88] font-bold tracking-tight">
+                      ₹{product.price} <span className="line-through text-gray-500 text-[8px] sm:text-[9px]">₹{product.originalPrice || 1000}</span>
                     </span>
                   </div>
 
-                  <div className="relative aspect-[3/4] bg-black border-2 border-white/10 overflow-hidden mb-4 group-hover:border-[#00ff88] transition-colors">
+                  <div className="relative aspect-[3/4] bg-black border sm:border-2 border-white/10 overflow-hidden mb-2.5 sm:mb-4 group-hover:border-[#00ff88] transition-colors">
                     <img
                       src={mainImage}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 group-hover:opacity-0 absolute inset-0"
+                      className="w-full h-full object-cover group-hover:scale-108 transition-all duration-500 group-hover:opacity-0 absolute inset-0"
                       loading="lazy"
                     />
                     <img
                       src={secondaryImage}
                       alt={`${product.name} alternate`}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-0 group-hover:opacity-100 absolute inset-0"
+                      className="w-full h-full object-cover group-hover:scale-108 transition-all duration-500 opacity-0 group-hover:opacity-100 absolute inset-0"
                       loading="lazy"
                     />
 
-                    <div className="absolute bottom-2 left-2 right-2 bg-black/90 backdrop-blur-md border border-[#00ff88]/40 px-2 py-1 flex items-center justify-between text-[9px] font-mono text-gray-300">
-                      <span className="flex items-center gap-1.5 text-[#00ff88]">
-                        <span className="w-1.5 h-1.5 bg-[#00ff88] rounded-full animate-ping" />
-                        {meta.stockText}
+                    <div className="absolute bottom-1.5 left-1.5 right-1.5 bg-black/90 backdrop-blur-md border border-[#00ff88]/40 px-1.5 py-0.5 sm:px-2 sm:py-1 flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-gray-300">
+                      <span className="flex items-center gap-1 text-[#00ff88] truncate">
+                        <span className="w-1.5 h-1.5 bg-[#00ff88] rounded-full animate-ping shrink-0" />
+                        <span className="truncate">{meta.stockText}</span>
                       </span>
                     </div>
                   </div>
 
-                  <h3 className="text-xl font-black uppercase text-white font-syne mb-1 tracking-tight group-hover:text-[#00ff88] transition-colors line-clamp-1">
+                  <h3 className="text-sm sm:text-xl font-black uppercase text-white font-syne mb-0.5 tracking-tight group-hover:text-[#00ff88] transition-colors line-clamp-1">
                     {product.name}
                   </h3>
-                  <p className="text-xs text-gray-400 font-medium mb-3 line-clamp-2 leading-relaxed">
+                  <p className="text-[10px] sm:text-xs text-gray-400 font-medium mb-2.5 line-clamp-2 leading-tight sm:leading-relaxed">
                     {product.description}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2 mt-2">
-                  <span className="text-[10px] font-mono uppercase text-gray-400">180GSM PURE FABRIC</span>
+                <div className="pt-2 border-t border-white/10 flex items-center justify-between gap-1 mt-1">
+                  <span className="text-[8px] sm:text-[10px] font-mono uppercase text-gray-400 hidden xs:inline">PURE COTTON</span>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       openQuickView(product);
                     }}
-                    className="bg-[#00ff88] text-black font-black text-xs px-3 py-1.5 uppercase tracking-wider border border-black shadow-[2px_2px_0px_0px_#000] hover:bg-white transition-colors"
+                    className="w-full sm:w-auto bg-[#00ff88] text-black font-black text-[10px] sm:text-xs px-2 py-1.5 sm:px-3 sm:py-1.5 uppercase tracking-wider border border-black shadow-[2px_2px_0px_0px_#000] hover:bg-white transition-colors text-center"
                   >
                     QUICK VIEW
                   </button>
@@ -2531,14 +2543,14 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
               onMouseLeave={() => setCursorVariant('default')}
             >
               <div className="flex flex-col items-center">
-                <span className="text-[9px] font-black tracking-widest text-black mb-1">SS26 LABS</span>
+                <span className="text-[9px] font-black tracking-widest text-black mb-1">ELEVEZ 2.0 LABS</span>
                 {/* Simulated Barcode */}
                 <div className="flex gap-[2px] h-8 items-end">
                   {[2,3,1,2,1,4,1,2,3,1,2,1,3,1].map((w, idx) => (
                     <div key={idx} className="bg-black h-full" style={{ width: `${w}px` }} />
                   ))}
                 </div>
-                <span className="text-[8px] font-black tracking-widest text-black mt-1">CODE: ELVZ-SS26</span>
+                <span className="text-[8px] font-black tracking-widest text-black mt-1">CODE: ELEVEZ-2.0</span>
               </div>
             </motion.div>
           </motion.div>
@@ -2601,7 +2613,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
               {/* Right bracket */}
               <div className="hidden xl:flex flex-col items-start text-black font-black text-xs uppercase tracking-widest opacity-60 pl-8 border-l-[3px] border-black leading-tight">
-                <span>[ SS26 // 01 ]</span>
+                <span>[ ELEVEZ 2.0 ]</span>
                 <span>MODEL VERIFIED</span>
               </div>
             </div>
@@ -2656,7 +2668,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
           <InfiniteMarquee text="NEW DROPS // LIMITED EDITION // PREMIUM STREETWEAR // FREE SHIPPING ON ORDERS OVER ₹650 // JOIN THE REWARDS PROGRAM" className="py-2 sm:py-4 shadow-[0_4px_0_0_#000] sm:shadow-[0_8px_0_0_#000]" />
         </div>
         <div className="absolute w-[150%] transform rotate-[4deg] z-20">
-          <InfiniteMarquee text="EXCELLENCE IN EVERY DETAIL // CUSTOM STITCHED // SS26 RUNWAY // ELEVEZ LABS" className="py-2 sm:py-4 shadow-[0_4px_0_0_#000] sm:shadow-[0_8px_0_0_#000]" direction="right" />
+          <InfiniteMarquee text="EXCELLENCE IN EVERY DETAIL // CUSTOM STITCHED // ELEVEZ 2.0 RUNWAY // ELEVEZ LABS" className="py-2 sm:py-4 shadow-[0_4px_0_0_#000] sm:shadow-[0_8px_0_0_#000]" direction="right" />
         </div>
       </div>
 
@@ -2672,7 +2684,7 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-8">
               {[
                 { icon: Truck, title: "3-Day Express", desc: "Lightning-fast shipping straight to your doorstep.", tag: "3 Days" },
-                { icon: Shield, title: "180gsm Premium", desc: "Superior quality cotton that breathes and lasts.", tag: "180gsm" },
+                { icon: Shield, title: "Pure Cotton Premium", desc: "Superior quality pure cotton fabric that breathes and lasts.", tag: "Pure Cotton" },
                 { icon: Award, title: "Excellent Designs", desc: "Award-winning patterns that stand out.", tag: "Winner" },
                 { icon: Star, title: "Personality-Driven", desc: "Each piece tells your unique story.", tag: "Style" }
               ].map((item, i) => (
