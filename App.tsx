@@ -837,66 +837,66 @@ const QuickViewModal = () => {
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 50 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white w-full max-w-4xl border-[4px] md:border-[8px] border-black shadow-[12px_12px_0px_0px_#000] md:shadow-[24px_24px_0px_0px_#000] flex flex-col md:flex-row max-h-[90vh] md:max-h-[600px] relative overflow-hidden"
+          className="bg-white w-full max-w-4xl border-[4px] md:border-[8px] border-black shadow-[8px_8px_0px_0px_#000] md:shadow-[24px_24px_0px_0px_#000] flex flex-col md:flex-row max-h-[92vh] md:max-h-[600px] relative overflow-y-auto md:overflow-hidden rounded-2xl md:rounded-none"
         >
           {/* Close Button */}
           <button
             onClick={closeQuickView}
-            className="absolute top-4 right-4 z-50 bg-black text-white p-3 border-[3px] border-black shadow-[4px_4px_0px_0px_#00ff88] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+            className="absolute top-3 right-3 md:top-4 md:right-4 z-50 bg-black text-white p-2.5 md:p-3 border-[3px] border-black shadow-[3px_3px_0px_0px_#00ff88] md:shadow-[4px_4px_0px_0px_#00ff88] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all cursor-pointer"
           >
-            <X size={24} />
+            <X size={20} className="md:w-6 md:h-6" />
           </button>
 
-          {/* Image Side */}
-          <div className="w-full md:w-1/2 relative h-[300px] md:h-auto min-h-[300px] border-b-[4px] md:border-b-0 md:border-r-[4px] border-black bg-black">
+          {/* Image Side - Scaling Fixed */}
+          <div className="w-full md:w-1/2 relative h-[230px] md:h-auto min-h-[230px] max-h-[320px] md:max-h-none flex items-center justify-center border-b-[4px] md:border-b-0 md:border-r-[4px] border-black bg-neutral-950 p-3 shrink-0">
             <img
-              src={activeProduct.image}
+              src={activeProduct.image || (activeProduct.images && activeProduct.images[0])}
               alt={activeProduct.name}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="max-h-full max-w-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)]"
               loading="eager"
             />
           </div>
 
           {/* Details Side */}
-          <div className="w-full md:w-1/2 p-4 md:p-10 flex flex-col h-full min-h-0 overflow-y-auto">
-            <div className="mb-10 flex-shrink-0">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-[#00ff88] text-black text-[10px] font-black px-3 py-1 border-[2px] border-black uppercase tracking-widest">In Stock</span>
-                {activeProduct.tags?.includes('BESTSELLER') && <span className="bg-black text-white text-[10px] font-black px-3 py-1 border-[2px] border-black uppercase tracking-widest">Best Seller</span>}
+          <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col h-full min-h-0 overflow-y-auto">
+            <div className="mb-4 md:mb-8 flex-shrink-0">
+              <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                <span className="bg-[#00ff88] text-black text-[9px] sm:text-[10px] font-black px-2.5 py-0.5 border-[2px] border-black uppercase tracking-widest">In Stock</span>
+                {activeProduct.tags?.includes('BESTSELLER') && <span className="bg-black text-white text-[9px] sm:text-[10px] font-black px-2.5 py-0.5 border-[2px] border-black uppercase tracking-widest">Best Seller</span>}
               </div>
-              <h2 className="text-4xl font-black font-syne uppercase leading-none mb-4 text-black">{activeProduct.name}</h2>
-              <div className="flex items-center gap-4">
-                <span className="font-price text-4xl font-black text-[#00ff88]" style={{ WebkitTextStroke: '1.5px black' }}>₹{activeProduct.price}</span>
-                <span className="font-price text-red-400 line-through text-xl font-bold">₹{activeProduct.originalPrice}</span>
+              <h2 className="text-2xl sm:text-4xl font-black font-syne uppercase leading-tight mb-2 text-black">{activeProduct.name}</h2>
+              <div className="flex items-center gap-3">
+                <span className="font-price text-3xl sm:text-4xl font-black text-[#00ff88]" style={{ WebkitTextStroke: '1.5px black' }}>₹{activeProduct.price}</span>
+                <span className="font-price text-red-400 line-through text-lg sm:text-xl font-bold">₹{activeProduct.originalPrice || 1000}</span>
               </div>
             </div>
 
-            {/* Color Selection — Shopify-style dot swatches */}
+            {/* Color Selection */}
             {activeProduct.colors && activeProduct.colors.length > 0 && (
-              <div className="mb-8 flex-shrink-0">
-                <h3 className="text-xs font-black uppercase mb-4 tracking-widest" style={{ fontFamily: "'Space Mono', monospace" }}>
+              <div className="mb-4 md:mb-6 flex-shrink-0">
+                <h3 className="text-[10px] sm:text-xs font-black uppercase mb-2 tracking-widest" style={{ fontFamily: "'Space Mono', monospace" }}>
                   <span className="text-black opacity-40">Color:</span> <span className="transition-all duration-200 text-black">{selectedColor}</span>
                 </h3>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2.5">
                   {activeProduct.colors.map(color => (
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
                       title={color}
-                      className="flex flex-col items-center gap-1 group"
+                      className="flex flex-col items-center gap-1 group cursor-pointer"
                     >
                       <div
                         style={{
                           background: getColorCode(color),
                           border: color.toLowerCase() === 'white' ? '2px solid #333' : '2px solid transparent'
                         }}
-                        className={`w-9 h-9 rounded-full transition-all duration-200 ${
+                        className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full transition-all duration-200 ${
                           selectedColor === color
                             ? 'ring-2 ring-[#00ff88] ring-offset-2 scale-110 shadow-[0_0_0_2px_#000]'
                             : 'group-hover:scale-105 ring-2 ring-transparent ring-offset-1'
                         }`}
                       />
-                      <span className={`text-[9px] font-black uppercase tracking-wide ${
+                      <span className={`text-[8px] sm:text-[9px] font-black uppercase tracking-wide ${
                         selectedColor === color ? 'text-black' : 'text-black opacity-50'
                       }`}>{color}</span>
                     </button>
@@ -906,14 +906,14 @@ const QuickViewModal = () => {
             )}
 
             {/* Size Selection */}
-            <div className="mb-10 flex-shrink-0">
-              <h3 className="text-xs font-black uppercase text-black opacity-40 mb-4 tracking-widest">Select Size: <span className="text-black opacity-100">{selectedSize}</span></h3>
-              <div className="flex gap-4">
+            <div className="mb-6 flex-shrink-0">
+              <h3 className="text-[10px] sm:text-xs font-black uppercase text-black opacity-40 mb-2 tracking-widest">Select Size: <span className="text-black opacity-100">{selectedSize}</span></h3>
+              <div className="flex gap-2 sm:gap-3">
                 {(activeProduct.sizes && activeProduct.sizes.length > 0 ? activeProduct.sizes : getAvailableSizes()).map(size => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`w-12 h-12 flex items-center justify-center border-[3px] border-black font-black text-sm transition-all ${selectedSize === size ? 'bg-[#00ff88] text-black shadow-[4px_4px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000]'}`}
+                    className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center border-[2.5px] sm:border-[3px] border-black font-black text-xs sm:text-sm transition-all cursor-pointer ${selectedSize === size ? 'bg-[#00ff88] text-black shadow-[3px_3px_0px_0px_#000]' : 'bg-white text-black hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000]'}`}
                   >
                     {size}
                   </button>
@@ -921,17 +921,17 @@ const QuickViewModal = () => {
               </div>
             </div>
 
-            <div className="mt-auto space-y-4">
+            <div className="mt-auto space-y-2.5">
               <button
                 onClick={handleAddToCart}
-                className="w-full bg-[#00ff88] text-black font-black py-4 lg:py-3 border-[3px] lg:border-[2.5px] border-black uppercase tracking-widest shadow-[4px_4px_0px_0px_#000] lg:shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all text-sm lg:text-xs"
+                className="w-full bg-[#00ff88] text-black font-black py-3.5 sm:py-3 border-[3px] border-black uppercase tracking-widest shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all text-xs sm:text-sm cursor-pointer"
               >
                 Add to Cart - ₹{(activeProduct.price).toFixed(0)}
               </button>
               <Link
                 to={`/product/${activeProduct.id}`}
                 onClick={closeQuickView}
-                className="block w-full text-center py-4 text-xs font-black uppercase tracking-widest text-black hover:underline underline-offset-8"
+                className="block w-full text-center py-2 text-[10px] sm:text-xs font-black uppercase tracking-widest text-black hover:underline underline-offset-4"
               >
                 View Full Dossier
               </Link>
@@ -2302,62 +2302,64 @@ const NewArrivalsShowcaseSection = ({
                 key={product.id || idx}
                 whileHover={{ y: -10, scale: 1.03 }}
                 transition={{ type: "spring", stiffness: 350, damping: 22 }}
-                className="new-arrival-card bg-neutral-900 border-[2px] sm:border-[3px] border-white/20 hover:border-[#00ff88] p-2.5 sm:p-4 relative flex flex-col justify-between shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#00ff88] sm:hover:shadow-[14px_14px_0px_0px_#00ff88] transition-all duration-300 group cursor-pointer"
+                className="new-arrival-card bg-neutral-900 border-[2.5px] sm:border-[3px] border-white/20 hover:border-[#00ff88] p-2.5 sm:p-4 relative flex flex-col justify-between h-full min-h-[350px] sm:min-h-[440px] shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#00ff88] sm:hover:shadow-[14px_14px_0px_0px_#00ff88] transition-all duration-300 group cursor-pointer"
                 onMouseEnter={() => setCursorVariant('hover')}
                 onMouseLeave={() => setCursorVariant('default')}
                 onClick={() => onProductClick(handle)}
               >
-                <div>
-                  <div className="flex flex-wrap justify-between items-center mb-2 gap-1">
-                    <span className={`text-[8px] sm:text-xs font-black px-1.5 py-0.5 sm:px-2.5 sm:py-1 uppercase tracking-wider border border-black shadow-[1.5px_1.5px_0px_0px_#000] ${meta.tagBg}`}>
-                      {meta.tag}
-                    </span>
-                    <span className="text-[9px] sm:text-xs font-mono text-[#00ff88] font-bold tracking-tight">
-                      ₹{product.price} <span className="line-through text-gray-500 text-[8px] sm:text-[9px]">₹{product.originalPrice || 1000}</span>
-                    </span>
-                  </div>
-
-                  <div className="relative aspect-[3/4] bg-black border sm:border-2 border-white/10 overflow-hidden mb-2.5 sm:mb-4 group-hover:border-[#00ff88] transition-colors">
-                    <img
-                      src={mainImage}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-108 transition-all duration-500 group-hover:opacity-0 absolute inset-0"
-                      loading="lazy"
-                    />
-                    <img
-                      src={secondaryImage}
-                      alt={`${product.name} alternate`}
-                      className="w-full h-full object-cover group-hover:scale-108 transition-all duration-500 opacity-0 group-hover:opacity-100 absolute inset-0"
-                      loading="lazy"
-                    />
-
-                    <div className="absolute bottom-1.5 left-1.5 right-1.5 bg-black/90 backdrop-blur-md border border-[#00ff88]/40 px-1.5 py-0.5 sm:px-2 sm:py-1 flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-gray-300">
-                      <span className="flex items-center gap-1 text-[#00ff88] truncate">
-                        <span className="w-1.5 h-1.5 bg-[#00ff88] rounded-full animate-ping shrink-0" />
-                        <span className="truncate">{meta.stockText}</span>
+                <div className="flex flex-col h-full justify-between">
+                  <div>
+                    <div className="flex flex-wrap justify-between items-center mb-2 gap-1">
+                      <span className={`text-[8px] sm:text-xs font-black px-1.5 py-0.5 sm:px-2.5 sm:py-1 uppercase tracking-wider border border-black shadow-[1.5px_1.5px_0px_0px_#000] ${meta.tagBg}`}>
+                        {meta.tag}
+                      </span>
+                      <span className="text-[9px] sm:text-xs font-mono text-[#00ff88] font-bold tracking-tight">
+                        ₹{product.price} <span className="line-through text-gray-500 text-[8px] sm:text-[9px]">₹{product.originalPrice || 1000}</span>
                       </span>
                     </div>
+
+                    <div className="relative aspect-[3/4] bg-black border sm:border-2 border-white/10 overflow-hidden mb-2 sm:mb-3 group-hover:border-[#00ff88] transition-colors">
+                      <img
+                        src={mainImage}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-108 transition-all duration-500 group-hover:opacity-0 absolute inset-0"
+                        loading="lazy"
+                      />
+                      <img
+                        src={secondaryImage}
+                        alt={`${product.name} alternate`}
+                        className="w-full h-full object-cover group-hover:scale-108 transition-all duration-500 opacity-0 group-hover:opacity-100 absolute inset-0"
+                        loading="lazy"
+                      />
+
+                      <div className="absolute bottom-1.5 left-1.5 right-1.5 bg-black/90 backdrop-blur-md border border-[#00ff88]/40 px-1.5 py-0.5 sm:px-2 sm:py-1 flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-gray-300">
+                        <span className="flex items-center gap-1 text-[#00ff88] truncate">
+                          <span className="w-1.5 h-1.5 bg-[#00ff88] rounded-full animate-ping shrink-0" />
+                          <span className="truncate">{meta.stockText}</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <h3 className="text-xs sm:text-xl font-black uppercase text-white font-syne mb-0.5 tracking-tight group-hover:text-[#00ff88] transition-colors line-clamp-1">
+                      {product.name}
+                    </h3>
+                    <p className="text-[10px] sm:text-xs text-gray-400 font-medium mb-2 line-clamp-1 leading-tight sm:leading-relaxed">
+                      {product.description}
+                    </p>
                   </div>
 
-                  <h3 className="text-sm sm:text-xl font-black uppercase text-white font-syne mb-0.5 tracking-tight group-hover:text-[#00ff88] transition-colors line-clamp-1">
-                    {product.name}
-                  </h3>
-                  <p className="text-[10px] sm:text-xs text-gray-400 font-medium mb-2.5 line-clamp-2 leading-tight sm:leading-relaxed">
-                    {product.description}
-                  </p>
-                </div>
-
-                <div className="pt-2 border-t border-white/10 flex items-center justify-between gap-1 mt-1">
-                  <span className="text-[8px] sm:text-[10px] font-mono uppercase text-gray-400 hidden xs:inline">PURE COTTON</span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openQuickView(product);
-                    }}
-                    className="w-full sm:w-auto bg-[#00ff88] text-black font-black text-[10px] sm:text-xs px-2 py-1.5 sm:px-3 sm:py-1.5 uppercase tracking-wider border border-black shadow-[2px_2px_0px_0px_#000] hover:bg-white transition-colors text-center"
-                  >
-                    QUICK VIEW
-                  </button>
+                  <div className="pt-2 border-t border-white/10 flex items-center justify-between gap-1 mt-auto shrink-0 relative z-10 w-full">
+                    <span className="text-[8px] sm:text-[10px] font-mono uppercase text-gray-400 hidden xs:inline">PURE COTTON</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openQuickView(product);
+                      }}
+                      className="w-full sm:w-auto bg-[#00ff88] text-black font-black text-[10px] sm:text-xs px-2.5 py-1.5 sm:px-3 sm:py-1.5 uppercase tracking-wider border border-black shadow-[2px_2px_0px_0px_#000] hover:bg-white transition-colors text-center cursor-pointer"
+                    >
+                      QUICK VIEW
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             );

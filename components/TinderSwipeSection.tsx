@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { Heart, X, RotateCcw, Sparkles, Eye, CheckCircle2, ArrowRight, Volume2 } from 'lucide-react';
+import { Heart, X, RotateCcw, Sparkles, Eye, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useQuickView } from '../App';
 
 interface TinderSwipeSectionProps {
@@ -9,7 +9,7 @@ interface TinderSwipeSectionProps {
   setCursorVariant: (v: any) => void;
 }
 
-// Web Audio API Sound Synthesizer (No external asset files required)
+// Web Audio API Sound Synthesizer
 const playAudioFx = (type: 'like' | 'pass' | 'undo' | 'victory') => {
   try {
     const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
@@ -53,7 +53,7 @@ const playAudioFx = (type: 'like' | 'pass' | 'undo' | 'victory') => {
       osc.start();
       osc.stop(ctx.currentTime + 0.08);
     } else if (type === 'victory') {
-      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      const notes = [523.25, 659.25, 783.99, 1046.50];
       notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -68,7 +68,7 @@ const playAudioFx = (type: 'like' | 'pass' | 'undo' | 'victory') => {
       });
     }
   } catch (e) {
-    // Silent fallback if audio context is blocked
+    // Silent fallback
   }
 };
 
@@ -79,29 +79,84 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
 }) => {
   const { openQuickView } = useQuickView();
 
-  // Filter pool for swipe deck
-  const swipePool = useMemo(() => {
-    if (!products || products.length === 0) return [];
-    const categoriesMap = new Map<string, any[]>();
-    products.forEach(p => {
+  const [swipedHistory, setSwipedHistory] = useState<{ action: 'like' | 'pass'; product: any }[]>([]);
+  const [showResults, setShowResults] = useState(false);
+
+  // Dynamic next-card selection helper
+  const getNextAdaptiveProduct = useCallback((history: { action: 'like' | 'pass'; product: any }[]) => {
+    if (!products || products.length === 0) return null;
+
+    const seenIds = new Set(history.map(h => h.product.id));
+    const unswiped = products.filter(p => !seenIds.has(p.id));
+    if (unswiped.length === 0) return null;
+
+    if (history.length === 0) {
+      // Card 1: Random selection from distinct catalog pool
+      const anchorIndex = Math.floor(Math.random() * unswiped.length);
+      return unswiped[anchorIndex] || unswiped[0];
+    }
+
+    const lastSwipe = history[history.length - 1];
+    const categoryWeights: Record<string, number> = {};
+    let targetPrice = 1500;
+    let likedCount = 0;
+
+    history.forEach(h => {
+      const cat = h.product.category || 'Streetwear';
+      if (h.action === 'like') {
+        categoryWeights[cat] = (categoryWeights[cat] || 0) + 4;
+        targetPrice += Number(h.product.price || 1500);
+        likedCount++;
+      } else {
+        categoryWeights[cat] = (categoryWeights[cat] || 0) - 2;
+      }
+    });
+
+    if (likedCount > 0) targetPrice = targetPrice / likedCount;
+
+    // Score unswiped candidates in real time
+    const candidates = unswiped.map(p => {
+      let score = 50;
       const cat = p.category || 'Streetwear';
-      if (!categoriesMap.has(cat)) categoriesMap.set(cat, []);
-      categoriesMap.get(cat)?.push(p);
+
+      // Category Weight Boost
+      score += (categoryWeights[cat] || 0) * 10;
+
+      // Price Proximity
+      const pPrice = Number(p.price || 1500);
+      const priceDiff = Math.abs(pPrice - targetPrice);
+      score += Math.max(0, 15 - (priceDiff / 120));
+
+      // Adaptive Next-Guess Direction:
+      if (lastSwipe.action === 'like') {
+        // If last swipe was LIKE -> favor same category / style family
+        if (cat === (lastSwipe.product.category || 'Streetwear')) score += 25;
+      } else {
+        // If last swipe was PASS -> favor contrasting category / style
+        if (cat !== (lastSwipe.product.category || 'Streetwear')) score += 25;
+      }
+
+      // Add entropy so deck is non-deterministic
+      score += Math.random() * 20;
+
+      return { product: p, score };
     });
 
-    const pool: any[] = [];
-    categoriesMap.forEach(items => {
-      pool.push(...items.slice(0, 2));
-    });
-
-    return pool.length >= 5 ? pool.slice(0, 7) : products.slice(0, 7);
+    candidates.sort((a, b) => b.score - a.score);
+    return candidates[0]?.product || unswiped[0];
   }, [products]);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [likedProducts, setLikedProducts] = useState<any[]>([]);
-  const [passedProducts, setPassedProducts] = useState<any[]>([]);
-  const [swipeHistory, setSwipeHistory] = useState<{ action: 'like' | 'pass'; product: any }[]>([]);
-  const [showResults, setShowResults] = useState(false);
+  // Current active product dynamically derived from history
+  const currentProduct = useMemo(() => {
+    return getNextAdaptiveProduct(swipedHistory);
+  }, [swipedHistory, getNextAdaptiveProduct]);
+
+  // Peek card for visual depth stack
+  const peekProduct = useMemo(() => {
+    if (!currentProduct) return null;
+    const tempHistory = [...swipedHistory, { action: 'pass' as const, product: currentProduct }];
+    return getNextAdaptiveProduct(tempHistory);
+  }, [swipedHistory, currentProduct, getNextAdaptiveProduct]);
 
   // Motion values for swipe drag
   const x = useMotionValue(0);
@@ -109,103 +164,83 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
   const likeOpacity = useTransform(x, [20, 120], [0, 1]);
   const nopeOpacity = useTransform(x, [-20, -120], [0, 1]);
 
-  const currentProduct = swipePool[currentIndex];
-
   const handleSwipe = useCallback((direction: 'like' | 'pass') => {
     if (!currentProduct) return;
 
     playAudioFx(direction);
 
-    let updatedLiked = likedProducts;
-    let updatedPassed = passedProducts;
+    const newHistory = [...swipedHistory, { action: direction, product: currentProduct }];
+    setSwipedHistory(newHistory);
 
-    if (direction === 'like') {
-      updatedLiked = [...likedProducts, currentProduct];
-      setLikedProducts(updatedLiked);
-      setSwipeHistory(prev => [...prev, { action: 'like', product: currentProduct }]);
-    } else {
-      updatedPassed = [...passedProducts, currentProduct];
-      setPassedProducts(updatedPassed);
-      setSwipeHistory(prev => [...prev, { action: 'pass', product: currentProduct }]);
-    }
+    const totalSwipes = newHistory.length;
+    const likedCount = newHistory.filter(h => h.action === 'like').length;
 
-    const nextIdx = currentIndex + 1;
-    if (nextIdx >= swipePool.length || updatedLiked.length >= 4) {
+    // Trigger results after 5 swipes or 3 likes
+    if (totalSwipes >= 5 || likedCount >= 3) {
       setShowResults(true);
       playAudioFx('victory');
-    } else {
-      setCurrentIndex(nextIdx);
     }
 
     x.set(0);
-  }, [currentProduct, currentIndex, likedProducts, passedProducts, swipePool.length, x]);
+  }, [currentProduct, swipedHistory, x]);
 
   const handleUndo = () => {
-    if (swipeHistory.length === 0 || currentIndex === 0) return;
+    if (swipedHistory.length === 0) return;
 
     playAudioFx('undo');
-    const lastEntry = swipeHistory[swipeHistory.length - 1];
-    setSwipeHistory(prev => prev.slice(0, -1));
-
-    if (lastEntry.action === 'like') {
-      setLikedProducts(prev => prev.filter(p => p.id !== lastEntry.product.id));
-    } else {
-      setPassedProducts(prev => prev.filter(p => p.id !== lastEntry.product.id));
-    }
-
-    setCurrentIndex(prev => Math.max(0, prev - 1));
+    setSwipedHistory(prev => prev.slice(0, -1));
     setShowResults(false);
     x.set(0);
   };
 
   const handleReset = () => {
     playAudioFx('undo');
-    setCurrentIndex(0);
-    setLikedProducts([]);
-    setPassedProducts([]);
-    setSwipeHistory([]);
+    setSwipedHistory([]);
     setShowResults(false);
     x.set(0);
   };
 
-  // Smart Recommendation Scoring Algorithm
+  // High-Intelligent Adaptive Recommendation Scoring
   const recommendedProducts = useMemo(() => {
     if (!showResults) return [];
+
+    const liked = swipedHistory.filter(h => h.action === 'like').map(h => h.product);
+    const passed = swipedHistory.filter(h => h.action === 'pass').map(h => h.product);
 
     const categoryWeights: Record<string, number> = {};
     let totalLikedPrice = 0;
 
-    likedProducts.forEach(p => {
+    liked.forEach(p => {
       const cat = p.category || 'Streetwear';
-      categoryWeights[cat] = (categoryWeights[cat] || 0) + 3;
+      categoryWeights[cat] = (categoryWeights[cat] || 0) + 4;
       totalLikedPrice += Number(p.price || 1500);
     });
 
-    passedProducts.forEach(p => {
+    passed.forEach(p => {
       const cat = p.category || 'Streetwear';
-      categoryWeights[cat] = (categoryWeights[cat] || 0) - 1;
+      categoryWeights[cat] = (categoryWeights[cat] || 0) - 2;
     });
 
-    const avgPrice = likedProducts.length > 0 ? totalLikedPrice / likedProducts.length : 1500;
+    const avgPrice = liked.length > 0 ? totalLikedPrice / liked.length : 1500;
 
-    // Score catalog products
     const scored = products.map(p => {
-      let score = 50;
+      let score = 55;
       const cat = p.category || 'Streetwear';
 
-      score += (categoryWeights[cat] || 0) * 12;
+      score += (categoryWeights[cat] || 0) * 10;
 
       const pPrice = Number(p.price || 1500);
       const priceDiff = Math.abs(pPrice - avgPrice);
       score += Math.max(0, 20 - (priceDiff / 100));
 
-      if (likedProducts.some(lp => lp.id === p.id)) {
-        score += 35;
+      if (liked.some(lp => lp.id === p.id)) {
+        score += 30;
       }
 
-      score += (Number(p.id) % 7);
+      // Add session entropy
+      score += (Number(p.id) % 9) + (Math.random() * 5);
 
-      const matchPercentage = Math.min(99, Math.max(78, Math.round(score)));
+      const matchPercentage = Math.min(99, Math.max(81, Math.round(score)));
 
       return {
         ...p,
@@ -213,12 +248,12 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
       };
     });
 
-    const passedIds = new Set(passedProducts.map(p => p.id));
+    const passedIds = new Set(passed.map(p => p.id));
     return scored
       .filter(p => !passedIds.has(p.id))
       .sort((a, b) => b.matchPercentage - a.matchPercentage)
       .slice(0, 6);
-  }, [showResults, likedProducts, passedProducts, products]);
+  }, [showResults, swipedHistory, products]);
 
   return (
     <section className="py-4 sm:py-16 bg-[#09090b] text-white relative z-30 overflow-hidden border-t-4 border-b-4 border-black min-h-[90vh] sm:min-h-0 flex flex-col justify-center snap-start scroll-mt-6">
@@ -228,19 +263,19 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#ff007f]/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-3 sm:px-4 max-w-4xl relative z-10 flex flex-col justify-center my-auto">
-        {/* Header - Compact for Mobile Viewport Fit */}
+        {/* Header */}
         <div className="text-center mb-3 sm:mb-8">
           <div className="inline-flex items-center gap-1.5 bg-[#00ff88] text-black font-mono text-[9px] sm:text-xs font-black uppercase tracking-widest px-2.5 py-1 border-2 border-black shadow-[3px_3px_0px_0px_#fff] mb-2 sm:mb-3">
             <Sparkles size={13} className="animate-spin" />
-            FIND YOUR NEXT FAVORITE
+            AI ADAPTIVE TASTE MATCHER
           </div>
 
           <h2 className="text-2xl sm:text-5xl font-black uppercase tracking-tighter font-syne text-white mb-1">
-            TASTE MATCHER
+            FIND YOUR NEXT FAVORITE
           </h2>
 
           <p className="text-gray-400 font-medium text-[10px] sm:text-xs max-w-xs sm:max-w-md mx-auto uppercase tracking-wider font-mono">
-            SWIPE RIGHT FOR LIKE // SWIPE LEFT TO PASS // AI PICKS YOUR MATCHES
+            SWIPE RIGHT FOR LIKE // SWIPE LEFT TO PASS // ADAPTIVE REAL-TIME GUESSING
           </p>
         </div>
 
@@ -251,18 +286,21 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
             <div className="w-full max-w-[260px] sm:max-w-sm bg-neutral-800 border-2 border-black shadow-[2px_2px_0px_0px_#fff] h-2 rounded-full mb-3 sm:mb-6 overflow-hidden p-0.5">
               <div
                 className="bg-[#00ff88] h-full rounded-full transition-all duration-300"
-                style={{ width: `${((currentIndex) / swipePool.length) * 100}%` }}
+                style={{ width: `${(swipedHistory.length / 5) * 100}%` }}
               />
             </div>
 
-            {/* Card Deck Area - Scaled for Single Mobile Viewport */}
+            {/* Card Deck Area */}
             <div className="relative w-full max-w-[270px] sm:max-w-sm aspect-[3/4] max-h-[340px] sm:max-h-[440px] mb-4 sm:mb-8">
-              {/* Background Illusion Cards */}
-              {currentIndex + 1 < swipePool.length && (
-                <div className="absolute inset-0 bg-neutral-900 border-[3px] border-white/20 rounded-2xl scale-[0.93] translate-y-3 opacity-50 shadow-lg pointer-events-none" />
-              )}
-              {currentIndex + 2 < swipePool.length && (
-                <div className="absolute inset-0 bg-neutral-900 border-[3px] border-white/20 rounded-2xl scale-[0.86] translate-y-6 opacity-25 shadow-lg pointer-events-none" />
+              {/* Peek Background Card for Depth */}
+              {peekProduct && (
+                <div className="absolute inset-0 bg-neutral-900 border-[3px] border-white/20 rounded-2xl scale-[0.93] translate-y-3 opacity-50 shadow-lg pointer-events-none overflow-hidden">
+                  <img
+                    src={peekProduct.image || (peekProduct.images && peekProduct.images[0])}
+                    alt="next card peek"
+                    className="w-full h-full object-cover grayscale opacity-30"
+                  />
+                </div>
               )}
 
               {/* Active Draggable Card */}
@@ -326,16 +364,15 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
                   </div>
 
                   <div className="text-[8px] sm:text-[9px] font-mono uppercase text-gray-500 flex items-center justify-between border-t border-white/10 pt-1.5">
-                    <span>SWIPE CARDS OR TAP</span>
+                    <span>REAL-TIME ADAPTIVE GUESS</span>
                     <span className="text-[#00ff88]">PURE COTTON</span>
                   </div>
                 </div>
               </motion.div>
             </div>
 
-            {/* Interactive Control Buttons */}
+            {/* Controls */}
             <div className="flex items-center gap-4 sm:gap-6">
-              {/* NOPE Button */}
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -346,14 +383,13 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
                 <X size={24} strokeWidth={3} />
               </motion.button>
 
-              {/* UNDO Button */}
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleUndo}
-                disabled={currentIndex === 0}
+                disabled={swipedHistory.length === 0}
                 className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full border-[2.5px] flex items-center justify-center transition-all ${
-                  currentIndex === 0
+                  swipedHistory.length === 0
                     ? 'border-gray-700 text-gray-700 bg-neutral-900 cursor-not-allowed'
                     : 'border-yellow-400 text-yellow-400 bg-black shadow-[3px_3px_0px_0px_#facc15] hover:bg-yellow-400 hover:text-black cursor-pointer'
                 }`}
@@ -362,7 +398,6 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
                 <RotateCcw size={18} strokeWidth={2.5} />
               </motion.button>
 
-              {/* LIKE Button */}
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -386,7 +421,7 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
               <div>
                 <div className="flex items-center justify-center sm:justify-start gap-1.5 text-[#00ff88] font-mono text-[10px] sm:text-xs font-black uppercase mb-0.5">
                   <CheckCircle2 size={14} />
-                  TASTE ANALYSIS COMPLETE
+                  ADAPTIVE ANALYSIS COMPLETE
                 </div>
                 <h3 className="text-xl sm:text-3xl font-black uppercase text-white font-syne">
                   TOP MATCHES FOR YOU
@@ -415,7 +450,6 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
                     onClick={() => onProductClick(handle)}
                   >
                     <div>
-                      {/* Match Score Badge */}
                       <div className="flex items-center justify-between mb-1.5 gap-1">
                         <span className="bg-[#00ff88] text-black text-[8px] sm:text-[10px] font-black px-1.5 py-0.5 uppercase tracking-wider border border-black shadow-[1.5px_1.5px_0px_0px_#000] truncate">
                           🔥 {product.matchPercentage}% MATCH
@@ -425,7 +459,6 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
                         </span>
                       </div>
 
-                      {/* Image */}
                       <div className="relative aspect-[3/4] bg-neutral-900 border border-white/10 overflow-hidden mb-2 group-hover:border-[#00ff88] transition-colors">
                         <img
                           src={mainImage}
@@ -467,7 +500,6 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
               })}
             </div>
 
-            {/* Bottom Action Footer */}
             <div className="text-center pt-2 border-t border-white/10">
               <button
                 onClick={handleReset}
