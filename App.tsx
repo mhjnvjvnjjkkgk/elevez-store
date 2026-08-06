@@ -43,6 +43,7 @@ import { CheckoutExitPopup } from './components/CheckoutExitPopup';
 import { InstagramFeed } from './components/InstagramFeed';
 import { useLoyalty } from './hooks/useLoyalty';
 import { LoyaltyRulesNotificationBanner } from './components/LoyaltyRulesNotificationBanner';
+import { TinderSwipeSection } from './components/TinderSwipeSection';
 import { VelocityHeader } from './components/VelocityHeader';
 import { InfiniteMarquee } from './components/InfiniteMarquee';
 import { ScrollVelocityGrid } from './components/ScrollVelocityGrid';
@@ -309,7 +310,7 @@ const QuickViewProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   );
 };
 
-const useQuickView = () => {
+export const useQuickView = () => {
   const context = useContext(QuickViewContext);
   if (!context) throw new Error('useQuickView must be used within a QuickViewProvider');
   return context;
@@ -2657,6 +2658,13 @@ const Home = ({ setCursorVariant }: { setCursorVariant: (v: any) => void }) => {
 
       {/* New Arrivals Animated Showcase */}
       <NewArrivalsShowcaseSection
+        products={allProducts}
+        onProductClick={(handle) => navigate(`/product/${handle}`)}
+        setCursorVariant={setCursorVariant}
+      />
+
+      {/* Tinder-Style Taste Matcher Section */}
+      <TinderSwipeSection
         products={allProducts}
         onProductClick={(handle) => navigate(`/product/${handle}`)}
         setCursorVariant={setCursorVariant}
