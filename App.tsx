@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, createContext, useContext, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef, createContext, useContext, useLayoutEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSEO } from './hooks/useSEO';
