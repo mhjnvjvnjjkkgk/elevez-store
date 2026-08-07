@@ -69,14 +69,14 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({ productId, onTog
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={handleToggleWishlist}
-      className={`w-8 h-8 sm:w-9 sm:h-9 border-2 border-black rounded-lg transition-all flex items-center justify-center cursor-pointer ${
+      className={`w-9 h-9 sm:w-10 sm:h-10 border-[2.5px] border-black rounded-xl transition-all flex items-center justify-center cursor-pointer ${
         isWishlisted
-          ? 'bg-[#ff007f] text-white shadow-[2px_2px_0px_0px_#00ff88]'
-          : 'bg-black text-[#ff007f] shadow-[2px_2px_0px_0px_#000] hover:bg-[#ff007f] hover:text-white'
+          ? 'bg-[#ff007f] text-white shadow-[3px_3px_0px_0px_#00ff88]'
+          : 'bg-black text-[#ff007f] shadow-[3px_3px_0px_0px_#ff007f] hover:bg-[#ff007f] hover:text-white'
       }`}
       title={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
     >
-      <Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} strokeWidth={2.5} />
+      <Heart size={18} fill={isWishlisted ? 'currentColor' : 'none'} strokeWidth={2.5} />
     </motion.button>
   );
 };

@@ -2286,11 +2286,11 @@ const NewArrivalsShowcaseSection = ({
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-6 sm:py-20 bg-black text-white relative z-30 overflow-hidden border-t-4 border-b-4 border-black">
+    <section ref={sectionRef} className="pt-6 pb-14 sm:pt-20 sm:pb-28 bg-black text-white relative z-30 overflow-x-hidden border-t-4 border-b-4 border-black">
       <div className="absolute inset-0 bg-[radial-gradient(#00ff88_1px,transparent_1px)] [background-size:20px_20px] opacity-15 pointer-events-none" />
 
       <div className="container mx-auto px-3 sm:px-4 max-w-6xl relative z-10">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-3 sm:mb-8 border-b-2 border-white/20 pb-3 sm:pb-6 gap-2 sm:gap-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-4 sm:mb-10 border-b-2 border-white/20 pb-3 sm:pb-6 gap-2 sm:gap-3">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#00ff88] rounded-full animate-ping" />
@@ -2310,12 +2310,12 @@ const NewArrivalsShowcaseSection = ({
             </h2>
           </div>
 
-          <div className="bg-[#00ff88] text-black border-2 border-black px-2.5 py-1 sm:px-4 sm:py-2 font-mono text-[9px] sm:text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_#fff]">
+          <div className="bg-[#00ff88] text-black border-2 border-black px-2.5 py-1 sm:px-4 sm:py-2 font-mono text-[9px] sm:text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_0px_#fff]">
             ⚡ PURE COTTON COLLECTION
           </div>
         </div>
 
-        <div ref={cardsRef} className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6">
+        <div ref={cardsRef} className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 pb-2">
           {displayProducts.map((product, idx) => {
             const meta = productMetaMap[Number(product.id)] || {
               tag: "🔥 NEW DROP",
@@ -2332,15 +2332,15 @@ const NewArrivalsShowcaseSection = ({
                 key={product.id || idx}
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 350, damping: 22 }}
-                className="new-arrival-card bg-neutral-900 border-[2.5px] sm:border-[3.5px] border-black hover:border-[#00ff88] p-2.5 sm:p-4 relative flex flex-col justify-between h-full min-h-[340px] sm:min-h-[440px] shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#00ff88] sm:hover:shadow-[12px_12px_0px_0px_#00ff88] transition-all duration-300 group cursor-pointer rounded-xl"
+                className="new-arrival-card bg-neutral-900 border-[3px] border-black hover:border-[#00ff88] p-3 sm:p-4 relative flex flex-col justify-between h-full min-h-[350px] sm:min-h-[440px] shadow-[5px_5px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#00ff88] sm:hover:shadow-[12px_12px_0px_0px_#00ff88] transition-all duration-300 group cursor-pointer rounded-2xl"
                 onMouseEnter={() => setCursorVariant('hover')}
                 onMouseLeave={() => setCursorVariant('default')}
                 onClick={() => onProductClick(handle)}
               >
                 <div className="flex flex-col h-full justify-between">
                   <div>
-                    <div className="flex flex-wrap justify-between items-center mb-1.5 gap-1">
-                      <span className={`text-[8px] sm:text-xs font-black px-1.5 py-0.5 sm:px-2.5 sm:py-1 uppercase tracking-wider border border-black shadow-[1.5px_1.5px_0px_0px_#000] ${meta.tagBg}`}>
+                    <div className="flex flex-wrap justify-between items-center mb-2 gap-1">
+                      <span className={`text-[8px] sm:text-xs font-black px-2 py-0.5 sm:px-2.5 sm:py-1 uppercase tracking-wider border border-black shadow-[1.5px_1.5px_0px_0px_#000] rounded-md ${meta.tagBg}`}>
                         {meta.tag}
                       </span>
                       <span className="text-[9px] sm:text-xs font-mono text-[#00ff88] font-bold tracking-tight">
@@ -2348,7 +2348,7 @@ const NewArrivalsShowcaseSection = ({
                       </span>
                     </div>
 
-                    <div className="relative aspect-[3/4] bg-black border sm:border-2 border-white/10 overflow-hidden mb-2 sm:mb-3 group-hover:border-[#00ff88] transition-colors rounded-lg">
+                    <div className="relative aspect-[3/3.8] sm:aspect-[3/4] bg-black border sm:border-2 border-white/10 overflow-hidden mb-2 sm:mb-3 group-hover:border-[#00ff88] transition-colors rounded-xl">
                       <img
                         src={mainImage}
                         alt={product.name}
@@ -2362,7 +2362,7 @@ const NewArrivalsShowcaseSection = ({
                         loading="lazy"
                       />
 
-                      <div className="absolute bottom-1.5 left-1.5 right-1.5 bg-black/90 backdrop-blur-md border border-[#00ff88]/40 px-1.5 py-0.5 sm:px-2 sm:py-1 flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-gray-300">
+                      <div className="absolute bottom-1.5 left-1.5 right-1.5 bg-black/90 backdrop-blur-md border border-[#00ff88]/40 px-1.5 py-0.5 sm:px-2 sm:py-1 flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-gray-300 rounded-md">
                         <span className="flex items-center gap-1 text-[#00ff88] truncate">
                           <span className="w-1.5 h-1.5 bg-[#00ff88] rounded-full animate-ping shrink-0" />
                           <span className="truncate">{meta.stockText}</span>
@@ -2378,16 +2378,16 @@ const NewArrivalsShowcaseSection = ({
                     </p>
                   </div>
 
-                  {/* Footer Action Bar: QUICK VIEW + HEART WISHLIST BUTTON */}
-                  <div className="pt-2 border-t border-white/10 flex items-center justify-between gap-1.5 mt-auto shrink-0 relative z-10 w-full">
+                  {/* Redesigned Footer Action Bar: QUICK VIEW + WISHLIST ICON BUTTON */}
+                  <div className="pt-2.5 border-t border-white/10 flex items-center justify-between gap-2 mt-auto shrink-0 relative z-20 w-full">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         openQuickView(product);
                       }}
-                      className="flex-1 bg-[#00ff88] text-black font-black text-[10px] sm:text-xs py-1.5 sm:py-2 uppercase tracking-wider border-2 border-black shadow-[2px_2px_0px_0px_#000] hover:bg-white transition-colors text-center cursor-pointer flex items-center justify-center gap-1"
+                      className="flex-1 bg-[#00ff88] text-black font-black text-[10px] sm:text-xs py-2 sm:py-2.5 uppercase tracking-wider border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:bg-white transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 rounded-xl font-syne"
                     >
-                      <Eye size={13} /> QUICK VIEW
+                      <Eye size={14} strokeWidth={2.5} /> QUICK VIEW
                     </button>
 
                     <div onClick={(e) => e.stopPropagation()} className="shrink-0">
