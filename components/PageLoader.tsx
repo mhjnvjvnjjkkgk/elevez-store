@@ -79,6 +79,7 @@ export const PageLoader: React.FC = () => {
             playsInline
             preload="auto"
             onEnded={handleVideoEnded}
+            onError={() => setIsVisible(false)}
             onLoadedMetadata={() => {
               if (videoRef.current) {
                 videoRef.current.playbackRate = 2.0;

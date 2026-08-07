@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Share2 } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { auth } from '../firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -12,28 +12,36 @@ interface WishlistButtonProps {
 export const WishlistButton: React.FC<WishlistButtonProps> = ({ productId, onToggle }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [showShare, setShowShare] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        // Check if product is in wishlist
-        try {
-          const { getUserProfile } = await import('../services/userService');
-          const result = await getUserProfile(currentUser.uid);
-          if (result.success) {
-            setIsWishlisted(result.data.wishlist?.includes(productId) || false);
+    let unsubscribe: any = () => {};
+    try {
+      if (auth) {
+        unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+          setUser(currentUser);
+          if (currentUser) {
+            try {
+              const { getUserProfile } = await import('../services/userService');
+              const result = await getUserProfile(currentUser.uid);
+              if (result && result.success && result.data && Array.isArray(result.data.wishlist)) {
+                setIsWishlisted(result.data.wishlist.includes(productId));
+              }
+            } catch (error) {
+              console.error('Error checking wishlist:', error);
+            }
           }
-        } catch (error) {
-          console.error('Error checking wishlist:', error);
-        }
+        });
       }
-    });
-    return () => unsubscribe();
+    } catch (e) {
+      console.error('Wishlist auth listener error:', e);
+    }
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
   }, [productId]);
 
-  const handleToggleWishlist = async () => {
+  const handleToggleWishlist = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!user) {
       alert('Please sign in to add items to your wishlist');
       return;
@@ -56,50 +64,19 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({ productId, onTog
     }
   };
 
-  const handleShare = async () => {
-    const shareUrl = `${window.location.origin}/#/product/${productId}`;
-    const shareText = `Check out this amazing product on ${window.location.hostname}!`;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Check this out!',
-          text: shareText,
-          url: shareUrl,
-        });
-      } catch (error) {
-        console.error('Error sharing:', error);
-      }
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(shareUrl);
-      alert('Link copied to clipboard!');
-    }
-  };
-
   return (
-    <div className="flex gap-2">
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={handleToggleWishlist}
-        className={`p-3 rounded-full transition-all border-2 ${
-          isWishlisted
-            ? 'bg-[#00ff88]/20 border-[#00ff88] text-[#00ff88]'
-            : 'bg-white/10 border-white/20 text-white hover:border-[#00ff88]/50'
-        }`}
-      >
-        <Heart size={20} className={isWishlisted ? 'fill-current' : ''} />
-      </motion.button>
-
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={handleShare}
-        className="p-3 rounded-full bg-white/10 border-2 border-white/20 text-white hover:border-[#00ff88]/50 transition-all"
-      >
-        <Share2 size={20} />
-      </motion.button>
-    </div>
+    <motion.button
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      onClick={handleToggleWishlist}
+      className={`w-8 h-8 sm:w-9 sm:h-9 border-2 border-black rounded-lg transition-all flex items-center justify-center cursor-pointer ${
+        isWishlisted
+          ? 'bg-[#ff007f] text-white shadow-[2px_2px_0px_0px_#00ff88]'
+          : 'bg-black text-[#ff007f] shadow-[2px_2px_0px_0px_#000] hover:bg-[#ff007f] hover:text-white'
+      }`}
+      title={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+    >
+      <Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} strokeWidth={2.5} />
+    </motion.button>
   );
 };
