@@ -6,8 +6,10 @@ const PRELOADER_KEY = 'elevez_preloader_shown_session';
 export const PageLoader: React.FC = () => {
   const [isVisible, setIsVisible] = useState<boolean>(() => {
     try {
-      const shown = sessionStorage.getItem(PRELOADER_KEY);
-      if (shown) return false;
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        const shown = sessionStorage.getItem(PRELOADER_KEY);
+        if (shown) return false;
+      }
     } catch (e) {
       // Storage fallback
     }
@@ -32,31 +34,31 @@ export const PageLoader: React.FC = () => {
     if (!isVisible) return;
 
     try {
-      sessionStorage.setItem(PRELOADER_KEY, 'true');
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        sessionStorage.setItem(PRELOADER_KEY, 'true');
+      }
     } catch (e) {
       // Storage fallback
     }
 
     if (videoRef.current) {
       videoRef.current.playbackRate = 2.0;
-      videoRef.current.play().catch(() => {});
+      videoRef.current.play().catch(() => {
+        // If autoplay is blocked by browser policies, dismiss preloader immediately
+        setIsVisible(false);
+      });
     }
 
-    // Safety timeout: auto-close after 4 seconds
+    // Fail-safe max timeout: auto-dismiss preloader after 3 seconds
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 4000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [isVisible]);
 
-  const handleVideoEnded = () => {
-    setIsVisible(false);
-  };
-
   if (!isVisible) return null;
 
-  // Exact user video files: Vertical for Mobile, Horizontal for PC
   const videoSrc = isMobile
     ? '/elevez-vertical.mp4'
     : '/elevez-horizontal.mp4';
@@ -67,10 +69,10 @@ export const PageLoader: React.FC = () => {
         <motion.div
           key="video-preloader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.03, transition: { duration: 0.4, ease: [0.77, 0, 0.175, 1] } }}
-          className="fixed inset-0 z-[10000] bg-black flex items-center justify-center overflow-hidden select-none"
+          exit={{ opacity: 0, scale: 1.03, transition: { duration: 0.3 } }}
+          onClick={() => setIsVisible(false)}
+          className="fixed inset-0 z-[10000] bg-black flex items-center justify-center overflow-hidden select-none cursor-pointer"
         >
-          {/* Full-Screen Pure Video - No Text Overlays */}
           <video
             ref={videoRef}
             src={videoSrc}
@@ -78,7 +80,7 @@ export const PageLoader: React.FC = () => {
             muted
             playsInline
             preload="auto"
-            onEnded={handleVideoEnded}
+            onEnded={() => setIsVisible(false)}
             onError={() => setIsVisible(false)}
             onLoadedMetadata={() => {
               if (videoRef.current) {
@@ -90,7 +92,10 @@ export const PageLoader: React.FC = () => {
 
           {/* Minimal Floating Skip Pill */}
           <button
-            onClick={() => setIsVisible(false)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsVisible(false);
+            }}
             className="absolute bottom-5 right-5 z-30 bg-black/70 hover:bg-black text-white font-mono text-[10px] font-bold px-3 py-1.5 border border-white/30 rounded-full backdrop-blur-md transition-all cursor-pointer opacity-70 hover:opacity-100"
           >
             SKIP →
