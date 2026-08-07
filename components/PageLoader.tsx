@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const PageLoader: React.FC = () => {
-  // Always show preloader on page refresh
   const [isVisible, setIsVisible] = useState<boolean>(true);
+  const [isFading, setIsFading] = useState<boolean>(false);
 
   const [isMobile, setIsMobile] = useState<boolean>(() => {
     return typeof window !== 'undefined' ? window.innerWidth < 768 : false;
@@ -26,11 +26,7 @@ export const PageLoader: React.FC = () => {
     if (videoRef.current) {
       videoRef.current.muted = true;
       videoRef.current.play().catch(() => {
-        // If autoplay is blocked, dismiss preloader after fallback timer
-        if (timerRef.current) clearTimeout(timerRef.current);
-        timerRef.current = setTimeout(() => {
-          setIsVisible(false);
-        }, 3000);
+        setIsVisible(false);
       });
     }
 
@@ -39,7 +35,7 @@ export const PageLoader: React.FC = () => {
     };
   }, [isVisible]);
 
-  // Triggers ONLY ONCE THE VIDEO ACTUALLY STARTS PLAYING
+  // Triggers when video playback starts
   const handleVideoPlay = () => {
     if (videoRef.current) {
       if (videoRef.current.duration && !isNaN(videoRef.current.duration) && videoRef.current.duration > 0) {
@@ -49,35 +45,42 @@ export const PageLoader: React.FC = () => {
       }
     }
 
-    // Start 4-second timer AFTER active playback begins
     if (timerRef.current) clearTimeout(timerRef.current);
+
+    // Start video opacity fade 0.8s before 4.0s ends
     timerRef.current = setTimeout(() => {
-      setIsVisible(false);
-    }, 4000);
+      setIsFading(true);
+      setTimeout(() => {
+        setIsVisible(false);
+      }, 800);
+    }, 3200);
   };
 
-  const handleVideoEnded = () => {
+  const handleDismiss = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
-    setIsVisible(false);
+    setIsFading(true);
+    setTimeout(() => {
+      setIsVisible(false);
+    }, 600);
   };
-
-  if (!isVisible) return null;
 
   const videoSrc = isMobile
     ? '/elevez-vertical.mp4'
     : '/elevez-horizontal.mp4';
 
   return (
-    <AnimatePresence>
+    <AnimatePresence unmountOnExit>
       {isVisible && (
         <motion.div
           key="video-preloader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.03, transition: { duration: 0.4 } }}
-          onClick={() => setIsVisible(false)}
+          animate={{ opacity: isFading ? 0 : 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          onClick={handleDismiss}
           className="fixed inset-0 z-[10000] bg-black flex items-center justify-center overflow-hidden select-none cursor-pointer"
         >
-          <video
+          <motion.video
             ref={videoRef}
             src={videoSrc}
             autoPlay
@@ -86,8 +89,10 @@ export const PageLoader: React.FC = () => {
             preload="auto"
             onPlay={handleVideoPlay}
             onPlaying={handleVideoPlay}
-            onEnded={handleVideoEnded}
-            onError={() => setIsVisible(false)}
+            onEnded={handleDismiss}
+            onError={handleDismiss}
+            animate={{ opacity: isFading ? 0 : 1 }}
+            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
             onLoadedMetadata={() => {
               if (videoRef.current && videoRef.current.duration) {
                 videoRef.current.playbackRate = videoRef.current.duration / 4.0;
@@ -100,7 +105,7 @@ export const PageLoader: React.FC = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setIsVisible(false);
+              handleDismiss();
             }}
             className="absolute bottom-5 right-5 z-30 bg-black/70 hover:bg-black text-white font-mono text-[10px] font-bold px-3 py-1.5 border border-white/30 rounded-full backdrop-blur-md transition-all cursor-pointer opacity-70 hover:opacity-100"
           >
