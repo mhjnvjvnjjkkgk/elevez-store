@@ -1,19 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const PRELOADER_KEY = 'elevez_preloader_last_shown';
-const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const PRELOADER_KEY = 'elevez_preloader_shown_session';
 
 export const PageLoader: React.FC = () => {
   const [isVisible, setIsVisible] = useState<boolean>(() => {
     try {
-      const lastShown = localStorage.getItem(PRELOADER_KEY);
-      if (lastShown) {
-        const timeDiff = Date.now() - Number(lastShown);
-        if (timeDiff < ONE_DAY_MS) {
-          return false;
-        }
-      }
+      const shown = sessionStorage.getItem(PRELOADER_KEY);
+      if (shown) return false;
     } catch (e) {
       // Storage fallback
     }
@@ -38,7 +32,7 @@ export const PageLoader: React.FC = () => {
     if (!isVisible) return;
 
     try {
-      localStorage.setItem(PRELOADER_KEY, Date.now().toString());
+      sessionStorage.setItem(PRELOADER_KEY, 'true');
     } catch (e) {
       // Storage fallback
     }

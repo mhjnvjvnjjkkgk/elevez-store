@@ -20,6 +20,22 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Disable blue/grey tap highlight and long-press selection callout boxes on mobile devices */
+@media (pointer: coarse) or (max-width: 768px) {
+  body * {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+  }
+
+  input, textarea, [contenteditable="true"] {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {

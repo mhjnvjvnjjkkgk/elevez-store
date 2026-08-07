@@ -801,12 +801,20 @@ const ProductCard: React.FC<{ product: Product; onHoverStart: () => void; onHove
 };
 
 
-// Quick View Modal
+// Quick View Modal - Multi-Image Gallery Enabled
 const QuickViewModal = () => {
   const { activeProduct, closeQuickView } = useQuickView();
   const { addToCart } = useCart();
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState<string>('');
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const productImages = useMemo(() => {
+    if (!activeProduct) return [];
+    if (activeProduct.images && activeProduct.images.length > 0) return activeProduct.images;
+    if (activeProduct.image) return [activeProduct.image];
+    return [];
+  }, [activeProduct]);
 
   useEffect(() => {
     if (activeProduct && activeProduct.colors && activeProduct.colors.length > 0) {
@@ -814,6 +822,7 @@ const QuickViewModal = () => {
     }
     const sizesToUse = activeProduct?.sizes && activeProduct.sizes.length > 0 ? activeProduct.sizes : getAvailableSizes();
     setSelectedSize(sizesToUse[0] || 'M');
+    setActiveImageIndex(0);
   }, [activeProduct]);
 
   if (!activeProduct) return null;
@@ -829,7 +838,7 @@ const QuickViewModal = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-white/20"
+        className="fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-4 bg-white/20 backdrop-blur-sm"
         onClick={closeQuickView}
       >
         <motion.div
@@ -847,14 +856,35 @@ const QuickViewModal = () => {
             <X size={20} className="md:w-6 md:h-6" />
           </button>
 
-          {/* Image Side - Scaling Fixed */}
-          <div className="w-full md:w-1/2 relative h-[230px] md:h-auto min-h-[230px] max-h-[320px] md:max-h-none flex items-center justify-center border-b-[4px] md:border-b-0 md:border-r-[4px] border-black bg-neutral-950 p-3 shrink-0">
-            <img
-              src={activeProduct.image || (activeProduct.images && activeProduct.images[0])}
-              alt={activeProduct.name}
-              className="max-h-full max-w-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)]"
-              loading="eager"
-            />
+          {/* Image Side with Multi-Image Gallery Thumbnails */}
+          <div className="w-full md:w-1/2 relative h-[250px] sm:h-[300px] md:h-auto min-h-[250px] max-h-[350px] md:max-h-none flex flex-col items-center justify-center border-b-[4px] md:border-b-0 md:border-r-[4px] border-black bg-neutral-950 p-3 shrink-0">
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+              <img
+                src={productImages[activeImageIndex] || activeProduct.image}
+                alt={`${activeProduct.name} image ${activeImageIndex + 1}`}
+                className="max-h-full max-w-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)] transition-all duration-300"
+                loading="eager"
+              />
+            </div>
+
+            {/* Thumbnail Navigation Gallery Bar */}
+            {productImages.length > 1 && (
+              <div className="absolute bottom-2 left-2 right-2 flex justify-center gap-2 overflow-x-auto py-1 z-30 bg-black/70 backdrop-blur-md border border-white/10 rounded-lg px-2">
+                {productImages.map((imgUrl, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveImageIndex(i)}
+                    className={`w-9 h-9 sm:w-10 sm:h-10 rounded border-2 overflow-hidden transition-all shrink-0 cursor-pointer ${
+                      activeImageIndex === i
+                        ? 'border-[#00ff88] scale-110 shadow-[0_0_8px_#00ff88]'
+                        : 'border-white/30 opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <img src={imgUrl} alt="thumb" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Details Side */}
@@ -2256,19 +2286,19 @@ const NewArrivalsShowcaseSection = ({
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-12 sm:py-28 bg-black text-white relative z-30 overflow-hidden border-t-4 border-b-4 border-black">
+    <section ref={sectionRef} className="py-6 sm:py-20 bg-black text-white relative z-30 overflow-hidden border-t-4 border-b-4 border-black">
       <div className="absolute inset-0 bg-[radial-gradient(#00ff88_1px,transparent_1px)] [background-size:20px_20px] opacity-15 pointer-events-none" />
 
       <div className="container mx-auto px-3 sm:px-4 max-w-6xl relative z-10">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 sm:mb-12 border-b-2 border-white/20 pb-4 sm:pb-6 gap-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-3 sm:mb-8 border-b-2 border-white/20 pb-3 sm:pb-6 gap-2 sm:gap-3">
           <div>
-            <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+            <div className="flex items-center gap-2 mb-1">
               <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#00ff88] rounded-full animate-ping" />
-              <span className="text-[#00ff88] font-mono text-[10px] sm:text-sm font-black uppercase tracking-widest">
+              <span className="text-[#00ff88] font-mono text-[9px] sm:text-xs font-black uppercase tracking-widest">
                 ELEVEZ 2.0 // EXCLUSIVE NEW DROPS
               </span>
             </div>
-            <h2 className="text-2xl sm:text-6xl font-black uppercase tracking-tighter font-syne text-white flex flex-wrap gap-[0.12em] perspective-1000">
+            <h2 className="text-2xl sm:text-5xl font-black uppercase tracking-tighter font-syne text-white flex flex-wrap gap-[0.12em] perspective-1000">
               {"NEW ARRIVALS".split("").map((char, index) => (
                 <span
                   key={index}
@@ -2280,12 +2310,12 @@ const NewArrivalsShowcaseSection = ({
             </h2>
           </div>
 
-          <div className="bg-[#00ff88] text-black border-2 border-black px-3 py-1.5 sm:px-4 sm:py-2 font-mono text-[10px] sm:text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_0px_#fff]">
+          <div className="bg-[#00ff88] text-black border-2 border-black px-2.5 py-1 sm:px-4 sm:py-2 font-mono text-[9px] sm:text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_#fff]">
             ⚡ PURE COTTON COLLECTION
           </div>
         </div>
 
-        <div ref={cardsRef} className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-8">
+        <div ref={cardsRef} className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6">
           {displayProducts.map((product, idx) => {
             const meta = productMetaMap[Number(product.id)] || {
               tag: "🔥 NEW DROP",
@@ -2300,16 +2330,16 @@ const NewArrivalsShowcaseSection = ({
             return (
               <motion.div
                 key={product.id || idx}
-                whileHover={{ y: -10, scale: 1.03 }}
+                whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 350, damping: 22 }}
-                className="new-arrival-card bg-neutral-900 border-[2.5px] sm:border-[3px] border-white/20 hover:border-[#00ff88] p-2.5 sm:p-4 relative flex flex-col justify-between h-full min-h-[350px] sm:min-h-[440px] shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#00ff88] sm:hover:shadow-[14px_14px_0px_0px_#00ff88] transition-all duration-300 group cursor-pointer"
+                className="new-arrival-card bg-neutral-900 border-[2.5px] sm:border-[3.5px] border-black hover:border-[#00ff88] p-2.5 sm:p-4 relative flex flex-col justify-between h-full min-h-[340px] sm:min-h-[440px] shadow-[4px_4px_0px_0px_#000] sm:shadow-[8px_8px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#00ff88] sm:hover:shadow-[12px_12px_0px_0px_#00ff88] transition-all duration-300 group cursor-pointer rounded-xl"
                 onMouseEnter={() => setCursorVariant('hover')}
                 onMouseLeave={() => setCursorVariant('default')}
                 onClick={() => onProductClick(handle)}
               >
                 <div className="flex flex-col h-full justify-between">
                   <div>
-                    <div className="flex flex-wrap justify-between items-center mb-2 gap-1">
+                    <div className="flex flex-wrap justify-between items-center mb-1.5 gap-1">
                       <span className={`text-[8px] sm:text-xs font-black px-1.5 py-0.5 sm:px-2.5 sm:py-1 uppercase tracking-wider border border-black shadow-[1.5px_1.5px_0px_0px_#000] ${meta.tagBg}`}>
                         {meta.tag}
                       </span>
@@ -2318,7 +2348,7 @@ const NewArrivalsShowcaseSection = ({
                       </span>
                     </div>
 
-                    <div className="relative aspect-[3/4] bg-black border sm:border-2 border-white/10 overflow-hidden mb-2 sm:mb-3 group-hover:border-[#00ff88] transition-colors">
+                    <div className="relative aspect-[3/4] bg-black border sm:border-2 border-white/10 overflow-hidden mb-2 sm:mb-3 group-hover:border-[#00ff88] transition-colors rounded-lg">
                       <img
                         src={mainImage}
                         alt={product.name}
@@ -2348,17 +2378,21 @@ const NewArrivalsShowcaseSection = ({
                     </p>
                   </div>
 
-                  <div className="pt-2 border-t border-white/10 flex items-center justify-between gap-1 mt-auto shrink-0 relative z-10 w-full">
-                    <span className="text-[8px] sm:text-[10px] font-mono uppercase text-gray-400 hidden xs:inline">PURE COTTON</span>
+                  {/* Footer Action Bar: QUICK VIEW + HEART WISHLIST BUTTON */}
+                  <div className="pt-2 border-t border-white/10 flex items-center justify-between gap-1.5 mt-auto shrink-0 relative z-10 w-full">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         openQuickView(product);
                       }}
-                      className="w-full sm:w-auto bg-[#00ff88] text-black font-black text-[10px] sm:text-xs px-2.5 py-1.5 sm:px-3 sm:py-1.5 uppercase tracking-wider border border-black shadow-[2px_2px_0px_0px_#000] hover:bg-white transition-colors text-center cursor-pointer"
+                      className="flex-1 bg-[#00ff88] text-black font-black text-[10px] sm:text-xs py-1.5 sm:py-2 uppercase tracking-wider border-2 border-black shadow-[2px_2px_0px_0px_#000] hover:bg-white transition-colors text-center cursor-pointer flex items-center justify-center gap-1"
                     >
-                      QUICK VIEW
+                      <Eye size={13} /> QUICK VIEW
                     </button>
+
+                    <div onClick={(e) => e.stopPropagation()} className="shrink-0">
+                      <WishlistButton productId={String(product.id)} />
+                    </div>
                   </div>
                 </div>
               </motion.div>
