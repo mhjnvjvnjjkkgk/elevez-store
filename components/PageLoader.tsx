@@ -1,26 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const PRELOADER_KEY = 'elevez_preloader_shown_session';
-
 export const PageLoader: React.FC = () => {
-  const [isVisible, setIsVisible] = useState<boolean>(() => {
-    try {
-      if (typeof window !== 'undefined' && window.sessionStorage) {
-        const shown = sessionStorage.getItem(PRELOADER_KEY);
-        if (shown) return false;
-      }
-    } catch (e) {
-      // Storage fallback
-    }
-    return true;
-  });
+  // Always show preloader on page refresh
+  const [isVisible, setIsVisible] = useState<boolean>(true);
 
   const [isMobile, setIsMobile] = useState<boolean>(() => {
     return typeof window !== 'undefined' ? window.innerWidth < 768 : false;
   });
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const timerRef = useRef<any>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -33,29 +23,43 @@ export const PageLoader: React.FC = () => {
   useEffect(() => {
     if (!isVisible) return;
 
-    try {
-      if (typeof window !== 'undefined' && window.sessionStorage) {
-        sessionStorage.setItem(PRELOADER_KEY, 'true');
-      }
-    } catch (e) {
-      // Storage fallback
-    }
-
     if (videoRef.current) {
-      videoRef.current.playbackRate = 2.0;
+      videoRef.current.muted = true;
       videoRef.current.play().catch(() => {
-        // If autoplay is blocked by browser policies, dismiss preloader immediately
-        setIsVisible(false);
+        // If autoplay is blocked, dismiss preloader after fallback timer
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+          setIsVisible(false);
+        }, 3000);
       });
     }
 
-    // Fail-safe max timeout: auto-dismiss preloader after 3 seconds
-    const timer = setTimeout(() => {
-      setIsVisible(false);
-    }, 3000);
-
-    return () => clearTimeout(timer);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [isVisible]);
+
+  // Triggers ONLY ONCE THE VIDEO ACTUALLY STARTS PLAYING
+  const handleVideoPlay = () => {
+    if (videoRef.current) {
+      if (videoRef.current.duration && !isNaN(videoRef.current.duration) && videoRef.current.duration > 0) {
+        videoRef.current.playbackRate = videoRef.current.duration / 4.0;
+      } else {
+        videoRef.current.playbackRate = 2.0;
+      }
+    }
+
+    // Start 4-second timer AFTER active playback begins
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setIsVisible(false);
+    }, 4000);
+  };
+
+  const handleVideoEnded = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setIsVisible(false);
+  };
 
   if (!isVisible) return null;
 
@@ -69,7 +73,7 @@ export const PageLoader: React.FC = () => {
         <motion.div
           key="video-preloader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.03, transition: { duration: 0.3 } }}
+          exit={{ opacity: 0, scale: 1.03, transition: { duration: 0.4 } }}
           onClick={() => setIsVisible(false)}
           className="fixed inset-0 z-[10000] bg-black flex items-center justify-center overflow-hidden select-none cursor-pointer"
         >
@@ -80,11 +84,13 @@ export const PageLoader: React.FC = () => {
             muted
             playsInline
             preload="auto"
-            onEnded={() => setIsVisible(false)}
+            onPlay={handleVideoPlay}
+            onPlaying={handleVideoPlay}
+            onEnded={handleVideoEnded}
             onError={() => setIsVisible(false)}
             onLoadedMetadata={() => {
-              if (videoRef.current) {
-                videoRef.current.playbackRate = 2.0;
+              if (videoRef.current && videoRef.current.duration) {
+                videoRef.current.playbackRate = videoRef.current.duration / 4.0;
               }
             }}
             className="w-full h-full object-cover"
