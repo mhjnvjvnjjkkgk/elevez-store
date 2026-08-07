@@ -34,30 +34,50 @@ console.log('Firebase Config:', {
   appId: firebaseConfig.appId ? '✓ Set' : '✗ Missing'
 });
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-console.log('Firebase App initialized successfully');
+// Initialize Firebase safely
+let app: any;
+let db: any;
+let auth: any;
+let analytics: any;
 
-// Initialize Firestore with Native Multi-Tab Caching
-const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({
-    tabManager: persistentMultipleTabManager()
-  })
-});
-console.log('Firestore initialized with native multi-tab persistent local cache');
+try {
+  app = initializeApp(firebaseConfig);
+  console.log('Firebase App initialized successfully');
+} catch (e) {
+  console.error('Firebase App initialization failed:', e);
+}
 
-// Initialize Firebase Authentication
-const auth = getAuth(app);
-console.log('Firebase Auth initialized');
-
-// Initialize Analytics (only in browser environment)
-let analytics;
-if (typeof window !== 'undefined') {
+if (app) {
   try {
-    analytics = getAnalytics(app);
-    console.log('Analytics initialized');
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+      })
+    });
+    console.log('Firestore initialized with native multi-tab persistent local cache');
   } catch (e) {
-    console.log('Analytics not available in this environment');
+    console.error('Firestore initialization with persistent cache failed, falling back:', e);
+    try {
+      db = initializeFirestore(app, {});
+    } catch (err) {
+      console.error('Firestore fallback failed:', err);
+    }
+  }
+
+  try {
+    auth = getAuth(app);
+    console.log('Firebase Auth initialized');
+  } catch (e) {
+    console.error('Firebase Auth initialization failed:', e);
+  }
+
+  if (typeof window !== 'undefined') {
+    try {
+      analytics = getAnalytics(app);
+      console.log('Analytics initialized');
+    } catch (e) {
+      console.log('Analytics not available in this environment');
+    }
   }
 }
 

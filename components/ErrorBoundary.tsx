@@ -56,12 +56,26 @@ export class ErrorBoundary extends Component<Props, State> {
               )}
             </div>
 
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-black text-white px-12 py-5 border-[4px] border-black font-black uppercase text-2xl shadow-[8px_8px_0px_0px_#ff2a5f] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
-            >
-              REBOOT SYSTEM
-            </button>
+            <div className="flex flex-wrap gap-4">
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-black text-white px-8 py-4 border-[4px] border-black font-black uppercase text-xl shadow-[6px_6px_0px_0px_#00ff88] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer"
+              >
+                REBOOT SYSTEM
+              </button>
+              <button
+                onClick={() => {
+                  try {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                  } catch (e) {}
+                  window.location.href = '/';
+                }}
+                className="bg-[#ff007f] text-white px-8 py-4 border-[4px] border-black font-black uppercase text-xl shadow-[6px_6px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer"
+              >
+                CLEAR CACHE & RESET
+              </button>
+            </div>
           </div>
         </div>
       );
