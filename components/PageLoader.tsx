@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const PRELOADER_KEY = 'elevez_preloader_last_shown';
-const ONE_DAY_MS = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 export const PageLoader: React.FC = () => {
   const [isVisible, setIsVisible] = useState<boolean>(() => {
@@ -11,12 +11,11 @@ export const PageLoader: React.FC = () => {
       if (lastShown) {
         const timeDiff = Date.now() - Number(lastShown);
         if (timeDiff < ONE_DAY_MS) {
-          // Shown within the last 24 hours -> skip immediately
           return false;
         }
       }
     } catch (e) {
-      // Ignore storage errors
+      // Storage fallback
     }
     return true;
   });
@@ -38,22 +37,18 @@ export const PageLoader: React.FC = () => {
   useEffect(() => {
     if (!isVisible) return;
 
-    // Record preloader display timestamp
     try {
       localStorage.setItem(PRELOADER_KEY, Date.now().toString());
     } catch (e) {
-      // Ignore storage errors
+      // Storage fallback
     }
 
-    // Set 2x speed playback so 8s video plays in 4s
     if (videoRef.current) {
       videoRef.current.playbackRate = 2.0;
-      videoRef.current.play().catch(() => {
-        // Autoplay fallback
-      });
+      videoRef.current.play().catch(() => {});
     }
 
-    // Safety timer: auto-close after 4 seconds (fast-forward duration)
+    // Safety timeout: auto-close after 4 seconds
     const timer = setTimeout(() => {
       setIsVisible(false);
     }, 4000);
@@ -67,23 +62,10 @@ export const PageLoader: React.FC = () => {
 
   if (!isVisible) return null;
 
-  // Video sources: Vertical for Mobile, Horizontal for PC
-  // Supports various file extensions (mp4, webm, mov) with fallback to promo-vid.mp4
-  const videoSources = isMobile
-    ? [
-        '/elevezverticle.mp4',
-        '/elevezverticle',
-        '/elevez-verticle.mp4',
-        '/elevez-vertical.mp4',
-        '/promo-vid.mp4'
-      ]
-    : [
-        '/elevez.horizontal.mp4',
-        '/elevez.horizontal',
-        '/elevez-horizontal.mp4',
-        '/elevez_horizontal.mp4',
-        '/promo-vid.mp4'
-      ];
+  // Exact user video files: Vertical for Mobile, Horizontal for PC
+  const videoSrc = isMobile
+    ? '/elevez-vertical.mp4'
+    : '/elevez-horizontal.mp4';
 
   return (
     <AnimatePresence>
@@ -91,15 +73,17 @@ export const PageLoader: React.FC = () => {
         <motion.div
           key="video-preloader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.05, transition: { duration: 0.5, ease: [0.77, 0, 0.175, 1] } }}
-          className="fixed inset-0 z-[10000] bg-black flex flex-col items-center justify-center overflow-hidden select-none"
+          exit={{ opacity: 0, scale: 1.03, transition: { duration: 0.4, ease: [0.77, 0, 0.175, 1] } }}
+          className="fixed inset-0 z-[10000] bg-black flex items-center justify-center overflow-hidden select-none"
         >
-          {/* Fullscreen Video Element */}
+          {/* Full-Screen Pure Video - No Text Overlays */}
           <video
             ref={videoRef}
+            src={videoSrc}
             autoPlay
             muted
             playsInline
+            preload="auto"
             onEnded={handleVideoEnded}
             onLoadedMetadata={() => {
               if (videoRef.current) {
@@ -107,26 +91,14 @@ export const PageLoader: React.FC = () => {
               }
             }}
             className="w-full h-full object-cover"
-          >
-            {videoSources.map((src, idx) => (
-              <source key={idx} src={src} type="video/mp4" />
-            ))}
-            Your browser does not support video.
-          </video>
+          />
 
-          {/* Neobrutalist Watermark & Skip Control */}
-          <div className="absolute top-6 left-6 z-20 flex items-center gap-2 bg-black/80 border-2 border-black px-3 py-1.5 shadow-[3px_3px_0px_0px_#00ff88]">
-            <span className="w-2.5 h-2.5 bg-[#00ff88] rounded-full animate-ping" />
-            <span className="text-[#00ff88] font-mono text-[10px] font-black uppercase tracking-widest">
-              ELEVEZ 2.0 // SYSTEM INTRO
-            </span>
-          </div>
-
+          {/* Minimal Floating Skip Pill */}
           <button
             onClick={() => setIsVisible(false)}
-            className="absolute bottom-6 right-6 z-20 bg-[#00ff88] text-black font-black text-[10px] sm:text-xs px-4 py-2 uppercase tracking-widest border-2 border-black shadow-[3px_3px_0px_0px_#fff] hover:bg-white transition-all cursor-pointer"
+            className="absolute bottom-5 right-5 z-30 bg-black/70 hover:bg-black text-white font-mono text-[10px] font-bold px-3 py-1.5 border border-white/30 rounded-full backdrop-blur-md transition-all cursor-pointer opacity-70 hover:opacity-100"
           >
-            SKIP INTRO →
+            SKIP →
           </button>
         </motion.div>
       )}
