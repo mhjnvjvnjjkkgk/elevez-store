@@ -136,8 +136,9 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
         if (cat !== (lastSwipe.product.category || 'Streetwear')) score += 25;
       }
 
-      // Add entropy so deck is non-deterministic
-      score += Math.random() * 20;
+      // Deterministic seed score so current product stays 100% stable while viewing
+      const seedScore = (Number(p.id) * 31 + (history.length + 1) * 17) % 23;
+      score += seedScore;
 
       return { product: p, score };
     });
@@ -237,8 +238,8 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
         score += 30;
       }
 
-      // Add session entropy
-      score += (Number(p.id) % 9) + (Math.random() * 5);
+      // Add deterministic score seed
+      score += (Number(p.id) % 9);
 
       const matchPercentage = Math.min(99, Math.max(81, Math.round(score)));
 
@@ -290,8 +291,18 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
               />
             </div>
 
-            {/* Card Deck Area */}
+            {/* Card Deck Area - Scaled for Single Mobile Viewport */}
             <div className="relative w-full max-w-[270px] sm:max-w-sm aspect-[3/4] max-h-[340px] sm:max-h-[440px] mb-4 sm:mb-8">
+              {/* Desktop Side Swipe Guides */}
+              <div className="hidden lg:flex absolute -left-32 top-1/2 -translate-y-1/2 flex-col items-end text-[#ff007f] font-mono text-xs font-black uppercase tracking-widest pointer-events-none select-none border-2 border-[#ff007f] px-3 py-2 bg-black/80 rounded-xl shadow-[3px_3px_0px_0px_#ff007f] animate-pulse z-20">
+                <span>👈 SWIPE LEFT</span>
+                <span className="text-[9px] text-gray-400 font-medium">DISLIKE // PASS</span>
+              </div>
+              <div className="hidden lg:flex absolute -right-32 top-1/2 -translate-y-1/2 flex-col items-start text-[#00ff88] font-mono text-xs font-black uppercase tracking-widest pointer-events-none select-none border-2 border-[#00ff88] px-3 py-2 bg-black/80 rounded-xl shadow-[3px_3px_0px_0px_#00ff88] animate-pulse z-20">
+                <span>SWIPE RIGHT 👉</span>
+                <span className="text-[9px] text-gray-400 font-medium">LIKE // FAVORITE</span>
+              </div>
+
               {/* Peek Background Card for Depth */}
               {peekProduct && (
                 <div className="absolute inset-0 bg-neutral-900 border-[3px] border-white/20 rounded-2xl scale-[0.93] translate-y-3 opacity-50 shadow-lg pointer-events-none overflow-hidden flex items-center justify-center p-2">
@@ -337,8 +348,16 @@ export const TinderSwipeSection: React.FC<TinderSwipeSectionProps> = ({
                   NOPE ❌
                 </motion.div>
 
-                {/* Product Image - Contain Scaling */}
+                {/* Product Image - Contain Scaling & Mobile On-Card Side Guides */}
                 <div className="relative w-full h-[58%] bg-neutral-950 overflow-hidden flex items-center justify-center p-2">
+                  {/* Mobile Edge Guides */}
+                  <div className="lg:hidden absolute left-1.5 top-1/2 -translate-y-1/2 bg-black/80 border border-[#ff007f] text-[#ff007f] px-1.5 py-0.5 rounded text-[8px] font-mono font-black animate-pulse z-20 pointer-events-none">
+                    👈 PASS
+                  </div>
+                  <div className="lg:hidden absolute right-1.5 top-1/2 -translate-y-1/2 bg-black/80 border border-[#00ff88] text-[#00ff88] px-1.5 py-0.5 rounded text-[8px] font-mono font-black animate-pulse z-20 pointer-events-none">
+                    LIKE 👉
+                  </div>
+
                   <img
                     src={currentProduct.image || (currentProduct.images && currentProduct.images[0])}
                     alt={currentProduct.name}
